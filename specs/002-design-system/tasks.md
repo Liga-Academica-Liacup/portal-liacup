@@ -98,10 +98,10 @@ description: 'Lista de tarefas — F01 Design system em componentes do Portal LI
 
 **Teste independente**: comparar cada componente com a classe de origem; abrir o `liacup.css` e listar o que resta.
 
-- [ ] T029 [US4] Remover de `liacup.css` as **32** classes convertidas — as três de cascata já saíram na T005, então 59 − 32 = **27** — e agrupar as 27 restantes sob cabeçalhos nomeando a feature de destino, confirmando que `.dialog`, `.seg` e os três valores anotados preservam as decisões das T005 e T006 (FR-011, SC-009)
-- [ ] T030 [US4] Preencher por componente as tabelas de `specs/002-design-system/FIDELIDADE.md`, comparando sempre contra o **valor efetivo pós-cascata**, com as três linhas de cor do `Botao`, as quatro correções de contraste, a opacidade do cartão, a linha do separador e a linha do par 14px/16px. **Zero vereditos não idênticos sem motivo escrito** (FR-009, FR-012)
-- [ ] T031 [US4] Verificar que nenhum token existente foi alterado: `git diff main -- src/estilos/tokens.css` só pode mostrar **linhas acrescentadas**, e os 20 tokens novos batem um a um com a tabela do `data-model.md` — promovida da Evidência 11 do quickstart (FR-010, SC-007)
-- [ ] T032 [US4] Conferir a contagem final com `grep -cE "^\.[a-z]" liacup.css` e registrar o número, que precisa ser **27** (FR-011, SC-009)
+- [X] T029 [US4] Remover de `liacup.css` as **32** classes convertidas — as três de cascata já saíram na T005, então 59 − 32 = **27** — e agrupar as 27 restantes sob cabeçalhos nomeando a feature de destino, confirmando que `.dialog`, `.seg` e os três valores anotados preservam as decisões das T005 e T006 (FR-011, SC-009)
+- [X] T030 [US4] Preencher por componente as tabelas de `specs/002-design-system/FIDELIDADE.md`, comparando sempre contra o **valor efetivo pós-cascata**, com as três linhas de cor do `Botao`, as quatro correções de contraste, a opacidade do cartão, a linha do separador e a linha do par 14px/16px. **Zero vereditos não idênticos sem motivo escrito** (FR-009, FR-012)
+- [X] T031 [US4] Verificar que nenhum token existente foi alterado: `git diff main -- src/estilos/tokens.css` só pode mostrar **linhas acrescentadas**, e os 20 tokens novos batem um a um com a tabela do `data-model.md` — promovida da Evidência 11 do quickstart (FR-010, SC-007)
+- [X] T032 [US4] Conferir a contagem final com `grep -cE "^\.[a-z]" liacup.css` e registrar o número, que precisa ser **27** (FR-011, SC-009)
 
 **Ponto de verificação**: 27 classes restantes, todas identificáveis; tabela de fidelidade sem nenhuma linha órfã de motivo.
 
