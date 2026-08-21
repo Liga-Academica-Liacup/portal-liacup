@@ -15,12 +15,6 @@ const fonteTitulo = Caprasimo({
   display: 'swap',
 })
 
-const fonteCorpo = Figtree({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--fonte-corpo',
-  display: 'swap',
-})
 
 export default function LayoutRaiz({ children }: { children: React.ReactNode }) {
   return (
