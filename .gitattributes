@@ -1,0 +1,10 @@
+# Normaliza o fim de linha no repositorio: o desenvolvimento acontece em Windows
+# e a verificacao roda em Linux. Sem isto, a verificacao de formatacao acusa o
+# arquivo inteiro como alterado so por causa do sistema operacional. (FR-028)
+* text=auto eol=lf
+
+# Binarios nao sao texto e nao devem ser convertidos.
+*.png binary
+*.jpg binary
+*.woff2 binary
+*.ico binary

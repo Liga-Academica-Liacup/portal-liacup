@@ -1,0 +1,48 @@
+{
+  "name": "portal-liacup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Portal institucional da Liga Academica Multiprofissional de Cuidados Paliativos da UnB",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "verificar": "npm run verificar:tipos && npm run lint && npm run formatar:check && npm run verificar:tokens",
+    "verificar:tipos": "tsc --noEmit",
+    "lint": "eslint .",
+    "formatar": "prettier --write .",
+    "formatar:check": "prettier --check .",
+    "verificar:tokens": "node scripts/verificar-tokens.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "node scripts/verificar-navegador.mjs && playwright test",
+    "test:desempenho": "lhci autorun"
+  },
+  "dependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@lhci/cli": "0.15.1",
+    "@playwright/test": "1.62.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.1.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.1",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "jsdom": "30.0.1",
+    "prettier": "3.9.6",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  }
+}

@@ -1,0 +1,24 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+.linksDeContato {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--alvo-de-toque);
+  color: var(--color-accent-700);
+  font-size: var(--font-size-body);
+}
+
+@media (min-width: 480px) {
+  .linksDeContato {
+    flex-direction: row;
+    justify-content: center;
+  }
+}

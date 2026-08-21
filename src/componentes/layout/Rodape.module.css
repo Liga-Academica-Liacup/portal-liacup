@@ -1,0 +1,11 @@
+.rodape {
+  padding: var(--space-6) var(--space-4);
+  border-top: var(--largura-borda) solid var(--color-divider);
+  text-align: center;
+}
+
+.linha {
+  margin: 0;
+  font-size: var(--font-size-h6);
+  color: var(--color-neutral-700);
+}

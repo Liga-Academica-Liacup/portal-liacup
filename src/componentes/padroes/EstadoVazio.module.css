@@ -1,0 +1,22 @@
+.caixa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-8) var(--space-4);
+  border: var(--largura-borda) solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-h5);
+}
+
+.descricao {
+  margin: 0;
+  font-size: var(--font-size-h6);
+  color: var(--color-neutral-700);
+}

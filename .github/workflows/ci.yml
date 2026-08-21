@@ -1,0 +1,77 @@
+# Verificacao automatica de toda alteracao proposta (FR-016).
+#
+# Nenhuma etapa usa continue-on-error: etapa que avisa e deixa passar e decoracao.
+# Cada etapa tem nome proprio, porque a protecao do ramo principal e configurada
+# selecionando essas verificacoes pelo nome — ver README.md.
+#
+# Roda so em Linux, deliberadamente. A paridade com Windows e travada na origem
+# por tres mecanismos (caixa de import na verificacao de tipos, fim de linha no
+# .gitattributes e versao do Node fixada). Uma matriz com Windows dobraria o
+# consumo de minutos do plano gratuito para reconferir o que ja esta travado.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verificar:
+    name: Verificacoes
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Baixar o codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar o Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar tipos
+        run: npm run verificar:tipos
+
+      - name: Analise estatica
+        run: npm run lint
+
+      - name: Formatacao
+        run: npm run formatar:check
+
+      - name: Verificar tokens
+        run: npm run verificar:tokens
+
+      - name: Testes de unidade
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # A maquina do CI vem sem navegador. Esquecer este passo e a causa mais
+      # comum de primeiro CI vermelho, com erro que nao tem nada a ver com o codigo.
+      - name: Instalar o navegador do Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Testes de ponta a ponta
+        run: npx playwright test
+
+      # Roda contra a versao compilada pelo passo Build, nunca contra o servidor
+      # de desenvolvimento: medir desempenho em modo dev produz numero sem sentido.
+      - name: Desempenho e acessibilidade por pagina
+        run: npm run test:desempenho
+
+      - name: Guardar relatorios quando algo falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios
+          path: |
+            playwright-report/
+            .lighthouseci/
+          retention-days: 7

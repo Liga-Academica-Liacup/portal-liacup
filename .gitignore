@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Build do Next
+.next/
+out/
+build/
+
+# Variaveis de ambiente — nenhum segredo real entra no repositorio (FR-023)
+.env
+.env.*
+!.env.example
+
+# Testes e medicoes
+playwright-report/
+test-results/
+blob-report/
+.lighthouseci/
+coverage/
+
+# Sistema operacional e editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+*.tmp
+*.swp

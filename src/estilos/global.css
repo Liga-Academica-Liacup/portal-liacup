@@ -1,0 +1,107 @@
+/* Portal LIACUP — reset e regras de elemento.
+   Extraido do liacup.css aprovado pela liga (F00/T010).
+
+   Duas reatribuicoes do ADR-0003 sao aplicadas aqui, que e onde regra de
+   elemento deve viver:
+   - link passa de --color-accent (3,48:1, reprova AA) para --color-accent-700 (6,91:1);
+   - texto secundario passa a usar --color-neutral-700 (5,53:1).
+   A reatribuicao do botao primario vive no Botao.tsx, e a do texto em verde
+   entra na F01, quando houver elemento em verde para reatribuir.
+
+   Nenhuma medida escrita a mao: tudo vem de src/estilos/tokens.css. */
+
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  line-height: var(--line-height-titulo);
+  letter-spacing: var(--letter-spacing-titulo);
+  margin: 0 0 var(--space-2);
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+}
+h2 {
+  font-size: var(--font-size-h2);
+}
+h3 {
+  font-size: var(--font-size-h3);
+}
+h4 {
+  font-size: var(--font-size-h4);
+}
+h5 {
+  font-size: var(--font-size-h5);
+}
+
+h6 {
+  font-size: var(--font-size-h6);
+  letter-spacing: var(--letter-spacing-h6);
+  text-transform: uppercase;
+}
+
+p {
+  margin: 0 0 var(--space-3);
+}
+
+/* ADR-0003: era var(--color-accent), que media 3,48:1 e reprovava no AA. */
+a {
+  color: var(--color-accent-700);
+  text-underline-offset: var(--underline-offset);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+figure {
+  margin: 0;
+}
+
+/* ADR-0003: texto secundario passa a usar neutral-700 (5,53:1). */
+figcaption {
+  font-size: var(--font-size-legenda);
+  margin-top: var(--space-1);
+  color: var(--color-neutral-700);
+}
+
+.texto-secundario {
+  color: var(--color-neutral-700);
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-accent-700);
+  outline-offset: var(--focus-ring-offset);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}

@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+build/
+coverage/
+playwright-report/
+test-results/
+.lighthouseci/
+package-lock.json
+liacup.css
+
+# Documentos de governanca e artefatos do Spec Kit: o Prettier nao formata o que
+# a liga aprovou nem o que o processo gerou. Conteudo desses arquivos e decidido
+# por pessoas, nao normalizado por ferramenta (Principio VI).
+docs/
+specs/
+.specify/

@@ -1,0 +1,126 @@
+/* Portal LIACUP — tokens de design.
+   Extraido do liacup.css aprovado pela liga (F00/T009). Contem APENAS o bloco
+   :root, ou seja, as custom properties. NENHUM valor foi alterado.
+
+   Cabecalho original preservado:
+   Portal LIACUP — Organic design system retuned to the LIACUP identity (lilás/roxo accent, sage support).
+   Structure, scales, radii, shadows and components come from Organic unchanged.
+   Organic — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md.
+
+   O que NAO veio, e por que:
+   - o @import de fonts.googleapis.com (ADR-0003 secao 3): as fontes sao servidas
+     pelo proprio dominio via next/font, sem requisicao a terceiro;
+   - as ~35 classes de componente (.btn, .card, .input, .tag, .nav, .table,
+     .dialog, .field, .radio, .seg, .hr, .elev-*, .washed): sao insumo da F01,
+     onde cada uma vira componente React (secao 2 dos padroes de codigo).
+     Traze-las agora criaria duas implementacoes de botao convivendo.
+
+   Este arquivo e a unica fonte de cor, espacamento, raio, sombra e tipografia.
+   Valor de token nao muda: as rampas foram geradas em OKLCH numa escala
+   compartilhada de luminosidade, e mexer num degrau desalinha os outros. */
+
+:root {
+  --color-bg: #f5ead8;
+  --color-surface: #ebddc5;
+  --color-text: #201e1d;
+  --color-accent: #9b6aaf;
+  --color-accent-2: #7a8a5e;
+  --color-divider: color-mix(in srgb, #201e1d 16%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f9f4ed;
+  --color-neutral-200: #eee7db;
+  --color-neutral-300: #dcd3c4;
+  --color-neutral-400: #c0b6a5;
+  --color-neutral-500: #a19786;
+  --color-neutral-600: #82796a;
+  --color-neutral-700: #645c50;
+  --color-neutral-800: #474238;
+  --color-neutral-900: #2e2b25;
+
+  --color-accent-100: #f8f1fb;
+  --color-accent-200: #eee0f4;
+  --color-accent-300: #dcc5e8;
+  --color-accent-400: #c3a1d6;
+  --color-accent-500: #9b6aaf;
+  --color-accent-600: #82558f;
+  --color-accent-700: #683f74;
+  --color-accent-800: #4e3260;
+  --color-accent-900: #33203f;
+
+  --color-accent-2-100: #f0fae1;
+  --color-accent-2-200: #e1eecc;
+  --color-accent-2-300: #ccdbb2;
+  --color-accent-2-400: #aebf92;
+  --color-accent-2-500: #8fa073;
+  --color-accent-2-600: #728157;
+  --color-accent-2-700: #56633f;
+  --color-accent-2-800: #3d472b;
+  --color-accent-2-900: #272e1b;
+
+  /* ADR-0003 secao 3: as fontes sao servidas pelo proprio dominio via next/font,
+     que gera um nome de familia com hash. Por isso os dois tokens apontam para as
+     variaveis que o next/font expoe (definidas em src/app/layout.tsx), em vez de
+     nomear a familia literalmente. Mesma tipografia, mesmos fallbacks: muda o
+     mecanismo de entrega, nao o valor. */
+  --font-heading: var(--fonte-titulo), system-ui, sans-serif;
+  --font-heading-weight: 400;
+  --font-body: var(--fonte-corpo), system-ui, sans-serif;
+
+  --space-1: 4.4px;
+  --space-2: 8.8px;
+  --space-3: 13.2px;
+  --space-4: 17.6px;
+  --space-6: 26.4px;
+  --space-8: 35.2px;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
+
+  /* ── Escala tipografica e ajustes oticos — tokens NOVOS (F00/T010) ──────────
+     Nenhum valor foi inventado nem alterado: sao exatamente as medidas que o
+     liacup.css ja usava nas regras de elemento. Viraram token porque a secao 3
+     dos padroes proibe tamanho de fonte e medida escritos a mao fora deste
+     arquivo, e a secao 3 do mesmo documento permite criar token novo. */
+  --font-size-body: 15px;
+  --font-size-h1: 42px;
+  --font-size-h2: 32px;
+  --font-size-h3: 25px;
+  --font-size-h4: 20px;
+  --font-size-h5: 16px;
+  --font-size-h6: 13px;
+  --font-size-legenda: 11px;
+  --line-height-body: 1.55;
+  --line-height-titulo: 1.12;
+  --letter-spacing-titulo: -0.015em;
+  --letter-spacing-h6: 0.08em;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --underline-offset: 3px;
+
+  /* ── Tokens NOVOS da F00 ────────────────────────────────────────────────────
+     --radius-pill: o liacup.css usava `border-radius: 999px` literal na regra
+     `.btn, .tag, .seg, .input`. Mesmo valor, agora nomeado.
+     --alvo-de-toque: 44px e o minimo do Principio 2 da constitution e do item D3
+     do checklist de validacao. Vira token para poder ser verificado. */
+  --radius-pill: 999px;
+  --alvo-de-toque: 44px;
+  /* Tamanho semantico para icones de acao acompanhados de texto. */
+  --tamanho-icone: 20px;
+  /* Borda fina: o liacup.css usava `1px solid` literal em varias regras.
+     Mesmo valor, agora nomeado, para que nenhuma medida fique escrita a mao. */
+  --largura-borda: 1px;
+  /* Espessura do traco dos icones. O padrao do SVG e 1, que a 20px fica fino
+     demais e some em tela clara. Vira token para nao ficar numero solto dentro
+     do componente. Sem unidade de proposito: em SVG, stroke-width e relativo ao
+     viewBox, entao 1.75 sobre um viewBox de 24 escala junto com o icone. */
+  --espessura-icone: 1.75;
+}

@@ -1,0 +1,44 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  /* O liacup.css aprovado usava 1px na .btn. O --focus-ring-width vale 2px e e
+     do anel de foco: usar token semantico fora do papel dele e como um numero
+     magico ganha nome bonito e para de significar o que diz. */
+  border: var(--largura-borda) solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--font-size-h6);
+  font-weight: 600;
+  cursor: pointer;
+  min-height: var(--alvo-de-toque);
+}
+
+.botao:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ADR-0003: accent-600 no lugar de accent. 3,48:1 -> 4,84:1. */
+.primario {
+  background: var(--color-accent-600);
+  color: var(--color-bg);
+}
+
+.secundario {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-divider);
+}
+
+.fantasma {
+  background: transparent;
+  color: var(--color-accent-700);
+}
+
+.larguraTotal {
+  width: 100%;
+}
