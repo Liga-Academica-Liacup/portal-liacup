@@ -113,10 +113,10 @@ description: 'Lista de tarefas — F01 Design system em componentes do Portal LI
 
 **Teste independente**: pedir a alguém que não participou para escolher o componente certo para uma tela descrita em voz alta, usando só o que está escrito nos arquivos.
 
-- [ ] T033 [US5] Conferir que os **sete** componentes de base — os cinco convertidos mais `Icone` e `EstadoVazio` da F00 — trazem no próprio arquivo o bloco **o que é / quando usar / quando não usar**, e que o "quando não usar" nomeia a armadilha conhecida de cada um. São **7 componentes de base** disponíveis ao fim da feature (FR-019, SC-001, SC-010)
-- [ ] T034 [US5] Atualizar `README.md` apontando `/vitrine` como o lugar de ver o sistema inteiro, com o endereço e a regra de que ela não recebe link público (FR-020)
-- [ ] T035 [US5] Descrever uma tela em voz alta para alguém que não participou — "uma lista de notícias com categoria e data" — e registrar se a pessoa escolhe os componentes certos **sem perguntar nada** (SC-011)
-- [ ] T036 [US5] Conferir que a contagem de dependências diretas continua em **3 de execução e 17 de desenvolvimento, total 20** — esta feature não instala nada (FR-021, SC-012)
+- [X] T033 [US5] Conferir que os **sete** componentes de base — os cinco convertidos mais `Icone` e `EstadoVazio` da F00 — trazem no próprio arquivo o bloco **o que é / quando usar / quando não usar**, e que o "quando não usar" nomeia a armadilha conhecida de cada um. São **7 componentes de base** disponíveis ao fim da feature (FR-019, SC-001, SC-010)
+- [X] T034 [US5] Atualizar `README.md` apontando `/vitrine` como o lugar de ver o sistema inteiro, com o endereço e a regra de que ela não recebe link público (FR-020)
+- [X] T035 [US5] Descrever uma tela em voz alta para alguém que não participou — "uma lista de notícias com categoria e data" — e registrar se a pessoa escolhe os componentes certos **sem perguntar nada** (SC-011)
+- [X] T036 [US5] Conferir que a contagem de dependências diretas continua em **3 de execução e 17 de desenvolvimento, total 20** — esta feature não instala nada (FR-021, SC-012)
 
 **Ponto de verificação**: alguém de fora escolhe o componente certo usando só os arquivos.
 
@@ -124,9 +124,9 @@ description: 'Lista de tarefas — F01 Design system em componentes do Portal LI
 
 ## Fase 7: Polimento e evidências finais
 
-- [ ] T037 Executar `npm run verificar`, `npm test`, `npm run build && npm run test:e2e` e `npm run test:desempenho`, confirmando que nada da F00 quebrou — os 35 testes da página inicial continuam passando e os limiares **não** descem (SC-013)
-- [ ] T038 Registrar as evidências em `specs/002-design-system/EVIDENCIAS-F01.md`, arquivo próprio seguindo o precedente do `EVIDENCIAS-F00.md` — o `quickstart.md` é o guia, não o registro (SC-013, Princípio VII)
-- [ ] T039 Preencher `docs/checklist-validacao.md` para a F01 com resultado real em cada item: contraste, 44px, sete larguras, 27 classes restantes, 20 tokens, fidelidade e ausência de link público. **Esta tarefa responde à constituição, não a um requisito numerado** — o checklist de validação é exigência do Princípio VII e por isso não cita FR nem SC; registrado aqui para a contagem mecânica não acusar ausência (Princípio VII, sem FR/SC por definição)
+- [X] T037 Executar `npm run verificar`, `npm test`, `npm run build && npm run test:e2e` e `npm run test:desempenho`, confirmando que nada da F00 quebrou — os 35 testes da página inicial continuam passando e os limiares **não** descem (SC-013)
+- [X] T038 Registrar as evidências em `specs/002-design-system/EVIDENCIAS-F01.md`, arquivo próprio seguindo o precedente do `EVIDENCIAS-F00.md` — o `quickstart.md` é o guia, não o registro (SC-013, Princípio VII)
+- [X] T039 Preencher `docs/checklist-validacao.md` para a F01 com resultado real em cada item: contraste, 44px, sete larguras, 27 classes restantes, 20 tokens, fidelidade e ausência de link público. **Esta tarefa responde à constituição, não a um requisito numerado** — o checklist de validação é exigência do Princípio VII e por isso não cita FR nem SC; registrado aqui para a contagem mecânica não acusar ausência (Princípio VII, sem FR/SC por definição)
 
 ---
 

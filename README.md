@@ -229,11 +229,35 @@ conferido antes de cada entrega) e
 
 ---
 
+## O design system: onde ver o sistema inteiro
+
+O portal tem um conjunto de componentes de base — botão, cartão, etiqueta, campo de formulário,
+separador, ícone e estado vazio — convertidos do design que a liga aprovou.
+
+**Para ver todos eles, em todas as variantes e todos os estados, de uma vez só, abra a vitrine:**
+
+```bash
+npm run dev
+```
+
+Depois acesse <http://localhost:3000/vitrine>. Em produção, o mesmo endereço, no domínio do portal.
+
+A vitrine é interna: **não recebe link de nenhuma página pública e não é indexada por buscador**.
+Ela existe para revisar o design system sem precisar navegar o site, e é sobre ela que rodam as
+verificações de acessibilidade, de alvo de toque e de responsividade. Um teste automático falha se
+alguém acrescentar um link do site público para ela.
+
+**Regra ao criar componente novo**: se ele não aparece na vitrine, a entrega não está completa.
+
+A explicação de **quando usar e quando não usar** cada componente fica no próprio arquivo dele, em
+`src/componentes/ui/`. A vitrine mostra; o arquivo explica.
+
 ## Como o codigo esta organizado
 
 ```
 src/
   app/            Rotas. So composicao e carregamento de dados
+  app/(interno)/  Ferramentas internas, nao publicas — a vitrine mora aqui
   componentes/
     ui/           Blocos base. Nao conhecem feature, banco nem rota
     layout/       Cabecalho, rodape, menu

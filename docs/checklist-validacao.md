@@ -111,3 +111,97 @@ Três linhas, sempre no mesmo formato:
 1. **O que entrou:** a feature em uma frase.
 2. **Checklist:** quantos itens passaram, quais falharam e o número que sustenta cada resposta.
 3. **O que ficou:** pendências, riscos novos e o ponto onde seu olho vai render mais.
+
+
+---
+
+# Preenchimento — F01 Design system em componentes
+
+**Feature:** F01 · **Data:** 21/08/2026 · **Branch:** `feat/F01-design-system`
+
+Evidências completas em `specs/002-design-system/EVIDENCIAS-F01.md`.
+
+## A. Fidelidade à spec
+
+| # | Resultado |
+|---|---|
+| A1 | 21 de 21 requisitos funcionais com tarefa e implementação |
+| A2 | 13 de 13 critérios de sucesso; 2 não executáveis por mim, declarados (SC-011 e CI) |
+| A3 | Nada além da spec. 3 tentações de dependência recusadas |
+| A4 | 5 divergências reportadas, nenhuma corrigida em silêncio |
+
+## B. Não quebrou nada
+
+| # | Resultado |
+|---|---|
+| B1 | `npm run build` — 3 rotas geradas |
+| B2 | `tsc --noEmit` — 0 erros |
+| B3 | `eslint .` — 0 erros, 0 avisos |
+| B4 | 65 de unidade, 84 de ponta a ponta — 149 no total, 0 falhas |
+| B5 | Não se aplica: login, publicação e exclusão entram na F02 e na F14 |
+
+## C. Responsividade
+
+| # | Resultado |
+|---|---|
+| C1 | 0 ocorrências de rolagem horizontal em 360, 390, 430, 480, 768, 1024 e 1280 px |
+| C2 | Coberto pelo C1 na vitrine |
+| C3 | Não se aplica: sem cabeçalho fixo ainda |
+| C4 | Não se aplica: sem tabela ainda |
+| C5 | 60 linhas comparadas no FIDELIDADE.md contra o valor efetivo pós-cascata |
+
+## D. Acessibilidade
+
+| # | Resultado |
+|---|---|
+| D1 | 0 violações do axe-core na vitrine, nas 7 larguras |
+| D2 | 4 defeitos de contraste medidos e corrigidos; 5 pares medidos que passam e não mudam |
+| D3 | **20 alvos medidos, 0 abaixo de 44 px** |
+| D4 | 15 elementos com foco verificado, 0 sem foco visível |
+| D5 | Todo campo com `<label htmlFor>`; identificador gerado por `useId` |
+| D6 | Não se aplica: nenhuma imagem nova |
+| D7 | `<h1>` único e um `<h2>` por componente; `Cartao.Titulo` recebe o nível de quem compõe |
+| D8 | Erro do campo em `role="alert"` com `aria-live="polite"` |
+
+## E. Segurança e dados
+
+Não se aplica: nenhum dado pessoal, nenhum acesso a banco, nenhum segredo. Entra na F02.
+
+## F. Desempenho
+
+| # | Resultado |
+|---|---|
+| F1 | Lighthouse desempenho **100** (limiar 90) |
+| F2 | Lighthouse acessibilidade **100** (limiar 95) |
+| F3 | Não se aplica: nenhuma imagem nova |
+| F4 | 20 dependências diretas, as mesmas da F00 |
+
+## G. Conteúdo
+
+| # | Resultado |
+|---|---|
+| G1 | Nenhum texto inventado. A vitrine usa exemplos rotulados como exemplos |
+| G2 | 27 classes pendentes marcadas com a feature de destino |
+| G3 | Não se aplica: nenhum texto institucional nesta feature |
+| G4 | Português com acentuação em todo texto de tela |
+
+## H. Manutenção
+
+| # | Resultado |
+|---|---|
+| H1 | README com a seção da vitrine e o endereço |
+| H2 | ADR-0004 criado; ADR-0003 com dois adendos |
+| H3 | 0 dependências novas |
+| H4 | Os 7 componentes com o que é / quando usar / quando não usar |
+| H5 | 3 valores reprovados que ficam, anotados no `liacup.css` com a correção |
+
+## Veredito
+
+- [x] **Aprovado com ressalvas** — segue, com as pendências abaixo registradas
+
+**Pendências:**
+
+1. **SC-011** não executado: precisa de uma pessoa que não participou.
+2. **CI e merge barrado** a confirmar na alteração proposta.
+3. **`.nav`, `.table` e `.text-muted`** ficam com valor reprovado no `liacup.css`, anotados com a
+   correção. Viram tarefa nas features que os converterem.
