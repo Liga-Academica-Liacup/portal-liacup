@@ -131,7 +131,9 @@ Medido: o **primário desabilitado** dá **1,86:1** entre o texto e o próprio f
 inteiro ser composto a 45% sobre `--color-bg`; o **secundário desabilitado** dá **2,72:1** entre
 `--color-text` a 45% e `--color-bg`.
 
-Os dois são **isentos** do critério 1.4.3 do WCAG, que exclui expressamente componentes
+E o **ícone desabilitado** mede **2,10:1** entre o traço `--color-accent-700` a 45% e `--color-bg`. É o único botão sem texto: não há rótulo visível amparando a leitura, o que o torna o estado que mais merece ser olhado — e por isso ele está na vitrine, na matriz completa de 4 variantes × 3 estados.
+
+Os três são **isentos** do critério 1.4.3 do WCAG, que exclui expressamente componentes
 desabilitados. Mas "isento" descreve a conformidade, não o que a pessoa vê: a 1,86:1 o botão
 primário desabilitado fica praticamente invisível contra a página.
 

@@ -181,6 +181,31 @@ número sem o par nomeado é o defeito que a tabela de fidelidade existe para pe
 
 ---
 
+## 4.2 Pendência nomeada — o sistema não tem cor semântica
+
+Levantada na F01, ao construir o estado de erro do `Campo`.
+
+**O `liacup.css` não define nenhuma cor semântica**: não há vermelho de erro, verde de sucesso nem
+âmbar de aviso. A paleta tem `--color-accent` (lilás da marca), `--color-accent-2` (sálvia) e a
+rampa neutra, e mais nada.
+
+O `Campo` da F01 resolveu com o que existe: o erro usa `--color-accent-700` na borda e no texto, e
+**não depende de cor** — traz ícone e texto, conforme o FR-007. Funciona, e foi a única saída dentro
+da restrição de não inventar cor.
+
+**Mas a primeira feature com formulário de verdade vai esbarrar nisso.** Um formulário de contato
+com sucesso, erro e aviso usando os três a mesma cor de marca é confuso, e quem estiver
+implementando vai improvisar um vermelho — que é exatamente o tipo de decisão que este projeto
+registra em vez de deixar acontecer.
+
+**Não decido aqui.** Fica registrado que a decisão existe e que ela chega junto da F13 (contato) ou
+antes. Quando chegar, as opções são: (a) acrescentar três cores semânticas à paleta, o que exige
+aval da liga por ser mudança de identidade; (b) manter só a marca e resolver por ícone e texto,
+como o `Campo` faz; (c) usar a rampa sálvia para sucesso e deixar erro na marca. Cada uma tem
+consequência de contraste a medir.
+
+---
+
 ## 5. Consequências
 
 - A F01 (design system em código) começa de um arquivo único, correto e acessível.

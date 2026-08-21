@@ -50,6 +50,7 @@ qual foi medido. Número solto não vale como registro.
 | `border-color` secundário | `var(--color-divider)` | `var(--color-neutral-600)` | **corrigido** | `--color-divider` sobre `--color-surface` mede **1,37:1**; `--color-neutral-600` sobre `--color-surface` mede **3,21:1**, atingindo o mínimo de 3:1 para elemento de interface (ADR-0003 §4.1) |
 | `.btn-icon` largura e altura | `36×36` | `var(--alvo-de-toque)` (44×44) | **corrigido** | Alvo de toque (ADR-0004 2.1) |
 | `opacity` desabilitado | `0.45` | `var(--opacidade-desabilitado)` | idêntico | Valor mantido. O primário desabilitado mede **1,86:1** e o secundário **2,72:1**, ambos sobre `--color-bg`: isentos do critério 1.4.3, medidos e aceitos conscientemente (ADR-0004 §3) |
+| `opacity` desabilitado no ícone | `0.45` | `var(--opacidade-desabilitado)` | idêntico | Valor mantido. O traço `--color-accent-700` a 45% sobre `--color-bg` mede **2,10:1** — entre o primário (1,86:1) e o secundário (2,72:1). É o único botão **sem texto**, então não há rótulo visível amparando a leitura; ainda assim é isento do critério 1.4.3 e aceito conscientemente (ADR-0004 §3) |
 | par botão + campo | 14px + 14px | 14px + 16px | **corrigido** | O comentário da `.btn` registra que os 14px existiam para casar com o campo. O campo sobe por ADR-0004 2.2 e o botão fica em 14px por fidelidade: **o par se desfez sabendo**, e a vitrine mostra os dois lado a lado |
 
 ## Cartao — `.card` e partes, `.elev-*`
@@ -135,17 +136,16 @@ comparar; aparecem na vitrine, mas não nesta tabela.
 
 | Veredito | Quantidade |
 | --- | --- |
-| idêntico | 38 |
+| idêntico | 39 |
 | corrigido | 17 |
 | corrigido em comentário | 1 |
 | ratificado | 1 |
 | revertido | 3 |
-| **Total de linhas** | **60** |
+| **Total de linhas** | **61** |
 | **sem motivo escrito** | **0** |
 
-**Zero linhas não idênticas sem motivo.** As 22 que exigem motivo — 17 corrigidas, 1 corrigida em
-comentário, 1 ratificada e 3 revertidas — trazem todas o par de cores medido ou a decisão de origem
-nomeada.
+**Zero linhas não idênticas sem motivo.** As 22 que exigem motivo trazem
+todas o par de cores medido ou a decisão de origem nomeada.
 
 Os números desta tabela foram **contados por script** sobre as próprias linhas do documento, não
 estimados. A primeira versão que escrevi dizia 33/15/1/3 de memória e errava em cinco linhas — o

@@ -107,6 +107,19 @@ Eles não sabem o que é uma notícia. Não chamam banco. Não conhecem rota. Re
 - Nada de `!important`, exceto para vencer estilo de terceiro — e com comentário explicando qual.
 - Verificação: script no CI procura cor em hexadecimal e medida em pixels fora dos arquivos de token. Achou, falhou.
 
+**Limitação conhecida do verificador, para ninguém perder uma hora achando que quebrou alguma coisa:**
+ele varre arquivos `.tsx` inteiros e não distingue valor de estilo de **texto de tela**. Escrever
+`16px` dentro de uma frase — numa legenda, num aviso, num rótulo de exemplo — faz o verificador
+acusar, mesmo não sendo estilo nenhum.
+
+A saída é escrever a medida em prosa **com espaço**: `16 px`. Isso não colide com o verificador,
+porque CSS nunca aceita espaço antes da unidade, e de quebra é a forma tipograficamente correta em
+português. Não é gambiarra: é a distinção real entre os dois usos.
+
+Ensinar o verificador a ignorar literais de string em `.tsx` é possível e fica registrado como
+melhoria futura — não foi feito na F01 porque a regra do espaço resolve o caso sem tornar o script
+mais difícil de ler, e o script ser legível inteiro é o que o mantém confiável.
+
 ---
 
 ## 4. Dados e regra de negócio
