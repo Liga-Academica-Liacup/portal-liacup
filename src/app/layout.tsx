@@ -22,12 +22,6 @@ const fonteCorpo = Figtree({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  title: 'Portal LIACUP',
-  description:
-    'Portal institucional da Liga Acadêmica Multiprofissional de Cuidados Paliativos da Universidade de Brasília.',
-}
-
 export default function LayoutRaiz({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className={`${fonteTitulo.variable} ${fonteCorpo.variable}`}>
