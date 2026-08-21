@@ -49,7 +49,7 @@ Já se sabe, pelo ADR-0004, o que estas linhas vão dizer:
 | `font-weight` | `var(--font-heading-weight)` (400) | `var(--font-heading-weight)` | **revertido** | A F00 usava `600` (ADR-0004 2.3) |
 | `min-height` | não declarada (≈36px) | `var(--alvo-de-toque)` (44px) | **ratificado** | Regra própria da constituição, mais estrita que o AA (ADR-0004 2.1) |
 | `border-radius` | **`999px`** (cascata final) | `var(--radius-pill)` | idêntico | — |
-| `background` primário | `var(--color-accent)` | `var(--color-accent-600)` | **corrigido** | 4,84:1 sobre a superfície; reatribuição registrada no adendo da ADR-0003 |
+| `background` primário | `var(--color-accent)` | `var(--color-accent-600)` | **corrigido** | **4,84:1 do texto do botão (`--color-bg`) sobre o fundo `--color-accent-600`** — não confundir com os 4,30:1 do accent-600 sobre a superfície da página, que é outro par e não se aplica aqui. Reatribuição registrada na ADR-0003 |
 | `background` fantasma | transparente | transparente | idêntico | — |
 | `color` fantasma | `var(--color-accent)` | `var(--color-accent-700)` | **corrigido** | 6,15:1 sobre a superfície; `--color-accent` mede 3,48:1 |
 | `border-color` secundário | `var(--color-divider)` | `var(--color-neutral-600)` | **corrigido** | A borda atual mede 1,36:1; neutral-600 mede 3,21:1 e é a única delimitação do campo/superfície |

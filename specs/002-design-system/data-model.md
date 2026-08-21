@@ -104,6 +104,9 @@ Registrado aqui porque é o detalhe que a conversão erraria sozinha. As três �
 .input { padding-inline: 14px; }
 ```
 
+Nomes de token abaixo são os do **nosso** `tokens.css`; no `liacup.css` os mesmos valores
+aparecem como literais.
+
 | Componente | Bloco declara | **Efetivo** — é o que vale |
 |---|---|---|
 | `Botao` | `--radius-md` (16px) | **`--radius-pill`** (999px) |
@@ -112,13 +115,28 @@ Registrado aqui porque é o detalhe que a conversão erraria sozinha. As três �
 | `Campo` | `padding: 6px 10px` | **`6px 14px`** |
 | `Cartao` | `--radius-md` (16px) | **`--radius-xl`** (~32px) |
 
-As duas classes que ficam na Fase 2 e compartilham essas regras também têm o valor efetivo
-registrado **antes** de as regras finais serem removidas:
+**Os seis blocos afetados recebem o próprio valor efetivo antes de as três regras finais serem
+removidas** — não só as duas classes da Fase 2. Se a remoção acontecer primeiro, quem abrir o arquivo
+para converter o `Cartao` lê `--radius-md` (16px) com a linha que a sobrescrevia já apagada: é o
+modo de falha do D2, reintroduzido pela ordem das tarefas.
 
-| Classe pendente | Valor efetivo a dobrar para o bloco | Razão |
+| Bloco | Valor efetivo a dobrar para dentro | Destino |
 |---|---|---|
-| `.dialog` | `border-radius: var(--radius-xl)` | Compartilha a regra final com `.card`; o bloco isolado hoje daria `--radius-lg` |
-| `.seg` | `border-radius: var(--radius-pill)` | Compartilha a regra final com `.btn`, `.tag` e `.input`; o bloco isolado hoje daria `--radius-md` |
+| `.card` | `border-radius: calc(var(--radius-lg) * 1.15)` | F01 — `Cartao` |
+| `.btn` | `border-radius: 999px` | F01 — `Botao` |
+| `.tag` | `border-radius: 999px` | F01 — `Etiqueta` |
+| `.input` | `border-radius: 999px` **e** `padding-inline: 14px` | F01 — `Campo` |
+| `.dialog` | `border-radius: calc(var(--radius-lg) * 1.15)` | **Fase 2** |
+| `.seg` | `border-radius: 999px` | **Fase 2** |
+
+**Literal, nunca token nosso.** O `:root` do `liacup.css` define apenas `--radius-sm` (8px),
+`--radius-md` (16px) e `--radius-lg` (28px). Escrever `var(--radius-xl)` ou `var(--radius-pill)` ali
+deixaria `.dialog` e `.seg` **sem raio nenhum** quando o arquivo é lido isolado — o oposto de
+preservar o valor efetivo. Os dois tokens foram criados no **nosso** `tokens.css`; o `liacup.css` é
+o registro do que a liga aprovou, não um consumidor do nosso arquivo.
+
+**Contagem**: remover as três regras compartilhadas leva de **62 para 59** seletores; a T017 remove
+as 32 classes convertidas restantes, fechando em **27** (SC-009).
 
 **A fidelidade é medida contra a coluna da direita.** Ver [research.md](./research.md) D2 e a tabela
 de [FIDELIDADE.md](./FIDELIDADE.md).
