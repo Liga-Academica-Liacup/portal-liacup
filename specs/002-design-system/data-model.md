@@ -22,7 +22,7 @@ classes. As duas são o que o Princípio VI exige que seja rastreável.
 - Todo token novo desta feature tem valor **lido literalmente do `liacup.css`**, com duas exceções
   que o ADR-0004 autoriza expressamente e que estão marcadas abaixo.
 
-### Os 20 tokens novos
+### Os 21 tokens novos
 
 | Token | Valor | Origem no `liacup.css` | Observação |
 |---|---|---|---|

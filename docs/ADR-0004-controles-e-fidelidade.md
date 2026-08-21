@@ -125,6 +125,21 @@ mesa.
   de token existente é alterado.**
 - A vitrine da F01 mostra os controles já com estes tamanhos, e é onde a liga vê o resultado.
 
+### O botão desabilitado fica quase invisível, e isso foi aceito
+
+Medido: o **primário desabilitado** dá **1,86:1** entre o texto e o próprio fundo, depois de o grupo
+inteiro ser composto a 45% sobre `--color-bg`; o **secundário desabilitado** dá **2,72:1** entre
+`--color-text` a 45% e `--color-bg`.
+
+Os dois são **isentos** do critério 1.4.3 do WCAG, que exclui expressamente componentes
+desabilitados. Mas "isento" descreve a conformidade, não o que a pessoa vê: a 1,86:1 o botão
+primário desabilitado fica praticamente invisível contra a página.
+
+**Foi medido, é isento, e foi aceito conscientemente.** Não é esquecimento, e não deve ser
+"corrigido" por quem encontrar o número daqui a um ano. Se um dia a liga reclamar que não dá para
+ver o botão desabilitado, o caminho é um ADR novo que reabra a opacidade de 0,45 — não um ajuste
+pontual.
+
 ### A consequência que não é óbvia: o par botão + campo se desfez
 
 As linhas 120–121 do `liacup.css` trazem, em comentário do próprio autor do design:

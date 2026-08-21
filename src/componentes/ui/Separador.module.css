@@ -1,0 +1,9 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css.
+   A altura reaproveita --largura-borda: e a mesma espessura de traco fino,
+   decisao registrada no FIDELIDADE.md e nao escolha de quem digitou. */
+.separador {
+  height: var(--largura-borda);
+  border: 0;
+  margin: var(--space-4) 0;
+  background: var(--color-divider);
+}

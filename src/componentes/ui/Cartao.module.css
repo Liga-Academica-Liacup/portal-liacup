@@ -1,0 +1,58 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+.cartao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface);
+
+  /* Valor efetivo do .card apos a cascata final do liacup.css.
+     O bloco declarava --radius-md (16px); a regra final sobrescrevia. */
+  border-radius: var(--radius-xl);
+}
+
+.sm {
+  box-shadow: var(--shadow-sm);
+}
+.md {
+  box-shadow: var(--shadow-md);
+}
+.lg {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ADR-0003, adendo: --color-accent media 3,09:1 sobre --color-surface, que
+   reprova para texto de 10px. --color-accent-700 mede 6,15:1 sobre a superficie. */
+.kicker {
+  margin: 0;
+  font-size: var(--font-size-kicker);
+  letter-spacing: var(--letter-spacing-kicker);
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--font-size-cartao-titulo);
+  line-height: var(--line-height-controle);
+}
+
+.corpo {
+  margin: 0;
+  flex: 1;
+  font-size: var(--font-size-cartao-corpo);
+  opacity: var(--opacidade-cartao-corpo);
+}
+
+/* ADR-0003, adendo: color-mix(--color-text 50%) media 3,01:1 sobre
+   --color-surface, que reprova para texto de 11px. --color-neutral-700 mede
+   4,92:1 sobre a superficie. */
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-controle);
+  font-size: var(--font-size-cartao-meta);
+  color: var(--color-neutral-700);
+}

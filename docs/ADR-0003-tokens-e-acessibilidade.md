@@ -111,6 +111,24 @@ Raios, sombras e a estrutura de classes de componente também ficam intactos.
 
 ---
 
+## 4.0 Convenção de notação — como se registra um valor de contraste
+
+Acrescentada em 21/08/2026, depois de **três** divergências na F01 virem todas do mesmo formato:
+um número de contraste escrito sem dizer entre o que ele foi medido.
+
+**Todo valor de contraste registrado neste projeto nomeia as duas cores e a superfície sobre a qual
+foi medido. Número solto não vale como registro.**
+
+Errado: "o rótulo mede 5,31:1".
+Certo: "`color-mix(text 70%)` sobre `--color-surface` mede 5,31:1".
+
+Vale para os ADRs, para o `FIDELIDADE.md`, para as tarefas e para os relatórios. Custa uma linha e
+fecha a fresta pela qual passaram: o rótulo de campo (5,31:1 sobre superfície contra 5,63:1 sobre o
+fundo), o botão desabilitado (2,72:1 no secundário contra 1,86:1 no primário) e o fundo do botão
+primário (4,84:1 do texto sobre o botão, não do botão sobre a página).
+
+---
+
 ## 4.1 Adendo de 21/08/2026 — quatro defeitos nos componentes convertidos na F01
 
 Levantado no planejamento da F01, ao medir **todas** as cores dos 35 seletores que viram componente.

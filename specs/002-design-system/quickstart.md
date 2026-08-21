@@ -81,7 +81,7 @@ SC-008 é promessa — mesmo raciocínio das demonstrações V1 a V5 da F00.
 git diff main -- src/estilos/tokens.css
 ```
 
-**Esperado**: apenas **linhas acrescentadas**. Nenhuma linha de token existente alterada. Os 20
+**Esperado**: apenas **linhas acrescentadas**. Nenhuma linha de token existente alterada. Os 21
 tokens novos batem, um a um, com a tabela de [data-model.md](./data-model.md).
 
 **Evidência 12 (SC-009)**: contar as classes restantes no `liacup.css`.
