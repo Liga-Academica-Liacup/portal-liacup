@@ -79,14 +79,14 @@ description: 'Lista de tarefas — F01 Design system em componentes do Portal LI
 
 **Teste independente**: abrir `/vitrine`, encontrar uma seção por componente, e confirmar que o site público não oferece caminho até ela.
 
-- [ ] T021 [US3] Criar `src/app/(interno)/vitrine/Secao.tsx`, `page.tsx` e `page.module.css`, com metadados `robots: { index: false, follow: false }`, `<h1>` único e um `<h2>` por componente, sem pular nível (FR-013, FR-014)
-- [ ] T022 [US3] Montar em `src/app/(interno)/vitrine/page.tsx` todas as variantes, estados e casos de borda de `contracts/vitrine.md` — incluindo cartão sem título, etiqueta com texto longo, campo com erro + desabilitado, dois campos com o mesmo rótulo — e a **linha de inscrição** com `Campo` e `Botao` lado a lado, que torna visível o par 16px/14px deliberadamente desfeito (FR-013)
-- [ ] T023 [US3] Criar `tests/e2e/vitrine.spec.ts` com axe-core sobre `/vitrine` nas sete larguras, imprimindo o número de violações (FR-015, SC-003)
-- [ ] T024 [US3] Acrescentar em `tests/e2e/vitrine.spec.ts` a medição de todos os alvos interativos visíveis, falhando abaixo de 44px e imprimindo **quantos foram medidos** e quais falharam — sem o contador, "nenhum abaixo de 44" e "não mediu nada" produzem a mesma saída verde (FR-016, SC-004)
-- [ ] T025 [US3] Acrescentar em `tests/e2e/vitrine.spec.ts` a checagem de `scrollWidth <= clientWidth` em 360, 390, 430, 480, 768, 1024 e 1280px, nomeando a largura na falha (FR-017, SC-005)
-- [ ] T026 [US3] Acrescentar em `tests/e2e/vitrine.spec.ts` a varredura dos links da página pública, falhando se algum apontar para `/vitrine` (FR-014, SC-008)
-- [ ] T027 [US3] Demonstrar a verificação anterior: acrescentar de propósito um link para `/vitrine` na página inicial, rodar e registrar a **falha** com o link listado; remover e registrar o verde. Mesmo raciocínio das demonstrações V1 a V5 da F00 (FR-014, SC-008)
-- [ ] T028 [US3] Conferir na vitrine que todo elemento interativo tem **foco visível** ao ser alcançado por Tab, percorrendo a página inteira (FR-008)
+- [X] T021 [US3] Criar `src/app/(interno)/vitrine/Secao.tsx`, `page.tsx` e `page.module.css`, com metadados `robots: { index: false, follow: false }`, `<h1>` único e um `<h2>` por componente, sem pular nível (FR-013, FR-014)
+- [X] T022 [US3] Montar em `src/app/(interno)/vitrine/page.tsx` todas as variantes, estados e casos de borda de `contracts/vitrine.md` — incluindo cartão sem título, etiqueta com texto longo, campo com erro + desabilitado, dois campos com o mesmo rótulo — e a **linha de inscrição** com `Campo` e `Botao` lado a lado, que torna visível o par 16px/14px deliberadamente desfeito (FR-013)
+- [X] T023 [US3] Criar `tests/e2e/vitrine.spec.ts` com axe-core sobre `/vitrine` nas sete larguras, imprimindo o número de violações (FR-015, SC-003)
+- [X] T024 [US3] Acrescentar em `tests/e2e/vitrine.spec.ts` a medição de todos os alvos interativos visíveis, falhando abaixo de 44px e imprimindo **quantos foram medidos** e quais falharam — sem o contador, "nenhum abaixo de 44" e "não mediu nada" produzem a mesma saída verde (FR-016, SC-004)
+- [X] T025 [US3] Acrescentar em `tests/e2e/vitrine.spec.ts` a checagem de `scrollWidth <= clientWidth` em 360, 390, 430, 480, 768, 1024 e 1280px, nomeando a largura na falha (FR-017, SC-005)
+- [X] T026 [US3] Acrescentar em `tests/e2e/vitrine.spec.ts` a varredura dos links da página pública, falhando se algum apontar para `/vitrine` (FR-014, SC-008)
+- [X] T027 [US3] Demonstrar a verificação anterior: acrescentar de propósito um link para `/vitrine` na página inicial, rodar e registrar a **falha** com o link listado; remover e registrar o verde. Mesmo raciocínio das demonstrações V1 a V5 da F00 (FR-014, SC-008)
+- [X] T028 [US3] Conferir na vitrine que todo elemento interativo tem **foco visível** ao ser alcançado por Tab, percorrendo a página inteira (FR-008)
 
 **Ponto de verificação**: axe zero, nenhum alvo abaixo de 44px com contador maior que zero, sete larguras sem rolagem horizontal, e a varredura de links vista falhando e voltando ao verde.
 
