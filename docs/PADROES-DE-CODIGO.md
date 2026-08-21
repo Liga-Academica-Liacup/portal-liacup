@@ -14,6 +14,7 @@ src/
   app/                      Rotas do Next.js. Só composição e carregamento de dados.
     (site)/                 Site público
     (painel)/               Painel administrativo
+    (interno)/              Ferramentas internas, nao publicas (ex.: vitrine do design system)
     api/                    Rotas de servidor
   componentes/
     ui/                     Blocos base, sem nenhuma regra de negócio
@@ -48,6 +49,8 @@ src/
 | `features/X` | `ui`, `padroes`, `lib` | **outra `features/Y`** |
 | `lib` | `lib/utils` | `features`, `componentes`, `app` |
 | `app` | tudo | — |
+
+O grupo `(interno)` foi acrescentado em 21/08/2026, na F01. Ele existe porque a vitrine do design system não é página pública nem tela de painel: colocá-la em `(site)` misturaria ferramenta de desenvolvimento com o site que a liga mostra ao público, e a primeira pessoa a listar as páginas do site encontraria uma que não é do site. O que mora em `(interno)` é publicado, mas **não recebe link de nenhuma página pública e não é indexado por buscador**.
 
 Duas features que precisam conversar conversam pela rota que as compõe, não uma dentro da outra. Isso é o que impede o projeto de virar um novelo em seis meses.
 

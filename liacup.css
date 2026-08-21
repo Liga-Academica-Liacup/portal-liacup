@@ -102,6 +102,9 @@ figcaption {
   color: color-mix(in srgb, var(--color-text) 55%, transparent);
 }
 .text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+/* PENDENTE F01: 3,57:1 sobre --color-bg, reprovado no AA. Corrigir para
+   var(--color-neutral-700) (5,53:1) ao converter — mesmo papel da .texto-secundario
+   ja convertida no global.css. Ver ADR-0003, adendo de 21/08/2026. */
 :focus { outline: none; }
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 ::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
@@ -121,7 +124,7 @@ figcaption {
      the pair sits side by side in sign-up rows */
   background: transparent; border: 1px solid transparent;
   padding: var(--space-2) calc(var(--space-3) * 1.2);
-  border-radius: var(--radius-md);
+  border-radius: 999px;  /* valor efetivo dobrado para dentro do bloco na F01: vinha da regra final compartilhada */
 }
 .btn svg { display: block; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -146,7 +149,7 @@ figcaption {
   width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
   font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
   background: var(--color-surface);
-  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider); border-radius: 999px; padding-inline: 14px;  /* valor efetivo dobrado para dentro do bloco na F01: vinha da regra final compartilhada */
 }
 .input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
 .input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
@@ -167,7 +170,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 .radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .seg {
   display: inline-flex; overflow: hidden;
-  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider); border-radius: 999px;  /* valor efetivo dobrado para dentro do bloco na F01: vinha da regra final compartilhada */
 }
 .seg-opt {
   display: inline-flex; align-items: center; gap: 6px;
@@ -181,7 +184,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 /* — cards — */
 .card {
   display: flex; flex-direction: column; gap: var(--space-2);
-  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+  padding: var(--space-3); border-radius: calc(var(--radius-lg) * 1.15); background: var(--color-surface);  /* valor efetivo dobrado para dentro do bloco na F01: vinha da regra final compartilhada */
 }
 .card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
 .card-title {
@@ -201,7 +204,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 .tag {
   display: inline-flex; align-items: center; font-size: 11px;
   letter-spacing: 0.02em; padding: 3px 10px;
-  border-radius: calc(var(--radius-md) * 0.75);
+  border-radius: 999px;  /* valor efetivo dobrado para dentro do bloco na F01: vinha da regra final compartilhada */
 }
 .tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
 .tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
@@ -220,12 +223,18 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 .nav a { color: inherit; text-decoration: none; font-size: 14px; }
 .nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+/* PENDENTE cabecalho: 3,48:1 sobre --color-bg, reprovado no AA. Corrigir para
+   var(--color-accent-700) (6,91:1) ao converter — e exatamente a reatribuicao de cor
+   de link ja decidida na ADR-0003, secao 2. */
 
 /* — tables — */
 .table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .table th {
   text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
   color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  /* PENDENTE Fase 2: 4,13:1 sobre --color-bg e 3,99:1 sobre --color-surface, reprovado
+     no AA para texto de 11px (exige 4,5). Corrigir para var(--color-neutral-700)
+     (5,53:1) ao converter. Ver ADR-0003, adendo de 21/08/2026. */
   padding: var(--space-2); border-bottom: 1px solid var(--color-divider);
 }
 .table td {
@@ -242,7 +251,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 .dialog {
   width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
-  padding: var(--space-4); border-radius: var(--radius-lg);
+  padding: var(--space-4); border-radius: calc(var(--radius-lg) * 1.15);  /* valor efetivo dobrado para dentro do bloco na F01: vinha da regra final compartilhada */
   background: var(--color-surface); box-shadow: var(--shadow-lg);
 }
 .dialog-title {
@@ -252,8 +261,4 @@ textarea.input { min-height: 90px; resize: vertical; }
 .dialog-body { font-size: 14px; opacity: 0.85; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
 
-/* — rounded frame: everything softens, small controls go pill — */
-.card, .dialog { border-radius: calc(var(--radius-lg) * 1.15); }
-.btn, .tag, .seg, .input { border-radius: 999px; }
-.input { padding-inline: 14px; }
 

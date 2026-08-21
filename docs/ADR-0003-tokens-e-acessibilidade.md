@@ -111,6 +111,58 @@ Raios, sombras e a estrutura de classes de componente também ficam intactos.
 
 ---
 
+## 4.1 Adendo de 21/08/2026 — quatro defeitos nos componentes convertidos na F01
+
+Levantado no planejamento da F01, ao medir **todas** as cores dos 35 seletores que viram componente.
+Estes quatro não apareceram na medição original porque a página provisória da F00 não tinha cartão,
+etiqueta nem campo na tela — o mesmo motivo pelo qual as quatro reatribuições da seção 2 precisaram
+entrar sem nada usando.
+
+| Onde | Par medido | Medido | Situação |
+| --- | --- | --- | --- |
+| `.card-meta` | `color-mix(text 50%)` sobre **superfície**, 11px | **3,01:1** | ❌ Falha (exige 4,5) |
+| `.card-kicker` | `--color-accent` sobre **superfície**, 10px | **3,09:1** | ❌ Falha (exige 4,5) |
+| `.tag-outline` | `--color-accent` como texto sobre **fundo**, 11px | **3,48:1** | ❌ Falha (exige 4,5) |
+| `.input` e `.btn-secondary` | borda `--color-divider` sobre **superfície** | **1,37:1** | ❌ Falha (exige 3,0) |
+
+**O quarto é o mais grave e o único que o axe-core NÃO pega**: não existe regra de axe para
+contraste de borda de controle. E o campo tem fundo `--color-surface` sobre página `--color-bg`, que
+contrastam **1,13:1** entre si — a borda é a **única** coisa que diz onde o campo começa.
+
+### Correção — quatro reatribuições, nenhuma cor nova
+
+| Uso | De | Para | Passa a medir |
+| --- | --- | --- | --- |
+| Texto de metadados do cartão | `color-mix(text 50%)` | `--color-neutral-700` | **4,92:1** sobre superfície ✅ |
+| Kicker do cartão | `--color-accent` | `--color-accent-700` | **6,15:1** sobre superfície ✅ |
+| Texto da etiqueta de contorno | `--color-accent` | `--color-accent-700` | **6,15:1** sobre superfície ✅ |
+| Borda de campo e de botão secundário | `--color-divider` | `--color-neutral-600` | **3,21:1** sobre superfície ✅ |
+
+**Atenção ao kicker**: o `--color-accent-600` **não basta** — mede 4,30:1 sobre a superfície, abaixo
+dos 4,5 exigidos para texto de 10px. Precisa do 700.
+
+### O que NÃO muda, e por quê
+
+Registrado para ninguém "consertar" depois:
+
+| Onde | Par medido | Medido | Veredito |
+| --- | --- | --- | --- |
+| `.card-body` | texto com `opacity: 0.8` sobre superfície | **7,19:1** | ✅ Passa folgado |
+| `.field > label` | `color-mix(text 70%)` sobre superfície | **5,33:1** | ✅ Passa |
+| `.field > label` | `color-mix(text 70%)` sobre fundo | **5,65:1** | ✅ Passa |
+| `.btn:disabled` — secundário | texto com `opacity: 0.45` sobre fundo | **2,72:1** | ✅ **Isento** |
+| `.btn:disabled` — primário | grupo com `opacity: 0.45` sobre fundo | **1,86:1** | ✅ **Isento** |
+
+**Botão desabilitado é isento do critério 1.4.3 do WCAG**, que exclui expressamente componentes
+desabilitados. Os números estão aqui porque são baixos e vão chamar atenção de quem revisar; não são
+defeito e não devem ser "corrigidos".
+
+O rótulo de campo aparece com **dois** valores porque depende de onde o campo está — sobre a página
+ou dentro de um cartão. Ambos passam, então a decisão não muda; os dois estão registrados porque
+número sem o par nomeado é o defeito que a tabela de fidelidade existe para pegar.
+
+---
+
 ## 5. Consequências
 
 - A F01 (design system em código) começa de um arquivo único, correto e acessível.

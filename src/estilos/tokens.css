@@ -123,4 +123,41 @@
      do componente. Sem unidade de proposito: em SVG, stroke-width e relativo ao
      viewBox, entao 1.75 sobre um viewBox de 24 escala junto com o icone. */
   --espessura-icone: 1.75;
+
+  /* ── Tokens da F01 — conversão do design system ────────────────────────────
+     Todos com valor lido literalmente do liacup.css, com UMA exceção marcada.
+     Nenhum valor de token existente foi alterado. Inventário e origem linha a
+     linha em specs/002-design-system/data-model.md. */
+
+  /* Controles */
+  --font-size-controle: 14px; /* .btn — existe para nao reaproveitar --font-size-h6 (13px) */
+  --font-size-campo: 16px; /* .input era 14px — ADR-0004 2.2, unico valor alterado */
+  --line-height-controle: 1.2; /* .btn e .card-title */
+  --gap-controle: 6px; /* .btn e .card-meta — nao e --space-1 (4,4px) */
+  --opacidade-desabilitado: 0.45; /* .btn:disabled */
+
+  /* Campo de formulario */
+  --font-size-rotulo: 12px; /* .field > label */
+  --margem-abaixo-rotulo: 5px; /* .field > label — nao e --space-1 (4,4px) */
+  --padding-campo-y: 6px; /* .input */
+  --padding-campo-x: 14px; /* cascata final do .input — nao e o 10px do bloco */
+  --altura-minima-textarea: 90px; /* textarea.input */
+
+  /* Cartao */
+  --font-size-cartao-titulo: 17px; /* .card-title */
+  --font-size-cartao-corpo: 13px; /* .card-body */
+  --font-size-cartao-meta: 11px; /* .card-meta */
+  --font-size-kicker: 10px; /* .card-kicker */
+  --letter-spacing-kicker: 0.1em; /* .card-kicker */
+  --opacidade-cartao-corpo: 0.8; /* .card-body */
+  --radius-xl: calc(
+    var(--radius-lg) * 1.15
+  ); /* cascata final de .card e .dialog — raio de
+                                        escala, nao de componente: o .dialog usa o mesmo na Fase 2 */
+
+  /* Etiqueta */
+  --font-size-etiqueta: 11px; /* .tag */
+  --letter-spacing-etiqueta: 0.02em; /* .tag */
+  --padding-etiqueta-y: 3px; /* .tag */
+  --padding-etiqueta-x: 10px; /* .tag */
 }
