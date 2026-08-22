@@ -61,5 +61,17 @@ os três papéis da diretoria ficando para a F14, o processo seletivo e os indic
 e a pausa do plano gratuito registrada mas não resolvida aqui. O `/speckit-clarify` roda em seguida
 justamente porque esta feature toca regra de negócio e dado pessoal.
 
-**Veredito**: 16 de 16 aprovados. Clarify concluído e integrado; plano e artefatos da Fase 1
-escritos. Pronta para `/speckit-tasks`.
+**Revalidado em 22/08/2026, após a análise.** Duas correções de severidade alta entraram:
+
+- **C1** — a contagem de dependências não tinha requisito nesta spec. A palavra "dependência"
+  aparecia zero vezes nos FR e SC. Resolvido em **duas camadas**: a seção 8.1 de
+  `docs/PADROES-DE-CODIGO.md` passa a registrar **12 requisitos permanentes** numerados, que valem
+  para toda feature, e esta spec **cita** os que se aplicam em vez de redescobri-los. O FR-033 e o
+  SC-016 nascem do **RP-01**.
+- **F1** — a T002 e a T058 citavam "FR-021 herdado da F00", mas o FR-021 **desta** spec é sobre
+  registro de erro. A citação inflava a cobertura de um requisito que não tem nada a ver. Corrigida
+  para FR-033.
+
+**Cobertura final**: 33 requisitos funcionais e 16 critérios de sucesso, todos com tarefa.
+
+**Veredito**: 16 de 16 aprovados. Pronta para `/speckit-implement`.

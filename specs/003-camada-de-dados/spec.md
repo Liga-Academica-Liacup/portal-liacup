@@ -269,9 +269,31 @@ detalhe e um estado vazio.
 - **FR-030**: Apagar um álbum **DEVE** arquivar as fotos dentro dele, recuperáveis junto com o álbum.
 - **FR-031**: O esquema **DEVE** permitir detectar que um conteúdo foi alterado por outra pessoa
   desde que foi aberto para edição, para que o segundo a salvar **não sobrescreva em silêncio**.
+- **FR-033**: A contagem de **dependências diretas** declaradas **DEVE** ser registrada como
+  evidência com número, e toda dependência nova **DEVE** estar justificada por escrito no `plan.md`
+  antes de entrar. Origem: **RP-01**.
 - **FR-032**: Ao detectar a alteração concorrente, **o texto digitado pela pessoa NÃO PODE ser
   perdido**, e o aviso **DEVE** dizer o que fazer — não apenas que houve conflito. A redação final é
   da F17; a F02 garante que o esquema sustenta os dois.
+
+### Requisitos permanentes aplicáveis
+
+Da seção 8.1 de `docs/PADROES-DE-CODIGO.md`. Esta feature não os redescobre: cita.
+
+| RP | Aplica? | Observação |
+| --- | --- | --- |
+| **RP-01** dependências declaradas e justificadas | **Sim** | Ver FR-033. Duas novas: de 20 para 22 |
+| **RP-02** zero valores de estilo à mão | Sim | Herdado; nenhuma tela nova, mas o verificador continua rodando |
+| **RP-03** nenhum token alterado | Sim | Herdado; esta feature não toca em token |
+| **RP-04** alvo de toque 44 px | **Não** | Nenhuma tela nesta feature |
+| **RP-05** sete larguras sem rolagem | **Não** | Nenhuma tela nesta feature |
+| **RP-06** Lighthouse 90 / 95 | Sim | As páginas da F00 e F01 continuam medidas (SC-012) |
+| **RP-07** zero violações do axe | Sim | Idem — nenhuma página nova, as existentes seguem verificadas |
+| **RP-08** diferença do aprovado com veredito | **Não** | Nada de design é convertido aqui |
+| **RP-09** contraste nomeia as duas cores | **Não** | Nenhuma cor é decidida aqui |
+| **RP-10** nenhum segredo no repositório | **Sim** | FR-016, SC-008 — e é o item de dano irreversível |
+| **RP-11** RLS ativa e política testada bloqueando | **Sim** | FR-008 a FR-013. É a razão de existir da feature |
+| **RP-12** verificação vista falhando | **Sim** | FR-013 e as demonstrações da chave de serviço |
 
 ### Escopo — o que **não** entra nesta feature
 
@@ -306,6 +328,8 @@ detalhe e um estado vazio.
   secreto.
 - **SC-015**: **Zero** registros de conteúdo removidos do banco ao serem apagados pela diretoria —
   todos arquivados e recuperáveis.
+- **SC-016**: O número de dependências diretas é **22 — 4 de execução e 18 de desenvolvimento** —,
+  batendo com a tabela do `plan.md`. O `@supabase/ssr` **não** aparece: ele é da F14 (RP-01).
 - **SC-012**: Todas as verificações herdadas continuam passando: tipos, análise estática, formatação,
   tokens, camadas, testes de unidade e de ponta a ponta, e medidor de desempenho.
 

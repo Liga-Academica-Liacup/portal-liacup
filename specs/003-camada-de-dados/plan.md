@@ -46,7 +46,7 @@ exemplo em todas · nenhuma tela
 |---|---|---|
 | **I — Quem mantém vem antes** | Esquema em arquivos versionados, nunca no painel (D4); tipos gerados, nunca à mão (D5); **duas** dependências justificadas uma a uma, e uma terceira nomeada como prevista para a F14 e não instalada aqui; comportamento da pausa escrito no README | ✅ |
 | **II — Acessibilidade** | Não se aplica: nenhuma tela. As telas que consomem estes dados são da Fase 1 | ✅ |
-| **III — Mobile é o caso principal** | Leitura estática com revalidação, que é o que mantém o site rápido em celular com internet ruim | ✅ |
+| **III — Mobile é o caso principal** | Leitura estática com revalidação, que é o que sustenta os limiares do RP-06 — Lighthouse desempenho ≥ 90 e acessibilidade ≥ 95 — em celular com rede lenta | ✅ |
 | **IV — Segurança e dados** | **É o coração da feature.** RLS em toda tabela, com teste de bloqueio por linha de política (D1); chave de serviço barrada por quatro camadas, três automáticas (D2); validação no servidor; retenção de 24 meses no esquema; log sem dado pessoal | ✅ |
 | **V — A spec manda** | O plano descreve tecnologia; a spec descreve comportamento. A contradição entre ADR-0001 e ADR-0002 foi reportada e corrigida por adendo, não contornada | ✅ |
 | **VI — Fidelidade ao aprovado** | Dados de exemplo usam o texto real de `conteudo-institucional.md`; onde não há texto aprovado, espaço reservado **visivelmente marcado** | ✅ |

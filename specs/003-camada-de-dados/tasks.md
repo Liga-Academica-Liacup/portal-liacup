@@ -27,7 +27,7 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 **⚠️ CRÍTICO**: T001–T006 terminam nesta ordem.
 
 - [ ] T001 [GABRIEL] Criar os **dois** projetos Supabase na conta da liga, em e-mail institucional conforme o risco R5 do ADR-0001: um de produção e um de teste. O de teste consome o segundo dos 2 projetos do plano gratuito, limite registrado em research.md D7. **Pré-requisito de infraestrutura, não requisito numerado**: sem os dois projetos não há onde criar tabela nem contra o que testar política (Dependencies da spec, sem FR/SC por definição)
-- [ ] T002 Instalar **exatamente duas** dependências novas — `@supabase/supabase-js` (execução) e `supabase` (desenvolvimento) —, levando o total de 20 para **22**. O `@supabase/ssr` **não entra**: ele repassa sessão por cookie entre servidor e navegador, que é o que a F14 faz, e esta feature não tem tela nem login (FR-021 herdado da F00, research.md D6)
+- [ ] T002 Instalar **exatamente duas** dependências novas — `@supabase/supabase-js` (execução) e `supabase` (desenvolvimento) —, levando o total de 20 para **22**. O `@supabase/ssr` **não entra**: ele repassa sessão por cookie entre servidor e navegador, que é o que a F14 faz, e esta feature não tem tela nem login (FR-033, RP-01, research.md D6)
 - [ ] T003 Registrar em `.env.example` as variáveis do Supabase, **separando visivelmente o que é segredo do que pode aparecer no navegador**, e conferir que a chave de serviço **não** recebe o prefixo `NEXT_PUBLIC_` — que é a barreira 1 (FR-017, FR-014)
 - [ ] T004 Criar `supabase/migrations/` e registrar em `package.json` os comandos de aplicar migração e gerar tipos, para que não sejam passos que alguém lembra de rodar (FR-005, research.md D4 e D5)
 - [ ] T005 Acrescentar a linha de `supabase/` e `tests/politicas/` à seção 1 de `docs/PADROES-DE-CODIGO.md`, pelo mesmo caminho que `tests/`, `scripts/` e `public/` percorreram — a regra mora no documento de origem, não só no plano. **Responde à seção 1 dos padrões de código, não a um requisito numerado**, e por isso não cita FR nem SC (Princípio I, sem FR/SC por definição)
@@ -159,7 +159,7 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 ## Fase 9: Polimento e evidências
 
 - [ ] T057 Executar `npm run verificar`, `npm test`, `npm run build && npm run test:e2e` e `npm run test:desempenho`, confirmando que os 65 testes de unidade e os 84 de ponta a ponta da F01 continuam passando e que os limiares **não** descem (SC-012)
-- [ ] T058 Conferir a contagem de dependências diretas e registrar o número: **esperado 22 — 4 de execução e 18 de desenvolvimento**. O `@supabase/ssr` **não pode aparecer**: ele é da F14, e sua ausência aqui é verificável junto da contagem (FR-021 herdado, research.md D6)
+- [ ] T058 Conferir a contagem de dependências diretas e registrar o número: **esperado 22 — 4 de execução e 18 de desenvolvimento**. O `@supabase/ssr` **não pode aparecer**: ele é da F14, e sua ausência aqui é verificável junto da contagem (FR-033, SC-016, RP-01)
 - [ ] T059 Registrar as 20 evidências em `specs/003-camada-de-dados/EVIDENCIAS-F02.md`, arquivo próprio no precedente das F00 e F01, declarando como **não executado** o que não puder ser provado em vez de preencher com algo plausível (SC-012, Princípio VIII)
 - [ ] T060 Preencher `docs/checklist-validacao.md` para a F02 com resultado real em cada item. **Esta tarefa responde à constituição, não a um requisito numerado** — o checklist é exigência do Princípio VII e por isso não cita FR nem SC (Princípio VII, sem FR/SC por definição)
 
