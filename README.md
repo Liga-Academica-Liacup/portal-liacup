@@ -229,6 +229,25 @@ conferido antes de cada entrega) e
 
 ---
 
+## O banco de dados
+
+Tudo o que define o banco — esquema, políticas de acesso e dados de exemplo — mora **versionado** em
+`supabase/`, não no painel do Supabase.
+
+> **Nunca altere o banco pelo painel.** Ele serve para olhar. Alterar por lá **desalinha o
+> repositório do que está no ar**, e quem fizer isso quebra a próxima migração. Esquema criado
+> clicando existe só na conta de quem clicou: sem histórico, sem revisão, impossível de recriar.
+
+| Comando                     | O que faz                                      |
+| --------------------------- | ---------------------------------------------- |
+| `npm run banco:migrar`      | Aplica as migrações pendentes                  |
+| `npm run banco:tipos`       | Regenera os tipos a partir do esquema          |
+| `npm run banco:tipos:check` | Falha se os tipos versionados estiverem velhos |
+
+**Toda tabela nasce com controle de acesso por linha ativo**, na mesma migração que a cria. Acesso
+ativado sem política recusa tudo — ativa primeiro, abre depois. A chave pública do Supabase vai para
+o navegador de propósito, e é só isso que impede qualquer pessoa de ler e escrever no banco.
+
 ## O design system: onde ver o sistema inteiro
 
 O portal tem um conjunto de componentes de base — botão, cartão, etiqueta, campo de formulário,

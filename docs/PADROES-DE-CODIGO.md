@@ -39,6 +39,18 @@ src/
     global.css
 ```
 
+Cinco pastas de raiz completam a árvore, acrescentadas conforme foram sendo necessárias e registradas
+aqui em vez de aparecerem sem aviso:
+
+```
+tests/e2e/                  Testes de ponta a ponta. Nao pertencem a nenhuma camada de src/
+scripts/                    Verificacoes proprias do projeto
+public/                     Arquivo estatico. Convencao obrigatoria do Next
+supabase/                   Esquema, politicas e dados de exemplo, versionados (F02)
+  migrations/               Arquivos numerados, rodam em ordem
+tests/politicas/            Testes de politica de acesso: permissao E recusa (F02)
+```
+
 **Regra de dependência entre camadas** — vale mais que a estrutura em si:
 
 | Camada | Pode importar de | Nunca importa de |

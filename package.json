@@ -19,9 +19,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node scripts/verificar-navegador.mjs && playwright test",
-    "test:desempenho": "lhci autorun"
+    "test:desempenho": "lhci autorun",
+    "banco:migrar": "supabase db push",
+    "banco:tipos": "supabase gen types typescript --linked > src/lib/supabase/tipos.ts",
+    "banco:tipos:check": "node scripts/verificar-tipos-do-banco.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
     "next": "16.3.1",
     "react": "19.2.8",
     "react-dom": "19.2.8"
@@ -42,6 +46,7 @@
     "eslint-plugin-jsx-a11y": "6.10.2",
     "jsdom": "30.0.1",
     "prettier": "3.9.6",
+    "supabase": "^2.115.0",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
   }
