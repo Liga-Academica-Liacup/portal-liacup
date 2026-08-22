@@ -23,6 +23,26 @@ Duas coisas nesta feature são de risco alto e por isso têm requisito próprio:
 nunca pode chegar ao navegador**, e **as políticas de acesso precisam ser testadas provando que
 bloqueiam**, não só que permitem.
 
+## Clarifications
+
+### Session 2026-08-21
+
+- Q: A purga das mensagens com mais de 24 meses acontece automaticamente, ou é um passo manual? → A: Procedimento manual documentado **e testado** nesta feature; a automação é da F25. **Adiamento registrado**, não escolha livre — ver abaixo.
+- Q: O endereço de IP de quem envia mensagem pode ser guardado, e por quanto tempo? → A: Apenas um **resumo irreversível** do IP, em tabela separada da mensagem, apagado em 24 horas.
+- Q: Quando a diretoria apaga uma notícia, o registro some do banco ou fica arquivado? → A: **Arquivado**, e recuperável **pela própria diretoria** pelo painel.
+- Q: Se duas pessoas editarem o mesmo conteúdo ao mesmo tempo, o que acontece? → A: O segundo a salvar é **avisado** e não sobrescreve — **sem perder o texto digitado**.
+- Q: O que acontece com as fotos quando um álbum da galeria é apagado? → A: Acompanham o álbum: arquivadas junto, recuperáveis junto.
+
+**A purga automática já era promessa de um ADR aprovado.** O ADR-0001, risco R6, mitiga o vazamento
+de dado pessoal com "RLS obrigatória, nenhuma chave secreta no cliente, validação no servidor,
+retenção definida e **purga automática**". A resposta acima **não escolhe** entre manual e
+automático: ela **adia** algo que já foi prometido, porque criar um segundo agendador antes daquele
+que vai ficar é desperdício. O adiamento é registrado em três lugares para não evaporar em silêncio:
+aqui, na linha da **F25** do `PLANO-DE-DESENVOLVIMENTO.md`, e no fato de que o procedimento manual
+**é testado nesta feature** — procedimento que nunca foi executado é procedimento que não funciona.
+
+---
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - O conteúdo do portal tem onde morar (Priority: P1)
@@ -156,12 +176,12 @@ detalhe e um estado vazio.
 
 - **Uma mensagem chega com texto muito longo, ou com script dentro.** O campo é texto livre vindo de
   quem não conhecemos: precisa ter limite e ser tratado como dado não confiável.
-- **Duas pessoas da diretoria editam a mesma notícia ao mesmo tempo.** O comportamento precisa ser
-  definido, não acidental.
-- **Um conteúdo é despublicado depois de ter estado no ar.** Some da leitura pública, mas não se
-  perde para a diretoria.
-- **Um álbum da galeria é apagado com fotos dentro.** O que acontece com as fotos precisa estar
-  decidido.
+- **Duas pessoas da diretoria editam a mesma notícia ao mesmo tempo.** O segundo a salvar é avisado
+  de que o conteúdo mudou desde que ele abriu, **sem perder o que digitou** (FR-031, FR-032).
+- **Um conteúdo é despublicado ou apagado depois de ter estado no ar.** Some da leitura pública e
+  continua **recuperável pela diretoria** pelo painel (FR-028, FR-029).
+- **Um álbum da galeria é apagado com fotos dentro.** As fotos são arquivadas junto e recuperadas
+  junto (FR-030).
 - **O formulário de contato é usado por robô em massa.** A coleção de mensagens não pode virar porta
   de entrada de lixo sem limite.
 - **A diretoria muda e o autor de um conteúdo não existe mais.** O conteúdo não pode sumir junto.
@@ -219,6 +239,16 @@ detalhe e um estado vazio.
 - **FR-020**: **DEVE** existir procedimento de purga escrito, executável por quem opera o portal sem
   conhecimento de banco de dados.
 - **FR-021**: Nenhum registro de erro **PODE** conter dado pessoal.
+- **FR-025**: O procedimento manual de purga **DEVE** ser **executado ao menos uma vez** nesta
+  feature, com evidência do resultado. Procedimento escrito e nunca executado é procedimento que não
+  funciona.
+- **FR-026**: O limite de envio de mensagens **DEVE** usar um **resumo irreversível** do endereço de
+  IP, guardado em **tabela separada da mensagem** e apagado em **24 horas** pelo mesmo procedimento
+  do FR-020 — sem um segundo mecanismo de purga.
+- **FR-027**: O sal usado no resumo do IP **DEVE** ser secreto e rotacionável. Sal fixo e público
+  torna o resumo reversível por força bruta: o espaço de endereços IPv4 tem cerca de 4,3 bilhões de
+  valores, o que uma máquina comum percorre em minutos. **Resumo de IP continua sendo dado pessoal
+  pseudonimizado sob a LGPD, não dado anônimo** — e é por isso que ele tem prazo próprio.
 
 ### Requisitos funcionais — Dados de exemplo
 
@@ -228,6 +258,20 @@ detalhe e um estado vazio.
   **visivelmente marcado**, impossível de confundir com informação institucional verdadeira.
 - **FR-024**: Cada coleção **DEVE** ter registros suficientes para exercitar lista, item único e
   coleção vazia.
+
+### Requisitos funcionais — Ciclo de vida do conteúdo
+
+- **FR-028**: Apagar conteúdo **DEVE** arquivá-lo: some da leitura pública e da lista normal, e
+  **não** é removido do banco.
+- **FR-029**: O esquema **DEVE** permitir **listar o que está arquivado e restaurá-lo**. Arquivar só
+  é recuperação se a diretoria conseguir ver e restaurar **pelo painel** — se apenas quem tem acesso
+  ao banco consegue, é backup com outro nome.
+- **FR-030**: Apagar um álbum **DEVE** arquivar as fotos dentro dele, recuperáveis junto com o álbum.
+- **FR-031**: O esquema **DEVE** permitir detectar que um conteúdo foi alterado por outra pessoa
+  desde que foi aberto para edição, para que o segundo a salvar **não sobrescreva em silêncio**.
+- **FR-032**: Ao detectar a alteração concorrente, **o texto digitado pela pessoa NÃO PODE ser
+  perdido**, e o aviso **DEVE** dizer o que fazer — não apenas que houve conflito. A redação final é
+  da F17; a F02 garante que o esquema sustenta os dois.
 
 ### Escopo — o que **não** entra nesta feature
 
@@ -256,6 +300,12 @@ detalhe e um estado vazio.
   executável por quem não conhece banco de dados.
 - **SC-011**: **Zero** textos institucionais inventados nos dados de exemplo; todo espaço reservado
   visivelmente marcado.
+- **SC-013**: O procedimento de purga é **executado ao menos uma vez** nesta feature, com o número
+  de registros afetados registrado.
+- **SC-014**: **Zero** endereços de IP em claro no banco; o resumo tem prazo de 24 horas e sal
+  secreto.
+- **SC-015**: **Zero** registros de conteúdo removidos do banco ao serem apagados pela diretoria —
+  todos arquivados e recuperáveis.
 - **SC-012**: Todas as verificações herdadas continuam passando: tipos, análise estática, formatação,
   tokens, camadas, testes de unidade e de ponta a ponta, e medidor de desempenho.
 
@@ -280,8 +330,12 @@ detalhe e um estado vazio.
 - **Processo seletivo e indicadores da home**: o ADR-0001 os lista como coleções próprias. Ficam
   **fora** do FR-001 porque a descrição desta feature não os incluiu; entram na feature que
   construir a página correspondente. Registrado para não parecer esquecimento.
-- **Limite de mensagens por origem**: o ADR-0002 já prevê limite por IP e janela de tempo contra
-  robôs. Esta feature cria a coleção e o limite; o formulário que a alimenta é a F13.
+- **Limite de mensagens por origem**: o ADR-0002 previa limite por IP e janela de tempo, e o
+  ADR-0001 especificava a tabela de mensagens com "IP não armazenado" — **os dois se
+  contradiziam**. Resolvido pelo resumo irreversível em tabela separada (FR-026, FR-027): a frase do
+  ADR-0001 continua **literalmente verdadeira**, porque é da tabela de mensagens que ela fala, e o
+  limite do ADR-0002 passa a ser implementável. Adendo escrito no ADR-0002, com referência cruzada
+  no ADR-0001. Esta feature cria a coleção e o limite; o formulário que a alimenta é a F13.
 
 ### A pausa do plano gratuito, registrada para não virar surpresa
 
