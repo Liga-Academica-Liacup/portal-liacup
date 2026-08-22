@@ -111,6 +111,101 @@ Raios, sombras e a estrutura de classes de componente também ficam intactos.
 
 ---
 
+## 4.0 Convenção de notação — como se registra um valor de contraste
+
+Acrescentada em 21/08/2026, depois de **três** divergências na F01 virem todas do mesmo formato:
+um número de contraste escrito sem dizer entre o que ele foi medido.
+
+**Todo valor de contraste registrado neste projeto nomeia as duas cores e a superfície sobre a qual
+foi medido. Número solto não vale como registro.**
+
+Errado: "o rótulo mede 5,31:1".
+Certo: "`color-mix(text 70%)` sobre `--color-surface` mede 5,31:1".
+
+Vale para os ADRs, para o `FIDELIDADE.md`, para as tarefas e para os relatórios. Custa uma linha e
+fecha a fresta pela qual passaram: o rótulo de campo (5,31:1 sobre superfície contra 5,63:1 sobre o
+fundo), o botão desabilitado (2,72:1 no secundário contra 1,86:1 no primário) e o fundo do botão
+primário (4,84:1 do texto sobre o botão, não do botão sobre a página).
+
+---
+
+## 4.1 Adendo de 21/08/2026 — quatro defeitos nos componentes convertidos na F01
+
+Levantado no planejamento da F01, ao medir **todas** as cores dos 35 seletores que viram componente.
+Estes quatro não apareceram na medição original porque a página provisória da F00 não tinha cartão,
+etiqueta nem campo na tela — o mesmo motivo pelo qual as quatro reatribuições da seção 2 precisaram
+entrar sem nada usando.
+
+| Onde | Par medido | Medido | Situação |
+| --- | --- | --- | --- |
+| `.card-meta` | `color-mix(text 50%)` sobre **superfície**, 11px | **3,01:1** | ❌ Falha (exige 4,5) |
+| `.card-kicker` | `--color-accent` sobre **superfície**, 10px | **3,09:1** | ❌ Falha (exige 4,5) |
+| `.tag-outline` | `--color-accent` como texto sobre **fundo**, 11px | **3,48:1** | ❌ Falha (exige 4,5) |
+| `.input` e `.btn-secondary` | borda `--color-divider` sobre **superfície** | **1,37:1** | ❌ Falha (exige 3,0) |
+
+**O quarto é o mais grave e o único que o axe-core NÃO pega**: não existe regra de axe para
+contraste de borda de controle. E o campo tem fundo `--color-surface` sobre página `--color-bg`, que
+contrastam **1,13:1** entre si — a borda é a **única** coisa que diz onde o campo começa.
+
+### Correção — quatro reatribuições, nenhuma cor nova
+
+| Uso | De | Para | Passa a medir |
+| --- | --- | --- | --- |
+| Texto de metadados do cartão | `color-mix(text 50%)` | `--color-neutral-700` | **4,92:1** sobre superfície ✅ |
+| Kicker do cartão | `--color-accent` | `--color-accent-700` | **6,15:1** sobre superfície ✅ |
+| Texto da etiqueta de contorno | `--color-accent` | `--color-accent-700` | **6,15:1** sobre superfície ✅ |
+| Borda de campo e de botão secundário | `--color-divider` | `--color-neutral-600` | **3,21:1** sobre superfície ✅ |
+
+**Atenção ao kicker**: o `--color-accent-600` **não basta** — mede 4,30:1 sobre a superfície, abaixo
+dos 4,5 exigidos para texto de 10px. Precisa do 700.
+
+### O que NÃO muda, e por quê
+
+Registrado para ninguém "consertar" depois:
+
+| Onde | Par medido | Medido | Veredito |
+| --- | --- | --- | --- |
+| `.card-body` | texto com `opacity: 0.8` sobre superfície | **7,19:1** | ✅ Passa folgado |
+| `.field > label` | `color-mix(text 70%)` sobre superfície | **5,33:1** | ✅ Passa |
+| `.field > label` | `color-mix(text 70%)` sobre fundo | **5,65:1** | ✅ Passa |
+| `.btn:disabled` — secundário | texto com `opacity: 0.45` sobre fundo | **2,72:1** | ✅ **Isento** |
+| `.btn:disabled` — primário | grupo com `opacity: 0.45` sobre fundo | **1,86:1** | ✅ **Isento** |
+
+**Botão desabilitado é isento do critério 1.4.3 do WCAG**, que exclui expressamente componentes
+desabilitados. Os números estão aqui porque são baixos e vão chamar atenção de quem revisar; não são
+defeito e não devem ser "corrigidos".
+
+O rótulo de campo aparece com **dois** valores porque depende de onde o campo está — sobre a página
+ou dentro de um cartão. Ambos passam, então a decisão não muda; os dois estão registrados porque
+número sem o par nomeado é o defeito que a tabela de fidelidade existe para pegar.
+
+---
+
+## 4.2 Pendência nomeada — o sistema não tem cor semântica
+
+Levantada na F01, ao construir o estado de erro do `Campo`.
+
+**O `liacup.css` não define nenhuma cor semântica**: não há vermelho de erro, verde de sucesso nem
+âmbar de aviso. A paleta tem `--color-accent` (lilás da marca), `--color-accent-2` (sálvia) e a
+rampa neutra, e mais nada.
+
+O `Campo` da F01 resolveu com o que existe: o erro usa `--color-accent-700` na borda e no texto, e
+**não depende de cor** — traz ícone e texto, conforme o FR-007. Funciona, e foi a única saída dentro
+da restrição de não inventar cor.
+
+**Mas a primeira feature com formulário de verdade vai esbarrar nisso.** Um formulário de contato
+com sucesso, erro e aviso usando os três a mesma cor de marca é confuso, e quem estiver
+implementando vai improvisar um vermelho — que é exatamente o tipo de decisão que este projeto
+registra em vez de deixar acontecer.
+
+**Não decido aqui.** Fica registrado que a decisão existe e que ela chega junto da F13 (contato) ou
+antes. Quando chegar, as opções são: (a) acrescentar três cores semânticas à paleta, o que exige
+aval da liga por ser mudança de identidade; (b) manter só a marca e resolver por ícone e texto,
+como o `Campo` faz; (c) usar a rampa sálvia para sucesso e deixar erro na marca. Cada uma tem
+consequência de contraste a medir.
+
+---
+
 ## 5. Consequências
 
 - A F01 (design system em código) começa de um arquivo único, correto e acessível.

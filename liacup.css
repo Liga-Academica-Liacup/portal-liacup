@@ -102,55 +102,15 @@ figcaption {
   color: color-mix(in srgb, var(--color-text) 55%, transparent);
 }
 .text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+/* PENDENTE F01: 3,57:1 sobre --color-bg, reprovado no AA. Corrigir para
+   var(--color-neutral-700) (5,53:1) ao converter — mesmo papel da .texto-secundario
+   ja convertida no global.css. Ver ADR-0003, adendo de 21/08/2026. */
 :focus { outline: none; }
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 ::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
 
 /* — rules — */
-.hr {
-  height: 1px; border: 0; margin: var(--space-4) 0;
-  background: var(--color-divider);
-}
 
-/* — buttons — */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  cursor: pointer; text-decoration: none;
-  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
-     the pair sits side by side in sign-up rows */
-  background: transparent; border: 1px solid transparent;
-  padding: var(--space-2) calc(var(--space-3) * 1.2);
-  border-radius: var(--radius-md);
-}
-.btn svg { display: block; }
-.btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-primary { background: var(--color-accent); color: var(--color-bg); }
-.btn-primary:hover { background: var(--color-accent-600); }
-.btn-primary:active { background: var(--color-accent-700); }
-.btn-secondary { border-color: var(--color-divider); }
-.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
-.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
-.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
-.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
-.btn-icon { width: 36px; height: 36px; padding: 0; }
-.btn-block { width: 100%; margin-top: var(--space-2); }
-
-/* — forms — */
-.field > label {
-  display: block; font-size: 12px; margin-bottom: 5px;
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
-}
-.input {
-  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
-  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
-  background: var(--color-surface);
-  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
-}
-.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
-.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
-textarea.input { min-height: 90px; resize: vertical; }
 .radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
 .radio input, .seg-opt input {
   position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
@@ -167,7 +127,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 .radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .seg {
   display: inline-flex; overflow: hidden;
-  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider); border-radius: 999px;  /* valor efetivo dobrado para dentro do bloco na F01: vinha da regra final compartilhada */
 }
 .seg-opt {
   display: inline-flex; align-items: center; gap: 6px;
@@ -178,36 +138,25 @@ textarea.input { min-height: 90px; resize: vertical; }
 .seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
 .seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
-/* — cards — */
-.card {
-  display: flex; flex-direction: column; gap: var(--space-2);
-  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
-}
-.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
-.card-title {
-  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-  font-size: 17px; line-height: 1.2;
-}
-.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
-.card-meta {
-  display: flex; align-items: center; gap: 6px; font-size: 11px;
-  color: color-mix(in srgb, var(--color-text) 50%, transparent);
-}
-.elev-sm { box-shadow: var(--shadow-sm); }
-.elev-md { box-shadow: var(--shadow-md); }
-.elev-lg { box-shadow: var(--shadow-lg); }
+/* ══════════════════════════════════════════════════════════════════════════
+   O QUE AINDA NAO FOI CONVERTIDO — 27 seletores
+   ══════════════════════════════════════════════════════════════════════════
+   A F01 converteu 32 seletores das familias .btn, .card, .tag, .field/.input,
+   .hr e .elev-* em componentes React (src/componentes/ui/). Eles sairam deste
+   arquivo: o historico do Git guarda o que havia, e classe comentada continua
+   sendo lida como se valesse.
 
-/* — tags — */
-.tag {
-  display: inline-flex; align-items: center; font-size: 11px;
-  letter-spacing: 0.02em; padding: 3px 10px;
-  border-radius: calc(var(--radius-md) * 0.75);
-}
-.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
-.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
-.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
-.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+   O que resta aqui esta agrupado abaixo com a feature de destino nomeada.
+   Ver specs/002-design-system/data-model.md, secao 2.
 
+   REGRA DE LEITURA, que custou caro para descobrir: ate a F01 este arquivo
+   tinha tres regras no fim que sobrescreviam o raio e o espacamento declarados
+   nos blocos. Elas foram dobradas para dentro dos blocos e removidas, entao
+   agora cada bloco declara o proprio valor efetivo. Nao ha mais cascata
+   escondida — mas confira o fim do arquivo antes de converter qualquer coisa.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* PENDENTE: cabecalho publico — proxima feature de layout */
 /* — navigation — */
 .nav {
   display: flex; align-items: center; gap: var(--space-4);
@@ -220,12 +169,19 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 .nav a { color: inherit; text-decoration: none; font-size: 14px; }
 .nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+/* PENDENTE cabecalho: 3,48:1 sobre --color-bg, reprovado no AA. Corrigir para
+   var(--color-accent-700) (6,91:1) ao converter — e exatamente a reatribuicao de cor
+   de link ja decidida na ADR-0003, secao 2. */
 
+/* PENDENTE: painel administrativo — Fase 2 */
 /* — tables — */
 .table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .table th {
   text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
   color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  /* PENDENTE Fase 2: 4,13:1 sobre --color-bg e 3,99:1 sobre --color-surface, reprovado
+     no AA para texto de 11px (exige 4,5). Corrigir para var(--color-neutral-700)
+     (5,53:1) ao converter. Ver ADR-0003, adendo de 21/08/2026. */
   padding: var(--space-2); border-bottom: 1px solid var(--color-divider);
 }
 .table td {
@@ -234,6 +190,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 .table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
 
+/* PENDENTE: painel administrativo — Fase 2 */
 /* — dialog — */
 .dialog-backdrop {
   position: fixed; inset: 0; display: grid; place-items: center;
@@ -242,7 +199,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 .dialog {
   width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
-  padding: var(--space-4); border-radius: var(--radius-lg);
+  padding: var(--space-4); border-radius: calc(var(--radius-lg) * 1.15);  /* valor efetivo dobrado para dentro do bloco na F01: vinha da regra final compartilhada */
   background: var(--color-surface); box-shadow: var(--shadow-lg);
 }
 .dialog-title {
@@ -251,9 +208,4 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 .dialog-body { font-size: 14px; opacity: 0.85; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
-
-/* — rounded frame: everything softens, small controls go pill — */
-.card, .dialog { border-radius: calc(var(--radius-lg) * 1.15); }
-.btn, .tag, .seg, .input { border-radius: 999px; }
-.input { padding-inline: 14px; }
 

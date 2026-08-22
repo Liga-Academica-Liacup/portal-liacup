@@ -1,0 +1,95 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.rotulo {
+  display: block;
+  font-size: var(--font-size-rotulo);
+  margin-bottom: var(--margem-abaixo-rotulo);
+  color: var(--color-neutral-700);
+}
+
+/* Rotulo continua existindo para leitor de tela, so nao ocupa espaco na tela. */
+.rotuloEscondido {
+  position: absolute;
+  width: var(--largura-borda);
+  height: var(--largura-borda);
+  padding: 0;
+  margin: calc(var(--largura-borda) * -1);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.controle {
+  width: 100%;
+  font: inherit;
+  color: var(--color-text);
+  caret-color: var(--color-accent-700);
+  background: var(--color-surface);
+  padding: var(--padding-campo-y) var(--padding-campo-x);
+
+  /* ADR-0004 2.2: 16px, para o Safari do iPhone nao dar zoom ao tocar no campo. */
+  font-size: var(--font-size-campo);
+
+  /* ADR-0004 2.1: alvo de toque. O .input aprovado tinha min-height 36px. */
+  min-height: var(--alvo-de-toque);
+
+  /* Valor efetivo do .input apos a cascata final do liacup.css. */
+  border-radius: var(--radius-pill);
+
+  /* ADR-0003, adendo: --color-divider mede 1,37:1 sobre --color-surface e nao
+     delimita nada; --color-surface e --color-bg diferem so 1,13:1 entre si, entao
+     a borda e a UNICA coisa que diz onde o campo comeca. --color-neutral-600 mede
+     3,21:1 sobre a superficie. */
+  border: var(--largura-borda) solid var(--color-neutral-600);
+}
+
+.textarea {
+  min-height: var(--altura-minima-textarea);
+  resize: vertical;
+  border-radius: var(--radius-md);
+}
+
+.controle:hover:not(:disabled) {
+  border-color: var(--color-neutral-700);
+}
+
+.controle:focus-visible {
+  border-color: var(--color-accent-700);
+  outline: var(--focus-ring-width) solid var(--color-accent-700);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.controle:disabled {
+  opacity: var(--opacidade-desabilitado);
+  cursor: not-allowed;
+}
+
+.ajuda {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-rotulo);
+  color: var(--color-neutral-700);
+}
+
+/* O erro nao depende so de cor: tem texto e icone. */
+.erro {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-rotulo);
+  color: var(--color-accent-700);
+}
+
+.comErro {
+  border-color: var(--color-accent-700);
+}
+
+.iconeErro {
+  flex-shrink: 0;
+  font-weight: 700;
+}

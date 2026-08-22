@@ -1,10 +1,21 @@
 /*
- * Exemplo de composicao reutilizavel (componentes/padroes).
+ * O QUE É
+ * Bloco que ocupa o lugar de uma lista quando não há o que mostrar. Cobre os
+ * três estados que a seção 2.6 dos padrões exige de todo componente que exibe
+ * dado: carregando, erro e vazio.
  *
- * Existe porque a secao 2.6 dos padroes de codigo exige que todo componente que
- * mostra dado trate carregando, erro e vazio — com texto em portugues que ajude
- * quem esta do outro lado. "Nenhuma noticia publicada ainda" e resposta; tela em
- * branco nao e.
+ * QUANDO USAR
+ * Sempre que uma lista puder vir vazia, falhar ou demorar. "Nenhuma notícia
+ * publicada ainda" é resposta; tela em branco não é.
+ *
+ * QUANDO NÃO USAR
+ * Como aviso geral da página. O `tom="alerta"` usa `role="alert"`, que
+ * interrompe quem usa leitor de tela — reservado para erro de carregamento, não
+ * para chamar atenção.
+ *
+ * FIDELIDADE
+ * Não vem do liacup.css: nasceu na F00. Não tem classe de origem para comparar
+ * e por isso não aparece no FIDELIDADE.md.
  */
 import type { ReactNode } from 'react'
 import estilos from './EstadoVazio.module.css'

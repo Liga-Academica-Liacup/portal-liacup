@@ -1,0 +1,77 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+.pagina {
+  max-width: 100%;
+  padding: var(--space-6) var(--space-4);
+  margin: 0 auto;
+}
+
+.aviso {
+  padding: var(--space-3);
+  margin-bottom: var(--space-6);
+  border: var(--largura-borda) solid var(--color-neutral-600);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-cartao-corpo);
+}
+
+.secao {
+  margin-bottom: var(--space-8);
+}
+
+.tituloSecao {
+  font-size: var(--font-size-h4);
+  margin-bottom: var(--space-2);
+}
+
+.descricaoSecao {
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-cartao-corpo);
+}
+
+.amostras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.amostra {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.palco {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--largura-borda) solid var(--color-divider);
+  border-radius: var(--radius-md);
+  min-width: 0;
+}
+
+.legenda {
+  font-size: var(--font-size-legenda);
+  color: var(--color-neutral-700);
+}
+
+/* A linha de inscricao que o comentario do .btn descreve: campo e botao lado a
+   lado. Existe para tornar visivel o par 16px/14px deliberadamente desfeito. */
+.linhaDeInscricao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.colunaDoCampo {
+  flex: 1;
+  min-width: 0;
+}
+
+.blocoLargo {
+  width: 100%;
+}

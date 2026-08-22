@@ -1,19 +1,23 @@
 /*
- * Componente de icone da camada base.
+ * O QUE É
+ * Ícone decorativo da camada base. Um componente com prop de variante, e não um
+ * arquivo por ícone: o tipo fechado em união de strings faz o TypeScript
+ * recusar um nome que não existe, e o conjunto fica visível num lugar só.
  *
- * Burro de proposito, como todo componente de ui/: nao sabe o que e um canal de
- * contato, nao conhece rota nem banco. Recebe o nome do desenho e desenha.
+ * QUANDO USAR
+ * Ao lado de um texto que já diz o que a coisa é — um link de contato, um botão
+ * com rótulo.
  *
- * Um componente com prop de variante, e nao um arquivo por icone, pelo mesmo
- * motivo do Botao.tsx: o tipo fechado em uniao de strings faz o TypeScript
- * recusar um nome que nao existe, e o conjunto de icones fica visivel num lugar
- * so em vez de espalhado pela pasta.
+ * QUANDO NÃO USAR
+ * Sozinho, carregando significado. Todo ícone aqui é decorativo: `aria-hidden` e
+ * `focusable="false"` são fixos, não props. Um ícone que precisa ser anunciado
+ * exige rótulo, e isso é outro componente. Dentro de um botão sem texto, quem
+ * carrega o nome acessível é o botão — a variante `icone` do Botao exige
+ * `aria-label` pelo tipo, justamente por isso.
  *
- * Todo icone aqui e DECORATIVO: vem sempre acompanhado do texto do link. Por
- * isso `aria-hidden` e `focusable="false"` sao fixos e nao props — leitor de tela
- * anunciaria o mesmo conteudo duas vezes, e no Internet Explorer legado o SVG
- * entra na ordem de tabulacao sem o `focusable`. Icone que carrega significado
- * sozinho precisa de rotulo, e ai e outro componente.
+ * FIDELIDADE
+ * Não vem do liacup.css: nasceu na F00, junto dos links de contato. Não tem
+ * classe de origem para comparar e por isso não aparece no FIDELIDADE.md.
  */
 import estilos from './Icone.module.css'
 
