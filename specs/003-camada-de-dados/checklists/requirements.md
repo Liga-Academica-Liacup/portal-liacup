@@ -61,4 +61,5 @@ os três papéis da diretoria ficando para a F14, o processo seletivo e os indic
 e a pausa do plano gratuito registrada mas não resolvida aqui. O `/speckit-clarify` roda em seguida
 justamente porque esta feature toca regra de negócio e dado pessoal.
 
-**Veredito**: 16 de 16 aprovados. Spec pronta para `/speckit-clarify`.
+**Veredito**: 16 de 16 aprovados. Clarify concluído e integrado; plano e artefatos da Fase 1
+escritos. Pronta para `/speckit-tasks`.
