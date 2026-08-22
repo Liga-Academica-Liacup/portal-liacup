@@ -206,11 +206,16 @@ depósito.
 | **RP-09** | Todo valor de contraste **nomeia as duas cores e a superfície** medida | ADR-0003 §4.0 | Leitura: número solto não vale como registro |
 | **RP-10** | **Nenhum segredo** no repositório nem no histórico | Princípio IV · F00 FR-023 | Varredura do estado atual e do histórico |
 | **RP-11** | Toda tabela nasce com **controle de acesso por linha ativo**, e a política é testada provando que **bloqueia** — não só que permite | Princípio IV · F02 | Suíte de políticas, com o número de células de recusa verificadas |
-| **RP-12** | **Verificação que ninguém viu falhar não conta.** Toda verificação nova é demonstrada **falhando** diante de violação real e voltando ao verde | F00 (V1–V5) · F01 · F02 | Duas execuções registradas, com resultados opostos |
+| **RP-12** | **Verificação que ninguém viu falhar não conta.** Toda verificação nova é demonstrada **falhando** diante de violação real e voltando ao verde. E toda verificação **diz quanto mediu** — arquivos varridos, elementos medidos, células checadas | F00 (V1–V5) · F01 · F02 | Duas execuções registradas com resultados opostos, **e o contador na saída** |
 
-**O RP-12 é o que sustenta os outros onze.** Sem ele, uma verificação quebrada e uma verificação
-satisfeita produzem a mesma saída verde — foi o que a F00 aprendeu com o CI que não checava nada, e o
-que a F01 repetiu com o contador de alvos de toque.
+**O RP-12 é o que sustenta os outros onze**, e tem duas metades que se completam:
+
+- **vista falhando** — sem isso, uma verificação quebrada e uma satisfeita produzem a mesma saída
+  verde. Foi o que a F00 aprendeu com o CI que não checava nada;
+- **com contador** — sem isso, **"nada falhou" e "nada foi medido" produzem a mesma saída verde**.
+  Foi o que pegou os 20 alvos de toque da F01: o número estava honesto, mas media uma página que não
+  mostrava tudo. Um verificador que varre zero arquivos e um que aprova tudo são indistinguíveis sem
+  o contador.
 
 ---
 

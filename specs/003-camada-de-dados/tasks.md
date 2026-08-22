@@ -39,35 +39,35 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 
 ## Fase 2: História 1 — O conteúdo do portal tem onde morar (P1)
 
-**Objetivo**: as 12 coleções existem, com os campos do protótipo aprovado, e o código chega até elas de forma tipada.
+**Objetivo**: as 13 tabelas existem — **todas já com controle de acesso por linha ativo** —, com os campos do protótipo aprovado, e o código chega até elas de forma tipada.
 
 **Teste independente**: pedir a lista de notícias publicadas pelo caminho tipado e receber os dados de exemplo, sem escrever nenhuma tela.
 
 - [ ] T007 [US1] Criar a migração da base comum das coleções de conteúdo: identificador, **publicado**, **arquivado**, criado em, **alterado em** (que é também a marca de versão do FR-031), autor e ordem, conforme data-model.md §1 (FR-002, FR-003, FR-028, FR-031)
-- [ ] T008 [P] [US1] Criar a migração das coleções de **notícias** (com link externo), **eventos** (com data do evento e passado) e **conteúdos educativos**, com os campos do protótipo (FR-001, FR-004)
-- [ ] T009 [P] [US1] Criar a migração de **projetos**, com o eixo em **lista fechada** — ensino, extensão, pesquisa e secretaria —, recusada pelo banco e não pela tela (FR-001, FR-004)
-- [ ] T010 [P] [US1] Criar a migração de **materiais**, **recomendações de leitura** e **perguntas frequentes** (FR-001, FR-004)
-- [ ] T011 [P] [US1] Criar a migração de **ligantes** (com "é diretoria") e **docentes orientadores**, com os campos de `conteudo-institucional.md` §4 (FR-001, FR-004)
-- [ ] T012 [P] [US1] Criar a migração de **álbuns** e **fotos** da galeria, com a foto referenciando o álbum (FR-001, FR-004)
-- [ ] T013 [US1] Criar a migração de **mensagens** com nome, e-mail, assunto, texto, situação e **recebida em** — e **nenhum endereço de IP**, nem em claro nem resumido, que é o que mantém verdadeira a frase do ADR-0001 §3. Com esta, fecham as **12 coleções** do SC-001 (FR-001, FR-018, SC-001)
-- [ ] T014 [US1] Criar a migração da tabela de **controle de origem**, separada da de mensagens, com o resumo irreversível do endereço e o momento (FR-026)
-- [ ] T015 [US1] Gerar `src/lib/supabase/tipos.ts` a partir do esquema e versioná-lo, sem escrever nenhum tipo de tabela à mão (FR-005, research.md D5)
-- [ ] T016 [US1] Acrescentar ao CI um passo que **regenera os tipos e falha se o resultado diferir do versionado** — sem ele, "os tipos estão atualizados" é promessa (FR-005)
-- [ ] T017 [US1] Criar `src/lib/supabase/navegador.ts` e `src/lib/supabase/servidor.ts`, sendo o segundo o **único arquivo autorizado a ler a chave de serviço** (FR-014, contracts/camada-de-dados.md)
-- [ ] T018 [US1] Criar `src/features/<dominio>/dados.ts` para uma coleção de referência, com leitura que **pede apenas as colunas que usa**, **devolve lista vazia em vez de erro** e filtra por publicado e não arquivado (FR-006, FR-007)
-- [ ] T019 [US1] Demonstrar que o caminho é tipado: pedir um campo inexistente, rodar `npm run verificar:tipos` e registrar a **falha**; remover e registrar o verde. Duas execuções, dois resultados opostos (FR-005, SC-009)
+- [ ] T008 [P] [US1] Criar a migração das coleções de **notícias** (com link externo), **eventos** (com data do evento e passado) e **conteúdos educativos**, com os campos do protótipo (FR-001, FR-004). **A migração ativa o controle de acesso por linha nas tabelas que cria**, na mesma migração: acesso ativado sem política **recusa tudo**, que é o padrão seguro — ativa primeiro, abre depois (FR-008, RP-11)
+- [ ] T009 [P] [US1] Criar a migração de **projetos**, com o eixo em **lista fechada** — ensino, extensão, pesquisa e secretaria —, recusada pelo banco e não pela tela (FR-001, FR-004). **A migração ativa o controle de acesso por linha nas tabelas que cria**, na mesma migração: acesso ativado sem política **recusa tudo**, que é o padrão seguro — ativa primeiro, abre depois (FR-008, RP-11)
+- [ ] T010 [P] [US1] Criar a migração de **materiais**, **recomendações de leitura** e **perguntas frequentes** (FR-001, FR-004). **A migração ativa o controle de acesso por linha nas tabelas que cria**, na mesma migração: acesso ativado sem política **recusa tudo**, que é o padrão seguro — ativa primeiro, abre depois (FR-008, RP-11)
+- [ ] T011 [P] [US1] Criar a migração de **ligantes** (com "é diretoria") e **docentes orientadores**, com os campos de `conteudo-institucional.md` §4 (FR-001, FR-004). **A migração ativa o controle de acesso por linha nas tabelas que cria**, na mesma migração: acesso ativado sem política **recusa tudo**, que é o padrão seguro — ativa primeiro, abre depois (FR-008, RP-11)
+- [ ] T012 [P] [US1] Criar a migração de **álbuns** e **fotos** da galeria, com a foto referenciando o álbum (FR-001, FR-004). **A migração ativa o controle de acesso por linha nas tabelas que cria**, na mesma migração: acesso ativado sem política **recusa tudo**, que é o padrão seguro — ativa primeiro, abre depois (FR-008, RP-11)
+- [ ] T013 [US1] Criar a migração de **mensagens** com nome, e-mail, assunto, texto, situação e **recebida em** — e **nenhum endereço de IP**, nem em claro nem resumido, que é o que mantém verdadeira a frase do ADR-0001 §3. Com esta, fecham as **12 coleções** do SC-001 (FR-001, FR-018, SC-001). **A migração ativa o controle de acesso por linha nas tabelas que cria**, na mesma migração: acesso ativado sem política **recusa tudo**, que é o padrão seguro — ativa primeiro, abre depois (FR-008, RP-11)
+- [ ] T014 [US1] Criar a migração da tabela de **controle de origem**, separada da de mensagens, com o resumo irreversível do endereço e o momento (FR-026). **A migração ativa o controle de acesso por linha nas tabelas que cria**, na mesma migração: acesso ativado sem política **recusa tudo**, que é o padrão seguro — ativa primeiro, abre depois (FR-008, RP-11)
+- [ ] T015 [US1] **Provar que nenhuma tabela existe sem controle de acesso por linha**: consultar o catálogo do Postgres e listar **tabela por tabela com a situação**, não uma afirmação. A saída informa **quantas tabelas foram verificadas** e quantas estão sem — se o contador vier zero, a consulta não olhou nada e o verde não significa nada (FR-008, SC-002, RP-11, RP-12)
+- [ ] T016 [US1] Gerar `src/lib/supabase/tipos.ts` a partir do esquema e versioná-lo, sem escrever nenhum tipo de tabela à mão (FR-005, research.md D5)
+- [ ] T017 [US1] Acrescentar ao CI um passo que **regenera os tipos e falha se o resultado diferir do versionado** — sem ele, "os tipos estão atualizados" é promessa (FR-005)
+- [ ] T018 [US1] Criar `src/lib/supabase/navegador.ts` e `src/lib/supabase/servidor.ts`, sendo o segundo o **único arquivo autorizado a ler a chave de serviço** (FR-014, contracts/camada-de-dados.md)
+- [ ] T019 [US1] Criar `src/features/<dominio>/dados.ts` para uma coleção de referência, com leitura que **pede apenas as colunas que usa**, **devolve lista vazia em vez de erro** e filtra por publicado e não arquivado (FR-006, FR-007)
+- [ ] T020 [US1] Demonstrar que o caminho é tipado: pedir um campo inexistente, rodar `npm run verificar:tipos` e registrar a **falha**; remover e registrar o verde. Duas execuções, dois resultados opostos (FR-005, SC-009)
 
-**Ponto de verificação**: 12 coleções no banco, tipos gerados, e uma leitura tipada devolvendo dado.
+**Ponto de verificação — PARADA B**: 12 coleções mais a de controle de origem no banco, **zero tabelas sem RLS provado por consulta ao catálogo**, tipos gerados e uma leitura tipada devolvendo dado. Nenhum commit desta feature tem tabela sem RLS, em momento nenhum.
 
 ---
 
 ## Fase 3: História 2 — Quem não é da diretoria não consegue escrever (P1)
 
-**Objetivo**: as políticas existem **e são vistas bloqueando**. É o que dá sentido a toda a feature.
+**Objetivo**: as políticas existem **e são vistas bloqueando**. O controle de acesso já está ativo desde a Fase 2, recusando tudo; esta fase **abre o que deve ser aberto**. É o que dá sentido a toda a feature.
 
 **Teste independente**: tentar cada operação proibida com acesso anônimo e receber recusa; tentar cada permitida e receber sucesso.
 
-- [ ] T020 [US2] Criar a migração que ativa o controle de acesso por linha em **todas** as 13 tabelas, sem exceção (FR-008, SC-002)
 - [ ] T021 [US2] Escrever as políticas das 11 coleções de conteúdo conforme a matriz de contracts/politicas-de-acesso.md: público lê só o publicado e não arquivado; a diretoria autenticada escreve; **remoção definitiva recusada até para a diretoria**, porque apagar arquiva (FR-009, FR-010, FR-028)
 - [ ] T022 [US2] Escrever as políticas da coleção de **mensagens**, que é a matriz invertida: inserção anônima permitida, **leitura anônima recusada — inclusive por identificador conhecido** (FR-011)
 - [ ] T023 [US2] Escrever as políticas da tabela de controle de origem: nenhum acesso anônimo em nenhuma operação (FR-026)
