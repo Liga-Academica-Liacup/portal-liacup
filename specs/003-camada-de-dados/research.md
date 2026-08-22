@@ -163,13 +163,26 @@ que está versionado. Sem isso, "os tipos estão atualizados" é promessa.
 
 ## D6 — Dependências novas: três, e o que cada uma custa
 
-Esta é a primeira feature desde a F00 que **precisa** instalar algo. As 20 atuais viram **23**.
+Esta é a primeira feature desde a F00 que **precisa** instalar algo. As 20 atuais viram **22**.
 
 | # | Dependência | Tipo | Por que é necessária | Alternativa rejeitada |
 |---|---|---|---|---|
-| 21 | `@supabase/supabase-js` | Execução | O cliente do banco escolhido no ADR-0001. Sem ele não há como falar com o Supabase | Escrever chamadas HTTP à mão: reimplementaria autenticação, refresh de sessão e tratamento de erro — mais código nosso para manter, exatamente o oposto do Princípio I |
-| 22 | `@supabase/ssr` | Execução | Faz a sessão funcionar entre servidor e navegador no App Router. Sem ele, a sessão da diretoria não sobrevive à navegação | Gerenciar cookie de sessão à mão: é criptografia e sessão escritas por nós, que o Princípio IV proíbe expressamente |
-| 23 | `supabase` (linha de comando) | Desenvolvimento | Gera os tipos a partir do esquema (D5) e roda as migrações | Gerar tipo à mão: divergência silenciosa (D5). Usar só o painel: esquema fora do repositório (D4) |
+| 21 | `@supabase/supabase-js` | Execução | O cliente do banco escolhido no ADR-0001. É ele que cria as conexões anônima, autenticada e de serviço que os testes de política exercem | Escrever chamadas HTTP à mão: reimplementaria tratamento de erro e autenticação — mais código nosso para manter, o oposto do Princípio I |
+| 22 | `supabase` (linha de comando) | Desenvolvimento | Gera os tipos a partir do esquema (D5) e roda as migrações | Gerar tipo à mão: divergência silenciosa (D5). Usar só o painel: esquema fora do repositório (D4) |
+
+### Uma terceira foi cogitada e **não entra aqui**
+
+O **`@supabase/ssr`** existe para uma única coisa: **repassar a sessão por cookie entre servidor e
+navegador**. Isso é exatamente — e apenas — o que a **F14** faz, e a spec desta feature diz na linha
+do escopo que "autenticação real entra na F14; esta feature define as políticas, quem faz login é a
+F14".
+
+Os testes de política **precisam** de acesso autenticado, mas isso o `@supabase/supabase-js` resolve
+sozinho: autenticar dentro de um teste em Node não envolve cookie nem navegador. A F02 não tem tela,
+então não há sessão para atravessar lugar nenhum.
+
+**Prevista para a F14, não instalada aqui.** Registrado assim para que, quando a F14 chegar, ela
+encontre a dependência **ausente e explicada** em vez de presente sem plano que a justifique.
 
 **Nenhuma outra entra.** Duas tentações nomeadas e recusadas antecipadamente: biblioteca de
 validação de esquema além do que já existe em `lib/validacao`, e biblioteca de acesso a dados por

@@ -19,8 +19,8 @@ acontece quando o Supabase pausa por inatividade** (D3).
 
 **Linguagem/Versão**: TypeScript 5.9.3 estrito · Next.js 16.3.1 · Node 22
 
-**Dependências principais**: `@supabase/supabase-js` 2.112.x · `@supabase/ssr` 0.12.x ·
-`supabase` (linha de comando) 2.115.x — **três novas**, de 20 para **23**, justificadas em D6
+**Dependências principais**: `@supabase/supabase-js` 2.112.x · `supabase` (linha de comando)
+2.115.x — **duas novas**, de 20 para **22**, justificadas em D6
 
 **Armazenamento**: PostgreSQL no Supabase, com controle de acesso por linha em **todas** as tabelas
 
@@ -44,7 +44,7 @@ exemplo em todas · nenhuma tela
 
 | Princípio | Como este plano cumpre | Situação |
 |---|---|---|
-| **I — Quem mantém vem antes** | Esquema em arquivos versionados, nunca no painel (D4); tipos gerados, nunca à mão (D5); três dependências justificadas uma a uma; comportamento da pausa escrito no README | ✅ |
+| **I — Quem mantém vem antes** | Esquema em arquivos versionados, nunca no painel (D4); tipos gerados, nunca à mão (D5); **duas** dependências justificadas uma a uma, e uma terceira nomeada como prevista para a F14 e não instalada aqui; comportamento da pausa escrito no README | ✅ |
 | **II — Acessibilidade** | Não se aplica: nenhuma tela. As telas que consomem estes dados são da Fase 1 | ✅ |
 | **III — Mobile é o caso principal** | Leitura estática com revalidação, que é o que mantém o site rápido em celular com internet ruim | ✅ |
 | **IV — Segurança e dados** | **É o coração da feature.** RLS em toda tabela, com teste de bloqueio por linha de política (D1); chave de serviço barrada por quatro camadas, três automáticas (D2); validação no servidor; retenção de 24 meses no esquema; log sem dado pessoal | ✅ |
@@ -162,13 +162,17 @@ Os dois exigem o banco vivo, e os dois são da F25.
 
 ## Dependências e justificativa
 
-**Total: 23** — 5 de execução, 18 de desenvolvimento. Três novas, a primeira vez desde a F00.
+**Total: 22** — 4 de execução, 18 de desenvolvimento. **Duas** novas, a primeira vez desde a F00.
 
 | # | Dependência | Tipo | Por quê |
 |---|---|---|---|
-| 21 | `@supabase/supabase-js` | Execução | O cliente do banco do ADR-0001 |
-| 22 | `@supabase/ssr` | Execução | Sessão entre servidor e navegador. A alternativa seria escrever gestão de sessão à mão, que o Princípio IV proíbe |
-| 23 | `supabase` (CLI) | Desenvolvimento | Gera os tipos a partir do esquema (D5) e roda as migrações |
+| 21 | `@supabase/supabase-js` | Execução | O cliente do banco do ADR-0001. Cria as conexões anônima, autenticada e de serviço que os testes de política exercem |
+| 22 | `supabase` (CLI) | Desenvolvimento | Gera os tipos a partir do esquema (D5) e roda as migrações |
+
+**O `@supabase/ssr` foi cogitado e não entra.** Ele serve para repassar a sessão por cookie entre
+servidor e navegador — que é exatamente o que a **F14** faz, e esta feature não tem tela nem login.
+Os testes de política autenticam dentro do Node, o que o `supabase-js` resolve sozinho. **Previsto
+para a F14, não instalado aqui** (D6).
 
 As 20 anteriores continuam justificadas nos planos da F00 e da F01. Duas tentações recusadas
 antecipadamente em D6.

@@ -114,8 +114,9 @@ primeiro dado — e-mail `liacup.unb@gmail.com`, FCTS · Campus UnB Ceilândia, 
 **Evidência 19 (SC-012)**: `npm test`, `npm run test:e2e` e `npm run test:desempenho` — os 65 de
 unidade e os 84 de ponta a ponta da F01 continuam passando, e os limiares **não** descem.
 
-**Evidência 20**: contagem de dependências. **Esperado: 23** — 5 de execução e 18 de
-desenvolvimento. Três a mais que a F01, cada uma na tabela do plano.
+**Evidência 20**: contagem de dependências. **Esperado: 22** — **4 de execução e 18 de
+desenvolvimento**. Duas a mais que a F01, cada uma na tabela do plano. O `@supabase/ssr` **não**
+pode aparecer: ele é da F14, e sua ausência aqui é verificável junto da contagem.
 
 ---
 
