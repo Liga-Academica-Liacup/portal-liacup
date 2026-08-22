@@ -172,11 +172,25 @@ Teste não é sobre porcentagem de cobertura. É sobre: **se alguém quebrar iss
 
 ## 8. Git
 
-- Uma feature, um branch: `feat/F06-noticias`.
-- Commits no padrão convencional, com descrição em português: `feat: adiciona filtro por categoria nas notícias`.
+O modelo de branches é **GitHub Flow**, decidido e justificado no
+[`ADR-0005`](ADR-0005-modelo-de-branches.md) — que também registra por que o GitFlow foi recusado,
+para a pergunta não voltar do zero daqui a seis meses.
+
+- Uma feature, um branch, **sempre saindo da `main`**: `feat/F06-noticias`.
+- Prefixos: `feat/` para feature, `fix/` para defeito, `docs/` para documentação, `chore/` para
+  manutenção. Branch do plano de desenvolvimento carrega o código: `feat/F02-...`.
+- Commits no padrão `tipo: descrição em português`, no imperativo. O corpo explica **por quê**; o
+  diff já diz o quê.
 - Pull request descreve o que muda, o que foi testado e como verificar.
-- Nada entra na `main` com CI vermelho.
-- `main` está sempre publicável.
+- Nada entra na `main` com CI vermelho, e a proteção está **configurada**, não combinada.
+- `main` está sempre publicável: é o que a Vercel põe em produção. **Incorporou, está no ar.**
+- A branch é **apagada depois de incorporada**.
+
+**Correção urgente**: branch `fix/` a partir da `main`, a menor correção possível, alteração
+proposta com `URGENTE` no título, CI verde continua obrigatório, incorporar assim que passar. Nunca
+push direto, nunca desligar a proteção, nunca `--no-verify` — se o CI impede a correção de uma
+emergência, isso é informação sobre o CI e vira tarefa, não exceção. Procedimento completo no
+ADR-0005, seção 2.4.
 
 ---
 
