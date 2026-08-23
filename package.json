@@ -23,7 +23,8 @@
     "banco:migrar": "supabase db push",
     "banco:tipos": "supabase gen types typescript --linked > src/lib/supabase/tipos.ts",
     "banco:tipos:check": "node scripts/verificar-tipos-do-banco.mjs",
-    "banco:rls": "node scripts/verificar-rls.mjs"
+    "banco:rls": "node scripts/verificar-rls.mjs",
+    "banco:rls:producao": "node scripts/verificar-rls.mjs --producao"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

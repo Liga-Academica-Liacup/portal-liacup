@@ -12,59 +12,77 @@
  *
  * Sem dependencia nova: usa a ferramenta de linha de comando do Supabase, que ja
  * e a dependencia 22.
+ *
+ * NENHUM VALOR DE CREDENCIAL SAI DAQUI. A conexao e lida do .env e nunca
+ * impressa; a saida de erro passa por um filtro que mascara qualquer coisa
+ * parecida com uma string de conexao.
  */
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 
-const CONSULTA = readFileSync('supabase/verificacoes/rls-por-tabela.sql', 'utf8')
+const CONSULTA = 'supabase/verificacoes/rls-por-tabela.sql'
+const PRODUCAO = process.argv.includes('--producao')
+
+const mascarar = (texto) =>
+  String(texto ?? '')
+    .replace(/postgres[^\s"]*/gi, '<CONEXAO-OCULTA>')
+    .replace(/db\.[a-z0-9]+\.supabase\.co/gi, '<HOST-OCULTO>')
+
+function conexao() {
+  const alvo = PRODUCAO ? 'SUPABASE_DIRECT_CONNECT_URL' : 'SUPABASE_TESTE_DIRECT_CONNECT_URL'
+  const linha = readFileSync('.env', 'utf8')
+    .split('\n')
+    .find((l) => l.startsWith(`${alvo}=`))
+  if (!linha) {
+    console.error(`\nFalta ${alvo} no .env. Ver README, secao "O banco de dados".`)
+    process.exit(1)
+  }
+  return linha
+    .slice(alvo.length + 1)
+    .trim()
+    .replace(/^"|"$/g, '')
+}
 
 function consultarCatalogo() {
   try {
-    return execFileSync('npx', ['supabase', 'db', 'execute', '--stdin'], {
-      input: CONSULTA,
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    })
-  } catch (erro) {
-    console.error(
-      '\nNao foi possivel consultar o catalogo do banco.\n\n' +
-        'A ferramenta do Supabase precisa estar conectada ao projeto. Ver o README,\n' +
-        'secao "O banco de dados". Nenhum valor de credencial e impresso aqui.\n'
+    /* shell: true porque no Windows o `npx` e um .cmd, e execFileSync sem shell
+       nao o encontra. */
+    const bruto = execFileSync(
+      'npx',
+      ['supabase', 'db', 'query', '--db-url', `"${conexao()}"`, '--file', CONSULTA],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], shell: true }
     )
+    const inicio = bruto.indexOf('{')
+    if (inicio === -1) throw new Error('a consulta nao devolveu JSON')
+    return JSON.parse(bruto.slice(inicio)).rows ?? []
+  } catch (erro) {
+    console.error('\nNao foi possivel consultar o catalogo do banco.\n')
     console.error(
-      String(erro.stderr ?? '')
+      mascarar(erro.stderr ?? erro.message)
         .split('\n')
-        .slice(0, 3)
+        .slice(0, 4)
         .join('\n')
     )
     process.exit(1)
   }
 }
 
-const saida = consultarCatalogo()
-const linhas = saida
-  .split('\n')
-  .map((l) => l.trim())
-  .filter((l) => l && !l.startsWith('tabela') && !l.startsWith('-') && !l.startsWith('('))
+const tabelas = consultarCatalogo()
+const semRls = tabelas.filter((t) => !t.rls_ativo)
 
-const tabelas = linhas.map((l) => {
-  const [tabela, rls, politicas] = l.split('|').map((c) => c.trim())
-  return { tabela, rlsAtivo: rls === 't' || rls === 'true', politicas: Number(politicas ?? 0) }
-})
-
-const semRls = tabelas.filter((t) => !t.rlsAtivo)
-
-console.log(`\nControle de acesso por linha — ${tabelas.length} tabela(s) verificada(s)\n`)
+console.log(
+  `\nControle de acesso por linha — ${PRODUCAO ? 'PRODUCAO' : 'TESTE'} — ` +
+    `${tabelas.length} tabela(s) verificada(s)\n`
+)
 for (const t of tabelas) {
-  const marca = t.rlsAtivo ? 'ATIVO   ' : 'AUSENTE '
-  console.log(`  ${marca} ${t.tabela.padEnd(24)} politicas: ${t.politicas}`)
+  const marca = t.rls_ativo ? 'ATIVO  ' : 'AUSENTE'
+  console.log(`  ${marca}  ${String(t.tabela).padEnd(24)} politicas: ${t.politicas}`)
 }
 console.log(`\n  verificadas: ${tabelas.length} · sem controle de acesso: ${semRls.length}`)
 
+/* Verde sem ter olhado nada nao conta (RP-12). */
 if (tabelas.length === 0) {
-  console.error(
-    '\nA consulta nao devolveu tabela nenhuma. Verde sem ter olhado nada nao conta (RP-12).'
-  )
+  console.error('\nA consulta nao devolveu tabela nenhuma. O contador em zero invalida o verde.')
   process.exit(1)
 }
 if (semRls.length > 0) {
