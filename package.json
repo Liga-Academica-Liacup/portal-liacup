@@ -19,6 +19,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node scripts/verificar-navegador.mjs && playwright test",
+    "test:politicas": "vitest run --config vitest.politicas.config.mts",
     "test:desempenho": "lhci autorun",
     "banco:migrar": "supabase db push",
     "banco:tipos": "supabase gen types typescript --linked > src/lib/supabase/tipos.ts",

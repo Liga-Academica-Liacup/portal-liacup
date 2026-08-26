@@ -31,6 +31,25 @@ import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 
 const CONSULTA = 'supabase/verificacoes/rls-por-tabela.sql'
+
+/*
+ * COBERTURA DE POLITICA (T030). Controle de acesso ativo sem politica recusa
+ * tudo — e seguro, e e inutil para uma colecao que precisa ser lida. Uma tabela
+ * que nasce e fica sem politica nao quebra nada de imediato: ela so nao aparece
+ * no site, e alguem descobre semanas depois. Por isso e bug aqui.
+ *
+ * A LISTA ABAIXO E A UNICA SAIDA, E ELA E NOMINAL. Uma tabela sem politica
+ * precisa estar escrita aqui, uma a uma, com o motivo. Sem essa lista o
+ * verificador teria de aceitar qualquer tabela sem politica — e a regra pararia
+ * de valer justamente para as tabelas que ainda nao existem, que sao as que ela
+ * existe para pegar.
+ */
+const SEM_POLITICA_POR_DECISAO = new Map([
+  [
+    'controle_de_origem',
+    'so a chave de servico escreve e le; nem a diretoria ve (FR-026, migracao 0011)',
+  ],
+])
 const PRODUCAO = process.argv.includes('--producao')
 const AMBIENTE = PRODUCAO ? 'PRODUCAO' : 'TESTE'
 const VARIAVEL = PRODUCAO ? 'NEXT_PUBLIC_SUPABASE_URL' : 'SUPABASE_TESTE_URL'
@@ -143,24 +162,63 @@ if (tabelas.length === 0) {
 }
 
 const semRls = tabelas.filter((t) => !t.rls_ativo)
+const semPolitica = tabelas.filter(
+  (t) => Number(t.politicas) === 0 && !SEM_POLITICA_POR_DECISAO.has(t.tabela)
+)
+const excecoes = tabelas.filter((t) => SEM_POLITICA_POR_DECISAO.has(t.tabela))
+
+/*
+ * POLITICA SEM CONCESSAO E DECORACAO, e este verificador ja deu verde para isso.
+ *
+ * As onze colecoes ficaram com controle de acesso ativo e quatro politicas cada,
+ * e recusavam tudo: nenhum papel tinha SELECT nem INSERT. O Postgres tem duas
+ * portas. A concessao diz se o papel pode tocar na tabela; a politica diz quais
+ * linhas ele ve. Olhar so a segunda produz o verde mais perigoso possivel — o
+ * site inteiro vazio, com todos os indicadores de seguranca acesos.
+ *
+ * Uma tabela sem politica E sem concessao esta fechada de proposito, e e o caso
+ * do controle de origem. Com politica e sem concessao, alguem escreveu regra
+ * para uma porta que ninguem pode atravessar.
+ */
+const inertes = tabelas.filter((t) => Number(t.politicas) > 0 && Number(t.concessoes) === 0)
 
 console.log(`\nControle de acesso por linha — ${AMBIENTE} — projeto ${ref}\n`)
 for (const t of tabelas) {
   const marca = t.rls_ativo ? 'ATIVO  ' : 'AUSENTE'
-  console.log(`  ${marca}  ${String(t.tabela).padEnd(24)} politicas: ${t.politicas}`)
-}
-console.log(`\n  verificadas: ${tabelas.length} · sem controle de acesso: ${semRls.length}`)
-
-if (semRls.length > 0) {
-  console.error(`\n=== FALHA — ${AMBIENTE} ===\n`)
-  console.error(
-    `  Tabela sem controle de acesso e bug, nao pendencia: ${semRls.map((t) => t.tabela).join(', ')}`
+  const nota = SEM_POLITICA_POR_DECISAO.has(t.tabela) ? '  (sem politica por decisao)' : ''
+  console.log(
+    `  ${marca}  ${String(t.tabela).padEnd(24)}` +
+      ` politicas: ${t.politicas} · concessoes: ${t.concessoes}${nota}`
   )
-  console.error('  Ative na propria migracao que cria a tabela (RP-11).\n')
+}
+console.log(
+  `\n  verificadas: ${tabelas.length}` +
+    ` · sem controle de acesso: ${semRls.length}` +
+    ` · sem politica: ${semPolitica.length}` +
+    ` · politica sem concessao: ${inertes.length}` +
+    ` · excecoes nomeadas: ${excecoes.length}`
+)
+
+if (semRls.length > 0 || semPolitica.length > 0 || inertes.length > 0) {
+  console.error(`\n=== FALHA — ${AMBIENTE} ===\n`)
+  if (semRls.length > 0) {
+    console.error(
+      `  Tabela sem controle de acesso e bug, nao pendencia: ${semRls.map((t) => t.tabela).join(', ')}`
+    )
+    console.error('  Ative na propria migracao que cria a tabela (RP-11).\n')
+  }
+  if (semPolitica.length > 0) {
+    console.error(`  Tabela sem politica nenhuma: ${semPolitica.map((t) => t.tabela).join(', ')}`)
+    console.error('  Com o controle de acesso ativo e nenhuma politica, esta tabela recusa')
+    console.error('  tudo: ela nao aparece no site e ninguem escreve nela. Escreva as')
+    console.error('  politicas, ou registre a ausencia com o motivo em SEM_POLITICA_POR_DECISAO')
+    console.error('  neste arquivo — decisao deliberada se escreve, esquecimento nao.\n')
+  }
   process.exit(1)
 }
 
 console.log(
   `\n=== VERIFICADO — ${AMBIENTE} ===\n\n` +
-    `  ${tabelas.length} tabela(s) lidas do catalogo, nenhuma sem controle de acesso.\n`
+    `  ${tabelas.length} tabela(s) lidas do catalogo: nenhuma sem controle de acesso,\n` +
+    `  nenhuma sem politica fora das ${excecoes.length} excecao(oes) nomeada(s).\n`
 )
