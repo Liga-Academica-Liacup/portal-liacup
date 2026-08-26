@@ -125,11 +125,11 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 
 **Teste independente**: pedir cada coleção e receber registros suficientes para lista, item único e coleção vazia.
 
-- [ ] T045 [US5] Criar `supabase/seed.sql` usando o **texto real** de `conteudo-institucional.md` onde ele existe: os quatro eixos, as duas orientadoras, o FAQ inteiro, os indicadores da home, o e-mail e o Instagram (FR-022, SC-011)
-- [ ] T046 [US5] Marcar **visivelmente** todo espaço reservado onde não há conteúdo aprovado — inclusive o texto da **secretaria**, que `conteudo-institucional.md` §3 registra como provisório e pendente de confirmação da liga (FR-023, SC-011)
-- [ ] T047 [US5] Garantir que as correções obrigatórias de `conteudo-institucional.md` §7 entram **corretas desde o primeiro dado**: `liacup.unb@gmail.com`, FCTS · Campus UnB Ceilândia, os **6** cargos do Estatuto e "Kerolyn Ramos Garcia" (FR-022, SC-011)
-- [ ] T048 [US5] Dar a cada coleção registros suficientes para exercitar **lista, item único e coleção vazia** — o terceiro é o estado que o `EstadoVazio` da F01 desenha, e sem dado ele nunca é verificado (FR-024)
-- [ ] T049 [US5] Ler criticamente todo o dado de exemplo procurando texto que possa ser confundido com informação institucional verdadeira, e registrar zero ocorrências. Na v1 do protótipo foram inventados e-mail, endereço e cargos plausíveis o bastante para alguém tomar por verdadeiros (FR-023, SC-011)
+- [X] T045 [US5] Criar `supabase/seed.sql` usando o **texto real** de `conteudo-institucional.md` onde ele existe: os quatro eixos, as duas orientadoras, o FAQ inteiro, os indicadores da home, o e-mail e o Instagram (FR-022, SC-011)
+- [X] T046 [US5] Marcar **visivelmente** todo espaço reservado onde não há conteúdo aprovado — inclusive o texto da **secretaria**, que `conteudo-institucional.md` §3 registra como provisório e pendente de confirmação da liga (FR-023, SC-011)
+- [X] T047 [US5] Garantir que as correções obrigatórias de `conteudo-institucional.md` §7 entram **corretas desde o primeiro dado**: `liacup.unb@gmail.com`, FCTS · Campus UnB Ceilândia, os **6** cargos do Estatuto e "Kerolyn Ramos Garcia" (FR-022, SC-011)
+- [X] T048 [US5] Dar a cada coleção registros suficientes para exercitar **lista, item único e coleção vazia** — o terceiro é o estado que o `EstadoVazio` da F01 desenha, e sem dado ele nunca é verificado (FR-024)
+- [X] T049 [US5] Ler criticamente todo o dado de exemplo procurando texto que possa ser confundido com informação institucional verdadeira, e registrar zero ocorrências. Na v1 do protótipo foram inventados e-mail, endereço e cargos plausíveis o bastante para alguém tomar por verdadeiros (FR-023, SC-011)
 
 **Ponto de verificação**: zero textos institucionais inventados.
 

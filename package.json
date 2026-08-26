@@ -23,6 +23,7 @@
     "test:politicas": "vitest run --config vitest.politicas.config.mts",
     "test:desempenho": "lhci autorun",
     "banco:migrar": "supabase db push",
+    "banco:semear": "supabase db query --linked --file supabase/seed.sql",
     "banco:tipos": "supabase gen types typescript --linked > src/lib/supabase/tipos.ts",
     "banco:tipos:check": "node scripts/verificar-tipos-do-banco.mjs",
     "banco:rls": "node scripts/verificar-rls.mjs",
