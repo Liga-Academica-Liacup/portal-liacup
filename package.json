@@ -26,7 +26,9 @@
     "banco:tipos": "supabase gen types typescript --linked > src/lib/supabase/tipos.ts",
     "banco:tipos:check": "node scripts/verificar-tipos-do-banco.mjs",
     "banco:rls": "node scripts/verificar-rls.mjs",
-    "banco:rls:producao": "node scripts/verificar-rls.mjs --producao"
+    "banco:rls:producao": "node scripts/verificar-rls.mjs --producao",
+    "purgar:dado-pessoal": "node scripts/purgar-dado-pessoal.mjs",
+    "purgar:dado-pessoal:simular": "node scripts/purgar-dado-pessoal.mjs --simular"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

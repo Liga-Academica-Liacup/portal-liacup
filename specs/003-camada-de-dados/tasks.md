@@ -107,13 +107,13 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 
 **Teste independente**: conferir que cada mensagem registra quando chegou e que a purga roda e apaga o que deve.
 
-- [ ] T038 [US4] Criar `src/lib/utils/resumo-de-origem.ts` com o resumo irreversível do endereço usando a biblioteca padrão do Node, **sem dependência nova**, com **sal secreto e rotacionável** lido de variável de ambiente. Sal fixo e público torna o resumo reversível por força bruta: o espaço IPv4 tem cerca de 4,3 bilhões de valores, que uma máquina comum percorre em minutos (FR-026, FR-027)
-- [ ] T039 [P] [US4] Documentar em `docs/` a **finalidade declarada, a base legal e o prazo de 24 meses** da coleta das mensagens, conforme data-model.md §5 (FR-019, SC-010)
-- [ ] T040 [US4] Criar `scripts/purgar-dado-pessoal.mjs`: apaga mensagens com mais de 24 meses **e** registros de origem com mais de 24 horas, **no mesmo procedimento** — dois mecanismos de purga é um que ninguém executa (FR-020, FR-026)
-- [ ] T041 [US4] Escrever o procedimento de purga no `README.md` em linguagem que **quem opera o portal entenda sem conhecer banco de dados**: o que apaga, quando rodar e como saber que deu certo (FR-020, SC-010)
-- [ ] T042 [US4] **Executar o procedimento de purga ao menos uma vez**, com dados de teste envelhecidos de propósito, e registrar o **número de registros afetados**. Procedimento escrito e nunca executado é procedimento que não funciona — e é o que impede o adiamento da purga automática de virar esquecimento (FR-025, SC-013)
-- [ ] T043 [US4] Conferir que **nenhum endereço de IP em claro** existe no banco e que o sal **não** está versionado (FR-021, SC-014)
-- [ ] T044 [US4] Conferir que nenhum registro de erro contém dado pessoal (FR-021)
+- [X] T038 [US4] Criar `src/lib/utils/resumo-de-origem.ts` com o resumo irreversível do endereço usando a biblioteca padrão do Node, **sem dependência nova**, com **sal secreto e rotacionável** lido de variável de ambiente. Sal fixo e público torna o resumo reversível por força bruta: o espaço IPv4 tem cerca de 4,3 bilhões de valores, que uma máquina comum percorre em minutos (FR-026, FR-027)
+- [X] T039 [P] [US4] Documentar em `docs/` a **finalidade declarada, a base legal e o prazo de 24 meses** da coleta das mensagens, conforme data-model.md §5 (FR-019, SC-010)
+- [X] T040 [US4] Criar `scripts/purgar-dado-pessoal.mjs`: apaga mensagens com mais de 24 meses **e** registros de origem com mais de 24 horas, **no mesmo procedimento** — dois mecanismos de purga é um que ninguém executa (FR-020, FR-026)
+- [X] T041 [US4] Escrever o procedimento de purga no `README.md` em linguagem que **quem opera o portal entenda sem conhecer banco de dados**: o que apaga, quando rodar e como saber que deu certo (FR-020, SC-010)
+- [X] T042 [US4] **Executar o procedimento de purga ao menos uma vez**, com dados de teste envelhecidos de propósito, e registrar o **número de registros afetados**. Procedimento escrito e nunca executado é procedimento que não funciona — e é o que impede o adiamento da purga automática de virar esquecimento (FR-025, SC-013)
+- [X] T043 [US4] Conferir que **nenhum endereço de IP em claro** existe no banco e que o sal **não** está versionado (FR-021, SC-014)
+- [X] T044 [US4] Conferir que nenhum registro de erro contém dado pessoal (FR-021)
 
 **Ponto de verificação**: a purga rodou, com número, e zero IPs em claro.
 

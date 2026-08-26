@@ -238,15 +238,69 @@ Tudo o que define o banco — esquema, políticas de acesso e dados de exemplo �
 > repositório do que está no ar**, e quem fizer isso quebra a próxima migração. Esquema criado
 > clicando existe só na conta de quem clicou: sem histórico, sem revisão, impossível de recriar.
 
-| Comando                     | O que faz                                      |
-| --------------------------- | ---------------------------------------------- |
-| `npm run banco:migrar`      | Aplica as migrações pendentes                  |
-| `npm run banco:tipos`       | Regenera os tipos a partir do esquema          |
-| `npm run banco:tipos:check` | Falha se os tipos versionados estiverem velhos |
+| Comando                     | O que faz                                               |
+| --------------------------- | ------------------------------------------------------- |
+| `npm run banco:migrar`      | Aplica as migrações pendentes                           |
+| `npm run banco:tipos`       | Regenera os tipos a partir do esquema                   |
+| `npm run banco:tipos:check` | Falha se os tipos versionados estiverem velhos          |
+| `npm run banco:rls`         | Lista tabela por tabela: acesso, políticas e concessões |
+
+**Antes de qualquer comando de banco, entre na sua conta:** `npx supabase login`. Nenhuma senha de
+banco fica no `.env` — os comandos acima falam com o Supabase pela sua conta, e os identificadores
+dos projetos saem das próprias URLs, que não são segredo.
 
 **Toda tabela nasce com controle de acesso por linha ativo**, na mesma migração que a cria. Acesso
 ativado sem política recusa tudo — ativa primeiro, abre depois. A chave pública do Supabase vai para
 o navegador de propósito, e é só isso que impede qualquer pessoa de ler e escrever no banco.
+
+> **Duas portas, não uma.** No Postgres, a **concessão** diz se um papel pode tocar na tabela e a
+> **política** diz quais linhas ele vê. Uma tabela com políticas e sem concessão recusa tudo, e
+> parece configurada. O `npm run banco:rls` mostra as duas colunas por isso — e falha quando encontra
+> política sem concessão.
+
+**Migração vai para produção depois do merge, nunca antes.** Durante o desenvolvimento, aplique só no
+projeto de teste — é lá que ela deve quebrar. O ADR-0005 explica por quê e registra a única exceção
+já aberta.
+
+## Apagar dado pessoal
+
+O portal guarda dado de duas coisas, as duas vindas do formulário de contato: **as mensagens**, por
+**24 meses**, e um **resumo do endereço de quem enviou** — que não permite voltar ao endereço —, por
+**24 horas**. Passado o prazo, esse dado precisa sair do banco. É uma obrigação, não uma faxina.
+
+**Enquanto isso não é automático, depende de alguém rodar um comando.** A automação é da F25.
+Rode isto **uma vez por mês** — anote no calendário da diretoria, junto das outras tarefas fixas:
+
+```bash
+npm run purgar:dado-pessoal
+```
+
+Antes de apagar de verdade, dá para ver o que sairia sem tirar nada:
+
+```bash
+npm run purgar:dado-pessoal:simular
+```
+
+**Como saber que deu certo.** O comando responde com duas linhas e um total, assim:
+
+```text
+  mensagens            prazo: 24 meses   apagados: 3
+  controle_de_origem   prazo: 24 horas   apagados: 2
+
+  total apagado: 5 registro(s)
+```
+
+**"apagados: 0" é um resultado bom** — quer dizer que nada tinha passado do prazo ainda. O que não é
+bom é a mensagem `NAO EXECUTADA`: aí a purga não conseguiu nem olhar, e precisa rodar de novo. As
+duas coisas são diferentes de propósito, porque "não havia o que apagar" e "não consegui apagar" se
+parecem demais quando ninguém diz qual foi.
+
+**O que é apagado não volta.** Não há lixeira, e é assim mesmo: dado pessoal guardado numa lixeira
+continua guardado. Para o conteúdo do site é o contrário — apagar notícia, evento ou projeto apenas
+arquiva, e o banco recusa a remoção definitiva até para a diretoria.
+
+Finalidade, base legal e o que exatamente é guardado estão em
+[docs/DADOS-PESSOAIS.md](docs/DADOS-PESSOAIS.md).
 
 ## O design system: onde ver o sistema inteiro
 
