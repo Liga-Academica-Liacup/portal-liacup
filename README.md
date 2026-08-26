@@ -160,13 +160,24 @@ quase sempre uma imagem grande demais. Corrija a causa.
 Nao ha passo manual. O que entra na `main` vai para o ar sozinho, e toda alteracao proposta ganha
 um endereco de pre-visualizacao proprio.
 
+O modelo de branches é **GitHub Flow**, escrito no
+[`docs/ADR-0005-modelo-de-branches.md`](docs/ADR-0005-modelo-de-branches.md). Em uma frase:
+**a `main` é sempre publicável, tudo entra por alteração proposta com CI verde, e incorporou está no
+ar.**
+
 O fluxo de trabalho, da F01 em diante:
 
-1. crie um branch: `git checkout -b feat/F01-design-system`;
+1. crie um branch **a partir da `main`**: `git checkout -b feat/F02-camada-de-dados`;
 2. abra uma alteracao proposta (pull request);
 3. o CI roda todas as verificacoes automaticamente;
 4. revise pelo endereco de pre-visualizacao;
 5. incorpore. **Com o CI vermelho, o botao de incorporar fica bloqueado.**
+6. apague a branch depois de incorporada.
+
+**Se o portal quebrar em produção**: branch `fix/` a partir da `main`, a menor correção possível,
+alteração proposta com `URGENTE` no título. O CI verde continua obrigatório — leva minutos, e é o
+que impede uma correção apressada de quebrar outra coisa. O procedimento completo está no ADR-0005,
+seção 2.4.
 
 > A F00 foi desenvolvida direto na `main`, como excecao de arranque: nao havia CI nem protecao a
 > respeitar ainda, e o primeiro CI precisa rodar uma vez para que as verificacoes passem a existir.
@@ -219,6 +230,8 @@ um ADR novo.
 
 - [`docs/ADR-0001-stack.md`](docs/ADR-0001-stack.md) — por que Next.js, TypeScript, Supabase e Vercel
 - [`docs/ADR-0002-envio-de-email.md`](docs/ADR-0002-envio-de-email.md) — por que Resend
+- [`docs/ADR-0004-controles-e-fidelidade.md`](docs/ADR-0004-controles-e-fidelidade.md) — tamanho dos controles e verificação de fidelidade
+- [`docs/ADR-0005-modelo-de-branches.md`](docs/ADR-0005-modelo-de-branches.md) — GitHub Flow, e por que não GitFlow
 - [`docs/ADR-0003-tokens-e-acessibilidade.md`](docs/ADR-0003-tokens-e-acessibilidade.md) — de onde
   vem os tokens e as correcoes de contraste
 
