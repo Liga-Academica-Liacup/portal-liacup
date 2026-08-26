@@ -30,3 +30,7 @@ Thumbs.db
 # Estado local da ferramenta do Supabase (ref do projeto ligado, versoes dos
 # servicos). Muda conforme a maquina de quem desenvolve, e nao descreve o projeto.
 supabase/.temp/
+
+# Cache de compilacao incremental do TypeScript: gerado a cada build,
+# diferente em cada maquina, conflita em todo merge. Nao se versiona.
+*.tsbuildinfo
