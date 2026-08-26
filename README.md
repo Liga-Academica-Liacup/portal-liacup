@@ -242,6 +242,107 @@ conferido antes de cada entrega) e
 
 ---
 
+## O banco de dados
+
+Tudo o que define o banco — esquema, políticas de acesso e dados de exemplo — mora **versionado** em
+`supabase/`, não no painel do Supabase.
+
+> **Nunca altere o banco pelo painel.** Ele serve para olhar. Alterar por lá **desalinha o
+> repositório do que está no ar**, e quem fizer isso quebra a próxima migração. Esquema criado
+> clicando existe só na conta de quem clicou: sem histórico, sem revisão, impossível de recriar.
+
+| Comando                     | O que faz                                               |
+| --------------------------- | ------------------------------------------------------- |
+| `npm run banco:migrar`      | Aplica as migrações pendentes                           |
+| `npm run banco:tipos`       | Regenera os tipos a partir do esquema                   |
+| `npm run banco:tipos:check` | Falha se os tipos versionados estiverem velhos          |
+| `npm run banco:rls`         | Lista tabela por tabela: acesso, políticas e concessões |
+
+**Antes de qualquer comando de banco, entre na sua conta:** `npx supabase login`. Nenhuma senha de
+banco fica no `.env` — os comandos acima falam com o Supabase pela sua conta, e os identificadores
+dos projetos saem das próprias URLs, que não são segredo.
+
+**Toda tabela nasce com controle de acesso por linha ativo**, na mesma migração que a cria. Acesso
+ativado sem política recusa tudo — ativa primeiro, abre depois. A chave pública do Supabase vai para
+o navegador de propósito, e é só isso que impede qualquer pessoa de ler e escrever no banco.
+
+> **Duas portas, não uma.** No Postgres, a **concessão** diz se um papel pode tocar na tabela e a
+> **política** diz quais linhas ele vê. Uma tabela com políticas e sem concessão recusa tudo, e
+> parece configurada. O `npm run banco:rls` mostra as duas colunas por isso — e falha quando encontra
+> política sem concessão.
+
+**Migração vai para produção depois do merge, nunca antes.** Durante o desenvolvimento, aplique só no
+projeto de teste — é lá que ela deve quebrar. O ADR-0005 explica por quê e registra a única exceção
+já aberta.
+
+## Quando o site fica esquisito num domingo
+
+O Supabase do plano gratuito **pausa o banco por inatividade**. Ninguém aperta nada: ele simplesmente
+para de responder até alguém entrar no painel e reativar. Esta seção existe para que a primeira
+pessoa a encontrar o site estranho ache a explicação aqui, em vez de descobrir sozinha no pior
+momento.
+
+**O que acontece, por tipo de página:**
+
+| Página                       | Com o banco pausado                                         |
+| ---------------------------- | ----------------------------------------------------------- |
+| Páginas públicas de conteúdo | **Continuam no ar**, mostrando a última versão boa          |
+| A atualização dessas páginas | Falha em silêncio — o conteúdo fica alguns minutos atrasado |
+| **Formulário de contato**    | **A mensagem não é gravada.** Quem escreveu perde o texto   |
+| **Painel administrativo**    | **Não abre**                                                |
+
+As páginas públicas sobrevivem porque o conteúdo é lido de forma **estática com revalidação**, nunca
+consultando o banco a cada acesso. **Isso não resolve a pausa — resolve que a pausa não derruba o
+site.** Para quem visita, conteúdo de alguns minutos atrás é indistinguível de estar tudo em dia.
+
+**O que continua quebrado, e está escrito assim de propósito:** o formulário e o painel exigem o
+banco vivo. Não há como contornar isso do lado do site. A rotina que evita a pausa — e o monitor que
+avisa antes de alguém reclamar — é da **F25**.
+
+**O que fazer agora, se acontecer:** entre no painel do Supabase com a conta da liga e reative o
+projeto. Ele volta em alguns minutos, e nada foi perdido além das mensagens que alguém tentou enviar
+enquanto estava fora.
+
+## Apagar dado pessoal
+
+O portal guarda dado de duas coisas, as duas vindas do formulário de contato: **as mensagens**, por
+**24 meses**, e um **resumo do endereço de quem enviou** — que não permite voltar ao endereço —, por
+**24 horas**. Passado o prazo, esse dado precisa sair do banco. É uma obrigação, não uma faxina.
+
+**Enquanto isso não é automático, depende de alguém rodar um comando.** A automação é da F25.
+Rode isto **uma vez por mês** — anote no calendário da diretoria, junto das outras tarefas fixas:
+
+```bash
+npm run purgar:dado-pessoal
+```
+
+Antes de apagar de verdade, dá para ver o que sairia sem tirar nada:
+
+```bash
+npm run purgar:dado-pessoal:simular
+```
+
+**Como saber que deu certo.** O comando responde com duas linhas e um total, assim:
+
+```text
+  mensagens            prazo: 24 meses   apagados: 3
+  controle_de_origem   prazo: 24 horas   apagados: 2
+
+  total apagado: 5 registro(s)
+```
+
+**"apagados: 0" é um resultado bom** — quer dizer que nada tinha passado do prazo ainda. O que não é
+bom é a mensagem `NAO EXECUTADA`: aí a purga não conseguiu nem olhar, e precisa rodar de novo. As
+duas coisas são diferentes de propósito, porque "não havia o que apagar" e "não consegui apagar" se
+parecem demais quando ninguém diz qual foi.
+
+**O que é apagado não volta.** Não há lixeira, e é assim mesmo: dado pessoal guardado numa lixeira
+continua guardado. Para o conteúdo do site é o contrário — apagar notícia, evento ou projeto apenas
+arquiva, e o banco recusa a remoção definitiva até para a diretoria.
+
+Finalidade, base legal e o que exatamente é guardado estão em
+[docs/DADOS-PESSOAIS.md](docs/DADOS-PESSOAIS.md).
+
 ## O design system: onde ver o sistema inteiro
 
 O portal tem um conjunto de componentes de base — botão, cartão, etiqueta, campo de formulário,

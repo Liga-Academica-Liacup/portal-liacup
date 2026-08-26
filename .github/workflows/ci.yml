@@ -38,6 +38,22 @@ jobs:
       - name: Verificar tipos
         run: npm run verificar:tipos
 
+      # Regera os tipos a partir do esquema e falha se o versionado diferir. Sem
+      # este passo, "os tipos estao atualizados" e promessa: o arquivo continua
+      # compilando depois que alguem altera o banco, so que descrevendo um
+      # esquema que nao existe mais (FR-005).
+      #
+      # Sem continue-on-error e sem `if:` que pule quando o segredo falta, pelo
+      # mesmo motivo da linha 3: um passo que se ignora quando nao consegue rodar
+      # e um verde que nao mediu nada. Se a SUPABASE_ACCESS_TOKEN nao estiver no
+      # repositorio, este passo fica VERMELHO dizendo que NAO VERIFICOU — que e a
+      # verdade — em vez de verde por omissao.
+      - name: Tipos do banco conferem com o esquema
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+        run: npm run banco:tipos:check
+
       - name: Analise estatica
         run: npm run lint
 
@@ -52,6 +68,16 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # A BARREIRA 3 roda DEPOIS do Build, e essa ordem e o ponto: ela e a unica
+      # que verifica o artefato entregue ao navegador, e nao o codigo-fonte. As
+      # barreiras 1 e 2 ficam verdes quando um componente de servidor passa a
+      # chave por prop — o valor vai para a pagina gerada sem nenhum arquivo de
+      # cliente mencionar a variavel.
+      - name: Chave de servico fora do pacote compilado
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run verificar:chave
 
       # A maquina do CI vem sem navegador. Esquecer este passo e a causa mais
       # comum de primeiro CI vermelho, com erro que nao tem nada a ver com o codigo.

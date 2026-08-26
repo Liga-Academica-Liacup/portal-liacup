@@ -39,6 +39,18 @@ src/
     global.css
 ```
 
+Cinco pastas de raiz completam a árvore, acrescentadas conforme foram sendo necessárias e registradas
+aqui em vez de aparecerem sem aviso:
+
+```
+tests/e2e/                  Testes de ponta a ponta. Nao pertencem a nenhuma camada de src/
+scripts/                    Verificacoes proprias do projeto
+public/                     Arquivo estatico. Convencao obrigatoria do Next
+supabase/                   Esquema, politicas e dados de exemplo, versionados (F02)
+  migrations/               Arquivos numerados, rodam em ordem
+tests/politicas/            Testes de politica de acesso: permissao E recusa (F02)
+```
+
 **Regra de dependência entre camadas** — vale mais que a estrutura em si:
 
 | Camada | Pode importar de | Nunca importa de |
@@ -191,6 +203,45 @@ proposta com `URGENTE` no título, CI verde continua obrigatório, incorporar as
 push direto, nunca desligar a proteção, nunca `--no-verify` — se o CI impede a correção de uma
 emergência, isso é informação sobre o CI e vira tarefa, não exceção. Procedimento completo no
 ADR-0005, seção 2.4.
+
+---
+
+## 8.1 Requisitos permanentes
+
+Regras que valem para **toda** feature, numeradas para que cada spec as **cite** em vez de
+redescobri-las. Elas existiam antes desta seção — espalhadas entre a constitution, estes padrões, os
+ADRs e o quickstart de quem lembrou. Foi assim que a contagem de dependências, que era FR na F00,
+virou evidência de quickstart na F01 e simplesmente não apareceu na F02.
+
+**Como usar**: a spec de cada feature lista os RP que se aplicam. Para os que **não** se aplicam, ela
+diz por quê — "nenhuma tela nesta feature" é resposta suficiente para os de interface.
+
+**O que NÃO entra aqui**: regra que valeu para uma feature só. Esta seção perde o sentido se virar
+depósito.
+
+| # | Requisito permanente | Origem | Como se verifica |
+|---|---|---|---|
+| **RP-01** | A contagem de **dependências diretas** é declarada, e cada nova é justificada por escrito no `plan.md` **antes** de entrar | F00 FR-025 | Contagem de `dependencies` + `devDependencies`, comparada com a tabela do plano |
+| **RP-02** | **Zero** valores de cor, espaçamento, raio, sombra ou tipografia escritos à mão fora de `tokens.css` | Seção 3 · F00 FR-010 | `npm run verificar:tokens` |
+| **RP-03** | **Nenhum token existente é alterado** sem ADR. Token novo tem **origem nomeada** | ADR-0003 · F01 FR-010 | Diferença do `tokens.css` mostra só linhas acrescentadas |
+| **RP-04** | Alvo de toque de **44 px** em todas as larguras | Princípio II · ADR-0004 2.1 | Medição no teste de ponta a ponta, **com o número de elementos medidos** |
+| **RP-05** | **Zero** rolagem horizontal em 360, 390, 430, 480, 768, 1024 e 1280 px | Princípio III · checklist C1 | `scrollWidth <= clientWidth` nas sete larguras |
+| **RP-06** | Lighthouse **desempenho ≥ 90** e **acessibilidade ≥ 95** | Seção 9 · F00 FR-029 | `npm run test:desempenho`, contra a versão compilada |
+| **RP-07** | **Zero** violações do axe-core em toda página entregue | Princípio II · F00 FR-014 | axe dentro do teste de ponta a ponta |
+| **RP-08** | Toda diferença em relação ao design aprovado tem **veredito e motivo escrito** | ADR-0004 2.4 | `FIDELIDADE.md` da feature: zero linhas não idênticas sem motivo |
+| **RP-09** | Todo valor de contraste **nomeia as duas cores e a superfície** medida | ADR-0003 §4.0 | Leitura: número solto não vale como registro |
+| **RP-10** | **Nenhum segredo** no repositório nem no histórico | Princípio IV · F00 FR-023 | Varredura do estado atual e do histórico |
+| **RP-11** | Toda tabela nasce com **controle de acesso por linha ativo**, e a política é testada provando que **bloqueia** — não só que permite | Princípio IV · F02 | Suíte de políticas, com o número de células de recusa verificadas |
+| **RP-12** | **Verificação que ninguém viu falhar não conta.** Toda verificação nova é demonstrada **falhando** diante de violação real e voltando ao verde. E toda verificação **diz quanto mediu** — arquivos varridos, elementos medidos, células checadas | F00 (V1–V5) · F01 · F02 | Duas execuções registradas com resultados opostos, **e o contador na saída** |
+
+**O RP-12 é o que sustenta os outros onze**, e tem duas metades que se completam:
+
+- **vista falhando** — sem isso, uma verificação quebrada e uma satisfeita produzem a mesma saída
+  verde. Foi o que a F00 aprendeu com o CI que não checava nada;
+- **com contador** — sem isso, **"nada falhou" e "nada foi medido" produzem a mesma saída verde**.
+  Foi o que pegou os 20 alvos de toque da F01: o número estava honesto, mas media uma página que não
+  mostrava tudo. Um verificador que varre zero arquivos e um que aprova tudo são indistinguíveis sem
+  o contador.
 
 ---
 

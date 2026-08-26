@@ -134,6 +134,68 @@ const configuracao = [
       ],
     },
   },
+
+  /*
+   * BARREIRA 2 DA CHAVE DE SERVICO (F02 T031).
+   *
+   * A chave de servico ignora TODAS as politicas de acesso. Se chegar ao
+   * navegador, qualquer pessoa passa a ter acesso total ao banco — e nao ha como
+   * despublicar o que ja foi baixado. E o unico item desta feature capaz de dano
+   * irreversivel.
+   *
+   * Esta regra recusa a variavel em qualquer arquivo, e o alivio vem logo abaixo
+   * para o unico autorizado. Escrita nesta ordem de proposito: um arquivo novo
+   * nasce proibido. A lista de excecoes e que precisa crescer conscientemente,
+   * nunca a lista de proibicoes.
+   *
+   * ELA VERIFICA O CODIGO, E POR ISSO NAO BASTA. Um valor chega ao navegador sem
+   * nenhum arquivo de cliente mencionar a variavel: basta um componente de
+   * servidor passa-lo como prop. Quem pega esse caso e a barreira 3, que varre o
+   * pacote compilado — o artefato, nao o codigo.
+   */
+  {
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "MemberExpression[object.object.name='process'][object.property.name='env']" +
+            "[property.name='SUPABASE_SERVICE_ROLE_KEY']",
+          message:
+            'So src/lib/supabase/servidor.ts pode ler a chave de servico. Ela ignora todas as ' +
+            'politicas de acesso, e no navegador nao ha como despublicar o que ja foi baixado. ' +
+            'Para leitura e escrita comuns existe criarClienteDeServidor(), que respeita as ' +
+            'politicas. Ver docs/PADROES-DE-CODIGO.md, secao 8.1, RP-09.',
+        },
+        {
+          selector: "Literal[value='SUPABASE_SERVICE_ROLE_KEY']",
+          message:
+            'O NOME da chave de servico tambem so aparece em src/lib/supabase/servidor.ts. ' +
+            'Ler a variavel por nome montado em texto contorna a regra acima sem contornar o ' +
+            'risco. Ver docs/PADROES-DE-CODIGO.md, secao 8.1, RP-09.',
+        },
+      ],
+    },
+  },
+  {
+    /*
+     * O UNICO arquivo autorizado. Se esta lista ganhar um segundo caminho de
+     * src/, a barreira 2 deixou de valer a pena — e a conversa e sobre por que,
+     * nao sobre acrescentar a linha.
+     */
+    files: ['src/lib/supabase/servidor.ts'],
+    rules: { 'no-restricted-syntax': 'off' },
+  },
+  {
+    /*
+     * Os scripts de linha de comando rodam no Node, nunca sao empacotados e
+     * nunca chegam a navegador nenhum: a purga precisa da chave para ignorar as
+     * politicas, e o verificador da barreira 3 precisa do nome para procura-lo
+     * no pacote. Esta excecao nao abre a porta que a barreira fecha.
+     */
+    files: ['scripts/**'],
+    rules: { 'no-restricted-syntax': 'off' },
+  },
 ]
 
 export default configuracao

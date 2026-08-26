@@ -205,3 +205,99 @@ Não se aplica: nenhum dado pessoal, nenhum acesso a banco, nenhum segredo. Entr
 2. **CI e merge barrado** a confirmar na alteração proposta.
 3. **`.nav`, `.table` e `.text-muted`** ficam com valor reprovado no `liacup.css`, anotados com a
    correção. Viram tarefa nas features que os converterem.
+
+# Preenchimento — F02 Camada de dados
+
+**Feature:** F02 · **Data:** 26/08/2026 · **Branch:** `feat/F02-camada-de-dados`
+
+Evidências completas em `specs/003-camada-de-dados/EVIDENCIAS-F02.md` — 33 evidências, 30 verificadas
+e 3 declaradas como não executadas.
+
+## A. Fidelidade à spec
+
+| #   | Resultado                                                                                                                                     |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | 33 FR percorridos; 60 tarefas, 60 concluídas                                                                                                  |
+| A2  | 16 SC; 15 verificados, o SC-002 verificado no projeto de teste e pendente em produção até o merge (E3)                                        |
+| A3  | Uma adição além do previsto: a migração 0012 de concessões. Sem ela as políticas escritas não fazem nada — E7                                  |
+| A4  | Uma divergência reportada e não corrigida em silêncio: T046 × seção 3 de `conteudo-institucional.md`, sobre o texto da Secretaria. Seção 10 das evidências |
+
+## B. Não quebrou nada
+
+| #   | Resultado                                                                       |
+| --- | ------------------------------------------------------------------------------- |
+| B1  | `npm run build` — verde                                                         |
+| B2  | `tsc --noEmit` — 0 erro                                                         |
+| B3  | `npm run lint` — 0 erro                                                         |
+| B4  | `npm test` — 71 passaram, 0 falharam (eram 65 na F01). `npm run test:banco` — 147 passaram |
+| B5  | Publicar, arquivar e escrita concorrente exercidos em `tests/banco/`; login é da F14, e envio de mensagem tem a inserção anônima coberta em `tests/politicas/` |
+
+## C. Responsividade
+
+Não se aplica: nenhuma tela nova. Os 84 testes de ponta a ponta da F01, que medem as sete larguras,
+continuam passando.
+
+## D. Acessibilidade
+
+Não se aplica: nenhuma tela nova. Zero violações de axe-core nas páginas existentes, medido de novo.
+
+## E. Segurança e dados
+
+| #   | Resultado                                                                                                                                  |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| E1  | **13 tabelas verificadas, 0 sem controle de acesso**, nos dois projetos. Políticas: teste completo, produção depois do merge (E1, E2, E3)   |
+| E2  | Bundle: 149 arquivos varridos, 35 entregues ao navegador, **0 ocorrências**. Histórico: 6 credenciais reais buscadas em todos os commits, **0 ocorrências** |
+| E3  | O banco valida: enum fechado no eixo de projeto, CHECK de tamanho nas mensagens — um deles recusou um INSERT durante o teste da purga        |
+| E4  | Finalidade, base legal e os dois prazos em `docs/DADOS-PESSOAIS.md`; purga **executada**, 5 removidos e 2 preservados                        |
+| E5  | Chamadas de log de `src/` e `scripts/` auditadas uma a uma: nenhuma leva dado pessoal                                                        |
+| E6  | Parcial e declarado: esta feature distingue **anônimo de autenticado**. Os três papéis do ADR-0001 são da F14 — 85 células de recusa cobrem o que existe hoje |
+
+## F. Desempenho
+
+| #   | Resultado                                                             |
+| --- | --------------------------------------------------------------------- |
+| F1  | Todas as asserções do Lighthouse passaram, 3 execuções                |
+| F2  | Idem                                                                  |
+| F3  | Não se aplica: nenhuma imagem nova                                    |
+| F4  | **22 dependências diretas** — 4 de execução, 18 de desenvolvimento. `@supabase/ssr` ausente, e a ausência é verificada junto da contagem |
+
+## G. Conteúdo
+
+| #   | Resultado                                                                                        |
+| --- | ------------------------------------------------------------------------------------------------ |
+| G1  | 49 literais no bloco de espaço reservado do seed, **0 sem a marca `[EXEMPLO]`**                   |
+| G2  | Idem. A exceção — o texto da Secretaria — está na divergência reportada em A4                    |
+| G3  | Frentes de trabalho, orientadoras, fundadores e FAQ entram literais. As 4 correções obrigatórias conferidas: **0 ocorrências** dos valores errados |
+| G4  | Revisado                                                                                          |
+
+## H. Manutenção
+
+| #   | Resultado                                                                                                    |
+| --- | ------------------------------------------------------------------------------------------------------------ |
+| H1  | README ganhou três seções: apagar dado pessoal, o comportamento com o banco pausado e as duas portas do Postgres |
+| H2  | ADR-0005 ganhou a seção de migrações. A decisão das concessões está na própria migração 0012, com o motivo por extenso |
+| H3  | 2 dependências novas, as previstas no plano. Nenhuma além                                                     |
+| H4  | Cada migração e cada script explicam **por que**, não o que                                                   |
+| H5  | 0 `TODO` no código. As pendências estão na seção 9 das evidências e no relatório                              |
+
+---
+
+## Veredito
+
+- [x] **Aprovado com ressalvas** — segue, com as pendências abaixo registradas
+
+**Itens reprovados:** nenhum.
+
+**Pendências registradas:**
+
+1. Aplicar as migrações 0009 a 0013 em **produção**, depois do merge (E3).
+2. Cadastrar `SUPABASE_ACCESS_TOKEN` e `SUPABASE_SERVICE_ROLE_KEY` como segredos do repositório, e
+   `NEXT_PUBLIC_SUPABASE_URL` como variável. Sem eles, os dois passos novos do CI ficam **vermelhos
+   dizendo que não verificaram** — que é o comportamento correto, e deixa o CI desta branch vermelho.
+3. Confirmar com a liga o texto da **Secretaria**, ainda provisório.
+
+**Observação para o Gabriel — onde olhar com atenção:**
+
+A **E7**: as políticas ficaram escritas e inertes por falta de concessão, com todos os indicadores de
+segurança verdes. É o tipo de verde que este projeto inteiro existe para não aceitar, e ele passou
+por aqui. Vale conferir se a coluna de concessões do verificador cobre o que você esperaria dela.

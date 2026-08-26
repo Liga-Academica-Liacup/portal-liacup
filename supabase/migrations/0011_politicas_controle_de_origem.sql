@@ -1,0 +1,22 @@
+-- T023 — politicas do controle de origem: NENHUMA, e isso e a politica (FR-026).
+--
+-- Esta tabela guarda o resumo irreversivel do endereco de quem envia mensagem,
+-- para conter abuso do formulario. E o registro mais sensivel da feature, e o
+-- unico com prazo de horas em vez de meses.
+--
+-- Com o controle de acesso ativo e NENHUMA politica, toda operacao e recusada
+-- para o anonimo E para quem esta autenticado. So a chave de servico atravessa —
+-- e ela existe em um unico arquivo do projeto, com tres barreiras automaticas
+-- impedindo que chegue ao navegador.
+--
+-- Ou seja: quem escreve aqui e o servidor, no momento em que a mensagem chega; e
+-- quem le e apaga e a purga. Nem a diretoria autenticada ve esta tabela, porque
+-- nao ha nada que ela precise fazer com ela.
+--
+-- ESTA AUSENCIA E DELIBERADA E ESTA REGISTRADA NO VERIFICADOR DE COBERTURA:
+-- scripts/verificar-rls.mjs falha quando uma tabela nao tem politica, e traz
+-- `controle_de_origem` numa lista curta de excecoes nomeadas. Sem essa lista, a
+-- unica forma de o verificador aceitar esta tabela seria nao verificar nenhuma.
+
+-- (Sem comandos. A ausencia de politica E o comportamento pretendido.)
+select 1;

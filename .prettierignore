@@ -16,3 +16,14 @@ liacup.css
 docs/
 specs/
 .specify/
+
+# Tipos GERADOS a partir do esquema do banco (F02 D5). O Prettier nao os formata
+# por um motivo mecanico, nao estetico: `banco:tipos:check` compara este arquivo
+# com o que a ferramenta do Supabase produz agora. Formatar aqui faria a
+# comparacao divergir para sempre, e um passo do CI que so pode falhar nao mede
+# mais nada.
+src/lib/supabase/tipos.ts
+
+# Estado local da ferramenta do Supabase: ref do projeto ligado, versoes. Nao e
+# codigo do projeto e nao vai para o repositorio.
+supabase/.temp/

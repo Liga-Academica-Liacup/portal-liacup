@@ -133,6 +133,12 @@ Tabelas de sistema: `perfis` (usuário + papel), `mensagens` (contato: nome, e-m
 
 Esse esboço vira modelo definitivo no `plan.md` da primeira feature de dados. Não tratar como fechado.
 
+> **Nota de 21/08/2026 — o "IP não armazenado" acima vale para a tabela `mensagens`, e continua
+> valendo.** Ele **não** significa que limitar robô seja impossível: o risco E3 do ADR-0002 foi
+> corrigido para usar um **resumo irreversível** do IP, em **tabela separada**, apagado em 24 horas.
+> Ver ADR-0002, adendo de 21/08/2026. Quem ler só esta linha e concluir que não dá para conter spam
+> vai chegar à conclusão errada.
+
 ---
 
 ## 4. Consequências

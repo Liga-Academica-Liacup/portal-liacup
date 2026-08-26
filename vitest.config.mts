@@ -8,8 +8,16 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
-    // Os testes de ponta a ponta sao do Playwright e nao rodam aqui.
-    exclude: ['node_modules/**', 'tests/e2e/**', '.next/**'],
+    // Os testes de ponta a ponta sao do Playwright e nao rodam aqui. Os de
+    // banco precisam do projeto Supabase de teste no ar e tem config
+    // propria — ver vitest.banco.config.mts.
+    exclude: [
+      'node_modules/**',
+      'tests/e2e/**',
+      'tests/politicas/**',
+      'tests/banco/**',
+      '.next/**',
+    ],
   },
   resolve: {
     alias: {

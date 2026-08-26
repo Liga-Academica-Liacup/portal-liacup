@@ -194,7 +194,7 @@ Cada linha da tabela vira uma trinca spec/plan/tasks. A ordem importa: ela foi m
 | --- | ------------------------------------------------------------------------ |
 | F14 | Autenticação real: login, sessão, recuperação de senha, papéis           |
 | F15 | Estrutura do painel: layout, menu, controle de acesso por papel          |
-| F16 | CRUD genérico: listar, criar, editar, excluir com confirmação e desfazer |
+| F16 | CRUD genérico: listar, criar, editar, excluir com confirmação e desfazer. **Inclui listar o que está arquivado e restaurar** — decidido no clarify da F02: excluir arquiva em vez de apagar, e arquivar só é recuperação se a diretoria conseguir ver e restaurar pelo painel |
 | F17 | Formulários por seção, reaproveitando um formulário por coleção          |
 | F18 | Upload de imagens com redimensionamento e limite de tamanho              |
 | F19 | Caixa de mensagens: lista, leitura, arquivar, excluir, contador          |
@@ -205,10 +205,10 @@ Cada linha da tabela vira uma trinca spec/plan/tasks. A ordem importa: ela foi m
 
 | #   | Feature                                                                |
 | --- | ---------------------------------------------------------------------- |
-| F22 | SEO: metadados, Open Graph, `sitemap.xml`, dados estruturados          |
+| F22 | SEO: metadados, Open Graph, `sitemap.xml`, dados estruturados. **Decide o que acontece com a vitrine em produção** — a página `/vitrine` da F01 é ferramenta de quem desenvolve, não conteúdo da liga; a decisão é entre não publicá-la, publicá-la fora do `sitemap.xml` e do índice dos buscadores, ou protegê-la. Fica aqui porque é aqui que o projeto passa a dizer, arquivo por arquivo, o que os buscadores enxergam |
 | F23 | Acessibilidade WCAG 2.1 AA e desempenho                                |
 | F24 | LGPD: política de privacidade, base legal, retenção e purga            |
-| F25 | Observabilidade: monitor de disponibilidade, rotina anti-pausa, backup |
+| F25 | Observabilidade: monitor de disponibilidade, rotina anti-pausa, backup. **Dona nominal da automação da purga de dado pessoal** — o ADR-0001 R6 promete "purga automática"; a F02 entrega o procedimento manual testado e adia a automação para cá, junto do agendador que já vai existir |
 | F26 | Domínio, produção, manual de operação e passagem de bastão             |
 
 **26 features.** Sem prazo fixo, o que importa não é a data e sim a ordem: nunca começar uma fase com a anterior pela metade.

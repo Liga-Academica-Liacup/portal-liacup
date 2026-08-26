@@ -92,6 +92,35 @@ Ao verificar o domínio, o Resend fornece os registros. Serão necessários: SPF
 
 ---
 
+## 5.1 Adendo de 21/08/2026 — correção do E3
+
+Levantado no `/speckit-clarify` da F02. O E3 acima manda mitigar spam com "limite de envio por IP e
+por janela de tempo". O **ADR-0001** especifica a tabela `mensagens` com "data, **IP não
+armazenado**". Os dois não podem valer como estão escritos: não se limita por IP sem guardar o IP.
+
+**Correção do E3**: o limite passa a ser por **resumo irreversível do endereço de IP**, guardado em
+**tabela separada da mensagem** e apagado em **24 horas**.
+
+Por que isto precisa os dois ADRs em vez de sacrificar um:
+
+- a frase "IP não armazenado" do ADR-0001 fala da **tabela de mensagens**, e continua
+  **literalmente verdadeira**: nenhum IP, nem em claro nem resumido, é gravado junto da mensagem;
+- o limite do ADR-0002 passa a ser implementável, porque o resumo é suficiente para reconhecer
+  repetição vinda da mesma origem numa janela curta.
+
+**Duas condições que não são detalhe:**
+
+1. **O sal do resumo é secreto e rotacionável.** Sal fixo e público torna o resumo reversível por
+   força bruta — o espaço de endereços IPv4 tem cerca de 4,3 bilhões de valores, que uma máquina
+   comum percorre em minutos. Sem sal secreto, "resumo irreversível" é falso.
+2. **A tabela é apagada em 24 horas pelo mesmo procedimento de purga das mensagens.** Não se cria um
+   segundo mecanismo: dois procedimentos de purga é um que ninguém executa.
+
+**Resumo de IP continua sendo dado pessoal pseudonimizado sob a LGPD, não dado anônimo.** É por isso
+que ele tem prazo próprio e tabela própria, e não porque "é só um hash".
+
+---
+
 ## 6. Escopo — o que **não** entra
 
 - Newsletter e disparo em massa. Está na lista de evoluções futuras do documento de aceite e continua lá.
