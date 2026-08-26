@@ -69,6 +69,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      # A BARREIRA 3 roda DEPOIS do Build, e essa ordem e o ponto: ela e a unica
+      # que verifica o artefato entregue ao navegador, e nao o codigo-fonte. As
+      # barreiras 1 e 2 ficam verdes quando um componente de servidor passa a
+      # chave por prop — o valor vai para a pagina gerada sem nenhum arquivo de
+      # cliente mencionar a variavel.
+      - name: Chave de servico fora do pacote compilado
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run verificar:chave
+
       # A maquina do CI vem sem navegador. Esquecer este passo e a causa mais
       # comum de primeiro CI vermelho, com erro que nao tem nada a ver com o codigo.
       - name: Instalar o navegador do Playwright

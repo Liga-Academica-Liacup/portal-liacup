@@ -89,13 +89,13 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 
 **Teste independente**: procurar a credencial no que é entregue ao navegador e não encontrá-la.
 
-- [ ] T031 [US3] Acrescentar ao `eslint.config.mjs` a **barreira 2**: uma zona que permite ler a variável da chave de serviço **apenas** em `src/lib/supabase/servidor.ts`, com mensagem em português apontando arquivo, linha e o motivo (FR-015)
-- [ ] T032 [US3] Criar `scripts/verificar-chave-de-servico.mjs` — a **barreira 3** —, que varre a **saída compilada** do build atrás do valor e do nome da chave, imprimindo **quantos arquivos varreu** e quantas ocorrências achou. Sem o contador, "nenhuma ocorrência" e "não varreu nada" produzem a mesma saída verde (FR-014, SC-007)
-- [ ] T033 [US3] Encadear a barreira 3 no comando `verificar` e no CI, **depois do build**, porque ela verifica o artefato e não o código (FR-014)
-- [ ] T034 [US3] **Demonstração C1**: ler a chave de serviço num componente de cliente, rodar o lint e registrar a **falha da barreira 2** com arquivo e linha (FR-015)
-- [ ] T035 [US3] **Demonstração C2**: contornar a barreira 2 de propósito, passando o valor por prop de um componente de servidor para um de cliente, e registrar a **barreira 3 pegando no pacote compilado**. É a demonstração que existe para o caso que as outras não pegam — sem ela, a barreira 3 nunca foi vista funcionando (FR-014, SC-007)
-- [ ] T036 [US3] **Demonstração C3**: desfazer as duas e registrar o verde (FR-014, FR-015)
-- [ ] T037 [US3] Varrer o repositório e o histórico por credenciais reais e registrar zero ocorrências (FR-016, SC-008)
+- [X] T031 [US3] Acrescentar ao `eslint.config.mjs` a **barreira 2**: uma zona que permite ler a variável da chave de serviço **apenas** em `src/lib/supabase/servidor.ts`, com mensagem em português apontando arquivo, linha e o motivo (FR-015)
+- [X] T032 [US3] Criar `scripts/verificar-chave-de-servico.mjs` — a **barreira 3** —, que varre a **saída compilada** do build atrás do valor e do nome da chave, imprimindo **quantos arquivos varreu** e quantas ocorrências achou. Sem o contador, "nenhuma ocorrência" e "não varreu nada" produzem a mesma saída verde (FR-014, SC-007)
+- [X] T033 [US3] Encadear a barreira 3 no comando `verificar` e no CI, **depois do build**, porque ela verifica o artefato e não o código (FR-014)
+- [X] T034 [US3] **Demonstração C1**: ler a chave de serviço num componente de cliente, rodar o lint e registrar a **falha da barreira 2** com arquivo e linha (FR-015)
+- [X] T035 [US3] **Demonstração C2**: contornar a barreira 2 de propósito, passando o valor por prop de um componente de servidor para um de cliente, e registrar a **barreira 3 pegando no pacote compilado**. É a demonstração que existe para o caso que as outras não pegam — sem ela, a barreira 3 nunca foi vista funcionando (FR-014, SC-007)
+- [X] T036 [US3] **Demonstração C3**: desfazer as duas e registrar o verde (FR-014, FR-015)
+- [X] T037 [US3] Varrer o repositório e o histórico por credenciais reais e registrar zero ocorrências (FR-016, SC-008)
 
 **Ponto de verificação**: duas barreiras vistas bloqueando, não uma, e o contador de arquivos varridos maior que zero.
 
