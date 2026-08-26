@@ -35,6 +35,13 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      # Nao le o .gitignore: pergunta ao git o que esta RASTREADO. As duas coisas
+      # parecem a mesma e nao sao — o .gitignore nao tem efeito sobre arquivo que
+      # ja entrou, e foi assim que o tsconfig.tsbuildinfo seguiu versionado
+      # depois de a linha correspondente ser escrita (RP-13).
+      - name: Artefatos gerados fora do controle de versao
+        run: npm run verificar:artefatos
+
       - name: Verificar tipos
         run: npm run verificar:tipos
 

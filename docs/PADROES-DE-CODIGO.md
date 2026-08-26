@@ -233,8 +233,9 @@ depósito.
 | **RP-10** | **Nenhum segredo** no repositório nem no histórico | Princípio IV · F00 FR-023 | Varredura do estado atual e do histórico |
 | **RP-11** | Toda tabela nasce com **controle de acesso por linha ativo**, e a política é testada provando que **bloqueia** — não só que permite | Princípio IV · F02 | Suíte de políticas, com o número de células de recusa verificadas |
 | **RP-12** | **Verificação que ninguém viu falhar não conta.** Toda verificação nova é demonstrada **falhando** diante de violação real e voltando ao verde. E toda verificação **diz quanto mediu** — arquivos varridos, elementos medidos, células checadas | F00 (V1–V5) · F01 · F02 | Duas execuções registradas com resultados opostos, **e o contador na saída** |
+| **RP-13** | **Artefato gerado não entra no controle de versão.** O que sai de um comando — build, cache, relatório, estado local de ferramenta — é reconstruível, difere em cada máquina e conflita em todo merge. Exceção precisa de motivo **conferível**, registrado por nome | F02 | `npm run verificar:artefatos` — pergunta ao git o que está **rastreado agora**, não o que o `.gitignore` lista |
 
-**O RP-12 é o que sustenta os outros onze**, e tem duas metades que se completam:
+**O RP-12 é o que sustenta os outros doze**, e tem duas metades que se completam:
 
 - **vista falhando** — sem isso, uma verificação quebrada e uma satisfeita produzem a mesma saída
   verde. Foi o que a F00 aprendeu com o CI que não checava nada;
@@ -242,6 +243,20 @@ depósito.
   Foi o que pegou os 20 alvos de toque da F01: o número estava honesto, mas media uma página que não
   mostrava tudo. Um verificador que varre zero arquivos e um que aprova tudo são indistinguíveis sem
   o contador.
+
+**O RP-13 nasceu de uma leitura errada que é a leitura natural.** O `.gitignore` e o rastreamento do
+git parecem a mesma coisa e não são: o arquivo diz ao git o que **não acrescentar**, e não tem efeito
+nenhum sobre o que **já está** rastreado. Um arquivo que entrou antes da linha continua sendo
+versionado a cada commit, com o `.gitignore` parecendo cobri-lo.
+
+Foi assim que `tsconfig.tsbuildinfo` e `supabase/.temp/cli-latest` seguiram versionados depois de as
+linhas correspondentes serem escritas. Por isso a verificação não lê o `.gitignore`: ela pergunta ao
+git **o que está rastreado agora**, que é a única pergunta cuja resposta não engana.
+
+**A exceção é nominal e precisa dizer o que quebra se o arquivo sair.** Hoje são duas:
+`next-env.d.ts`, porque o `tsconfig.json` o inclui por nome e o CI verifica tipos **antes** do build;
+e `src/lib/supabase/tipos.ts`, porque é o contrato tipado que as features consomem sem acesso ao
+banco — e que não fica à deriva, já que `banco:tipos:check` regera e falha se divergir.
 
 ---
 
@@ -256,6 +271,7 @@ Regra que depende de disciplina humana degrada. Estas são automáticas:
 | ESLint acessibilidade (`jsx-a11y`) | Erros básicos de semântica e rótulo |
 | Prettier | Formatação, sem discussão |
 | Script de tokens no CI | Cor e medida escritas à mão |
+| Script de artefatos no CI | Arquivo gerado versionado sem decisão registrada (RP-13) |
 | Vitest | Unidade e integração |
 | Playwright + axe | Ponta a ponta, acessibilidade, responsividade |
 | Lighthouse CI | Desempenho e acessibilidade por página |

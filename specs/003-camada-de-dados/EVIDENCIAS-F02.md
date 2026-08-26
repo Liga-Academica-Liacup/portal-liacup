@@ -150,6 +150,24 @@ seria repetir o erro da v1 do protótipo na informação mais fácil de acredita
 
 ---
 
+## 8.1 Artefatos gerados no controle de versão (RP-13)
+
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E34** | Arquivos rastreados pelo git que são artefato gerado | **2 encontrados**, ambos com a linha correspondente **já presente** no `.gitignore`: `tsconfig.tsbuildinfo` e `supabase/.temp/cli-latest` |
+| **E35** | Depois de tirados do rastreamento | **198 arquivos examinados contra 11 padrões · 0 artefatos indevidos · 2 versionados por decisão** |
+| **E36** | Demonstração: `git add -f tsconfig.tsbuildinfo`, com `*.tsbuildinfo` presente no `.gitignore` | **Falhou nomeando o arquivo** e mostrando o `git rm --cached` a rodar, saída 1. Removido do rastreamento: verde, saída 0 |
+
+**O `.gitignore` não cobria coisa nenhuma nesses dois casos, e parecia cobrir.** Ele diz ao git o que
+não acrescentar; não tem efeito sobre o que já está rastreado. Por isso o verificador não lê o
+`.gitignore` — ele pergunta ao git **o que está rastreado agora**.
+
+As cinco pastas conferidas por pedido do Gabriel — `.next/`, `coverage/`, `playwright-report/`,
+`test-results/` e `.lighthouseci/` — **já estavam** no `.gitignore` e nenhuma tinha arquivo
+rastreado. O buraco não estava onde a lista sugeria.
+
+---
+
 ## 9. O que NÃO foi executado, e por quê
 
 | # | Item | Motivo |
