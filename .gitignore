@@ -26,3 +26,7 @@ Thumbs.db
 .idea/
 *.tmp
 *.swp
+
+# Estado local da ferramenta do Supabase (ref do projeto ligado, versoes dos
+# servicos). Muda conforme a maquina de quem desenvolve, e nao descreve o projeto.
+supabase/.temp/

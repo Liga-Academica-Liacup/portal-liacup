@@ -205,7 +205,7 @@ Cada linha da tabela vira uma trinca spec/plan/tasks. A ordem importa: ela foi m
 
 | #   | Feature                                                                |
 | --- | ---------------------------------------------------------------------- |
-| F22 | SEO: metadados, Open Graph, `sitemap.xml`, dados estruturados          |
+| F22 | SEO: metadados, Open Graph, `sitemap.xml`, dados estruturados. **Decide o que acontece com a vitrine em produção** — a página `/vitrine` da F01 é ferramenta de quem desenvolve, não conteúdo da liga; a decisão é entre não publicá-la, publicá-la fora do `sitemap.xml` e do índice dos buscadores, ou protegê-la. Fica aqui porque é aqui que o projeto passa a dizer, arquivo por arquivo, o que os buscadores enxergam |
 | F23 | Acessibilidade WCAG 2.1 AA e desempenho                                |
 | F24 | LGPD: política de privacidade, base legal, retenção e purga            |
 | F25 | Observabilidade: monitor de disponibilidade, rotina anti-pausa, backup. **Dona nominal da automação da purga de dado pessoal** — o ADR-0001 R6 promete "purga automática"; a F02 entrega o procedimento manual testado e adia a automação para cá, junto do agendador que já vai existir |
