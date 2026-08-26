@@ -72,8 +72,8 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 - [X] T022 [US2] Escrever as políticas da coleção de **mensagens**, que é a matriz invertida: inserção anônima permitida, **leitura anônima recusada — inclusive por identificador conhecido** (FR-011)
 - [X] T023 [US2] Escrever as políticas da tabela de controle de origem: nenhum acesso anônimo em nenhuma operação (FR-026)
 - [X] T024 [US2] Montar a infraestrutura de teste de política com os **três clientes separados** — anônimo, autenticado e de serviço —, com o de serviço restrito à preparação e limpeza e **nunca presente no que está sendo verificado**. Se ele preparar e verificar, ignora as políticas dos dois lados e a suíte fica verde com o banco aberto (FR-012, research.md D1)
-- [ ] T025 [P] [US2] Escrever em `tests/politicas/` os testes de **permissão** de cada célula da matriz, para as 11 coleções de conteúdo (FR-012)
-- [ ] T026 [P] [US2] Escrever os testes de **recusa** de cada célula da matriz, para as 11 coleções — incluindo ler rascunho, ler arquivado, criar, alterar e arquivar com acesso anônimo. Uma célula de recusa só passa se a operação **falhar**: receber lista vazia **não é** o mesmo que ser recusado (FR-012, SC-004, SC-006)
+- [X] T025 [P] [US2] Escrever em `tests/politicas/` os testes de **permissão** de cada célula da matriz, para as 11 coleções de conteúdo (FR-012)
+- [X] T026 [P] [US2] Escrever os testes de **recusa** de cada célula da matriz, para as 11 coleções — incluindo ler rascunho, ler arquivado, criar, alterar e arquivar com acesso anônimo. Uma célula de recusa só passa se a operação **falhar**: receber lista vazia **não é** o mesmo que ser recusado (FR-012, SC-004, SC-006)
 - [X] T027 [US2] Escrever os testes das mensagens nos dois lados, com atenção à célula que quase sempre falta: **ler uma mensagem pelo identificador conhecido com acesso anônimo precisa ser recusado**. Esconder a lista e deixar buscar por identificador não protege nada, porque identificador vaza (FR-011, FR-012, SC-005)
 - [X] T028 [US2] Fazer a suíte imprimir **quantas células foram verificadas e quantas são de recusa**. Se o número de recusas for zero, o teste não provou bloqueio nenhum, só permissão — mesmo raciocínio do contador de alvos de toque da F01 (FR-012, SC-003)
 - [X] T029 [US2] **Demonstração P1 e P2**: desligar a política de leitura de uma coleção, rodar a suíte e registrar a **falha** do teste de bloqueio de rascunho; religar e registrar o verde. Duas execuções, dois resultados opostos, no padrão V1–V5 da F00 (FR-013, SC-003)
@@ -158,10 +158,10 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 
 ## Fase 9: Polimento e evidências
 
-- [ ] T057 Executar `npm run verificar`, `npm test`, `npm run build && npm run test:e2e` e `npm run test:desempenho`, confirmando que os 65 testes de unidade e os 84 de ponta a ponta da F01 continuam passando e que os limiares **não** descem (SC-012)
-- [ ] T058 Conferir a contagem de dependências diretas e registrar o número: **esperado 22 — 4 de execução e 18 de desenvolvimento**. O `@supabase/ssr` **não pode aparecer**: ele é da F14, e sua ausência aqui é verificável junto da contagem (FR-033, SC-016, RP-01)
-- [ ] T059 Registrar as 20 evidências em `specs/003-camada-de-dados/EVIDENCIAS-F02.md`, arquivo próprio no precedente das F00 e F01, declarando como **não executado** o que não puder ser provado em vez de preencher com algo plausível (SC-012, Princípio VIII)
-- [ ] T060 Preencher `docs/checklist-validacao.md` para a F02 com resultado real em cada item. **Esta tarefa responde à constituição, não a um requisito numerado** — o checklist é exigência do Princípio VII e por isso não cita FR nem SC (Princípio VII, sem FR/SC por definição)
+- [X] T057 Executar `npm run verificar`, `npm test`, `npm run build && npm run test:e2e` e `npm run test:desempenho`, confirmando que os 65 testes de unidade e os 84 de ponta a ponta da F01 continuam passando e que os limiares **não** descem (SC-012)
+- [X] T058 Conferir a contagem de dependências diretas e registrar o número: **esperado 22 — 4 de execução e 18 de desenvolvimento**. O `@supabase/ssr` **não pode aparecer**: ele é da F14, e sua ausência aqui é verificável junto da contagem (FR-033, SC-016, RP-01)
+- [X] T059 Registrar as 20 evidências em `specs/003-camada-de-dados/EVIDENCIAS-F02.md`, arquivo próprio no precedente das F00 e F01, declarando como **não executado** o que não puder ser provado em vez de preencher com algo plausível (SC-012, Princípio VIII)
+- [X] T060 Preencher `docs/checklist-validacao.md` para a F02 com resultado real em cada item. **Esta tarefa responde à constituição, não a um requisito numerado** — o checklist é exigência do Princípio VII e por isso não cita FR nem SC (Princípio VII, sem FR/SC por definição)
 
 ---
 
