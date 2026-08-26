@@ -50,6 +50,48 @@ export function criarClienteDeServidor() {
 }
 
 /**
+ * SEGUNDOS ate o conteudo publico ser buscado de novo.
+ *
+ * Cinco minutos: para um site institucional, mostrar conteudo de alguns minutos
+ * atras e indistinguivel de estar tudo em dia, e a diferenca entre isso e ler o
+ * banco a cada acesso e o site continuar de pe quando o banco nao esta.
+ */
+export const SEGUNDOS_DE_REVALIDACAO = 300
+
+/**
+ * Cliente de leitura publica: ESTATICO COM REVALIDACAO, nunca dinamico a cada
+ * acesso (T055, research.md D3).
+ *
+ * ISTO NAO RESOLVE A PAUSA DO PLANO GRATUITO — resolve que a pausa NAO DERRUBA O
+ * SITE PUBLICO. Com o banco pausado, uma pagina dinamica da erro na tela; uma
+ * pagina estatica com revalidacao serve a ultima versao boa e falha a
+ * atualizacao em silencio. Quem visita nao percebe nada.
+ *
+ * O que CONTINUA QUEBRADO com o banco pausado, e esta escrito assim no README: o
+ * formulario de contato nao grava a mensagem, e o painel nao abre. Os dois
+ * exigem o banco vivo, e os dois sao da F25.
+ *
+ * A revalidacao viaja no `fetch` do proprio cliente, e nao numa constante de
+ * rota, de proposito: assim ela vale para toda pagina que consumir esta camada,
+ * inclusive as que a F03 ainda vai escrever, sem ninguem precisar lembrar de
+ * repetir a configuracao em cada arquivo.
+ */
+export function criarClienteDeLeituraPublica(revalidarEm = SEGUNDOS_DE_REVALIDACAO) {
+  const url = exigir('NEXT_PUBLIC_SUPABASE_URL', process.env.NEXT_PUBLIC_SUPABASE_URL)
+  const chavePublica = exigir(
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+  return createClient<Database>(url, chavePublica, {
+    auth: { persistSession: false },
+    global: {
+      fetch: (entrada, init) =>
+        fetch(entrada, { ...init, next: { revalidate: revalidarEm } } as RequestInit),
+    },
+  })
+}
+
+/**
  * Cliente que IGNORA as politicas de acesso. Use apenas para purga e para
  * preparacao e limpeza de teste — nunca no caminho que esta sendo verificado,
  * senao o teste ignora as politicas dos dois lados e nao testa nada.

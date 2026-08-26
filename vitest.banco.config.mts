@@ -2,7 +2,8 @@ import { defineConfig } from 'vitest/config'
 import { fileURLToPath } from 'node:url'
 
 /*
- * Os testes de politica rodam separados dos de unidade, e por tres motivos:
+ * Os testes que precisam do BANCO rodam separados dos de unidade, e por tres
+ * motivos:
  *
  * 1. Eles precisam do PROJETO SUPABASE DE TESTE no ar. `npm test` tem de
  *    continuar rodando em qualquer maquina, inclusive sem banco.
@@ -18,7 +19,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
-    include: ['tests/politicas/**/*.test.ts'],
+    include: ['tests/politicas/**/*.test.ts', 'tests/banco/**/*.test.ts'],
     isolate: false,
     fileParallelism: false,
     pool: 'forks',

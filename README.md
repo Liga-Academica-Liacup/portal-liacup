@@ -262,6 +262,34 @@ o navegador de propósito, e é só isso que impede qualquer pessoa de ler e esc
 projeto de teste — é lá que ela deve quebrar. O ADR-0005 explica por quê e registra a única exceção
 já aberta.
 
+## Quando o site fica esquisito num domingo
+
+O Supabase do plano gratuito **pausa o banco por inatividade**. Ninguém aperta nada: ele simplesmente
+para de responder até alguém entrar no painel e reativar. Esta seção existe para que a primeira
+pessoa a encontrar o site estranho ache a explicação aqui, em vez de descobrir sozinha no pior
+momento.
+
+**O que acontece, por tipo de página:**
+
+| Página                       | Com o banco pausado                                         |
+| ---------------------------- | ----------------------------------------------------------- |
+| Páginas públicas de conteúdo | **Continuam no ar**, mostrando a última versão boa          |
+| A atualização dessas páginas | Falha em silêncio — o conteúdo fica alguns minutos atrasado |
+| **Formulário de contato**    | **A mensagem não é gravada.** Quem escreveu perde o texto   |
+| **Painel administrativo**    | **Não abre**                                                |
+
+As páginas públicas sobrevivem porque o conteúdo é lido de forma **estática com revalidação**, nunca
+consultando o banco a cada acesso. **Isso não resolve a pausa — resolve que a pausa não derruba o
+site.** Para quem visita, conteúdo de alguns minutos atrás é indistinguível de estar tudo em dia.
+
+**O que continua quebrado, e está escrito assim de propósito:** o formulário e o painel exigem o
+banco vivo. Não há como contornar isso do lado do site. A rotina que evita a pausa — e o monitor que
+avisa antes de alguém reclamar — é da **F25**.
+
+**O que fazer agora, se acontecer:** entre no painel do Supabase com a conta da liga e reative o
+projeto. Ele volta em alguns minutos, e nada foi perdido além das mensagens que alguém tentou enviar
+enquanto estava fora.
+
 ## Apagar dado pessoal
 
 O portal guarda dado de duas coisas, as duas vindas do formulário de contato: **as mensagens**, por

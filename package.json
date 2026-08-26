@@ -20,7 +20,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node scripts/verificar-navegador.mjs && playwright test",
-    "test:politicas": "vitest run --config vitest.politicas.config.mts",
+    "test:banco": "vitest run --config vitest.banco.config.mts",
     "test:desempenho": "lhci autorun",
     "banco:migrar": "supabase db push",
     "banco:semear": "supabase db query --linked --file supabase/seed.sql",

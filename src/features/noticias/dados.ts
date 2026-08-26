@@ -6,7 +6,7 @@
  * forma daqui. Tres regras do contrato, e cada uma esta marcada abaixo no ponto
  * em que e cumprida (contracts/camada-de-dados.md).
  */
-import { criarClienteDeServidor } from '@/lib/supabase/servidor'
+import { criarClienteDeLeituraPublica, criarClienteDeServidor } from '@/lib/supabase/servidor'
 import type { NoticiaPublica } from './tipos'
 
 /*
@@ -25,7 +25,9 @@ const COLUNAS = 'id, titulo, resumo, imagem_url, link_externo, data_noticia'
  * esta atualizacao falha em silencio, que e o comportamento decidido em D3.
  */
 export async function listarNoticiasPublicadas(): Promise<NoticiaPublica[]> {
-  const supabase = criarClienteDeServidor()
+  /* Leitura publica e estatica com revalidacao: e o que faz a pausa do plano
+     gratuito nao derrubar o site (research.md D3). */
+  const supabase = criarClienteDeLeituraPublica()
 
   /*
    * REGRA 3: filtra por publicado e nao arquivado mesmo que a politica ja filtre.
@@ -46,6 +48,41 @@ export async function listarNoticiasPublicadas(): Promise<NoticiaPublica[]> {
    */
   if (error) {
     console.error(`[noticias] leitura publica falhou: ${error.message}`)
+    return []
+  }
+
+  return (data ?? []).map((linha) => ({
+    id: linha.id,
+    titulo: linha.titulo,
+    resumo: linha.resumo,
+    imagemUrl: linha.imagem_url,
+    linkExterno: linha.link_externo,
+    dataNoticia: linha.data_noticia,
+  }))
+}
+
+/**
+ * Noticias ARQUIVADAS (FR-029).
+ *
+ * Existe porque arquivar sem ter como olhar o arquivo e apagar com passos
+ * extras. A tela que consome esta funcao e da F16.
+ *
+ * Com credencial anonima esta consulta devolve lista vazia, e nao por erro: a
+ * politica de leitura publica so mostra o que esta publicado e nao arquivado. Ela
+ * so traz conteudo para quem esta autenticado, que e o comportamento pretendido
+ * — e passa a ser exercido de verdade quando a F14 trouxer o login.
+ */
+export async function listarNoticiasArquivadas(): Promise<NoticiaPublica[]> {
+  const supabase = criarClienteDeServidor()
+
+  const { data, error } = await supabase
+    .from('noticias')
+    .select(COLUNAS)
+    .eq('arquivado', true)
+    .order('data_noticia', { ascending: false })
+
+  if (error) {
+    console.error(`[noticias] leitura de arquivadas falhou: ${error.message}`)
     return []
   }
 

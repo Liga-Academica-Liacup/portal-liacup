@@ -139,11 +139,11 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 
 **Objetivo**: as decisões do clarify viram comportamento verificável.
 
-- [ ] T050 Implementar o arquivamento: apagar pelo caminho da aplicação **marca como arquivado e não remove**, e a consulta de arquivados existe (FR-028, FR-029, SC-015)
-- [ ] T051 Fazer o arquivamento de um álbum **descer para as fotos**, e a restauração trazer as duas coisas de volta (FR-030)
-- [ ] T052 Implementar a detecção de edição concorrente: a escrita informa qual versão abriu, e é **recusada** se não bater com a do banco (FR-031)
-- [ ] T053 Fazer a recusa **devolver o conteúdo que a pessoa tentou salvar**. Avisar sem devolver troca perda silenciosa por perda barulhenta, que é pior — a pessoa vê o aviso **e** perde o trabalho. A redação da mensagem é da F17; o esquema que a sustenta é daqui (FR-032)
-- [ ] T054 Escrever os testes dos três comportamentos: arquivar não remove, álbum leva as fotos, e a segunda escrita é recusada devolvendo o conteúdo (FR-028 a FR-032, SC-015)
+- [X] T050 Implementar o arquivamento: apagar pelo caminho da aplicação **marca como arquivado e não remove**, e a consulta de arquivados existe (FR-028, FR-029, SC-015)
+- [X] T051 Fazer o arquivamento de um álbum **descer para as fotos**, e a restauração trazer as duas coisas de volta (FR-030)
+- [X] T052 Implementar a detecção de edição concorrente: a escrita informa qual versão abriu, e é **recusada** se não bater com a do banco (FR-031)
+- [X] T053 Fazer a recusa **devolver o conteúdo que a pessoa tentou salvar**. Avisar sem devolver troca perda silenciosa por perda barulhenta, que é pior — a pessoa vê o aviso **e** perde o trabalho. A redação da mensagem é da F17; o esquema que a sustenta é daqui (FR-032)
+- [X] T054 Escrever os testes dos três comportamentos: arquivar não remove, álbum leva as fotos, e a segunda escrita é recusada devolvendo o conteúdo (FR-028 a FR-032, SC-015)
 
 **Ponto de verificação**: zero registros removidos do banco ao serem apagados pela aplicação.
 
@@ -151,8 +151,8 @@ description: 'Lista de tarefas — F02 Camada de dados do Portal LIACUP'
 
 ## Fase 8: Leitura pública e a pausa do plano gratuito
 
-- [ ] T055 Configurar a leitura do conteúdo público como **estática com revalidação**, nunca dinâmica a cada acesso. Isso não resolve a pausa do plano gratuito — resolve que **a pausa não derruba o site público** (FR-006, research.md D3)
-- [ ] T056 Escrever no `README.md` o comportamento com o banco pausado, **por tipo de página**, incluindo o que **continua quebrado**: o formulário perde a mensagem e o painel não abre, ambos da F25. A primeira pessoa a encontrar o site esquisito num domingo precisa achar a explicação em vez de descobrir sozinha. **Responde ao Princípio I**, não a um requisito numerado (Princípio I, sem FR/SC por definição, research.md D3)
+- [X] T055 Configurar a leitura do conteúdo público como **estática com revalidação**, nunca dinâmica a cada acesso. Isso não resolve a pausa do plano gratuito — resolve que **a pausa não derruba o site público** (FR-006, research.md D3)
+- [X] T056 Escrever no `README.md` o comportamento com o banco pausado, **por tipo de página**, incluindo o que **continua quebrado**: o formulário perde a mensagem e o painel não abre, ambos da F25. A primeira pessoa a encontrar o site esquisito num domingo precisa achar a explicação em vez de descobrir sozinha. **Responde ao Princípio I**, não a um requisito numerado (Princípio I, sem FR/SC por definição, research.md D3)
 
 ---
 
