@@ -157,3 +157,87 @@ test('todo elemento alcançável por Tab tem foco visível', async ({ page }, in
   expect(resultado.verificados, 'o teste precisa ter focado alguma coisa').toBeGreaterThan(0)
   expect(resultado.semFoco, `sem foco visível: ${resultado.semFoco.join(' | ')}`).toEqual([])
 })
+
+/*
+ * SC-018 — os seis pares botao/link com a MESMA aparencia calculada.
+ *
+ * "Verificado, nao olhado" (SC-018) tem uma exigencia embutida: o teste precisa
+ * comparar o RESULTADO que o navegador calcula, e nao a classe que foi
+ * aplicada. Duas classes com nomes diferentes e o mesmo resultado passam; duas
+ * com o mesmo nome e resultados diferentes falham.
+ *
+ * A LISTA DE PROPRIEDADES E DERIVADA de src/componentes/ui/AparenciaDeBotao.module.css
+ * — ver tests/e2e/apoio/propriedades-da-aparencia.ts para os dois motivos. Em
+ * uma frase: lista digitada seria a cobertura, e lista de exclusoes seria o
+ * mesmo defeito pelo avesso.
+ *
+ * Sao 3 variantes x 2 larguras = 6 pares. O teste reporta quantos pares e
+ * quantas propriedades comparou: sem os dois contadores, "nenhuma divergencia"
+ * e "comparei tres coisas" produzem a mesma saida verde.
+ */
+import { propriedadesDeclaradasNaAparencia } from './apoio/propriedades-da-aparencia'
+
+test('os seis pares botao/link tem aparencia calculada identica', async ({ page }) => {
+  await page.goto('/vitrine')
+
+  const propriedades = propriedadesDeclaradasNaAparencia()
+  /*
+   * O par e identificado pelo CONTEINER, e nao por um atributo no controle.
+   *
+   * `Botao` e `LinkComAparenciaDeBotao` recusam pelo tipo o que nao esta no
+   * contrato — `data-*` inclusive —, e essa recusa e parte do que faz a origem
+   * unica valer. Marcar o conteiner foi a escolha: o teste se adapta ao
+   * componente, nao o contrario. Afrouxar o tipo para o teste conseguir medir
+   * seria medir outra coisa.
+   */
+  const pares = await page.locator('[data-par-visual]').evaluateAll((conteineres, lista) => {
+    const resultado: { par: string; divergencias: string[]; comparadas: number }[] = []
+
+    for (const conteiner of conteineres) {
+      const par = conteiner.getAttribute('data-par-visual') ?? ''
+      const botao = conteiner.querySelector('button')
+      const link = conteiner.querySelector('a')
+
+      if (!botao || !link) {
+        resultado.push({
+          par,
+          divergencias: [`par incompleto: botao=${Boolean(botao)} link=${Boolean(link)}`],
+          comparadas: 0,
+        })
+        continue
+      }
+
+      const estiloBotao = window.getComputedStyle(botao)
+      const estiloLink = window.getComputedStyle(link)
+      const divergencias: string[] = []
+      for (const propriedade of lista) {
+        const a = estiloBotao.getPropertyValue(propriedade)
+        const b = estiloLink.getPropertyValue(propriedade)
+        if (a !== b) divergencias.push(`${propriedade}: botao "${a}" contra link "${b}"`)
+      }
+      resultado.push({ par, divergencias, comparadas: lista.length })
+    }
+    return resultado
+  }, propriedades)
+
+  const divergentes = pares.filter((p) => p.divergencias.length > 0)
+  console.log(
+    `Pares visuais: ${pares.length}/6 · propriedades comparadas por par: ${propriedades.length} · ` +
+      `pares divergentes: ${divergentes.length}`
+  )
+  for (const p of divergentes) console.log(`  ${p.par}: ${p.divergencias.join(' | ')}`)
+
+  expect(propriedades.length, 'nenhuma propriedade derivada do CSS da aparencia').toBeGreaterThan(0)
+  expect(pares.length, 'a vitrine nao expos os seis pares identificaveis').toBe(6)
+  expect(divergentes.map((p) => `${p.par}: ${p.divergencias.join(' | ')}`)).toEqual([])
+})
+
+test('a vitrine mostra os quatro icones da uniao fechada', async ({ page }) => {
+  await page.goto('/vitrine')
+
+  const nomes = await page
+    .locator('svg[data-icone]')
+    .evaluateAll((svgs) => [...new Set(svgs.map((s) => s.getAttribute('data-icone') ?? ''))].sort())
+  console.log(`Icones distintos na vitrine: ${nomes.length} — ${nomes.join(', ')}`)
+  expect(nomes).toEqual(['abrir', 'email', 'fechar', 'instagram'])
+})

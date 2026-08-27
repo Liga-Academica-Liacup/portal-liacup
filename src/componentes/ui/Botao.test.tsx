@@ -103,4 +103,29 @@ describe('Botao', () => {
     fireEvent.click(botao)
     expect(aoClicar).toHaveBeenCalled()
   })
+
+  /*
+   * F03 — o contrato fecha `style` além de `className`.
+   *
+   * A F01 já omitia `className`, e o contrato documentado dizia que `style`
+   * seguia o mesmo caminho — mas o tipo não cobrava. Com a aparência agora
+   * compartilhada com o `LinkComAparenciaDeBotao` (FR-045), um `style` solto num
+   * dos dois é exatamente a segunda fonte de verdade que a origem única existe
+   * para impedir: a próxima correção de contraste acerta um e esquece o outro.
+   *
+   * `@ts-expect-error` é o oposto de um comentário: se a prop deixar de ser
+   * recusada, o TypeScript acusa a diretiva como inútil e a verificação de
+   * tipos fica vermelha.
+   */
+  it('o tipo recusa className e style', () => {
+    const naoCompila = () => (
+      <>
+        {/* @ts-expect-error className abriria uma segunda fonte de aparência */}
+        <Botao className="meu-estilo">Texto</Botao>
+        {/* @ts-expect-error style abriria a mesma porta, por outro caminho */}
+        <Botao style={{ color: 'red' }}>Texto</Botao>
+      </>
+    )
+    expect(typeof naoCompila).toBe('function')
+  })
 })

@@ -6,6 +6,7 @@ import { EstadoVazioDemo } from './EstadoVazioDemo'
 import { EtiquetaDemo } from './EtiquetaDemo'
 import { IconeDemo } from './IconeDemo'
 import { LinhaDeInscricaoDemo } from './LinhaDeInscricaoDemo'
+import { ParesVisuaisDemo } from './ParesVisuaisDemo'
 import { SeparadorDemo } from './SeparadorDemo'
 import estilos from './page.module.css'
 
@@ -42,6 +43,7 @@ export default function PaginaDaVitrine() {
 
       <BotaoDemo />
       <LinhaDeInscricaoDemo />
+      <ParesVisuaisDemo />
       <CartaoDemo />
       <EtiquetaDemo />
       <CampoDemo />

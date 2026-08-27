@@ -21,7 +21,19 @@
  */
 import estilos from './Icone.module.css'
 
-type NomeDoIcone = 'instagram' | 'email'
+/*
+ * F03 — dois nomes acrescentados, e SÓ dois.
+ *
+ * `abrir` e `fechar` são os desenhos que o botão do painel lateral exige. A
+ * extensão desta união foi **pré-autorizada** pela spec (FR-029) e é a única
+ * permitida na feature: qualquer terceiro nome é desvio a reportar, não
+ * conveniência. O teste cobra o número exato — "tem abrir e fechar"
+ * continuaria verde com um quinto entrando de carona.
+ *
+ * Os dois continuam decorativos, como todos os outros: quem carrega o nome
+ * acessível é o botão que os contém.
+ */
+type NomeDoIcone = 'instagram' | 'email' | 'abrir' | 'fechar'
 
 type PropsDoIcone = {
   /** Qual desenho mostrar. Nome fora da uniao nao compila. */
@@ -40,6 +52,21 @@ const DESENHOS: Record<NomeDoIcone, React.ReactNode> = {
     <>
       <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" />
       <path d="m4 7 8 6 8-6" stroke="currentColor" />
+    </>
+  ),
+  /* Tres linhas: o desenho que a web inteira usa para "abrir o menu". Aqui ele
+     nunca aparece sozinho — o botao que o contem carrega o nome acessivel. */
+  abrir: (
+    <>
+      <path d="M4 7h16" stroke="currentColor" strokeLinecap="round" />
+      <path d="M4 12h16" stroke="currentColor" strokeLinecap="round" />
+      <path d="M4 17h16" stroke="currentColor" strokeLinecap="round" />
+    </>
+  ),
+  fechar: (
+    <>
+      <path d="M6 6 18 18" stroke="currentColor" strokeLinecap="round" />
+      <path d="M18 6 6 18" stroke="currentColor" strokeLinecap="round" />
     </>
   ),
 }

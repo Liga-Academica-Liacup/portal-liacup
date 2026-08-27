@@ -108,16 +108,16 @@ ficam no diálogo; em 1024/1280 px, os dez destinos estão diretos e acionador/d
 
 ### Testes e evidência vermelha
 
-- [ ] T015 [P] [US3] Criar `src/componentes/ui/LinkComAparenciaDeBotao.test.tsx` e ampliar `src/componentes/ui/Botao.test.tsx` com contratos de tipo e execução que rejeitem `className`/`style` nos dois, `icone`/`disabled` no link, e cubram `href`, três variantes e largura total; registrar vermelho de tipos/unidade antes da implementação
-- [ ] T016 [P] [US3] Ampliar `src/componentes/ui/Icone.test.tsx` e `tests/e2e/vitrine.spec.ts` para exigir exatamente quatro ícones e seis pares botão/link identificáveis, comparando as propriedades calculadas contratadas; registrar vermelho com o número de pares antes da implementação
+- [X] T015 [P] [US3] Criar `src/componentes/ui/LinkComAparenciaDeBotao.test.tsx` e ampliar `src/componentes/ui/Botao.test.tsx` com contratos de tipo e execução que rejeitem `className`/`style` nos dois, `icone`/`disabled` no link, e cubram `href`, três variantes e largura total; registrar vermelho de tipos/unidade antes da implementação
+- [X] T016 [P] [US3] Ampliar `src/componentes/ui/Icone.test.tsx` e `tests/e2e/vitrine.spec.ts` para exigir exatamente quatro ícones e seis pares botão/link identificáveis, comparando as propriedades calculadas contratadas; registrar vermelho com o número de pares antes da implementação
 - [ ] T017 [P] [US3] Acrescentar a `tests/e2e/paginas-publicas.spec.ts` casos derivados do catálogo para CTA, nove destinos do painel, dez destinos desktop, ausência acessível do diálogo/acionador no desktop e alvo do acionador ≥44 px; registrar vermelho nas larguras afetadas
 
 ### Implementação
 
-- [ ] T018 [P] [US3] Extrair a origem visual única para `src/componentes/ui/AparenciaDeBotao.module.css` e `src/componentes/ui/aparencia-de-botao.ts`, refatorar `src/componentes/ui/Botao.tsx` para usar essa origem e remover `src/componentes/ui/Botao.module.css` sem alterar a API existente além de omitir `style`
-- [ ] T019 [US3] Criar `src/componentes/ui/LinkComAparenciaDeBotao.tsx` como `a` real com `href` obrigatório, variantes `primario|secundario|fantasma`, `larguraTotal` e atributos seguros, consumindo exclusivamente a aparência de T018
-- [ ] T020 [P] [US3] Acrescentar somente `abrir` e `fechar` à união e ao `Record` de `src/componentes/ui/Icone.tsx`, preservando `aria-hidden`/`focusable=false` e documentando o motivo no componente
-- [ ] T021 [US3] Atualizar `src/app/(interno)/vitrine/BotaoDemo.tsx`, `src/app/(interno)/vitrine/IconeDemo.tsx` e `src/app/(interno)/vitrine/page.tsx` com os seis pares identificáveis e quatro ícones, sem criar variantes de link sem consumidor
+- [X] T018 [P] [US3] Extrair a origem visual única para `src/componentes/ui/AparenciaDeBotao.module.css` e `src/componentes/ui/aparencia-de-botao.ts`, refatorar `src/componentes/ui/Botao.tsx` para usar essa origem e remover `src/componentes/ui/Botao.module.css` sem alterar a API existente além de omitir `style`
+- [X] T019 [US3] Criar `src/componentes/ui/LinkComAparenciaDeBotao.tsx` como `a` real com `href` obrigatório, variantes `primario|secundario|fantasma`, `larguraTotal` e atributos seguros, consumindo exclusivamente a aparência de T018
+- [X] T020 [P] [US3] Acrescentar somente `abrir` e `fechar` à união e ao `Record` de `src/componentes/ui/Icone.tsx`, preservando `aria-hidden`/`focusable=false` e documentando o motivo no componente
+- [X] T021 [US3] Atualizar `src/app/(interno)/vitrine/BotaoDemo.tsx`, `src/app/(interno)/vitrine/IconeDemo.tsx` e `src/app/(interno)/vitrine/page.tsx` com os seis pares identificáveis e quatro ícones, sem criar variantes de link sem consumidor
 - [ ] T022 [US3] Transformar `src/componentes/layout/NavegacaoPublica.tsx` na única ilha cliente, completar `src/componentes/layout/NavegacaoPublica.module.css` e ajustar `src/componentes/layout/Cabecalho.tsx`/`src/componentes/layout/Cabecalho.module.css` para CTA com link-botão, acionador nativo e `dialog`; o CSS detém o corte de 1024 px e o TypeScript consulta visibilidade calculada
 - [ ] T023 [US3] Executar tipos, unidades e os casos focados de `tests/e2e/paginas-publicas.spec.ts`/`tests/e2e/vitrine.spec.ts`, registrar 10 destinos, quatro ícones, seis de seis pares e todos os alvos medidos em `specs/004-layout-base/EVIDENCIAS-F03.md`
 

@@ -1,0 +1,95 @@
+/*
+ * A ORIGEM ÚNICA da aparência de botão.
+ *
+ * Consumido por `Botao` (que renderiza `<button>`) e por
+ * `LinkComAparenciaDeBotao` (que renderiza `<a>`), através de
+ * `aparencia-de-botao.ts`. Nenhum dos dois tem CSS próprio de aparência — o
+ * `Botao.module.css` foi APAGADO na F03, e essa remoção é o que separa origem
+ * única de cópia com disciplina: enquanto o arquivo antigo existisse,
+ * "compartilham a aparência" seria promessa; sem ele, é a única forma de o botão
+ * continuar existindo.
+ *
+ * POR QUE ISSO IMPORTA (FR-045)
+ * Duas cópias do mesmo visual significam que a próxima correção de contraste
+ * acerta uma e esquece a outra. É a classe da cascata escondida que a F01 pegou
+ * no `liacup.css` — só que criada nova, hoje, de propósito.
+ *
+ * ESTE ARQUIVO É LIDO POR UM TESTE.
+ * `tests/e2e/apoio/propriedades-da-aparencia.ts` deriva daqui a lista de
+ * propriedades comparadas entre os dois componentes na vitrine (SC-018).
+ * Acrescentar uma propriedade aqui estende a comparação sozinho. Por isso as
+ * declarações ficam neste arquivo e não espalhadas: a lista de propriedades
+ * comparadas É o conteúdo daqui.
+ *
+ * Nenhum valor escrito à mão: tudo vem de src/estilos/tokens.css.
+ * Fidelidade ao `.btn` aprovado, com os desvios registrados na ADR-0004.
+ */
+.base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-controle);
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border: var(--largura-borda) solid transparent;
+
+  /* ADR-0004 2.3: familia, peso e tamanho restaurados ao aprovado */
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--font-size-controle);
+  line-height: var(--line-height-controle);
+  color: var(--color-text);
+
+  background: transparent;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+
+  /* O <a> vem com sublinhado do agente de usuario e o <button> nao. Declarar
+     aqui e o que faz os dois terem a MESMA aparencia calculada, em vez de
+     precisarem de excecao no teste que os compara. */
+  text-decoration: none;
+
+  /* ADR-0004 2.1: alvo de toque, em todas as larguras, sem media query */
+  min-height: var(--alvo-de-toque);
+}
+
+/* Estado que so o <button> tem. O link nao desabilita: sem destino ele deixa de
+   ser navegacao, e navegacao desabilitada e um botao. */
+.base:disabled {
+  opacity: var(--opacidade-desabilitado);
+  cursor: not-allowed;
+}
+
+/* ADR-0003: accent-600 no lugar de accent. O texto --color-bg sobre o fundo
+   --color-accent-600 mede 4,84:1; sobre --color-accent media 3,48:1. */
+.primario {
+  background: var(--color-accent-600);
+  color: var(--color-bg);
+}
+
+/* ADR-0003, adendo: a borda passa de --color-divider (1,37:1 sobre a superficie)
+   para --color-neutral-600 (3,21:1 sobre a superficie), que e o minimo de 3:1
+   para elemento de interface. */
+.secundario {
+  border-color: var(--color-neutral-600);
+}
+
+/* ADR-0003: accent-700 como cor de texto. --color-accent-700 sobre --color-bg
+   mede 6,91:1; --color-accent media 3,48:1. */
+.fantasma {
+  color: var(--color-accent-700);
+  padding-inline: var(--space-1);
+}
+
+/* ADR-0004 2.1: 44x44 no lugar dos 36x36 do .btn-icon aprovado.
+   Variante exclusiva do <button>: nao existe link-icone com consumidor real. */
+.icone {
+  width: var(--alvo-de-toque);
+  min-width: var(--alvo-de-toque);
+  padding: 0;
+  color: var(--color-accent-700);
+}
+
+.larguraTotal {
+  width: 100%;
+  margin-top: var(--space-2);
+}
