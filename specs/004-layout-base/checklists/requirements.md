@@ -47,6 +47,13 @@ consumidores), **E2** (FR-039 — preset mobile, e a contradição de três feat
 número), **E4** (FR-045, SC-018 — origem única de aparência), **E5** (FR-046 — os comentários
 desatualizados ganharam dono).
 
+Duas correções técnicas aprovadas por Gabriel em 27/08/2026, antes do plano:
+
+- **FR-039** — Lighthouse não possui `preset: "mobile"`; o contrato passa a exigir perfil mobile
+  simulado configurado explicitamente e conferido nos relatórios;
+- **FR-045 / SC-018** — o link compartilha somente as variantes textuais e os estados que têm
+  consumidor real, sem inventar variante de ícone nem estado desabilitado.
+
 Duas verificações desta lista são deliberadamente **mais frouxas** que a spec, e isso está aqui para
 não parecer descuido: a spec exige número medido (altura do cabeçalho, alvos, contraste), e esta
 lista só confere que o requisito **pede** o número. Quem mede é o `tasks.md`.

@@ -4,7 +4,7 @@
 
 **Created**: 2026-08-26
 
-**Status**: Draft
+**Status**: Aprovada por Gabriel e pela coordenação em 2026-08-27
 
 **Input**: Descrição do usuário: "O cabeçalho, o menu mobile, o rodapé e a navegação que todas as páginas do site público vão usar. Nenhum conteúdo de página."
 
@@ -49,6 +49,17 @@ com endereço.
 
 A premissa do **cabeçalho fixo em todas as larguras** foi mantida de pé por decisão explícita, não
 por omissão.
+
+### Session 2026-08-27
+
+- Q: Como declarar a medição mobile se o Lighthouse não possui `preset: "mobile"`? → A: **O perfil
+  mobile simulado deve ser configurado explicitamente e conferido nos relatórios gerados.** Mobile
+  é um perfil de execução, não um preset nomeado; inventar um preset faria a configuração falhar.
+- Q: O link com aparência de botão precisa copiar variantes sem consumidor, como ícone e
+  desabilitado? → A: **Não.** Ele oferece somente as variantes textuais realmente compartilhadas —
+  `primario`, `secundario` e `fantasma` — mais largura total. A vitrine compara todas as variantes e
+  estados que botão e link têm em comum. Variante de ícone ou estado desabilitado só entra quando
+  existir consumidor real, para não criar API especulativa.
 
 ---
 
@@ -343,8 +354,9 @@ medir o contraste da cor de link do cabeçalho contra as duas superfícies.
 - **FR-038**: **Zero** rolagem horizontal em **360, 390, 430, 480, 768, 1024 e 1280 px**. Origem:
   **RP-05**.
 - **FR-039**: Lighthouse **desempenho ≥ 90** e **acessibilidade ≥ 95**, contra a versão
-  **compilada** e em **mobile simulado**. Origem: **RP-06**. O preset **DEVE** estar declarado, e o
-  número só vale no preset declarado. **Contradição corrigida nesta feature**: o item F1 do
+  **compilada** e em **mobile simulado**. Origem: **RP-06**. O perfil mobile simulado **DEVE** estar
+  configurado explicitamente e conferido nos relatórios gerados; o número só vale no perfil
+  declarado. **Contradição corrigida nesta feature**: o item F1 do
   `docs/checklist-validacao.md` manda "execução em mobile simulado" desde a F00, e o
   `lighthouserc.json` fixava `preset: desktop`. Os dois se contradiziam por escrito havia três
   features. Foi inofensivo porque nenhuma delas era sobre o mobile; **esta é** — o objeto inteiro da
@@ -366,7 +378,10 @@ medir o contraste da cor de link do cabeçalho contra as duas superfícies.
   deixar uma página fora da verificação. Vale para **todas** as verificações por página: axe,
   rolagem horizontal, alvo de toque, altura do cabeçalho e Lighthouse.
 - **FR-045**: O `Botao` e o link com aparência de botão **DEVEM** ter uma **única origem de
-  aparência**. Alteração visual em um **DEVE** aparecer no outro **sem edição em dois lugares**.
+  aparência**. Alteração visual em um **DEVE** aparecer no outro **sem edição em dois lugares**. O
+  link oferece somente as variantes textuais compartilhadas — `primario`, `secundario` e
+  `fantasma` — mais largura total; variante de ícone e estado desabilitado ficam fora enquanto não
+  houver consumidor real.
 - **FR-046**: Os comentários de `src/componentes/layout/Rodape.tsx` e
   `src/componentes/layout/LinksDeContato.tsx` **DEVEM** ser atualizados nesta feature. Os dois
   descrevem hoje um arranjo que esta feature desfaz — que o rodapé traz só a linha institucional e
@@ -485,7 +500,8 @@ porque foi a primeira vez que todas as combinações estiveram juntas na mesma t
   entregues**. Hoje: **10 e 10**. **Demonstrado falhando (RP-12)**: acrescentar um destino sem tocar
   em mais nada deixa a verificação **vermelha, nomeando a página que ficou de fora**.
 - **SC-018**: O `Botao` e o link com aparência de botão aparecem **lado a lado na vitrine**, em
-  **todas as variantes e estados**, e a **aparência calculada dos dois é idêntica — verificado, não
+  **todas as variantes e estados compartilhados** — `primario`, `secundario`, `fantasma`, largura
+  normal e largura total —, e a **aparência calculada dos dois é idêntica — verificado, não
   olhado**. O alvo do link é **≥ 44 px**.
 
 ## Dependencies
