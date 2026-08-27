@@ -141,6 +141,56 @@ função `medirAlvosDeToque` compara **as duas dimensões**, e foi por isso que 
 
 Fica registrado aqui porque a correção é da Fase 4/5 e a causa é desta.
 
+### E19 — O `aria-label` do `<address>` é anunciado. A hipótese contrária foi medida e não se sustenta
+
+Levantou-se, na revisão da Fase 3, que `<address>` mapearia para `generic`, que `generic` é papel em
+que a ARIA **proíbe** nomeação, e que portanto o `aria-label` seria marcação morta. A dúvida era
+legítima e o pedido foi explícito: medir, e reportar mesmo se contradissesse quem levantou.
+
+**Contradiz.** Três ferramentas foram consultadas e duas respostas apareceram:
+
+| Fonte | O que respondeu |
+| --- | --- |
+| **Árvore do Chrome** (CDP `Accessibility.getFullAXTree`) | `role="group"` · `name="Canais de contato da LIACUP"` · **`ignorado=false`** |
+| **axe-core**, regra `aria-prohibited-attr` (tags `cat.aria`, **`wcag2a`**, `wcag412`) | **0 ocorrências** — a regra existe, rodou, e não considera o rótulo proibido aqui |
+| **`getByRole` do Playwright** | **não encontra** o elemento: não mapeia `<address>` para `group` |
+| `dom-accessibility-api` (jsdom/Testing Library) | encontra `group` com o nome |
+
+O `<address>` mapeia para **`group`**, não para `generic`, e `group` **admite** nomeação. A árvore do
+navegador é a que decide o que chega ao leitor de tela, e ela expõe o nome sem ignorá-lo.
+
+**Detalhe que fecha a dúvida sobre o axe**: a regra está em `wcag2a`, então ela já rodava dentro do
+filtro `['wcag2a','wcag2aa','wcag21a','wcag21aa']` usado nas dez rotas. O silêncio dela não era
+ausência de cobertura.
+
+**A divergência do Playwright fica registrada de propósito**, para ninguém "corrigir" isto de novo a
+partir da ferramenta errada: `getByRole('group')` devolvendo zero descreve o modelo do Playwright,
+não o que o leitor de tela recebe.
+
+### E20 — A crítica metodológica estava certa, e o teste mudou
+
+A conclusão não se sustentou; **o método sim**. O teste cobrava
+`getAttribute('aria-label')`, o que prova que o atributo está no DOM e **não** que ele é anunciado —
+"anunciado" e "ignorado" produzem exatamente o mesmo atributo. Verificação de configuração, no
+formato mais inocente possível, e na mesma família do que quase entregou um banco quebrado fechado
+na F02.
+
+Passou a cobrar o **nome acessível exposto**, computado pelas regras da especificação:
+
+```js
+expect(screen.getByRole('group', { name: 'Canais de contato da LIACUP' })).toBeInTheDocument()
+```
+
+**Visto falhando nas duas regressões que ele existe para pegar** — cada uma isolada, com restauração:
+
+| Violação temporária | Resultado |
+| --- | --- |
+| `aria-label` removido | **Código 1 · 1 de 6 falhou** — `Unable to find an accessible element with the role "group" and name "Canais de contato da LIACUP"` |
+| `<address>` trocado por `<div>` | **Código 1 · 2 de 6 falharam** |
+| Restaurado | **Código 0 · 6 passaram**, árvore limpa |
+
+O teste anterior passaria nas duas.
+
 ### Duas antecipações declaradas, para não passarem como desvio silencioso
 
 1. **O token `--font-size-marca` entrou no T011, não no T025.** O `Cabecalho.module.css` precisa do

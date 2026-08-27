@@ -53,12 +53,36 @@ describe('LinksDeContato', () => {
     expect(container.querySelector('address')).not.toBeNull()
   })
 
-  it('dá nome acessível ao bloco de contato', () => {
-    // `address` não tem papel implícito, então o nome é cobrado pelo rótulo.
-    const { container } = render(<LinksDeContato />)
+  /*
+   * Cobra o NOME ACESSÍVEL EXPOSTO, não a presença do atributo.
+   *
+   * A versão anterior deste teste fazia
+   * `expect(endereco?.getAttribute('aria-label')).toBe(...)`, e isso prova que o
+   * atributo está no DOM — não que ele é anunciado. As duas coisas produzem
+   * exatamente o mesmo atributo, então o teste não conseguia distingui-las. É
+   * verificação de configuração, no formato mais inocente possível.
+   *
+   * `getByRole` computa papel e nome acessível pelas regras da especificação, do
+   * mesmo jeito que o leitor de tela. Se alguém trocar o elemento por um que não
+   * admita nomeação, ou tirar o rótulo, este teste falha; o anterior passaria.
+   *
+   * MEDIDO em 27/08/2026, porque a dúvida era legítima e três ferramentas não
+   * concordam:
+   *   - árvore do Chrome (CDP `Accessibility.getFullAXTree`):
+   *     `role="group" name="Canais de contato da LIACUP" ignorado=false`;
+   *   - axe-core, regra `aria-prohibited-attr` (tags `wcag2a`, `wcag412`):
+   *     **0 ocorrências** — não considera o rótulo proibido aqui;
+   *   - `getByRole` do Playwright: não enxerga o elemento, porque não mapeia
+   *     `<address>` para `group`.
+   *
+   * A árvore do navegador é a que decide o que o leitor de tela recebe, e ela
+   * expõe o nome. A divergência do Playwright fica registrada para ninguém
+   * "consertar" isto de novo a partir da ferramenta errada.
+   */
+  it('expõe o bloco de contato com nome acessível', () => {
+    render(<LinksDeContato />)
 
-    const endereco = container.querySelector('address')
-    expect(endereco?.getAttribute('aria-label')).toBe('Canais de contato da LIACUP')
+    expect(screen.getByRole('group', { name: 'Canais de contato da LIACUP' })).toBeInTheDocument()
   })
 
   it('não escreve nenhum endereço além dos dois confirmados', () => {
