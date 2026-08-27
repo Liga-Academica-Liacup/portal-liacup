@@ -125,25 +125,61 @@ test.describe('matriz das páginas públicas', () => {
         }
 
         const permanencia = await cabecalhoPermaneceVisivelAoRolar(page)
-        if (permanencia.rolagemAplicada > 0) {
-          expect(
-            permanencia.topoDepois,
-            `${destino.caminho}: o cabeçalho saiu da tela ao rolar ` +
-              `(topo ${permanencia.topoDepois} depois de ${permanencia.rolagemAplicada} px)`
-          ).toBeGreaterThanOrEqual(-1)
-        }
+        expect(
+          permanencia.rolagemAplicada,
+          `${destino.caminho}: a pagina nao rolou; permanencia nao foi verificada`
+        ).toBeGreaterThan(0)
+        expect(
+          permanencia.topoDepois,
+          `${destino.caminho}: o cabeçalho saiu da tela ao rolar ` +
+            `(topo ${permanencia.topoDepois} depois de ${permanencia.rolagemAplicada} px)`
+        ).toBeGreaterThanOrEqual(-1)
       })
 
       test('nenhum alvo de toque abaixo de 44 px', async ({ page }, informacoes) => {
         await page.goto(destino.caminho)
 
-        const medida = await medirAlvosDeToque(page, ALVO_MINIMO_PX)
+        const painelFechado = await medirAlvosDeToque(page, ALVO_MINIMO_PX)
         console.log(
-          `[${informacoes.project.name} ${destino.caminho}] alvos medidos: ${medida.medidos} · ` +
-            `abaixo de ${ALVO_MINIMO_PX} px: ${medida.pequenos.length}`
+          `[${informacoes.project.name} ${destino.caminho}] painel fechado: ` +
+            `${painelFechado.medidos} alvos medidos · abaixo de ${ALVO_MINIMO_PX} px: ` +
+            `${painelFechado.pequenos.length}`
         )
-        expect(medida.medidos, `${destino.caminho}: nenhum alvo medido`).toBeGreaterThan(0)
-        expect(medida.pequenos, `${destino.caminho}: ${medida.pequenos.join(' | ')}`).toEqual([])
+        expect(painelFechado.medidos, `${destino.caminho}: nenhum alvo medido`).toBeGreaterThan(0)
+        expect(
+          painelFechado.pequenos,
+          `${destino.caminho}: ${painelFechado.pequenos.join(' | ')}`
+        ).toEqual([])
+
+        /*
+         * No mobile, os nove destinos existem dentro de um <dialog> fechado.
+         * A varredura acima deve pula-los: sem caixa, eles nao sao alvo de
+         * toque naquele estado. Mas parar ali deixava justamente a navegacao
+         * principal do celular fora da verificacao. Perguntamos ao navegador
+         * se o acionador esta visivel, abrimos o painel e medimos de novo — sem
+         * repetir em TypeScript o breakpoint que pertence ao CSS.
+         */
+        const acionadorVisivel = await estaAcessivelmenteVisivel(
+          page,
+          '[data-testid="abrir-painel"]'
+        )
+        if (acionadorVisivel) {
+          await page.getByTestId('abrir-painel').click()
+          const painelAberto = await medirAlvosDeToque(page, ALVO_MINIMO_PX)
+          const destinosQueEntraramNaMedicao = painelAberto.medidos - painelFechado.medidos
+
+          console.log(
+            `[${informacoes.project.name} ${destino.caminho}] painel aberto: ` +
+              `${painelAberto.medidos} alvos medidos · ` +
+              `${destinosQueEntraramNaMedicao} destinos acrescentados · ` +
+              `abaixo de ${ALVO_MINIMO_PX} px: ${painelAberto.pequenos.length}`
+          )
+          expect(destinosQueEntraramNaMedicao).toBe(DESTINOS_PUBLICOS.length - 1)
+          expect(
+            painelAberto.pequenos,
+            `${destino.caminho}, painel aberto: ${painelAberto.pequenos.join(' | ')}`
+          ).toEqual([])
+        }
       })
 
       test('não faz nenhuma requisição a domínio externo', async ({ page }) => {
@@ -252,6 +288,45 @@ test.describe('conversao principal e painel lateral', () => {
         `[${largura}px] destinos diretos: ${quantos} + conversao = ${total}/${DESTINOS_PUBLICOS.length}`
       )
       expect(total).toBe(DESTINOS_PUBLICOS.length)
+
+      const geometria = await page.getByTestId('navegacao-direta').evaluate((lista) => {
+        const itens = Array.from(lista.querySelectorAll('a')).map((item) => {
+          const caixa = item.getBoundingClientRect()
+          return { topo: Number(caixa.top.toFixed(2)), altura: Number(caixa.height.toFixed(2)) }
+        })
+        const caixaDaLista = lista.getBoundingClientRect()
+        return {
+          alturaDaLista: Number(caixaDaLista.height.toFixed(2)),
+          maiorAlturaDeItem: Math.max(...itens.map((item) => item.altura)),
+          toposDistintos: [...new Set(itens.map((item) => item.topo))],
+        }
+      })
+      console.log(
+        `[${largura}px] geometria da navegacao direta: lista ${geometria.alturaDaLista} px · ` +
+          `maior item ${geometria.maiorAlturaDeItem} px · ` +
+          `${geometria.toposDistintos.length} topo(s) distinto(s)`
+      )
+      expect(
+        geometria.alturaDaLista - geometria.maiorAlturaDeItem,
+        `${largura}px: a lista direta ocupa mais de uma linha`
+      ).toBeLessThanOrEqual(1)
+
+      const filhosDoCabecalho = await page.locator('header').evaluate((cabecalho) =>
+        Array.from(cabecalho.children).map((filho) => {
+          const caixa = filho.getBoundingClientRect()
+          return {
+            nome: filho.getAttribute('data-testid') ?? filho.tagName.toLowerCase(),
+            largura: Number(caixa.width.toFixed(2)),
+            altura: Number(caixa.height.toFixed(2)),
+          }
+        })
+      )
+      console.log(
+        `[${largura}px] filhos do cabecalho: ` +
+          filhosDoCabecalho
+            .map((filho) => `${filho.nome} ${filho.largura}×${filho.altura}`)
+            .join(' · ')
+      )
     } else {
       await expect(acionador).toBeVisible()
       const noPainel = page.getByTestId('painel-de-navegacao').getByRole('link')

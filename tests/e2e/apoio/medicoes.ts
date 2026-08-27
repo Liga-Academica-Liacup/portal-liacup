@@ -102,17 +102,32 @@ export async function cabecalhoPermaneceVisivelAoRolar(page: Page): Promise<{
   topoDepois: number
   rolagemAplicada: number
 }> {
-  const topoAntes = await page.evaluate(
-    () => document.querySelector('header')?.getBoundingClientRect().top ?? Number.NaN
-  )
+  /*
+   * As paginas provisorias podem ser menores que a viewport. Sem criar altura
+   * durante a medicao, `scrollTo` aplica zero e um cabecalho `static` passa
+   * verde sem ter sido exercitado. Guardamos e restauramos o estilo inline: a
+   * pagina fica rolavel apenas pelo tempo necessario para medir.
+   */
+  const preparacao = await page.evaluate(() => {
+    const alturaMinimaAnterior = document.body.style.minHeight
+    document.body.style.minHeight = `${window.innerHeight + 800}px`
+    window.scrollTo(0, 0)
+    return {
+      topoAntes: document.querySelector('header')?.getBoundingClientRect().top ?? Number.NaN,
+      alturaMinimaAnterior,
+    }
+  })
   await page.evaluate(() => window.scrollTo(0, 400))
   await page.waitForTimeout(120)
   const resultado = await page.evaluate(() => ({
     topoDepois: document.querySelector('header')?.getBoundingClientRect().top ?? Number.NaN,
     rolagemAplicada: window.scrollY,
   }))
-  await page.evaluate(() => window.scrollTo(0, 0))
-  return { topoAntes, ...resultado }
+  await page.evaluate((alturaMinimaAnterior) => {
+    window.scrollTo(0, 0)
+    document.body.style.minHeight = alturaMinimaAnterior
+  }, preparacao.alturaMinimaAnterior)
+  return { topoAntes: preparacao.topoAntes, ...resultado }
 }
 
 export type MedidaDeAlvos = { medidos: number; pequenos: string[] }

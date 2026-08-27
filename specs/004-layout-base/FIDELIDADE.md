@@ -22,6 +22,7 @@ superfície. Valores previstos abaixo são ponto de comparação, não substitue
 | altura mobile | protótipo 244 px | PREENCHER | PREENCHER | FR-002 |
 | permanência ao rolar | protótipo fixo | PREENCHER | PREENCHER | |
 | painel lateral | não existia | PREENCHER | PREENCHER | requisito mobile aprovado |
+| CTA em 1024 px | texto em uma linha no protótipo | 96,38 × 53,19 px, texto em duas linhas | divergente, aceito no limite | sem quebra mede 153,73 × 44 px e gera `scrollWidth 1064 > 1024`; o plano B autorizado já foi consumido e o FR-007 proíbe novo breakpoint |
 
 ## Rodapé
 

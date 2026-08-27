@@ -268,7 +268,7 @@ O teste anterior passaria nas duas.
 | **E26** | Ícones da união fechada, na vitrine | **4 distintos**: `abrir, email, fechar, instagram` |
 | **E27** | Suíte de ponta a ponta completa, sete larguras | **726 passaram · 0 falharam · 2 puladas** (o alvo do acionador não existe no desktop) |
 | **E28** | Altura do cabeçalho, as sete larguras | **360: 62,59 · 390: 62,59 · 430: 62,59 · 480: 62,59 · 768: 62,59 · 1024: 71,78 · 1280: 62,59 px** |
-| **E29** | Alvos de toque | **0 abaixo de 44 px** em todas as combinações · 14 medidos no mobile, 6 no desktop |
+| **E29** | Alvos de toque, contagem original conferida literalmente | **0 abaixo de 44 px** · painel fechado: **6 no mobile**, **14 no desktop**. O registro anterior estava invertido e os nove destinos do painel ainda não pertenciam à medição |
 | **E30** | Unidade | **11 arquivos · 93 testes** (eram 82) |
 
 ### O achado da fase: o contador pegou um defeito meu
@@ -341,7 +341,16 @@ formulário da liga, onde tem de ser um `<a>` de verdade.
 
 ## 5. Geometria do cabeçalho (US2 · FR-002, FR-003, FR-038)
 
-_A preencher na Fase 5._
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E31** | **T024 — vermelho da altura.** Troca temporária e isolada do padding vertical de `--space-2` para `--space-3`, em 360 px | **Código 1** · altura **71,38 px**, acima do teto de 64 px. Restaurado para `--space-2` |
+| **E32** | **T024 — o primeiro vermelho de permanência não apareceu** com `position: static` | O teste passou porque a página provisória não tinha altura para rolar: `rolagemAplicada` era zero e o `if` pulava a asserção. Era verde sem medição |
+| **E33** | **T024 — vermelho real da permanência**, depois de o medidor criar altura temporária e exigir rolagem > 0 | **Código 1** · `topo -400 depois de 400 px` com `position: static`. O medidor restaura a altura inline e a posição da página depois de cada caso |
+| **E34** | Cobertura dos alvos móveis com o painel aberto, nas dez rotas | Painel fechado: **6** medidos. Painel aberto: **15** medidos, exatamente **9 acrescentados**, **zero** abaixo de 44 px. Em desktop: **14** medidos e painel ausente da árvore acessível |
+| **E35** | Origem dos 71,78 px em 1024 | Lista direta **44,69 px**, maior item **44 px**: uma única linha. Filhos do cabeçalho: marca `73,02×44`, navegação `784,23×44,69`, CTA **`96,38×53,19`** — é a CTA que quebra o texto |
+| **E36** | Tentativa isolada de manter a CTA em uma linha | Cabeçalho caiu para **63,28 px**, mas a CTA foi a `153,73×44` e as dez rotas reprovaram: **`scrollWidth 1064 > 1024`**. Restaurado. O plano B do FR-007 já havia sido aplicado; novo breakpoint ou novo aperto são proibidos. Divergência registrada em `FIDELIDADE.md` |
+| **E37** | T025 | `--font-size-marca: 18px` já havia entrado no T011 por necessidade de compilação, com origem literal `.nav-brand`; conferido: um token novo, nenhum token existente alterado |
+| **E38** | **T027 — matriz completa no build final** | **726 passaram · 0 falharam · 2 puladas e cobertas** · 70/70 combinações públicas com zero overflow · rolagem de **400 px realmente aplicada** em cada medição · alturas 360/390/430/480/768/1280: **62,59 px**, 1024: **71,78 px** · mobile **6 fechado / 15 aberto / 9 acrescentados / zero pequenos** · desktop **14 / zero pequenos** |
 
 ## 6. Percurso por teclado (US4 · FR-009 a FR-012, FR-017 a FR-019, FR-042)
 

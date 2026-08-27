@@ -137,13 +137,13 @@ permanência após rolagem e zero rolagem horizontal.
 
 ### Testes e evidência vermelha
 
-- [ ] T024 [US2] Completar em `tests/e2e/paginas-publicas.spec.ts` as medições de altura, posição após rolagem e `scrollWidth<=clientWidth` nas 70 combinações; executar primeiro e, se a estrutura já passar naturalmente, introduzir uma violação temporária isolada para provar cada detector vermelho antes de restaurá-la
+- [X] T024 [US2] Completar em `tests/e2e/paginas-publicas.spec.ts` as medições de altura, posição após rolagem e `scrollWidth<=clientWidth` nas 70 combinações; executar primeiro e, se a estrutura já passar naturalmente, introduzir uma violação temporária isolada para provar cada detector vermelho antes de restaurá-la
 
 ### Implementação
 
-- [ ] T025 [US2] Acrescentar somente `--font-size-marca: 18px` com origem literal `.nav-brand` em `src/estilos/tokens.css`, sem alterar qualquer token existente
-- [ ] T026 [US2] Ajustar `src/componentes/layout/Cabecalho.module.css`, `src/componentes/layout/NavegacaoPublica.module.css` e `src/app/(site)/layout.module.css` usando exclusivamente tokens para cabeçalho fixo, orçamento mobile ≤64 px e ausência de overflow; em 1024 px aplicar apenas o plano B `--space-4`→`--space-3` se a medição reprovar e parar se ainda não couber
-- [ ] T027 [US2] Executar a matriz de `tests/e2e/paginas-publicas.spec.ts` e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` as sete alturas, 70/70 combinações, zero overflow e evidência de permanência ao rolar
+- [X] T025 [US2] Acrescentar somente `--font-size-marca: 18px` com origem literal `.nav-brand` em `src/estilos/tokens.css`, sem alterar qualquer token existente
+- [X] T026 [US2] Ajustar `src/componentes/layout/Cabecalho.module.css`, `src/componentes/layout/NavegacaoPublica.module.css` e `src/app/(site)/layout.module.css` usando exclusivamente tokens para cabeçalho fixo, orçamento mobile ≤64 px e ausência de overflow; em 1024 px aplicar apenas o plano B `--space-4`→`--space-3` se a medição reprovar e parar se ainda não couber
+- [X] T027 [US2] Executar a matriz de `tests/e2e/paginas-publicas.spec.ts` e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` as sete alturas, 70/70 combinações, zero overflow e evidência de permanência ao rolar
 
 **Checkpoint**: US2 comprovada por números depois de todos os controles reais existirem.
 
