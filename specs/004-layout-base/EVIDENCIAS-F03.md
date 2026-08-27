@@ -167,6 +167,62 @@ ausência de cobertura.
 partir da ferramenta errada: `getByRole('group')` devolvendo zero descreve o modelo do Playwright,
 não o que o leitor de tela recebe.
 
+#### Adendo — o que o zero do axe significa, medido no bundle instalado
+
+A primeira versão deste registro tratou o zero do axe como prova de que o rótulo é permitido. **Não
+é**, e a correção veio de abrir o `node_modules/axe-core/axe.js`. A entrada do elemento é:
+
+```js
+address: {
+  contentTypes: [ 'flow' ],
+  allowedRoles: true
+},
+```
+
+**Sem `implicitRole`** — e `implicitRole` aparece só **18 vezes** no bundle inteiro. O axe não
+atribui papel implícito a `<address>` naquela tabela.
+
+Mas o zero **também não é vazio**, e isso só apareceu ao ler as linhas vizinhas. O axe tem um sinal
+próprio e explícito para o caso, usado em **38 entradas** — e o elemento imediatamente anterior o
+carrega:
+
+```js
+abbr: {
+  contentTypes: [ 'phrasing', 'flow' ],
+  allowedRoles: true,
+  namingProhibited: true      // ← abbr tem
+},
+address: {
+  contentTypes: [ 'flow' ],
+  allowedRoles: true          // ← address NÃO tem
+},
+```
+
+Então o zero do `aria-prohibited-attr` diz uma coisa modesta e verdadeira: **`<address>` não está na
+lista de 38 elementos em que o axe proíbe nomeação, ao contrário do vizinho `abbr`.** É evidência
+fraca, não prova — e continua não sendo o que decide.
+
+**O que decide é a árvore do Chrome**, e a decisão de ir até ela foi tomada *antes* de saber o
+resultado, que é a única hora em que dá para julgar o método. Parar no axe teria acertado a
+conclusão pelo motivo errado.
+
+### E21 — Ferramenta que não enxerga não é atributo que não existe
+
+Nome dado à classe, porque ela vai voltar.
+
+O `getByRole('group')` do Playwright devolve **zero** para um elemento cujo nome acessível o Chrome
+expõe. Lido sem cuidado, "a ferramenta não achou" vira "o atributo não funciona" — e a conclusão
+errada fica com cara de medição.
+
+É a mesma família de **"não executado" que era "não executado por mim"**, das E32/E33 da F02: o
+sujeito da frase some, e sobra uma afirmação sobre o mundo que na verdade era uma afirmação sobre
+quem olhou.
+
+**Limite de cobertura, declarado**: o teste de unidade roda em **jsdom**, e prova que o
+`dom-accessibility-api` expõe o nome. Quem prova o **Chrome** é a leitura do CDP registrada em E19,
+que foi feita uma vez e não é permanente. Os dois concordam hoje. Cada um cobre o que alcança, e
+vale saber qual prova o quê.
+
 ### E20 — A crítica metodológica estava certa, e o teste mudou
 
 A conclusão não se sustentou; **o método sim**. O teste cobrava
