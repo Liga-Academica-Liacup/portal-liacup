@@ -1,0 +1,31 @@
+/*
+ * Aparencia das nove rotas que a F03 entrega sem conteudo.
+ *
+ * Um modulo compartilhado, e nao nove copias: o aviso e literalmente o mesmo
+ * nas nove paginas, e nove copias divergem na primeira vez que alguem ajustar
+ * uma delas.
+ *
+ * Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css.
+ */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+}
+
+.titulo {
+  margin: 0;
+  font-size: var(--font-size-h2);
+  color: var(--color-accent-800);
+}
+
+.aviso {
+  margin: 0;
+  max-width: 42ch;
+  /* --color-neutral-700 sobre --color-bg #f5ead8: 5,53:1. Passa o AA. */
+  color: var(--color-neutral-700);
+}

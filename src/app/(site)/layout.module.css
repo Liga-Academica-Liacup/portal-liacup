@@ -1,0 +1,52 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+
+.moldura {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.principal {
+  flex: 1;
+}
+
+/*
+ * O link de pular para o conteudo.
+ *
+ * ELE NAO E `display: none`, e essa e a decisao. Elemento escondido assim sai da
+ * ordem de foco, e um atalho de teclado que o teclado nao alcanca nao e atalho.
+ * Aqui ele fica FORA DA TELA, alcancavel por Tab, e volta a posicao normal ao
+ * receber foco (FR-017).
+ *
+ * O `top` negativo usa a mesma medida de espacamento do cabecalho, entao ele
+ * some exatamente acima da borda superior sem numero solto.
+ */
+.pularParaConteudo {
+  position: absolute;
+  left: var(--space-2);
+  top: calc(var(--space-8) * -1);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alvo-de-toque);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  /* --color-text sobre --color-surface: 12,59:1. Passa o AA com folga. */
+  color: var(--color-text);
+  font-size: var(--font-size-controle);
+  text-decoration: none;
+  transition: top 0.15s ease-in-out;
+}
+
+.pularParaConteudo:focus-visible {
+  top: var(--space-2);
+}
+
+/* Quem navega com o teclado e tem `prefers-reduced-motion` nao precisa da
+   animacao para entender que o atalho apareceu. */
+@media (prefers-reduced-motion: reduce) {
+  .pularParaConteudo {
+    transition: none;
+  }
+}

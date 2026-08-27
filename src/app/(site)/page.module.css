@@ -1,10 +1,16 @@
+/*
+ * O `min-height: 80vh` saiu na F03. Ele existia porque esta pagina era a unica
+ * do site e precisava ocupar a tela sozinha. Agora o layout do grupo `(site)`
+ * traz cabecalho e rodape, e o `.principal` dele ja cresce com `flex: 1` — 80vh
+ * somado aos dois passaria de 100vh e criaria rolagem vertical sem conteudo
+ * para ela.
+ */
 .principal {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  min-height: 80vh;
   padding: var(--space-8) var(--space-4);
   text-align: center;
 }

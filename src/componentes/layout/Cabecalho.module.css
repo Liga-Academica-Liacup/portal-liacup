@@ -1,0 +1,50 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+
+/*
+ * Conversao do `.nav` do liacup.css.
+ *
+ * ORIGEM: display flex, align-items center, gap --space-4, padding
+ * `--space-3 --space-4`, border-bottom none.
+ *
+ * DUAS DIFERENCAS, as duas registradas no FIDELIDADE.md:
+ *
+ *   1. `position: sticky`. O `.nav` aprovado nao era fixo. O FR-002 exige
+ *      cabecalho fixo, e a premissa de mante-lo fixo em TODAS as larguras foi
+ *      confirmada por decisao explicita em 27/08 — um comportamento so e menos
+ *      coisa para quem mantem entender.
+ *   2. `padding` vertical desce de --space-3 para --space-2. Nao e estetica: e
+ *      aritmetica. 44 px de alvo + 2 x 13,2 = 70,4 px, acima do teto de 64. Com
+ *      --space-2 sao 61,6 px. O orcamento nao admite o valor aprovado.
+ *
+ * O FUNDO OPACO tambem e consequencia do sticky: cabecalho fixo transparente
+ * deixa o conteudo passar por baixo do texto. Usa --color-bg, a mesma cor da
+ * pagina, entao nao introduz superficie nova.
+ */
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg);
+  border-bottom: var(--largura-borda) solid var(--color-divider);
+}
+
+/*
+ * Conversao do `.nav-brand`: font-family --font-heading, font-weight
+ * --font-heading-weight, font-size 18px (agora --font-size-marca) e
+ * margin-right auto, que e o que empurra a navegacao para a direita.
+ */
+.marca {
+  margin-right: auto;
+  min-height: var(--alvo-de-toque);
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--font-size-marca);
+  color: inherit;
+  text-decoration: none;
+}

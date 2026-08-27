@@ -4,6 +4,9 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
+  /* O <address> vem com italico por padrao do navegador. Texto de contato nao e
+     citacao nem enfase: e dado. */
+  font-style: normal;
 }
 
 .link {

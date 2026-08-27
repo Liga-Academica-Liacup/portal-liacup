@@ -101,7 +101,55 @@ a cadeia voltar ao verde.
 
 ## 3. Moldura e dez rotas (US1 · FR-001 a FR-004, FR-020 a FR-025, FR-046)
 
-_A preencher na Fase 3._
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E13** | **T007 — vermelho antes da mudança semântica.** `npx vitest run src/componentes/layout/LinksDeContato.test.tsx` com o componente ainda como `<nav>` | **Código 1 · 2 falharam, 4 passaram.** A mensagem nomeia o elemento: `expected document not to contain element, found <nav aria-label="Canais de contato da LIACUP">` |
+| **E14** | **T009 — verde.** Mesmo comando depois de `<address>` | **Código 0 · 6 testes.** Contador: `Canais de contato renderizados: 2` |
+| **E15** | **T008 — vermelho da matriz**, antes das rotas. `npx playwright test --project=largura-360 tests/e2e/paginas-publicas.spec.ts` | **Código 1 · 50 falharam, 42 passaram** · `páginas verificadas: 1/10 · destinos do catálogo: 10` · `destinos do catálogo sem rota: /sobre, /noticias, /conteudo-educativo, /eventos, /projetos, /materiais, /galeria, /processo-seletivo, /contato` |
+| **E16** | **T014 — a mesma matriz depois da moldura e das dez rotas** | **`páginas verificadas: 10/10`** · **`banner 1 · navigation 1 · main 1 · contentinfo 1`** nas dez rotas · **21 falharam, 71 passaram** |
+| **E17** | Unidade, depois da Fase 3 | **10 arquivos · 82 testes**, código 0 (eram 79 no fim da Fase 2) |
+| **E18** | Cadeia estática | **Código 0** · 217 artefatos examinados · 74 arquivos varridos pelo verificador de tokens |
+
+### As 21 falhas restantes são de fase posterior, e estão nomeadas
+
+O checkpoint da Fase 3 é *"US1 verificável nas dez rotas"* — **10/10 e landmarks 1·1·1·1 estão
+cumpridos**. As falhas que sobram pertencem a US3 (Fase 4) e US2 (Fase 5), e ficam declaradas em vez
+de escondidas:
+
+| Falha | Número medido | Quem resolve |
+| --- | --- | --- |
+| Rolagem horizontal em 360 px | `scrollWidth 765 maior que clientWidth 360` | **Fase 4** — nove destinos vão para o painel; hoje os dez estão lado a lado |
+| Alvos de toque | **14 medidos · 3 abaixo de 44 px** | **Fase 4/5** — ver abaixo |
+
+### O achado da Fase 3: `min-height: 44px` não é um alvo de 44 px
+
+Os três alvos reprovados são os de rótulo curto:
+
+```
+a "Início"  33.8 × 44.0
+a "Sobre"   37.3 × 44.0
+a "Galeria" 43.6 × 44.0
+```
+
+**A altura está certa em todos.** O que falta é **largura** — o `.nav a` do `liacup.css` não tem
+preenchimento horizontal, então o alvo é do tamanho do texto. "Início" tem seis letras e por isso
+mede 33,8 px de largura, mesmo com `min-height: var(--alvo-de-toque)` aplicado.
+
+Isto é exatamente o tipo de defeito que uma verificação de uma dimensão só deixa passar: um
+verificador que medisse `height >= 44` reportaria **zero falhas** e estaria errado em três alvos. A
+função `medirAlvosDeToque` compara **as duas dimensões**, e foi por isso que apareceu.
+
+Fica registrado aqui porque a correção é da Fase 4/5 e a causa é desta.
+
+### Duas antecipações declaradas, para não passarem como desvio silencioso
+
+1. **O token `--font-size-marca` entrou no T011, não no T025.** O `Cabecalho.module.css` precisa do
+   tamanho da marca para existir, e escrever `18px` à mão reprovaria o `verificar:tokens`. O
+   conteúdo é exatamente o que o T025 pede — um token novo, origem literal `.nav-brand`, nenhum
+   token existente alterado. Quando a Fase 5 chegar ao T025, ele confere em vez de criar.
+2. **`src/app/(site)/pagina-em-construcao.module.css` não está na lista de arquivos do `plan.md`.**
+   As nove páginas provisórias são idênticas na aparência; nove cópias do mesmo CSS divergem na
+   primeira vez que alguém ajustar uma. Um módulo compartilhado, nenhum componente novo.
 
 ## 4. Conversão visível, navegação responsiva e aparência única (US3 · FR-005 a FR-008, FR-026 a FR-030, FR-045 · SC-018)
 

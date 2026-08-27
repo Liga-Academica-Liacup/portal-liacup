@@ -1,0 +1,43 @@
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+
+.navegacao {
+  display: flex;
+  align-items: center;
+}
+
+.lista {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * Conversao do `.nav a` do liacup.css.
+ *
+ * A CORRECAO DE CONTRASTE: o arquivo de origem usava --color-accent no :hover e
+ * no [aria-current], que mede 3,48:1 sobre --color-bg #f5ead8 e REPROVA o AA
+ * para texto normal. Passa a --color-accent-700 #683f74, que mede 6,91:1 sobre
+ * --color-bg e 6,15:1 sobre --color-surface #ebddc5.
+ *
+ * Nao e decisao nova: e a reatribuicao de cor de link ja decidida na ADR-0003,
+ * secao 2, e anotada no proprio liacup.css nas linhas 171-175.
+ *
+ * ALTURA: o `.nav a` aprovado nao definia altura minima. Os 44 px vem da
+ * ADR-0004 2.1 e sao regra nossa, mais estrita que o AA. Registrado no
+ * FIDELIDADE.md como ratificado, nao como identico.
+ */
+.destino {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alvo-de-toque);
+  color: inherit;
+  font-size: var(--font-size-controle);
+  text-decoration: none;
+}
+
+.destino:hover {
+  color: var(--color-accent-700);
+}

@@ -155,6 +155,17 @@
   ); /* cascata final de .card e .dialog — raio de
                                         escala, nao de componente: o .dialog usa o mesmo na Fase 2 */
 
+  /* ── Token da F03 — layout base ─────────────────────────────────────────────
+     UM token novo, com origem literal. Nenhum token existente foi alterado.
+
+     --font-size-marca: o `.nav-brand` do liacup.css declarava `font-size: 18px`
+     literal. Mesmo valor, agora nomeado. Não é --font-size-h4 (20px) nem
+     --font-size-h5 (16px): 18px não existia na escala, e usar o degrau vizinho
+     seria mudar o design aprovado para não criar um token — que é o mesmo erro
+     semântico do --font-size-h6 usado como fonte de botão, corrigido na
+     ADR-0004 2.3. */
+  --font-size-marca: 18px; /* .nav-brand */
+
   /* Etiqueta */
   --font-size-etiqueta: 11px; /* .tag */
   --letter-spacing-etiqueta: 0.02em; /* .tag */

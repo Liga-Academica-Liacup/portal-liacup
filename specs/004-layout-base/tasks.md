@@ -78,17 +78,17 @@ uma moldura estrutural idêntica, uma região de cada papel e marca apontando pa
 
 ### Testes e evidência vermelha
 
-- [ ] T007 [P] [US1] Ampliar `src/componentes/layout/LinksDeContato.test.tsx` para exigir os dois destinos preservados, contêiner `address` nomeado e ausência de landmark `navigation`, executar o teste focado e registrar o vermelho antes da mudança semântica
-- [ ] T008 [P] [US1] Migrar os cenários ainda válidos de `tests/e2e/pagina-inicial.spec.ts` e substituí-lo por `tests/e2e/paginas-publicas.spec.ts` com casos derivados do catálogo para status, URL final, `h1`, marca, header/nav/main/footer únicos, igualdade estrutural e zero requisição externa; executar contra o estado atual e registrar caminhos e contagens que falharam
+- [X] T007 [P] [US1] Ampliar `src/componentes/layout/LinksDeContato.test.tsx` para exigir os dois destinos preservados, contêiner `address` nomeado e ausência de landmark `navigation`, executar o teste focado e registrar o vermelho antes da mudança semântica
+- [X] T008 [P] [US1] Migrar os cenários ainda válidos de `tests/e2e/pagina-inicial.spec.ts` e substituí-lo por `tests/e2e/paginas-publicas.spec.ts` com casos derivados do catálogo para status, URL final, `h1`, marca, header/nav/main/footer únicos, igualdade estrutural e zero requisição externa; executar contra o estado atual e registrar caminhos e contagens que falharam
 
 ### Implementação
 
-- [ ] T009 [P] [US1] Atualizar semântica e comentários de `src/componentes/layout/LinksDeContato.tsx` e `src/componentes/layout/LinksDeContato.module.css`, e compor linha institucional, sede curta e contatos em `src/componentes/layout/Rodape.tsx` e `src/componentes/layout/Rodape.module.css`
-- [ ] T010 [P] [US1] Criar a navegação estrutural baseada somente no catálogo em `src/componentes/layout/NavegacaoPublica.tsx` e `src/componentes/layout/NavegacaoPublica.module.css`, sem estado de negócio e sem uma segunda lista de destinos
-- [ ] T011 [US1] Criar `src/componentes/layout/Cabecalho.tsx`, `src/componentes/layout/Cabecalho.module.css`, `src/app/(site)/layout.tsx` e `src/app/(site)/layout.module.css` compondo skip link primeiro, header, uma navegação, `main#conteudo-principal[tabIndex=-1]` e rodapé, mantendo `src/app/layout.tsx` exclusivamente global
-- [ ] T012 [P] [US1] Reduzir `src/app/(site)/page.tsx` e `src/app/(site)/page.module.css` ao conteúdo provisório permitido para Início, removendo da página os contatos e o rodapé agora fornecidos pelo layout
-- [ ] T013 [P] [US1] Criar as nove rotas explícitas `src/app/(site)/sobre/page.tsx`, `src/app/(site)/noticias/page.tsx`, `src/app/(site)/conteudo-educativo/page.tsx`, `src/app/(site)/eventos/page.tsx`, `src/app/(site)/projetos/page.tsx`, `src/app/(site)/materiais/page.tsx`, `src/app/(site)/galeria/page.tsx`, `src/app/(site)/processo-seletivo/page.tsx` e `src/app/(site)/contato/page.tsx`, cada uma somente com `h1` e “Página em construção”
-- [ ] T014 [US1] Executar os testes focados de `src/componentes/layout/LinksDeContato.test.tsx` e `tests/e2e/paginas-publicas.spec.ts`, registrar 10/10 rotas e landmarks em `specs/004-layout-base/EVIDENCIAS-F03.md` e parar se qualquer página tiver conteúdo institucional além do rodapé aprovado
+- [X] T009 [P] [US1] Atualizar semântica e comentários de `src/componentes/layout/LinksDeContato.tsx` e `src/componentes/layout/LinksDeContato.module.css`, e compor linha institucional, sede curta e contatos em `src/componentes/layout/Rodape.tsx` e `src/componentes/layout/Rodape.module.css`
+- [X] T010 [P] [US1] Criar a navegação estrutural baseada somente no catálogo em `src/componentes/layout/NavegacaoPublica.tsx` e `src/componentes/layout/NavegacaoPublica.module.css`, sem estado de negócio e sem uma segunda lista de destinos
+- [X] T011 [US1] Criar `src/componentes/layout/Cabecalho.tsx`, `src/componentes/layout/Cabecalho.module.css`, `src/app/(site)/layout.tsx` e `src/app/(site)/layout.module.css` compondo skip link primeiro, header, uma navegação, `main#conteudo-principal[tabIndex=-1]` e rodapé, mantendo `src/app/layout.tsx` exclusivamente global
+- [X] T012 [P] [US1] Reduzir `src/app/(site)/page.tsx` e `src/app/(site)/page.module.css` ao conteúdo provisório permitido para Início, removendo da página os contatos e o rodapé agora fornecidos pelo layout
+- [X] T013 [P] [US1] Criar as nove rotas explícitas `src/app/(site)/sobre/page.tsx`, `src/app/(site)/noticias/page.tsx`, `src/app/(site)/conteudo-educativo/page.tsx`, `src/app/(site)/eventos/page.tsx`, `src/app/(site)/projetos/page.tsx`, `src/app/(site)/materiais/page.tsx`, `src/app/(site)/galeria/page.tsx`, `src/app/(site)/processo-seletivo/page.tsx` e `src/app/(site)/contato/page.tsx`, cada uma somente com `h1` e “Página em construção”
+- [X] T014 [US1] Executar os testes focados de `src/componentes/layout/LinksDeContato.test.tsx` e `tests/e2e/paginas-publicas.spec.ts`, registrar 10/10 rotas e landmarks em `specs/004-layout-base/EVIDENCIAS-F03.md` e parar se qualquer página tiver conteúdo institucional além do rodapé aprovado
 
 **Checkpoint**: US1 verificável nas dez rotas; nenhum conteúdo das features seguintes foi criado.
 
