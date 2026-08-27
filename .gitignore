@@ -34,3 +34,9 @@ supabase/.temp/
 # Cache de compilacao incremental do TypeScript: gerado a cada build,
 # diferente em cada maquina, conflita em todo merge. Nao se versiona.
 *.tsbuildinfo
+
+# Declaracao de tipos gerada pelo Next. Esteve versionada desde o primeiro
+# commit da F00 e saiu na recuperacao do RP-13, depois de medido que o `tsc`
+# passa sem ela. Quem a regera e `next typegen`, encadeado em `verificar:tipos`
+# — entao um clone novo a tem antes de qualquer verificacao precisar dela.
+next-env.d.ts

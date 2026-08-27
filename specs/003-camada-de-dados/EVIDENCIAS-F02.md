@@ -6,7 +6,17 @@ No precedente das F00 e F01. Cada linha traz **o que foi medido e o número**, n
 que está tudo certo. O que não pôde ser provado está declarado como **NÃO EXECUTADO**, com o motivo
 — preencher com algo plausível é o que este arquivo existe para não fazer (Princípio VIII).
 
-**33 evidências: 30 verificadas, 3 não executadas** (E3, E32 e E33, na seção 9).
+**40 evidências: 39 verificadas, 1 não executada** (E3, na seção 9).
+
+Eram "37 verificadas, 3 não executadas" até 26/08/2026, quando alguém foi olhar o GitHub em vez de
+supor: os segredos **estavam** cadastrados e a execução #13 do CI passou. A E32 e a E33 nunca foram
+"não executadas" — foram **não executadas por mim, localmente**, que é outra frase. Ver a correção
+no fim da seção 9.
+
+Eram **33** quando a F02 fechou. As sete últimas — **E34 a E40** — vieram do RP-13: as três
+primeiras no commit que ficou inalcançável, e as quatro seguintes na recuperação dele, já durante a
+F03. Estão aqui, e não num arquivo da F03, porque é aqui que o requisito nasceu. A contagem foi
+refeita e não arredondada.
 
 A T059 previa 20. São 33 porque a fase 3 rendeu evidências que a tarefa não previa — a descoberta das
 concessões e as três saídas do verificador. O número está aqui contado, e não arredondado para bater
@@ -147,6 +157,68 @@ seria repetir o erro da v1 do protótipo na informação mais fácil de acredita
 | **E29** | `npm run test:e2e` | **84 passaram** — os mesmos da F01, nenhum perdido |
 | **E30** | `npm run test:desempenho` | **Todas as asserções passaram**, 3 execuções do Lighthouse |
 | **E31** | Dependências diretas | **22** — 4 de execução, 18 de desenvolvimento. `@supabase/ssr` **ausente**, como o plano exige |
+| **E32** | Passo de CI "Tipos do banco conferem com o esquema" **rodando no CI** | **Verde na execução #13**, a do merge do PR #9 — 26/08/2026, 17:43, 3m02s. O segredo `SUPABASE_ACCESS_TOKEN` e a variável `NEXT_PUBLIC_SUPABASE_URL` **estavam cadastrados**. Antes disso, provado **localmente** nos dois sentidos: **219 linhas divergentes** com o arquivo desatualizado de propósito, e verde depois |
+| **E33** | Passo de CI "Chave de serviço fora do pacote compilado" **rodando no CI** | **Verde na mesma execução #13.** O segredo `SUPABASE_SERVICE_ROLE_KEY` **estava cadastrado**. Provado localmente em E13 e E14 |
+
+**Regra de leitura destas tabelas**, uniformizada em 26/08/2026: **toda evidência aparece uma vez na
+seção temática a que pertence**, e as **não executadas se repetem na seção 9**, onde o motivo é
+explicado. O `E3` já seguia essa regra; o `E32` e o `E33` apareciam **só** na seção 9, e quem
+contasse as tabelas temáticas achava **38** em vez de 40. Os números nunca estiveram errados — a
+disposição estava, e num arquivo cujo propósito é ser contado isso é defeito.
+
+No mesmo dia, e por acaso na mesma passagem, descobriu-se que a E32 e a E33 **nem eram** não
+executadas: os segredos estavam cadastrados e o CI as rodou. Hoje elas moram aqui, verificadas, e
+**só o `E3` se repete na seção 9**. As duas correções são independentes — uma era de arrumação,
+a outra era de fato —, e vieram juntas porque foi preciso mexer nas mesmas linhas.
+
+---
+
+## 8.1 Artefatos gerados no controle de versão (RP-13)
+
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E34** | Arquivos rastreados pelo git que são artefato gerado | **2 encontrados**, ambos com a linha correspondente **já presente** no `.gitignore`: `tsconfig.tsbuildinfo` e `supabase/.temp/cli-latest` |
+| **E35** | Depois de tirados do rastreamento | **198 arquivos examinados contra 11 padrões · 0 artefatos indevidos · 1 versionado por decisão** *(era 2 — ver adendo)* |
+| **E36** | Demonstração: `git add -f tsconfig.tsbuildinfo`, com `*.tsbuildinfo` presente no `.gitignore` | **Falhou nomeando o arquivo** e mostrando o `git rm --cached` a rodar, saída 1. Removido do rastreamento: verde, saída 0 |
+
+### Adendo de 26/08/2026 — a exceção que não sobreviveu à medição
+
+Este commit ficou **inalcançável** por um tempo: foi feito sobre `feat/F02-camada-de-dados` depois
+do merge do PR #9, e a branch foi apagada em seguida. Recuperado do reflog na F03 e incorporado por
+PR próprio. As três evidências abaixo são da recuperação.
+
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E37** | `tsc --noEmit` **sem** `.next` e **sem** `next-env.d.ts` — o estado real de um clone novo se o arquivo for desrastreado | **Código 0.** O motivo escrito da exceção — "a verificação de tipos quebraria" — era **previsão, e falsa**. A exceção caiu e o arquivo saiu do controle de versão |
+| **E38** | O custo de tirá-lo, medido **antes** de tirar: arquivo temporário com `import de .png`, que depende do `declare module '*.png'` que o `next-env.d.ts` traz | **Sem** o arquivo: `TS2307` apontando o `import` do png, **sem citar** o arquivo que falta, código **2**. **Com** o arquivo: código **0**. Defesa escolhida: `next typegen` encadeado em `verificar:tipos`, que o regenera **idêntico** sem build inteiro — medido, código 0 |
+| **E39** | Demonstração do verificador com a lista de exceções já corrigida: `git add -f next-env.d.ts` | **Falhou nomeando o arquivo**, saída 1 — provando que a remoção da exceção **teve efeito**. `git add -f tsconfig.tsbuildinfo`: falhou igual, saída 1. Estado final: **198 examinados · 11 padrões · 1 exceção · 0 indevidos**, saída 0 |
+
+**A emenda que isto produziu no RP-13**: o motivo de uma exceção passa a ter de **nomear o comando
+que demonstra o que quebra**, e esse comando é executado quando a exceção entra. A condição
+anterior — "exceção sem motivo é falha" — pegava **ausência** de motivo e não pegava **motivo
+errado**. É a distinção configuração contra resultado do RP-12, aplicada à lista de exceções do
+próprio requisito que a criou.
+
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E40** | A garantia do `next typegen &&` tem quem a **exercite**? Busca por importação estática de imagem em `src/` e `tests/` — `.png`, `.jpg`, `.svg`, `.webp`, `StaticImageData`, `next/image-types` | **Zero.** Nada no repositório dependia daquele arquivo, e por isso apagar o `next typegen &&` deixaria **tudo verde**: a cadeia, o `verificar:artefatos` e os 71 testes. Criado `scripts/garantia-de-tipos-do-next.ts`, permanente e visto pelo `tsc`. **Três execuções: 0 → 2 → 0** — verde no estado normal; **código 2** sem o `next-env.d.ts`, com `TS2307` apontando a linha 57 do guarda; verde de novo depois de `npm run verificar:tipos`, que roda o `typegen` e conserta sozinho |
+
+**A E40 é a metade que a E38 não deixou.** A E38 provou que o modo de falha existe, com um arquivo
+temporário que foi apagado; a E40 é o que continua provando que o conserto vale. **Teste de recusa
+não distingue "corretamente bloqueado" de "quebrado fechado"** — a lição da E7 desta mesma feature,
+aplicada uma feature depois a um alvo completamente diferente.
+
+O guarda disparou sozinho, em condição real, antes mesmo de ser testado de propósito: ao trocar de
+`feat/F03-layout-base` (onde o `next-env.d.ts` ainda está rastreado) para `chore/RP-13` (onde é
+ignorado), o próprio `git checkout` apagou o arquivo, e o `tsc` ficou vermelho na hora.
+
+**O `.gitignore` não cobria coisa nenhuma nesses dois casos, e parecia cobrir.** Ele diz ao git o que
+não acrescentar; não tem efeito sobre o que já está rastreado. Por isso o verificador não lê o
+`.gitignore` — ele pergunta ao git **o que está rastreado agora**.
+
+As cinco pastas conferidas por pedido do Gabriel — `.next/`, `coverage/`, `playwright-report/`,
+`test-results/` e `.lighthouseci/` — **já estavam** no `.gitignore` e nenhuma tinha arquivo
+rastreado. O buraco não estava onde a lista sugeria.
 
 ---
 
@@ -154,14 +226,29 @@ seria repetir o erro da v1 do protótipo na informação mais fácil de acredita
 
 | # | Item | Motivo |
 | --- | --- | --- |
-| **E3** | Políticas em produção | Migrações 0009 a 0013 vão para produção **depois do merge**, pela regra do ADR-0005 §2.6. Produção hoje: 13 tabelas, RLS ativo em todas, nenhuma política — **fechada**, não desprotegida |
-| **E32** | Passo de CI "Tipos do banco conferem com o esquema" **rodando no CI** | Depende do segredo `SUPABASE_ACCESS_TOKEN` e da variável `NEXT_PUBLIC_SUPABASE_URL` no repositório, que só o Gabriel pode cadastrar. O script foi provado **localmente**, verde e vermelho: com o arquivo versionado deliberadamente desatualizado, apontou **219 linhas divergentes** e as três primeiras, e voltou ao verde depois |
-| **E33** | Passo de CI "Chave de serviço fora do pacote compilado" **rodando no CI** | Depende do segredo `SUPABASE_SERVICE_ROLE_KEY` no repositório. Provado localmente em E13 e E14 |
+| **E3** | Políticas em produção | Migrações 0009 a 0013 vão para produção **depois do merge**, pela regra do ADR-0005 §2.6. Produção no fechamento da F02: 13 tabelas, RLS ativo em todas, nenhuma política — **fechada**, não desprotegida |
 
 **Os dois passos de CI não têm `if:` que os pule quando o segredo falta.** Sem o segredo eles ficam
-**vermelhos dizendo que NÃO VERIFICARAM**, que é a verdade, em vez de verdes por omissão. Isso
-significa que o CI desta branch fica vermelho até os segredos serem cadastrados — e é o
-comportamento correto.
+**vermelhos dizendo que NÃO VERIFICARAM**, que é a verdade, em vez de verdes por omissão.
+
+### Correção de 26/08/2026 — a E32 e a E33 saíram desta seção
+
+Elas estavam aqui dizendo *"NÃO EXECUTADO — depende de segredo"*, e isso descrevia a execução
+**local**. No GitHub, os dois segredos e a variável **já estavam cadastrados**, e a **execução #13
+do CI**, a do merge do PR #9, rodou os dois passos e **passou** — 26/08/2026, 17:43, 3m02s. Os dois
+foram promovidos para a seção 8 como **verificados**.
+
+**O erro não estava no número; estava em confundir "eu não consegui rodar" com "não foi rodado".**
+São a mesma frase vista de dentro do documento e coisas diferentes vistas de fora dele — a mesma
+classe do `.gitignore` que parecia cobrir, do catálogo do Postgres que dizia "13 políticas" com o
+banco recusando tudo, e do `lighthouserc.json` que dizia desktop enquanto o checklist dizia mobile.
+**O lado que responde a verdade é sempre o de fora do documento**, e desta vez levou três rodadas de
+raciocínio bem construído até alguém abrir a tela.
+
+**Pendência que este mesmo fato abre**: o PR #9 foi incorporado em 26/08. Pela regra do ADR-0005
+§2.6, as migrações 0009 a 0013 iam para produção **depois do merge** — o merge aconteceu, e se as
+migrações foram aplicadas **não foi medido aqui**. A E3 fica como está, descrevendo o fechamento da
+F02, até alguém olhar o catálogo de produção. Não é registro que se atualiza por dedução.
 
 ---
 

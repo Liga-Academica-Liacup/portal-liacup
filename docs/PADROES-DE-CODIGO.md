@@ -233,8 +233,9 @@ depósito.
 | **RP-10** | **Nenhum segredo** no repositório nem no histórico | Princípio IV · F00 FR-023 | Varredura do estado atual e do histórico |
 | **RP-11** | Toda tabela nasce com **controle de acesso por linha ativo**, e a política é testada provando que **bloqueia** — não só que permite | Princípio IV · F02 | Suíte de políticas, com o número de células de recusa verificadas |
 | **RP-12** | **Verificação que ninguém viu falhar não conta.** Toda verificação nova é demonstrada **falhando** diante de violação real e voltando ao verde. E toda verificação **diz quanto mediu** — arquivos varridos, elementos medidos, células checadas | F00 (V1–V5) · F01 · F02 | Duas execuções registradas com resultados opostos, **e o contador na saída** |
+| **RP-13** | **Artefato gerado não entra no controle de versão.** O que sai de um comando — build, cache, relatório, estado local de ferramenta — é reconstruível, difere em cada máquina e conflita em todo merge. Exceção é registrada por nome, e o motivo dela **nomeia o comando que demonstra o que quebra se o arquivo sair** — comando que é **executado quando a exceção entra** | F02 · F03 | `npm run verificar:artefatos` — pergunta ao git o que está **rastreado agora**, não o que o `.gitignore` lista |
 
-**O RP-12 é o que sustenta os outros onze**, e tem duas metades que se completam:
+**O RP-12 é o que sustenta os outros doze**, e tem duas metades que se completam:
 
 - **vista falhando** — sem isso, uma verificação quebrada e uma satisfeita produzem a mesma saída
   verde. Foi o que a F00 aprendeu com o CI que não checava nada;
@@ -242,6 +243,83 @@ depósito.
   Foi o que pegou os 20 alvos de toque da F01: o número estava honesto, mas media uma página que não
   mostrava tudo. Um verificador que varre zero arquivos e um que aprova tudo são indistinguíveis sem
   o contador.
+
+**O RP-13 nasceu de uma leitura errada que é a leitura natural.** O `.gitignore` e o rastreamento do
+git parecem a mesma coisa e não são: o arquivo diz ao git o que **não acrescentar**, e não tem efeito
+nenhum sobre o que **já está** rastreado. Um arquivo que entrou antes da linha continua sendo
+versionado a cada commit, com o `.gitignore` parecendo cobri-lo.
+
+Foi assim que `tsconfig.tsbuildinfo` e `supabase/.temp/cli-latest` seguiram versionados depois de as
+linhas correspondentes serem escritas. Por isso a verificação não lê o `.gitignore`: ela pergunta ao
+git **o que está rastreado agora**, que é a única pergunta cuja resposta não engana.
+
+**A exceção é nominal, e o motivo dela nomeia um comando.** Hoje é **uma**:
+`src/lib/supabase/tipos.ts`, porque é o contrato tipado que as features consomem sem acesso ao
+banco — e que não fica à deriva, já que **`npm run banco:tipos:check`** regera a partir do esquema e
+falha se o versionado divergir.
+
+### Por que "motivo escrito" não bastava — o requisito pegou a própria exceção
+
+Esta regra tem uma emenda com data, e ela vale mais que o requisito original.
+
+A primeira versão do RP-13 exigia que toda exceção tivesse **motivo escrito**, e trazia **duas**:
+a de cima e o `next-env.d.ts`, cujo motivo dizia que tirá-lo quebraria a verificação de tipos num
+clone novo, porque o CI roda `verificar:tipos` **antes** do `build`.
+
+Isso tem forma de motivo e não é um. É **previsão**, não medição. Quando alguém finalmente mediu —
+escondendo o `.next` **e** o `next-env.d.ts` e rodando `tsc --noEmit` — o resultado foi **código 0**.
+O motivo era falso, e a exceção caiu.
+
+É a distinção **configuração contra resultado**, a mesma do RP-12, aplicada à lista de exceções do
+próprio requisito que a criou: *"tem motivo escrito"* é configuração e a lista conseguia exigir;
+*"o motivo confere"* é resultado, e ela passava verde com ele errado.
+
+Daí a redação atual: **o motivo nomeia o comando que demonstra o que quebra, e esse comando é
+executado quando a exceção entra.** Motivo que só descreve uma consequência plausível não é motivo —
+é o que sobra quando ninguém mediu.
+
+### O que a remoção do `next-env.d.ts` custou, medido antes de decidir
+
+Tirá-lo do controle de versão cria uma falha de forma cara, e ela foi demonstrada antes de o arquivo
+sair. O `next-env.d.ts` traz o `declare module '*.png'` (via `next/image-types/global`). No dia em
+que alguém escrever `import logo from './algo.png'`:
+
+| Onde | O que acontece |
+| --- | --- |
+| Máquina de quem escreveu | **Passa** — um `next dev` ou `next build` já regenerou o arquivo |
+| CI, sem defesa | **Vermelho** com `TS2307` apontando o `import` do png, **sem citar** o arquivo que falta |
+
+Verde local, vermelho remoto, mensagem apontando para o lugar errado. Medido: **código 2** sem o
+arquivo, **código 0** com ele.
+
+A defesa é `next typegen`, encadeado dentro de `verificar:tipos`. Ele regenera o `next-env.d.ts`
+**idêntico**, sem rodar um build inteiro, e por estar no script — e não só num passo do CI — vale
+também para quem clona e roda `npm run verificar` na própria máquina. Mover o `verificar:tipos` para
+depois do `build` resolveria o CI e deixaria o clone local quebrado; seria a mesma assimetria,
+invertida.
+
+### E a garantia tem quem a exercite: `scripts/garantia-de-tipos-do-next.ts`
+
+Essa defesa é um `next typegen &&` — **uma linha**. Apague-a e, na varredura de hoje, **nada fica
+vermelho**: não existe no repositório uma única importação estática de imagem, e foi por isso que o
+`tsc` passou sem o `next-env.d.ts` nas duas medições que autorizaram removê-lo.
+
+A demonstração de falha (E38) foi feita com um arquivo temporário, que foi apagado. Ela provou que o
+modo de falha **existe** e não deixou nada provando que o conserto **continua valendo**.
+
+É a mesma lição que a F02 escreveu, na mesma forma: **teste de recusa não distingue "corretamente
+bloqueado" de "quebrado fechado"** — só o de permissão separa os dois. A recusa foi demonstrada e
+descartada junto com o temporário; a permissão é este arquivo, e ele é permanente.
+
+Ele faz uma **importação só de tipo** de um `.png`, que depende do `declare module '*.png'` que só o
+`next-env.d.ts` traz. `import type` é apagada na compilação: não vira `require`, não entra em pacote,
+e nenhum executor de teste precisa saber carregar imagem — o que evitaria o desfecho previsível de o
+guarda passar a falhar por um segundo motivo e alguém desligá-lo.
+
+**Limite conhecido, escrito em vez de omitido**: numa máquina onde já se rodou `next dev`, o
+`next-env.d.ts` existe em disco mesmo sem o `typegen`, então a regressão pode continuar verde
+**localmente** e ficar vermelha **no CI**, que roda em clone limpo. O CI é o portão, e é lá que a
+garantia morde.
 
 ---
 
@@ -256,6 +334,7 @@ Regra que depende de disciplina humana degrada. Estas são automáticas:
 | ESLint acessibilidade (`jsx-a11y`) | Erros básicos de semântica e rótulo |
 | Prettier | Formatação, sem discussão |
 | Script de tokens no CI | Cor e medida escritas à mão |
+| Script de artefatos no CI | Arquivo gerado versionado sem decisão registrada (RP-13) |
 | Vitest | Unidade e integração |
 | Playwright + axe | Ponta a ponta, acessibilidade, responsividade |
 | Lighthouse CI | Desempenho e acessibilidade por página |

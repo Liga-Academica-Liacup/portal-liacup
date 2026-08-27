@@ -294,6 +294,7 @@ Da seção 8.1 de `docs/PADROES-DE-CODIGO.md`. Esta feature não os redescobre: 
 | **RP-10** nenhum segredo no repositório | **Sim** | FR-016, SC-008 — e é o item de dano irreversível |
 | **RP-11** RLS ativa e política testada bloqueando | **Sim** | FR-008 a FR-013. É a razão de existir da feature |
 | **RP-12** verificação vista falhando | **Sim** | FR-013 e as demonstrações da chave de serviço |
+| **RP-13** artefato gerado fora do controle de versão | **Sim** | Criado durante esta feature, a partir de dois arquivos que seguiam versionados apesar do `.gitignore`. Verificado por `npm run verificar:artefatos` |
 
 ### Escopo — o que **não** entra nesta feature
 

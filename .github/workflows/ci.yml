@@ -35,6 +35,19 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      # Nao le o .gitignore: pergunta ao git o que esta RASTREADO. As duas coisas
+      # parecem a mesma e nao sao — o .gitignore nao tem efeito sobre arquivo que
+      # ja entrou, e foi assim que o tsconfig.tsbuildinfo seguiu versionado
+      # depois de a linha correspondente ser escrita (RP-13).
+      - name: Artefatos gerados fora do controle de versao
+        run: npm run verificar:artefatos
+
+      # Encadeia `next typegen` antes do `tsc`, e isso NAO e detalhe: o
+      # next-env.d.ts deixou de ser versionado (RP-13), e ele e quem traz o
+      # `declare module '*.png'`. Sem o typegen, um `import logo from './x.png'`
+      # passaria na maquina de quem escreveu — que ja rodou `next dev` — e
+      # falharia AQUI, com um TS2307 apontando o png e sem citar o arquivo que
+      # falta. Medido antes de decidir: sem o arquivo, codigo 2; com ele, 0.
       - name: Verificar tipos
         run: npm run verificar:tipos
 

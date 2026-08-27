@@ -45,8 +45,8 @@ Abra <http://localhost:3000>. **`npm run dev` e o unico comando para trabalhar n
 npm run verificar
 ```
 
-Roda as quatro verificacoes em sequencia — tipos, analise estatica, formatacao e tokens — e para na
-primeira que falhar.
+Roda as **seis** verificacoes em sequencia — artefatos gerados, tipos, analise estatica, formatacao,
+tokens e chave de servico — e para na primeira que falhar.
 
 ```bash
 npm test
@@ -60,21 +60,21 @@ Na primeira vez, o teste de ponta a ponta pede que voce instale o navegador. Ele
 
 ## Todos os comandos
 
-| Comando                    | O que faz                                      |
-| -------------------------- | ---------------------------------------------- |
-| `npm run dev`              | Sobe o projeto para trabalhar                  |
-| `npm run build`            | Gera a versao de producao                      |
-| `npm start`                | Sobe a versao ja compilada                     |
-| `npm run verificar`        | Tipos + analise estatica + formatacao + tokens |
-| `npm run verificar:tipos`  | So a verificacao de tipos                      |
-| `npm run lint`             | So a analise estatica                          |
-| `npm run formatar:check`   | Confere formatacao sem alterar arquivo         |
-| `npm run formatar`         | Corrige a formatacao                           |
-| `npm run verificar:tokens` | Procura cor e medida escritas a mao            |
-| `npm test`                 | Testes de unidade                              |
-| `npm run test:watch`       | Testes de unidade, reexecutando ao salvar      |
-| `npm run test:e2e`         | Testes de ponta a ponta, nas 7 larguras        |
-| `npm run test:desempenho`  | Lighthouse contra a versao compilada           |
+| Comando                    | O que faz                                                                   |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `npm run dev`              | Sobe o projeto para trabalhar                                               |
+| `npm run build`            | Gera a versao de producao                                                   |
+| `npm start`                | Sobe a versao ja compilada                                                  |
+| `npm run verificar`        | As seis: artefatos + tipos + analise estatica + formatacao + tokens + chave |
+| `npm run verificar:tipos`  | So a verificacao de tipos                                                   |
+| `npm run lint`             | So a analise estatica                                                       |
+| `npm run formatar:check`   | Confere formatacao sem alterar arquivo                                      |
+| `npm run formatar`         | Corrige a formatacao                                                        |
+| `npm run verificar:tokens` | Procura cor e medida escritas a mao                                         |
+| `npm test`                 | Testes de unidade                                                           |
+| `npm run test:watch`       | Testes de unidade, reexecutando ao salvar                                   |
+| `npm run test:e2e`         | Testes de ponta a ponta, nas 7 larguras                                     |
+| `npm run test:desempenho`  | Lighthouse contra a versao compilada                                        |
 
 ---
 
@@ -190,17 +190,45 @@ Estes tres passos acontecem nas interfaces do GitHub e da Vercel, **nesta ordem*
    importar o repositorio e aceitar os padroes de Next.js. Isso ja entrega publicacao automatica da
    `main` e pre-visualizacao por alteracao proposta.
 2. **Deixar o primeiro CI rodar.** Abra qualquer alteracao proposta e espere terminar.
-3. **Proteger o ramo principal.** No GitHub, _Settings › Branches › Add branch protection rule_
+3. **Proteger o ramo principal.** No GitHub, _Settings › Rules › Rulesets › New branch ruleset_
    para `main`, exigindo alteracao proposta antes de incorporar e exigindo que as verificacoes
-   passem — selecionando as que apareceram no passo 2.
+   passem — selecionando, pelo nome, a verificacao `Verificacoes` que apareceu no passo 2.
+4. **Deixar a lista de dispensa VAZIA.** No ruleset ela se chama _Bypass list_; nas protecoes
+   classicas, o equivalente e marcar _Include administrators_. **Este e o passo que decide se a
+   protecao vale para quem incorpora**, e e o unico da lista que nao da nenhum sinal quando fica
+   errado — a regra aparece ativa, com as caixas certas marcadas, e simplesmente nao se aplica a
+   quem tem permissao de administrador. Num repositorio onde so o dono incorpora, uma dispensa de
+   administrador e uma protecao que nunca se aplica a nada.
 
 > **A ordem importa e nao e detalhe.** A protecao so pode ser configurada depois que o CI rodou uma
 > vez, porque antes disso o GitHub nao sabe quais verificacoes existem: a protecao fica vazia,
 > parece configurada e nao barra nada.
 
-**Depois de configurar, teste.** Crie um branch, quebre alguma coisa de proposito, abra uma
-alteracao proposta e confirme que o botao de incorporar fica bloqueado. Se der para incorporar com
-o CI vermelho, a protecao nao esta valendo — e todo o resto e decoracao.
+> **O CI e um job so.** Todos os passos moram dentro de `Verificacoes`, entao a protecao exige **uma**
+> verificacao, nao onze. Qualquer passo vermelho derruba o check inteiro — que e o comportamento
+> desejado, e explica por que a lista do passo 3 tem um nome so.
+
+**Depois de configurar, teste — e olhe TRES coisas, nao uma.** Crie um branch, quebre alguma coisa
+de proposito, abra uma alteracao proposta e confira:
+
+| #   | Onde olhar                                                         | O que significa                                                                                        |
+| --- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| ①   | O botao de incorporar esta **bloqueado**?                          | Se estiver, e o unico dos tres sinais que ja e boa noticia                                             |
+| ②   | O check `Verificacoes` tem a etiqueta **"Required"**?              | **Nao tem** → a protecao existe mas nao exige o check                                                  |
+| ③   | Aparece **aviso de que voce esta passando por cima de uma regra**? | **Aparece** → a regra vale para outras pessoas e **nao para voce**: a lista de dispensa nao esta vazia |
+
+**O botao sozinho nao basta**, e este e o ponto do quadro. Uma protecao que nao exige o check e uma
+que dispensa administradores produzem **o mesmo botao verde e clicavel**, e se consertam de formas
+diferentes: a primeira selecionando a verificacao, a segunda esvaziando a lista de dispensa. Quem
+testa sendo dono do repositorio esta na pior posicao possivel para notar a diferenca — se o botao
+abrir, e preciso saber se abriu porque a regra nao existe ou porque ela nao se aplica a voce.
+
+Se der para incorporar com o CI vermelho, a protecao nao esta valendo — e todo o resto e decoracao.
+
+> **Estado conferido em 26/08/2026**: ruleset `main-protegida`, **Active**, alvo `main`, 4 regras,
+> **lista de dispensa vazia**. As protecoes classicas estao desligadas — os dois mecanismos coexistem
+> na interface do GitHub, e procurar no lugar errado devolve "nao configurado" para um repositorio
+> protegido. Se for conferir, olhe **Rules › Rulesets**, nao so _Branches_.
 
 ### Alteracao vinda de fork e propostas simultaneas
 
