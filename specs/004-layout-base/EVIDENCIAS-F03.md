@@ -259,7 +259,85 @@ O teste anterior passaria nas duas.
 
 ## 4. Conversão visível, navegação responsiva e aparência única (US3 · FR-005 a FR-008, FR-026 a FR-030, FR-045 · SC-018)
 
-_A preencher na Fase 4._
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E22** | **T015 — vermelho no tipo.** `npx tsc --noEmit` com os contratos escritos e os componentes ainda sem eles | **Código 2.** `TS2578: Unused '@ts-expect-error'` na linha do `style` do `Botao` — provando que ele **ainda não era recusado** · `TS2307` link inexistente · `TS2322` `'abrir' \| 'fechar'` não atribuível a `NomeDoIcone` |
+| **E23** | **T018/T019/T020 — verde.** Mesmo comando | **Código 0** — e o verde aqui significa que as diretivas passaram a ser **usadas**: as recusas funcionam, não apenas compilam |
+| **E24** | `Botao.module.css` depois do T018 | **Não existe.** `ls src/componentes/ui/Botao*.css` não devolve nada, e nenhuma referência a ele sobrou no repositório |
+| **E25** | **SC-018 — os seis pares** | **6/6 pares · 29 propriedades comparadas por par · 0 divergentes** · **29 derivadas / 29 reconhecidas** pelo navegador |
+| **E26** | Ícones da união fechada, na vitrine | **4 distintos**: `abrir, email, fechar, instagram` |
+| **E27** | Suíte de ponta a ponta completa, sete larguras | **726 passaram · 0 falharam · 2 puladas** (o alvo do acionador não existe no desktop) |
+| **E28** | Altura do cabeçalho, as sete larguras | **360: 62,59 · 390: 62,59 · 430: 62,59 · 480: 62,59 · 768: 62,59 · 1024: 71,78 · 1280: 62,59 px** |
+| **E29** | Alvos de toque | **0 abaixo de 44 px** em todas as combinações · 14 medidos no mobile, 6 no desktop |
+| **E30** | Unidade | **11 arquivos · 93 testes** (eram 82) |
+
+### O achado da fase: o contador pegou um defeito meu
+
+A comparação dos seis pares **passou** na primeira execução:
+
+```
+Pares visuais: 6/6 · propriedades comparadas por par: 2 · pares divergentes: 0
+```
+
+**Dois.** Eu desestruturei o grupo 1 do regex em vez do 2, e o grupo 1 era `(^|[;{])` — o conjunto
+derivado continha `'{'` e `';'`. O teste comparou `getPropertyValue('{')` nos dois elementos, que
+devolve string vazia em ambos, e portanto **sempre coincidia**.
+
+Seis de seis pares, zero divergências, comparando duas coisas que não existem. **A asserção estava
+correta e passaria para sempre.** Quem acusou foi o contador ao lado dela — que é o argumento
+inteiro do RP-12 numa linha de saída.
+
+Vale o registro sobre o método: a exigência do contador nasceu na F00 contra um CI que não checava
+nada, e três features depois pegou um defeito de regex num teste de comparação visual. Regra que só
+serve para o caso que a criou não teria pego este.
+
+**Duas defesas foram acrescentadas, e a segunda substitui um número mágico por uma propriedade do
+objeto:**
+
+| Defesa | Pega | Visto falhando |
+| --- | --- | --- |
+| Piso de sanidade (12) | quebra catastrófica | a saída `2` acima |
+| `CSS.supports(nome, 'initial')` | quebra **parcial** | propriedade plausível e inexistente no CSS: **30 derivadas / 29 reconhecidas**, código 1, nomeando `aparencia-do-controle` |
+
+O piso sozinho deixaria passar quinze nomes plausíveis e errados. A validade não depende de quantos
+nomes sobraram.
+
+### O segundo achado: o landmark de navegação sumiu no mobile
+
+Ao esconder a navegação direta abaixo de 1024 px, a primeira versão escondia o `<nav>` **inteiro**.
+Medido: **`navigation 0`** nas dez rotas em 360 px. Como `display: none` tira o elemento da árvore
+de acessibilidade, a página ficava **sem nenhum landmark de navegação justamente no caso
+principal** — quem navega por regiões no leitor de tela não encontrava o menu do site no celular.
+
+Corrigido: o `<nav>` existe nas sete larguras e só o conteúdo dele troca; o acionador e o painel
+moram dentro dele, porque **são** a navegação. Depois: `banner 1 · navigation 1 · main 1 ·
+contentinfo 1` nas dez rotas, em 360 e em 1280.
+
+### O plano B do FR-007 foi disparado por medição, e só ele
+
+| Antes | Depois |
+| --- | --- |
+| `gap: var(--space-4)` (17,6 px) · **`scrollWidth 1041` contra `clientWidth 1024`** nas dez rotas | `gap: var(--space-3)` (13,2 px) · **zero rolagem horizontal** nas sete larguras |
+
+Faltavam **17 px** — quase exatamente um `--space-4`. A spec autorizou, **antes de medir**, uma
+única saída: descer o espaçamento ao degrau anterior de token. Nenhum ponto de corte novo fora de
+480/768/1024 foi inventado.
+
+### A terceira saída do `<Link>`, e por que ela não afrouxa o FR-045
+
+A primeira versão do cabeçalho usava o `LinkComAparenciaDeBotao`, que renderiza `<a>` puro e
+**recarrega a página inteira**. Para a conversão principal do site — cujo público chega pelo
+Instagram, no celular, muitas vezes em rede ruim — esse é o custo mais caro possível, e o Lighthouse
+não mostraria, porque mede carga inicial.
+
+O T018 criou a peça que dispensa a escolha: `classesDaAparencia` é **função pura**, sem rota e sem
+componente, e `componentes/layout` **pode** conhecer rota. Então o cabeçalho usa
+`<Link className={classesDaAparencia('primario', false)}>`: navegação de cliente, mesma origem única
+de aparência, e nenhum buraco de `className` aberto no componente.
+
+**A divisão fica por significado**, e esclarece o escopo do componente: rota interna usa `<Link>` com
+a função; **destino externo** usa o componente — que é o caso do "Fazer inscrição" da F12, para o
+formulário da liga, onde tem de ser um `<a>` de verdade.
 
 ## 5. Geometria do cabeçalho (US2 · FR-002, FR-003, FR-038)
 

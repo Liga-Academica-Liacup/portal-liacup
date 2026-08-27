@@ -1,14 +1,80 @@
-/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css. */
+/* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css.
+   ESTE ARQUIVO DETEM O CORTE DE 1024 px. O TypeScript nunca o repete: quando
+   precisa saber se o painel ainda faz sentido, pergunta ao navegador se o
+   acionador esta visivel. Uma fonte para o breakpoint, e ela e o CSS. */
 
+/* ── Abaixo de 1024 px: painel ─────────────────────────────────────────────
+   A LISTA direta nao aparece, mas o <nav> que a contem SIM. Esconder o <nav>
+   inteiro tirava o unico landmark de navegacao da pagina no mobile — medido:
+   `navigation 0` nas dez rotas. `display: none` tira da arvore de
+   acessibilidade, e era isso que acontecia com a regiao inteira. */
 .navegacao {
   display: flex;
   align-items: center;
 }
 
 .lista {
-  display: flex;
+  display: none;
+}
+
+.acionador {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
+  justify-content: center;
+  width: var(--alvo-de-toque);
+  height: var(--alvo-de-toque);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  /* --color-accent-700 sobre --color-bg #f5ead8: 6,91:1. */
+  color: var(--color-accent-700);
+  cursor: pointer;
+}
+
+.painel {
+  /* O <dialog> nasce centralizado; aqui ele vira painel lateral. */
+  margin: 0 0 0 auto;
+  height: 100%;
+  max-height: 100%;
+  width: min(20rem, 85vw);
+  padding: var(--space-6) var(--space-4);
+  border: none;
+  border-left: var(--largura-borda) solid var(--color-divider);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.painel::backdrop {
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+
+.listaDoPainel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * PLANO B DO FR-007, APLICADO — e o numero que o disparou esta aqui.
+ *
+ * O `.nav` aprovado usa `gap: var(--space-4)` (17,6 px). Com os dez destinos
+ * lado a lado, a medicao em 1024 px deu `scrollWidth 1041` contra
+ * `clientWidth 1024`: 17 px de sobra, quase exatamente um `--space-4`.
+ *
+ * A spec autorizou, ANTES de medir, uma unica saida: reduzir o espacamento
+ * entre itens ao degrau anterior de token. `--space-3` (13,2 px) x 9 intervalos
+ * devolve 39,6 px, mais que o suficiente. Nao foi inventado ponto de corte novo
+ * fora de 480/768/1024, que a secao 3 dos padroes chama de divida.
+ *
+ * Registrado no FIDELIDADE.md como corrigido, com o par de valores.
+ */
+.lista {
+  align-items: center;
+  gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -20,24 +86,55 @@
  * A CORRECAO DE CONTRASTE: o arquivo de origem usava --color-accent no :hover e
  * no [aria-current], que mede 3,48:1 sobre --color-bg #f5ead8 e REPROVA o AA
  * para texto normal. Passa a --color-accent-700 #683f74, que mede 6,91:1 sobre
- * --color-bg e 6,15:1 sobre --color-surface #ebddc5.
+ * --color-bg e 6,15:1 sobre --color-surface #ebddc5. Nao e decisao nova: e a
+ * reatribuicao ja decidida na ADR-0003 secao 2, anotada no proprio liacup.css.
  *
- * Nao e decisao nova: e a reatribuicao de cor de link ja decidida na ADR-0003,
- * secao 2, e anotada no proprio liacup.css nas linhas 171-175.
- *
- * ALTURA: o `.nav a` aprovado nao definia altura minima. Os 44 px vem da
- * ADR-0004 2.1 e sao regra nossa, mais estrita que o AA. Registrado no
- * FIDELIDADE.md como ratificado, nao como identico.
+ * O PADDING HORIZONTAL nao vem do aprovado, e o motivo esta medido: sem ele os
+ * rotulos curtos ficam com 33,8 px de LARGURA e reprovam o alvo de 44 px, mesmo
+ * com a altura correta. Registrado no FIDELIDADE.md como corrigido.
  */
-.destino {
+.destino,
+.destinoDoPainel {
   display: inline-flex;
   align-items: center;
   min-height: var(--alvo-de-toque);
+  padding-inline: var(--space-3);
   color: inherit;
   font-size: var(--font-size-controle);
   text-decoration: none;
 }
 
-.destino:hover {
+.destinoDoPainel {
+  width: 100%;
+}
+
+.destino:hover,
+.destinoDoPainel:hover {
   color: var(--color-accent-700);
+}
+
+/*
+ * PAGINA ATUAL — e a pista NAO depende so de cor.
+ *
+ * Quem nao distingue as cores precisa da mesma informacao, e o sublinhado a da.
+ * A cor sozinha reprovaria o criterio 1.4.1 do WCAG.
+ */
+.destino[aria-current='page'],
+.destinoDoPainel[aria-current='page'] {
+  color: var(--color-accent-700);
+  text-decoration: underline;
+  text-underline-offset: var(--underline-offset);
+}
+
+/* ── A partir de 1024 px: navegacao direta, sem painel ─────────────────────── */
+@media (min-width: 1024px) {
+  .lista {
+    display: flex;
+  }
+
+  /* Fora da arvore de acessibilidade, e nao apenas invisivel. */
+  .acionador,
+  .painel {
+    display: none;
+  }
 }

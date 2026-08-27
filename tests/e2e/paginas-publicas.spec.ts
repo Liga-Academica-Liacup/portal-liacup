@@ -33,6 +33,7 @@ import {
   medirAlturaDoCabecalho,
   medirAlvosDeToque,
   medirRolagemHorizontal,
+  estaAcessivelmenteVisivel,
 } from './apoio/medicoes'
 
 const larguraDoProjeto = (nome: string) => Number(nome.replace('largura-', ''))
@@ -197,4 +198,81 @@ test('a conversão principal do catálogo aponta para o processo seletivo', asyn
 
   const cta = page.getByTestId('conversao-principal')
   await expect(cta).toHaveAttribute('href', conversaoPrincipal.caminho)
+})
+
+/*
+ * US3 — conversao visivel e navegacao responsiva (FR-005 a FR-007).
+ *
+ * O corte de 1024 px mora no CSS. Estes testes NAO o repetem: eles perguntam ao
+ * navegador o que esta visivel e o que esta na arvore acessivel, e derivam a
+ * expectativa da largura do projeto. Repetir o numero aqui criaria a segunda
+ * fonte que o plano proibe.
+ */
+const CORTE_DESKTOP = 1024
+
+test.describe('conversao principal e painel lateral', () => {
+  test('a conversao principal fica visivel sem nenhuma interacao', async ({
+    page,
+  }, informacoes) => {
+    await page.goto('/')
+
+    const cta = page.getByTestId('conversao-principal')
+    await expect(cta).toBeVisible()
+    await expect(cta).toHaveAttribute('href', conversaoPrincipal.caminho)
+    console.log(
+      `[${informacoes.project.name}] conversao "${conversaoPrincipal.rotulo}" visivel sem interacao`
+    )
+  })
+
+  test('abaixo de 1024 px os nove destinos ficam no painel, e acima ficam diretos', async ({
+    page,
+  }, informacoes) => {
+    await page.goto('/')
+    const largura = larguraDoProjeto(informacoes.project.name)
+    const ehDesktop = largura >= CORTE_DESKTOP
+
+    const acionador = page.getByTestId('abrir-painel')
+    const diretos = page.getByTestId('navegacao-direta').getByRole('link')
+
+    if (ehDesktop) {
+      // Fora da arvore acessivel, nao apenas transparente.
+      expect(await estaAcessivelmenteVisivel(page, '[data-testid="abrir-painel"]')).toBe(false)
+      expect(await estaAcessivelmenteVisivel(page, '[data-testid="painel-de-navegacao"]')).toBe(
+        false
+      )
+      /*
+       * Nove na navegacao direta MAIS a conversao, que fica fora dela em todas
+       * as larguras. Total visivel: dez. A conversao nao e repetida dentro da
+       * navegacao — dois links para o mesmo destino na mesma tela e ruido para
+       * quem navega por teclado e para quem usa leitor de tela.
+       */
+      const quantos = await diretos.count()
+      const total = quantos + 1
+      console.log(
+        `[${largura}px] destinos diretos: ${quantos} + conversao = ${total}/${DESTINOS_PUBLICOS.length}`
+      )
+      expect(total).toBe(DESTINOS_PUBLICOS.length)
+    } else {
+      await expect(acionador).toBeVisible()
+      const noPainel = page.getByTestId('painel-de-navegacao').getByRole('link')
+      await acionador.click()
+      const quantos = await noPainel.count()
+      console.log(`[${largura}px] destinos no painel: ${quantos} (esperados 9, sem a conversao)`)
+      expect(quantos).toBe(DESTINOS_PUBLICOS.length - 1)
+    }
+  })
+
+  test('o acionador do painel tem alvo de toque suficiente', async ({ page }, informacoes) => {
+    await page.goto('/')
+    const largura = larguraDoProjeto(informacoes.project.name)
+    if (largura >= CORTE_DESKTOP) {
+      test.skip(true, 'o acionador nao existe no desktop')
+      return
+    }
+
+    const caixa = await page.getByTestId('abrir-painel').boundingBox()
+    console.log(`[${largura}px] acionador: ${caixa?.width}×${caixa?.height}`)
+    expect(caixa?.width ?? 0).toBeGreaterThanOrEqual(ALVO_MINIMO_PX)
+    expect(caixa?.height ?? 0).toBeGreaterThanOrEqual(ALVO_MINIMO_PX)
+  })
 })

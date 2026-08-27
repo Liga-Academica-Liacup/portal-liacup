@@ -181,6 +181,29 @@ test('os seis pares botao/link tem aparencia calculada identica', async ({ page 
   await page.goto('/vitrine')
 
   const propriedades = propriedadesDeclaradasNaAparencia()
+
+  /*
+   * VALIDADE, e nao so quantidade.
+   *
+   * O piso de sanidade do arquivo de apoio pega a quebra catastrofica — foi o
+   * caso do regex que derivou `'{'` e `';'`. Nao pega a parcial: se a derivacao
+   * passar a devolver quinze nomes plausiveis e errados, o piso fica verde.
+   *
+   * `CSS.supports(nome, 'initial')` responde se o nome e uma propriedade CSS de
+   * verdade, em qualquer escala e sem numero escolhido a mao. E a mesma troca
+   * que a lista derivada ja fez uma vez: limiar por propriedade do objeto.
+   */
+  const invalidas = await page.evaluate(
+    (lista) => lista.filter((nome) => !CSS.supports(nome, 'initial')),
+    propriedades
+  )
+  console.log(
+    `Propriedades derivadas: ${propriedades.length} · reconhecidas pelo navegador: ` +
+      `${propriedades.length - invalidas.length}`
+  )
+  expect(invalidas, `nomes derivados que nao sao propriedade CSS: ${invalidas.join(', ')}`).toEqual(
+    []
+  )
   /*
    * O par e identificado pelo CONTEINER, e nao por um atributo no controle.
    *
