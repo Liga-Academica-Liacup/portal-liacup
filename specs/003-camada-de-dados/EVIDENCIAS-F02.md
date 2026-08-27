@@ -6,7 +6,12 @@ No precedente das F00 e F01. Cada linha traz **o que foi medido e o número**, n
 que está tudo certo. O que não pôde ser provado está declarado como **NÃO EXECUTADO**, com o motivo
 — preencher com algo plausível é o que este arquivo existe para não fazer (Princípio VIII).
 
-**33 evidências: 30 verificadas, 3 não executadas** (E3, E32 e E33, na seção 9).
+**40 evidências: 37 verificadas, 3 não executadas** (E3, E32 e E33, na seção 9).
+
+Eram **33** quando a F02 fechou. As sete últimas — **E34 a E40** — vieram do RP-13: as três
+primeiras no commit que ficou inalcançável, e as quatro seguintes na recuperação dele, já durante a
+F03. Estão aqui, e não num arquivo da F03, porque é aqui que o requisito nasceu. A contagem foi
+refeita e não arredondada.
 
 A T059 previa 20. São 33 porque a fase 3 rendeu evidências que a tarefa não previa — a descoberta das
 concessões e as três saídas do verificador. O número está aqui contado, e não arredondado para bater
@@ -175,6 +180,19 @@ que demonstra o que quebra**, e esse comando é executado quando a exceção ent
 anterior — "exceção sem motivo é falha" — pegava **ausência** de motivo e não pegava **motivo
 errado**. É a distinção configuração contra resultado do RP-12, aplicada à lista de exceções do
 próprio requisito que a criou.
+
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E40** | A garantia do `next typegen &&` tem quem a **exercite**? Busca por importação estática de imagem em `src/` e `tests/` — `.png`, `.jpg`, `.svg`, `.webp`, `StaticImageData`, `next/image-types` | **Zero.** Nada no repositório dependia daquele arquivo, e por isso apagar o `next typegen &&` deixaria **tudo verde**: a cadeia, o `verificar:artefatos` e os 71 testes. Criado `scripts/garantia-de-tipos-do-next.ts`, permanente e visto pelo `tsc`. **Três execuções: 0 → 2 → 0** — verde no estado normal; **código 2** sem o `next-env.d.ts`, com `TS2307` apontando a linha 57 do guarda; verde de novo depois de `npm run verificar:tipos`, que roda o `typegen` e conserta sozinho |
+
+**A E40 é a metade que a E38 não deixou.** A E38 provou que o modo de falha existe, com um arquivo
+temporário que foi apagado; a E40 é o que continua provando que o conserto vale. **Teste de recusa
+não distingue "corretamente bloqueado" de "quebrado fechado"** — a lição da E7 desta mesma feature,
+aplicada uma feature depois a um alvo completamente diferente.
+
+O guarda disparou sozinho, em condição real, antes mesmo de ser testado de propósito: ao trocar de
+`feat/F03-layout-base` (onde o `next-env.d.ts` ainda está rastreado) para `chore/RP-13` (onde é
+ignorado), o próprio `git checkout` apagou o arquivo, e o `tsc` ficou vermelho na hora.
 
 **O `.gitignore` não cobria coisa nenhuma nesses dois casos, e parecia cobrir.** Ele diz ao git o que
 não acrescentar; não tem efeito sobre o que já está rastreado. Por isso o verificador não lê o

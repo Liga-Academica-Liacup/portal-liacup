@@ -298,6 +298,29 @@ também para quem clona e roda `npm run verificar` na própria máquina. Mover o
 depois do `build` resolveria o CI e deixaria o clone local quebrado; seria a mesma assimetria,
 invertida.
 
+### E a garantia tem quem a exercite: `scripts/garantia-de-tipos-do-next.ts`
+
+Essa defesa é um `next typegen &&` — **uma linha**. Apague-a e, na varredura de hoje, **nada fica
+vermelho**: não existe no repositório uma única importação estática de imagem, e foi por isso que o
+`tsc` passou sem o `next-env.d.ts` nas duas medições que autorizaram removê-lo.
+
+A demonstração de falha (E38) foi feita com um arquivo temporário, que foi apagado. Ela provou que o
+modo de falha **existe** e não deixou nada provando que o conserto **continua valendo**.
+
+É a mesma lição que a F02 escreveu, na mesma forma: **teste de recusa não distingue "corretamente
+bloqueado" de "quebrado fechado"** — só o de permissão separa os dois. A recusa foi demonstrada e
+descartada junto com o temporário; a permissão é este arquivo, e ele é permanente.
+
+Ele faz uma **importação só de tipo** de um `.png`, que depende do `declare module '*.png'` que só o
+`next-env.d.ts` traz. `import type` é apagada na compilação: não vira `require`, não entra em pacote,
+e nenhum executor de teste precisa saber carregar imagem — o que evitaria o desfecho previsível de o
+guarda passar a falhar por um segundo motivo e alguém desligá-lo.
+
+**Limite conhecido, escrito em vez de omitido**: numa máquina onde já se rodou `next dev`, o
+`next-env.d.ts` existe em disco mesmo sem o `typegen`, então a regressão pode continuar verde
+**localmente** e ficar vermelha **no CI**, que roda em clone limpo. O CI é o portão, e é lá que a
+garantia morde.
+
 ---
 
 ## 9. Ferramentas que fazem cumprir
