@@ -38,8 +38,8 @@ acessíveis. US4 e US5 podem avançar em paralelo depois de US3.
 
 **Objetivo**: preservar o estado inicial e abrir o registro auditável da implementação.
 
-- [ ] T001 Criar `specs/004-layout-base/EVIDENCIAS-F03.md` com branch, SHA inicial, estrutura por requisito, campos de comando/código/contador e seções separadas para cada demonstração vermelho→verde
-- [ ] T002 Executar a linha de base de `specs/004-layout-base/quickstart.md` e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` os totais reais de `npm run verificar`, `npm test`, `npm run test:banco`, `npm run test:e2e`, build, dependências 4+18=22 e Lighthouse atual, sem corrigir falha encontrada
+- [X] T001 Criar `specs/004-layout-base/EVIDENCIAS-F03.md` com branch, SHA inicial, estrutura por requisito, campos de comando/código/contador e seções separadas para cada demonstração vermelho→verde
+- [X] T002 Executar a linha de base de `specs/004-layout-base/quickstart.md` e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` os totais reais de `npm run verificar`, `npm test`, `npm run test:banco`, `npm run test:e2e`, build, dependências 4+18=22 e Lighthouse atual, sem corrigir falha encontrada
 
 **Checkpoint**: estado anterior à F03 reproduzível e nenhuma dependência alterada.
 
