@@ -22,7 +22,7 @@
     "test:watch": "vitest",
     "test:e2e": "node scripts/verificar-navegador.mjs && playwright test",
     "test:banco": "vitest run --config vitest.banco.config.mts",
-    "test:desempenho": "lhci autorun",
+    "test:desempenho": "lhci autorun && node scripts/verificar-paginas-lighthouse.mjs",
     "banco:migrar": "supabase db push",
     "banco:semear": "supabase db query --linked --file supabase/seed.sql",
     "banco:tipos": "supabase gen types typescript --linked > src/lib/supabase/tipos.ts",

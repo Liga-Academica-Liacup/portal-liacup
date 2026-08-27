@@ -55,10 +55,10 @@ moldura.
 
 **Crítico**: nenhuma história começa antes de o catálogo canônico estar verde.
 
-- [ ] T003 Escrever primeiro os testes de quantidade, rótulos, caminhos únicos, formato de rota e única conversão principal em `src/componentes/layout/destinos-publicos.test.ts`, executar o teste focado ainda sem o catálogo e registrar o vermelho em `specs/004-layout-base/EVIDENCIAS-F03.md`
-- [ ] T004 Criar os dez itens exatos em `src/componentes/layout/destinos-publicos.json` e o adaptador somente leitura com validação explícita em `src/componentes/layout/destinos-publicos.ts`, então tornar `src/componentes/layout/destinos-publicos.test.ts` verde com contador 10/10
-- [ ] T005 [P] Criar em `tests/e2e/apoio/medicoes.ts` funções reutilizáveis para medir landmarks acessíveis, rolagem horizontal, altura do cabeçalho, alvos de toque visíveis e propriedades calculadas, sem copiar destinos nem definir breakpoint em TypeScript
-- [ ] T006 [P] Substituir `lighthouserc.json` por `lighthouserc.cjs` derivando dez URLs de `src/componentes/layout/destinos-publicos.json` e declarando `formFactor=mobile`, emulação de tela mobile e `throttlingMethod=simulate`; criar `scripts/verificar-paginas-lighthouse.mjs` para conferir no manifest atual 10/10 caminhos, 30/30 relatórios, três execuções, status HTTP, URL final e perfil, encadear o pós-verificador em `package.json` e executar contra as rotas ainda ausentes para registrar o vermelho nominal antes de qualquer rota ser criada
+- [X] T003 Escrever primeiro os testes de quantidade, rótulos, caminhos únicos, formato de rota e única conversão principal em `src/componentes/layout/destinos-publicos.test.ts`, executar o teste focado ainda sem o catálogo e registrar o vermelho em `specs/004-layout-base/EVIDENCIAS-F03.md`
+- [X] T004 Criar os dez itens exatos em `src/componentes/layout/destinos-publicos.json` e o adaptador somente leitura com validação explícita em `src/componentes/layout/destinos-publicos.ts`, então tornar `src/componentes/layout/destinos-publicos.test.ts` verde com contador 10/10
+- [X] T005 [P] Criar em `tests/e2e/apoio/medicoes.ts` funções reutilizáveis para medir landmarks acessíveis, rolagem horizontal, altura do cabeçalho, alvos de toque visíveis e propriedades calculadas, sem copiar destinos nem definir breakpoint em TypeScript
+- [X] T006 [P] Substituir `lighthouserc.json` por `lighthouserc.cjs` derivando dez URLs de `src/componentes/layout/destinos-publicos.json` e declarando `formFactor=mobile`, emulação de tela mobile e `throttlingMethod=simulate`; criar `scripts/verificar-paginas-lighthouse.mjs` para conferir no manifest atual 10/10 caminhos, 30/30 relatórios, três execuções, status HTTP, URL final e perfil, encadear o pós-verificador em `package.json` e executar contra as rotas ainda ausentes para registrar o vermelho nominal antes de qualquer rota ser criada
 
 **Checkpoint**: uma única lista alimenta aplicação, Playwright e Lighthouse; ausência de rota fica
 vermelha.

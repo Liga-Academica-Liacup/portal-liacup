@@ -1,0 +1,16 @@
+[
+  { "rotulo": "Início", "caminho": "/", "ehConversaoPrincipal": false },
+  { "rotulo": "Sobre", "caminho": "/sobre", "ehConversaoPrincipal": false },
+  { "rotulo": "Notícias", "caminho": "/noticias", "ehConversaoPrincipal": false },
+  {
+    "rotulo": "Conteúdo educativo",
+    "caminho": "/conteudo-educativo",
+    "ehConversaoPrincipal": false
+  },
+  { "rotulo": "Eventos", "caminho": "/eventos", "ehConversaoPrincipal": false },
+  { "rotulo": "Projetos", "caminho": "/projetos", "ehConversaoPrincipal": false },
+  { "rotulo": "Materiais", "caminho": "/materiais", "ehConversaoPrincipal": false },
+  { "rotulo": "Galeria", "caminho": "/galeria", "ehConversaoPrincipal": false },
+  { "rotulo": "Processo seletivo", "caminho": "/processo-seletivo", "ehConversaoPrincipal": true },
+  { "rotulo": "Contato", "caminho": "/contato", "ehConversaoPrincipal": false }
+]

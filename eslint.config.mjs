@@ -8,6 +8,27 @@ import jsxA11y from 'eslint-plugin-jsx-a11y'
 const raiz = dirname(fileURLToPath(import.meta.url))
 
 /*
+ * As extensoes que o eslint-config-next cobre, e portanto as unicas em que os
+ * plugins `import` e `jsx-a11y` estao registrados.
+ *
+ * Existe desde a F03, e por um motivo concreto: os blocos que usam regras
+ * DESSES plugins precisam declarar `files`, senao valem para todo arquivo — e
+ * um arquivo fora da lista derruba o lint inteiro com "could not find plugin",
+ * sem apontar a causa. Foi o que o primeiro `.cjs` do repositorio
+ * (lighthouserc.cjs) fez.
+ *
+ * `.cjs` fica de fora de proposito: e formato de arquivo de configuracao de
+ * ferramenta, nao de codigo do produto. Regra de camada e de acessibilidade de
+ * JSX nao tem o que verificar nele.
+ *
+ * ATENCAO: isto vale so para regras DE PLUGIN. Regra do nucleo do ESLint —
+ * como a barreira da chave de servico, mais abaixo — continua global, e tem de
+ * continuar: um arquivo novo, em qualquer extensao, nasce proibido de ler a
+ * credencial.
+ */
+const ARQUIVOS_COM_PLUGIN = ['**/*.js', '**/*.jsx', '**/*.mjs', '**/*.ts', '**/*.tsx', '**/*.mts']
+
+/*
  * O eslint-config-next 16 ja e config flat nativa e registra os plugins `import`
  * e `jsx-a11y`. Por isso nao usamos FlatCompat, que exigiria @eslint/eslintrc —
  * uma dependencia transitiva usada como direta, que e justamente o que a tabela
@@ -122,11 +143,25 @@ const configuracao = [
   ...proximoCoreWebVitals,
   ...proximoTypescript,
   {
-    // O plugin ja vem registrado pelo config do Next; aqui so subimos o conjunto
-    // de regras para o recomendado completo (Principio II da constitution).
+    /*
+     * O plugin ja vem registrado pelo config do Next; aqui so subimos o conjunto
+     * de regras para o recomendado completo (Principio II da constitution).
+     *
+     * O `files` foi acrescentado na F03 e nao e detalhe. Sem ele, este bloco
+     * aplicava regras de JSX a TODO arquivo — inclusive aos que o config do Next
+     * nao cobre, e que portanto nao tem o plugin registrado. Enquanto o projeto
+     * so teve .ts/.tsx/.mjs, ninguem notou; o primeiro `.cjs` do repositorio
+     * (lighthouserc.cjs, T006) derrubou o lint inteiro com
+     * "could not find plugin jsx-a11y".
+     *
+     * Restringir e a correcao certa e nao afrouxa nada: regra de acessibilidade
+     * de JSX aplicada a arquivo sem JSX nunca teve o que verificar.
+     */
+    files: ['**/*.jsx', '**/*.tsx'],
     rules: { ...jsxA11y.configs.recommended.rules },
   },
   {
+    files: ARQUIVOS_COM_PLUGIN,
     rules: {
       'import/no-restricted-paths': [
         'error',
@@ -176,6 +211,19 @@ const configuracao = [
         },
       ],
     },
+  },
+  {
+    /*
+     * Arquivo `.cjs` E CommonJS por definicao: `require` nao e estilo antigo
+     * nele, e a unica forma que existe. A regra que o proibe vale para o codigo
+     * do produto, que e todo ESM.
+     *
+     * Hoje isto cobre so o `lighthouserc.cjs`, que precisa ser CommonJS porque
+     * e assim que o `@lhci/cli` carrega a configuracao — e precisa ser codigo,
+     * e nao JSON, para derivar as dez URLs do catalogo unico (FR-044).
+     */
+    files: ['**/*.cjs'],
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   {
     /*

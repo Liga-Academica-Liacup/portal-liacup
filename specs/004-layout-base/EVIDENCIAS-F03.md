@@ -56,7 +56,48 @@ porque uma queda futura para, digamos, 91 precisa ser lida contra **98**, não c
 
 ## 2. Fonte única dos destinos (FR-044 · SC-017)
 
-_A preencher na Fase 2._
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E8** | **T003 — vermelho antes do catálogo.** `npx vitest run src/componentes/layout/destinos-publicos.test.ts` com o teste escrito e o catálogo ainda inexistente | **Código 1 · `Test Files 1 failed` · `Tests no tests`** — falha na resolução de `./destinos-publicos`. Zero testes executados, que é o vermelho honesto: não havia o que medir |
+| **E9** | **T004 — verde com contador.** Mesmo comando depois do JSON e do adaptador | **Código 0 · 8 testes.** Contadores impressos: **`Destinos no catálogo: 10`** · **`Rótulos únicos: 10 · caminhos únicos: 10`** · **`Conversões principais declaradas: 1`** |
+| **E10** | **T006 — `lhci` contra as nove rotas ausentes**, antes de qualquer rota ser criada | **Código 1.** `Runtime error encountered: Lighthouse was unable to reliably load the page you requested. (Status code: 404)` |
+| **E11** | **T006 — o pós-verificador sobre o mesmo estado.** `node scripts/verificar-paginas-lighthouse.mjs` | **Código 1 · `caminhos medidos: 1/10` · `relatorios lidos: 3/30` · `problemas encontrados: 9`**, cada um nomeando o caminho: `/sobre: NENHUM relatorio — o destino esta no catalogo e nao foi medido` |
+| **E12** | URLs derivadas do catálogo pelo `lighthouserc.cjs`, conferidas fora do teste | **10 URLs**, uma por destino, e `perfil: mobile simulate` |
+
+### O E11 pegou o caso que ele existe para pegar — e por um caminho que eu não tinha planejado
+
+O manifest que o verificador leu era o da **linha de base**, com três relatórios de `/` apenas: o
+`lhci` abortou no 404 e não escreveu manifest novo. O verificador não se enganou com isso. Disse
+**1/10** e **3/30**, e nomeou os nove ausentes.
+
+É exatamente o quarto caso listado no cabeçalho do script — *"relatório velho na pasta inflando a
+contagem"* — e ele apareceu sozinho, sem ser encenado. Um verificador que só olhasse notas teria
+lido três relatórios com desempenho 0,98 e ficado verde.
+
+### Achado da Fase 2: o primeiro `.cjs` do repositório derrubou o lint inteiro
+
+Não é defeito do `lighthouserc.cjs`; é uma fragilidade do `eslint.config.mjs` que só podia aparecer
+quando surgisse um arquivo fora das extensões que o `eslint-config-next` cobre.
+
+Dois blocos aplicavam regras **de plugin** — `jsx-a11y/*` e `import/no-restricted-paths` — **sem
+`files`**, isto é, a todo arquivo. Num `.cjs`, onde o config do Next não registra os plugins, o
+ESLint aborta com `could not find plugin`, **sem apontar a causa** e derrubando o lint do projeto
+inteiro. Enquanto só existiram `.ts`, `.tsx`, `.mts` e `.mjs`, ninguém podia notar.
+
+| Correção | Prova de que não afrouxou |
+| --- | --- |
+| `jsx-a11y` restrito a `**/*.jsx`, `**/*.tsx` | `.tsx` temporário com `<img>` sem `alt` → **erro `jsx-a11y/alt-text`, código 1** |
+| `import/no-restricted-paths` restrito às extensões com plugin | `src/componentes/ui/` temporário importando de `features/` → **erro `import/no-restricted-paths`, código 1** |
+| `@typescript-eslint/no-require-imports` desligado só em `**/*.cjs` | `require` é a única forma que existe em CommonJS; o produto é todo ESM e continua proibido |
+
+**A barreira da chave de serviço foi deixada global de propósito**, e isso também foi medido: um
+`.cjs` temporário lendo `process.env.SUPABASE_SERVICE_ROLE_KEY` → **erro `no-restricted-syntax`,
+código 1**. Regra de plugin ganhou `files`; regra do núcleo, não — um arquivo novo, em qualquer
+extensão, nasce proibido de ler a credencial.
+
+**Por que isto não é conserto silencioso**: mexer numa verificação sem demonstrar que ela continua
+mordendo é o que o RP-12 proíbe. As quatro provas acima foram executadas, cada uma isolada, antes de
+a cadeia voltar ao verde.
 
 ## 3. Moldura e dez rotas (US1 · FR-001 a FR-004, FR-020 a FR-025, FR-046)
 
