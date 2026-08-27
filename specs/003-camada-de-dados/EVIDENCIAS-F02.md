@@ -6,7 +6,12 @@ No precedente das F00 e F01. Cada linha traz **o que foi medido e o número**, n
 que está tudo certo. O que não pôde ser provado está declarado como **NÃO EXECUTADO**, com o motivo
 — preencher com algo plausível é o que este arquivo existe para não fazer (Princípio VIII).
 
-**40 evidências: 37 verificadas, 3 não executadas** (E3, E32 e E33, na seção 9).
+**40 evidências: 39 verificadas, 1 não executada** (E3, na seção 9).
+
+Eram "37 verificadas, 3 não executadas" até 26/08/2026, quando alguém foi olhar o GitHub em vez de
+supor: os segredos **estavam** cadastrados e a execução #13 do CI passou. A E32 e a E33 nunca foram
+"não executadas" — foram **não executadas por mim, localmente**, que é outra frase. Ver a correção
+no fim da seção 9.
 
 Eram **33** quando a F02 fechou. As sete últimas — **E34 a E40** — vieram do RP-13: as três
 primeiras no commit que ficou inalcançável, e as quatro seguintes na recuperação dele, já durante a
@@ -152,14 +157,19 @@ seria repetir o erro da v1 do protótipo na informação mais fácil de acredita
 | **E29** | `npm run test:e2e` | **84 passaram** — os mesmos da F01, nenhum perdido |
 | **E30** | `npm run test:desempenho` | **Todas as asserções passaram**, 3 execuções do Lighthouse |
 | **E31** | Dependências diretas | **22** — 4 de execução, 18 de desenvolvimento. `@supabase/ssr` **ausente**, como o plano exige |
-| **E32** | Passo de CI "Tipos do banco conferem com o esquema" **rodando no CI** | **NÃO EXECUTADO** — depende de segredo. Provado **localmente**, verde e vermelho: **219 linhas divergentes** com o arquivo desatualizado de propósito, e verde depois. Detalhe na seção 9 |
-| **E33** | Passo de CI "Chave de serviço fora do pacote compilado" **rodando no CI** | **NÃO EXECUTADO** — depende de segredo. Provado localmente em E13 e E14. Detalhe na seção 9 |
+| **E32** | Passo de CI "Tipos do banco conferem com o esquema" **rodando no CI** | **Verde na execução #13**, a do merge do PR #9 — 26/08/2026, 17:43, 3m02s. O segredo `SUPABASE_ACCESS_TOKEN` e a variável `NEXT_PUBLIC_SUPABASE_URL` **estavam cadastrados**. Antes disso, provado **localmente** nos dois sentidos: **219 linhas divergentes** com o arquivo desatualizado de propósito, e verde depois |
+| **E33** | Passo de CI "Chave de serviço fora do pacote compilado" **rodando no CI** | **Verde na mesma execução #13.** O segredo `SUPABASE_SERVICE_ROLE_KEY` **estava cadastrado**. Provado localmente em E13 e E14 |
 
 **Regra de leitura destas tabelas**, uniformizada em 26/08/2026: **toda evidência aparece uma vez na
 seção temática a que pertence**, e as **não executadas se repetem na seção 9**, onde o motivo é
 explicado. O `E3` já seguia essa regra; o `E32` e o `E33` apareciam **só** na seção 9, e quem
 contasse as tabelas temáticas achava **38** em vez de 40. Os números nunca estiveram errados — a
 disposição estava, e num arquivo cujo propósito é ser contado isso é defeito.
+
+No mesmo dia, e por acaso na mesma passagem, descobriu-se que a E32 e a E33 **nem eram** não
+executadas: os segredos estavam cadastrados e o CI as rodou. Hoje elas moram aqui, verificadas, e
+**só o `E3` se repete na seção 9**. As duas correções são independentes — uma era de arrumação,
+a outra era de fato —, e vieram juntas porque foi preciso mexer nas mesmas linhas.
 
 ---
 
@@ -216,14 +226,29 @@ rastreado. O buraco não estava onde a lista sugeria.
 
 | # | Item | Motivo |
 | --- | --- | --- |
-| **E3** | Políticas em produção | Migrações 0009 a 0013 vão para produção **depois do merge**, pela regra do ADR-0005 §2.6. Produção hoje: 13 tabelas, RLS ativo em todas, nenhuma política — **fechada**, não desprotegida |
-| **E32** | Passo de CI "Tipos do banco conferem com o esquema" **rodando no CI** | Depende do segredo `SUPABASE_ACCESS_TOKEN` e da variável `NEXT_PUBLIC_SUPABASE_URL` no repositório, que só o Gabriel pode cadastrar. O script foi provado **localmente**, verde e vermelho: com o arquivo versionado deliberadamente desatualizado, apontou **219 linhas divergentes** e as três primeiras, e voltou ao verde depois |
-| **E33** | Passo de CI "Chave de serviço fora do pacote compilado" **rodando no CI** | Depende do segredo `SUPABASE_SERVICE_ROLE_KEY` no repositório. Provado localmente em E13 e E14 |
+| **E3** | Políticas em produção | Migrações 0009 a 0013 vão para produção **depois do merge**, pela regra do ADR-0005 §2.6. Produção no fechamento da F02: 13 tabelas, RLS ativo em todas, nenhuma política — **fechada**, não desprotegida |
 
 **Os dois passos de CI não têm `if:` que os pule quando o segredo falta.** Sem o segredo eles ficam
-**vermelhos dizendo que NÃO VERIFICARAM**, que é a verdade, em vez de verdes por omissão. Isso
-significa que o CI desta branch fica vermelho até os segredos serem cadastrados — e é o
-comportamento correto.
+**vermelhos dizendo que NÃO VERIFICARAM**, que é a verdade, em vez de verdes por omissão.
+
+### Correção de 26/08/2026 — a E32 e a E33 saíram desta seção
+
+Elas estavam aqui dizendo *"NÃO EXECUTADO — depende de segredo"*, e isso descrevia a execução
+**local**. No GitHub, os dois segredos e a variável **já estavam cadastrados**, e a **execução #13
+do CI**, a do merge do PR #9, rodou os dois passos e **passou** — 26/08/2026, 17:43, 3m02s. Os dois
+foram promovidos para a seção 8 como **verificados**.
+
+**O erro não estava no número; estava em confundir "eu não consegui rodar" com "não foi rodado".**
+São a mesma frase vista de dentro do documento e coisas diferentes vistas de fora dele — a mesma
+classe do `.gitignore` que parecia cobrir, do catálogo do Postgres que dizia "13 políticas" com o
+banco recusando tudo, e do `lighthouserc.json` que dizia desktop enquanto o checklist dizia mobile.
+**O lado que responde a verdade é sempre o de fora do documento**, e desta vez levou três rodadas de
+raciocínio bem construído até alguém abrir a tela.
+
+**Pendência que este mesmo fato abre**: o PR #9 foi incorporado em 26/08. Pela regra do ADR-0005
+§2.6, as migrações 0009 a 0013 iam para produção **depois do merge** — o merge aconteceu, e se as
+migrações foram aplicadas **não foi medido aqui**. A E3 fica como está, descrevendo o fechamento da
+F02, até alguém olhar o catálogo de produção. Não é registro que se atualiza por dedução.
 
 ---
 
