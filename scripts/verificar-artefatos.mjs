@@ -53,21 +53,30 @@ const GERADOS = [
  * que alguem consiga CONFERIR, nao de uma justificativa que soe bem.
  *
  * Sem esta lista, a regra teria de aceitar qualquer arquivo gerado e pararia de
- * valer. Com ela larga demais, vira deposito. Duas linhas hoje, e as duas
- * dizem o que quebra se o arquivo sair.
+ * valer. Com ela larga demais, vira deposito.
+ *
+ * O MOTIVO NOMEIA UM COMANDO, e o comando e EXECUTADO quando a excecao entra.
+ * Esta regra nasceu de um erro que este proprio arquivo cometeu: a primeira
+ * versao trazia DUAS excecoes, e a do `next-env.d.ts` dizia que tira-lo
+ * quebraria a verificacao de tipos num clone novo. Ninguem mediu. Quando alguem
+ * mediu — escondendo o `.next` E o `next-env.d.ts` e rodando `tsc --noEmit` —
+ * o resultado foi codigo 0. O motivo era falso, e a excecao caiu.
+ *
+ * A licao e a distincao que atravessa este projeto: "tem motivo escrito" e
+ * configuracao, "o motivo confere" e resultado. Uma lista pode exigir a
+ * primeira e passar verde com a segunda errada. Por isso o motivo precisa
+ * nomear o comando que demonstra o que quebra, e nao descrever uma
+ * consequencia plausivel — que e o que sobra quando ninguem mediu (RP-13).
+ *
+ * Uma linha hoje, e ela satisfaz a regra por construcao.
  */
 const VERSIONADO_POR_DECISAO = new Map([
   [
-    'next-env.d.ts',
-    'o tsconfig.json o inclui por nome, e o CI roda `verificar:tipos` ANTES do ' +
-      'build — num clone novo o arquivo ainda nao existe, e a verificacao de ' +
-      'tipos quebraria antes de o Next ter chance de gera-lo',
-  ],
-  [
     'src/lib/supabase/tipos.ts',
     'e o contrato tipado que a F03 em diante consome, e precisa existir sem ' +
-      'acesso ao banco. Nao fica a deriva: `banco:tipos:check` regera e falha ' +
-      'se divergir do esquema (F02 D5)',
+      'acesso ao banco. Nao fica a deriva, e o comando que demonstra e ' +
+      '`npm run banco:tipos:check`: ele regera a partir do esquema e falha se ' +
+      'o versionado divergir (F02 D5)',
   ],
 ])
 

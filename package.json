@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "verificar": "npm run verificar:artefatos && npm run verificar:tipos && npm run lint && npm run formatar:check && npm run verificar:tokens && npm run verificar:chave",
-    "verificar:tipos": "tsc --noEmit",
+    "verificar:tipos": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "formatar": "prettier --write .",
     "formatar:check": "prettier --check .",

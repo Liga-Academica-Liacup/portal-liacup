@@ -155,8 +155,26 @@ seria repetir o erro da v1 do protótipo na informação mais fácil de acredita
 | # | O que foi medido | Resultado |
 | --- | --- | --- |
 | **E34** | Arquivos rastreados pelo git que são artefato gerado | **2 encontrados**, ambos com a linha correspondente **já presente** no `.gitignore`: `tsconfig.tsbuildinfo` e `supabase/.temp/cli-latest` |
-| **E35** | Depois de tirados do rastreamento | **198 arquivos examinados contra 11 padrões · 0 artefatos indevidos · 2 versionados por decisão** |
+| **E35** | Depois de tirados do rastreamento | **198 arquivos examinados contra 11 padrões · 0 artefatos indevidos · 1 versionado por decisão** *(era 2 — ver adendo)* |
 | **E36** | Demonstração: `git add -f tsconfig.tsbuildinfo`, com `*.tsbuildinfo` presente no `.gitignore` | **Falhou nomeando o arquivo** e mostrando o `git rm --cached` a rodar, saída 1. Removido do rastreamento: verde, saída 0 |
+
+### Adendo de 26/08/2026 — a exceção que não sobreviveu à medição
+
+Este commit ficou **inalcançável** por um tempo: foi feito sobre `feat/F02-camada-de-dados` depois
+do merge do PR #9, e a branch foi apagada em seguida. Recuperado do reflog na F03 e incorporado por
+PR próprio. As três evidências abaixo são da recuperação.
+
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E37** | `tsc --noEmit` **sem** `.next` e **sem** `next-env.d.ts` — o estado real de um clone novo se o arquivo for desrastreado | **Código 0.** O motivo escrito da exceção — "a verificação de tipos quebraria" — era **previsão, e falsa**. A exceção caiu e o arquivo saiu do controle de versão |
+| **E38** | O custo de tirá-lo, medido **antes** de tirar: arquivo temporário com `import de .png`, que depende do `declare module '*.png'` que o `next-env.d.ts` traz | **Sem** o arquivo: `TS2307` apontando o `import` do png, **sem citar** o arquivo que falta, código **2**. **Com** o arquivo: código **0**. Defesa escolhida: `next typegen` encadeado em `verificar:tipos`, que o regenera **idêntico** sem build inteiro — medido, código 0 |
+| **E39** | Demonstração do verificador com a lista de exceções já corrigida: `git add -f next-env.d.ts` | **Falhou nomeando o arquivo**, saída 1 — provando que a remoção da exceção **teve efeito**. `git add -f tsconfig.tsbuildinfo`: falhou igual, saída 1. Estado final: **198 examinados · 11 padrões · 1 exceção · 0 indevidos**, saída 0 |
+
+**A emenda que isto produziu no RP-13**: o motivo de uma exceção passa a ter de **nomear o comando
+que demonstra o que quebra**, e esse comando é executado quando a exceção entra. A condição
+anterior — "exceção sem motivo é falha" — pegava **ausência** de motivo e não pegava **motivo
+errado**. É a distinção configuração contra resultado do RP-12, aplicada à lista de exceções do
+próprio requisito que a criou.
 
 **O `.gitignore` não cobria coisa nenhuma nesses dois casos, e parecia cobrir.** Ele diz ao git o que
 não acrescentar; não tem efeito sobre o que já está rastreado. Por isso o verificador não lê o
