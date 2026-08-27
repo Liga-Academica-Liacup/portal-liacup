@@ -260,6 +260,7 @@ um ADR novo.
 - [`docs/ADR-0002-envio-de-email.md`](docs/ADR-0002-envio-de-email.md) — por que Resend
 - [`docs/ADR-0004-controles-e-fidelidade.md`](docs/ADR-0004-controles-e-fidelidade.md) — tamanho dos controles e verificação de fidelidade
 - [`docs/ADR-0005-modelo-de-branches.md`](docs/ADR-0005-modelo-de-branches.md) — GitHub Flow, e por que não GitFlow
+- [`docs/OPERACAO-GIT.md`](docs/OPERACAO-GIT.md) — as quatro regras operacionais do Git, cada uma com o episódio de trabalho perdido que a pagou. **Leia antes do primeiro commit.**
 - [`docs/ADR-0003-tokens-e-acessibilidade.md`](docs/ADR-0003-tokens-e-acessibilidade.md) — de onde
   vem os tokens e as correcoes de contraste
 

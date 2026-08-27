@@ -198,6 +198,17 @@ para a pergunta não voltar do zero daqui a seis meses.
 - `main` está sempre publicável: é o que a Vercel põe em produção. **Incorporou, está no ar.**
 - A branch é **apagada depois de incorporada**.
 
+A **operação diária** do Git — quando commitar, quando enviar, como apagar branch sem perder
+trabalho e como conferir que o trabalho está mesmo no remoto — vive em
+[`OPERACAO-GIT.md`](OPERACAO-GIT.md). São quatro regras, cada uma com o episódio real que a pagou.
+Elas estão num arquivo próprio porque moravam **fora do repositório**, nas notas de quem revisa, e
+foi assim que a mesma perda aconteceu **cinco vezes**.
+
+A que mais importa, em uma linha: **commitar e enviar ao fim de cada fase, não ao fim da feature.**
+Nenhuma verificação automática pega trabalho não commitado — nem o `git status -sb`, nem o RP-13,
+nem o CI, nem o ruleset. O RP-13 impede que artefato gerado **entre**; nada impede que trabalho de
+verdade **não entre**.
+
 **Correção urgente**: branch `fix/` a partir da `main`, a menor correção possível, alteração
 proposta com `URGENTE` no título, CI verde continua obrigatório, incorporar assim que passar. Nunca
 push direto, nunca desligar a proteção, nunca `--no-verify` — se o CI impede a correção de uma

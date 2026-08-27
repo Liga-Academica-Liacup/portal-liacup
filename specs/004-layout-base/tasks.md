@@ -25,6 +25,14 @@ acessíveis. US4 e US5 podem avançar em paralelo depois de US3.
 - A ordem dos IDs é a ordem segura para uma única pessoa desenvolvedora.
 - Nenhuma tarefa autoriza dependência nova, conteúdo de F04–F13, breakpoint fora de 480/768/1024
   ou componente não declarado.
+- **Toda fase termina com commit e envio**, marcado em "Fecha a fase" no fim de cada uma.
+  Commitar numa branch de trabalho **não atravessa portão nenhum**: os portões são o PR, o ruleset
+  `main-protegida` e as duas revisões. Trabalho não commitado, sim, atravessa — some sem aviso
+  quando o GitHub Desktop guarda a árvore para trocar de branch. Procedimento e os cinco episódios
+  que pagaram por esta regra em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
+- **Commitar estado vermelho é correto e desejado.** As tarefas mandam ver a evidência vermelha
+  antes da implementação; o RP-12 quer essa execução registrada, e um commit é o registro mais
+  barato que existe. Fase que termina em vermelho declarado é história útil, não sujeira.
 
 ## Fase 1: Preparação e linha de base
 
@@ -34,6 +42,9 @@ acessíveis. US4 e US5 podem avançar em paralelo depois de US3.
 - [ ] T002 Executar a linha de base de `specs/004-layout-base/quickstart.md` e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` os totais reais de `npm run verificar`, `npm test`, `npm run test:banco`, `npm run test:e2e`, build, dependências 4+18=22 e Lighthouse atual, sem corrigir falha encontrada
 
 **Checkpoint**: estado anterior à F03 reproduzível e nenhuma dependência alterada.
+
+**Fecha a fase**: commitar e enviar antes de seguir — `git add -A`, `git commit`,
+`git push`. Motivo e procedimento em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
 
 ---
 
@@ -51,6 +62,9 @@ moldura.
 
 **Checkpoint**: uma única lista alimenta aplicação, Playwright e Lighthouse; ausência de rota fica
 vermelha.
+
+**Fecha a fase**: commitar e enviar antes de seguir — `git add -A`, `git commit`,
+`git push`. Motivo e procedimento em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
 
 ---
 
@@ -77,6 +91,9 @@ uma moldura estrutural idêntica, uma região de cada papel e marca apontando pa
 - [ ] T014 [US1] Executar os testes focados de `src/componentes/layout/LinksDeContato.test.tsx` e `tests/e2e/paginas-publicas.spec.ts`, registrar 10/10 rotas e landmarks em `specs/004-layout-base/EVIDENCIAS-F03.md` e parar se qualquer página tiver conteúdo institucional além do rodapé aprovado
 
 **Checkpoint**: US1 verificável nas dez rotas; nenhum conteúdo das features seguintes foi criado.
+
+**Fecha a fase**: commitar e enviar antes de seguir — `git add -A`, `git commit`,
+`git push`. Motivo e procedimento em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
 
 ---
 
@@ -106,6 +123,9 @@ ficam no diálogo; em 1024/1280 px, os dez destinos estão diretos e acionador/d
 
 **Checkpoint**: US3 funcional sem duplicar aparência, destinos ou breakpoint.
 
+**Fecha a fase**: commitar e enviar antes de seguir — `git add -A`, `git commit`,
+`git push`. Motivo e procedimento em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
+
 ---
 
 ## Fase 5: US2 — Cabeçalho devolve a tela ao celular (P1)
@@ -126,6 +146,9 @@ permanência após rolagem e zero rolagem horizontal.
 - [ ] T027 [US2] Executar a matriz de `tests/e2e/paginas-publicas.spec.ts` e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` as sete alturas, 70/70 combinações, zero overflow e evidência de permanência ao rolar
 
 **Checkpoint**: US2 comprovada por números depois de todos os controles reais existirem.
+
+**Fecha a fase**: commitar e enviar antes de seguir — `git add -A`, `git commit`,
+`git push`. Motivo e procedimento em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
 
 ---
 
@@ -150,6 +173,9 @@ resize mobile→desktop passam como casos adicionais.
 
 **Checkpoint**: US4 passa por interação real, não por inspeção de atributos.
 
+**Fecha a fase**: commitar e enviar antes de seguir — `git add -A`, `git commit`,
+`git push`. Motivo e procedimento em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
+
 ---
 
 ## Fase 7: US5 — Estado e propósito anunciados (P1)
@@ -170,6 +196,9 @@ fora do catálogo; botão anuncia estado/região e diálogo tem nome acessível.
 - [ ] T036 [US5] Executar os testes focados nas dez rotas em mobile e desktop, registrar contagens de landmarks e páginas atuais em `specs/004-layout-base/EVIDENCIAS-F03.md` e confirmar zero marcação em rota fora do catálogo
 
 **Checkpoint**: US5 anunciada corretamente e sem landmark duplicado.
+
+**Fecha a fase**: commitar e enviar antes de seguir — `git add -A`, `git commit`,
+`git push`. Motivo e procedimento em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
 
 ---
 
@@ -194,6 +223,9 @@ fidelidade com medidas reproduzíveis.
 
 **Checkpoint**: US6 fecha a dívida do `liacup.css` sem apagar pendências de outras features.
 
+**Fecha a fase**: commitar e enviar antes de seguir — `git add -A`, `git commit`,
+`git push`. Motivo e procedimento em [`docs/OPERACAO-GIT.md`](../../docs/OPERACAO-GIT.md).
+
 ---
 
 ## Fase 9: Verificação transversal e encerramento
@@ -211,7 +243,7 @@ real.
 - [ ] T049 Executar `npm run build` e `npm run test:e2e`, registrar rotas geradas, 10/10, 70/70, alvos medidos, sete alturas, 7/7 teclado, 6/6 pares e zero axe/overflow em `specs/004-layout-base/EVIDENCIAS-F03.md`
 - [ ] T050 Executar `npm run test:desempenho` contra o build e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` 10/10 caminhos, 30/30 relatórios, três execuções por rota, status/URL final, perfil mobile simulado e menores notas de desempenho/acessibilidade
 - [ ] T051 Atualizar em `README.md` toda referência ao `lighthouserc.json`, que o T006 substitui por `lighthouserc.cjs` — hoje a linha 153 ("**O que NAO fazer:** baixar o limiar em `lighthouserc.json`") é a única instrução do repositório contra afrouxar o limiar, e depois do T006 ela aponta para um arquivo que não existe; varrer `README.md` inteiro por `lighthouserc` e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` a contagem de ocorrências antes e depois, com zero apontando para o nome antigo
-- [ ] T052 Completar o veredito de `specs/004-layout-base/FIDELIDADE.md` e o resumo final de `specs/004-layout-base/EVIDENCIAS-F03.md`, executar por último `npm run verificar`, então conferir `git diff --check` e `git status -sb` e parar para revisão sem commit, push, PR ou merge
+- [ ] T052 Completar o veredito de `specs/004-layout-base/FIDELIDADE.md` — **zero `PREENCHER` restantes** — e o resumo final de `specs/004-layout-base/EVIDENCIAS-F03.md`, executar por último `npm run verificar` e `git diff --check`, **commitar e enviar**, e então registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` os **dois números** que provam que o trabalho está onde os outros olham: `git status --porcelain | wc -l` **igual a 0** e `git rev-parse HEAD` **idêntico** a `git ls-remote origin feat/F03-layout-base`. **Parar aí, para revisão: sem abrir PR e sem incorporar.**
 
 ---
 
