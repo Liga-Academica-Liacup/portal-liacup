@@ -176,6 +176,17 @@ Não se aplica: nenhum dado pessoal, nenhum acesso a banco, nenhum segredo. Entr
 | F3 | Não se aplica: nenhuma imagem nova |
 | F4 | 20 dependências diretas, as mesmas da F00 |
 
+> ⚠️ **Estes dois números foram medidos em `preset: desktop`**, e os itens F1 e F2 deste checklist
+> sempre disseram "execução em mobile simulado". A contradição estava por escrito desde a F00, no
+> `lighthouserc.json`, e passou por três features sem ser notada — foi inofensiva porque nenhuma
+> delas era sobre o mobile. **Corrigido na F03**: a chave `preset` saiu do `lighthouserc.json`, e o
+> Lighthouse voltou ao padrão dele, que é mobile simulado. Não existe `preset: "mobile"` — os únicos
+> presets são `perf`, `experimental` e `desktop`; mobile é o padrão, obtido pela ausência da chave.
+>
+> **Consequência a esperar, declarada antes de medir**: o mobile simulado aplica limitação de CPU e
+> de rede que o desktop não aplica. É provável que o desempenho caia abaixo de 100. O limiar de 90
+> **não desce** por causa disso — se cair abaixo dele, é trabalho, não motivo para reabrir o limiar.
+
 ## G. Conteúdo
 
 | # | Resultado |

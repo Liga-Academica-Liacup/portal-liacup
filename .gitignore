@@ -6,6 +6,11 @@ node_modules/
 out/
 build/
 
+# Estado local da ferramenta da Vercel (projeto ligado, ids). Ainda nao e gerado
+# aqui: entra ANTES de alguem rodar `vercel link`, porque no dia em que for
+# gerado ninguem vai estar olhando.
+.vercel/
+
 # Variaveis de ambiente — nenhum segredo real entra no repositorio (FR-023)
 .env
 .env.*
@@ -15,8 +20,12 @@ build/
 playwright-report/
 test-results/
 blob-report/
+playwright/.cache/
 .lighthouseci/
 coverage/
+
+# Cache do ESLint. So e gerado com `eslint --cache`, que hoje nao usamos.
+.eslintcache
 
 # Sistema operacional e editor
 .DS_Store
@@ -30,6 +39,7 @@ Thumbs.db
 # Estado local da ferramenta do Supabase (ref do projeto ligado, versoes dos
 # servicos). Muda conforme a maquina de quem desenvolve, e nao descreve o projeto.
 supabase/.temp/
+supabase/.branches/
 
 # Cache de compilacao incremental do TypeScript: gerado a cada build,
 # diferente em cada maquina, conflita em todo merge. Nao se versiona.
