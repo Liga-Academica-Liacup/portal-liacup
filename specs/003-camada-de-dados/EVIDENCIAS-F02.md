@@ -152,6 +152,14 @@ seria repetir o erro da v1 do protótipo na informação mais fácil de acredita
 | **E29** | `npm run test:e2e` | **84 passaram** — os mesmos da F01, nenhum perdido |
 | **E30** | `npm run test:desempenho` | **Todas as asserções passaram**, 3 execuções do Lighthouse |
 | **E31** | Dependências diretas | **22** — 4 de execução, 18 de desenvolvimento. `@supabase/ssr` **ausente**, como o plano exige |
+| **E32** | Passo de CI "Tipos do banco conferem com o esquema" **rodando no CI** | **NÃO EXECUTADO** — depende de segredo. Provado **localmente**, verde e vermelho: **219 linhas divergentes** com o arquivo desatualizado de propósito, e verde depois. Detalhe na seção 9 |
+| **E33** | Passo de CI "Chave de serviço fora do pacote compilado" **rodando no CI** | **NÃO EXECUTADO** — depende de segredo. Provado localmente em E13 e E14. Detalhe na seção 9 |
+
+**Regra de leitura destas tabelas**, uniformizada em 26/08/2026: **toda evidência aparece uma vez na
+seção temática a que pertence**, e as **não executadas se repetem na seção 9**, onde o motivo é
+explicado. O `E3` já seguia essa regra; o `E32` e o `E33` apareciam **só** na seção 9, e quem
+contasse as tabelas temáticas achava **38** em vez de 40. Os números nunca estiveram errados — a
+disposição estava, e num arquivo cujo propósito é ser contado isso é defeito.
 
 ---
 
