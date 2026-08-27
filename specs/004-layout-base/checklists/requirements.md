@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -24,26 +24,28 @@
 
 ## Feature Readiness
 
-- [ ] All functional requirements have clear acceptance criteria
+- [x] All functional requirements have clear acceptance criteria
 - [x] User scenarios cover primary flows
 - [x] Feature meets measurable outcomes defined in Success Criteria
 - [x] No implementation details leak into specification
 
 ## Notes
 
-Três marcadores [NEEDS CLARIFICATION] permanecem abertos de propósito, em FR-008, FR-015 e FR-025.
-Os três são decisões de escopo ou de conteúdo institucional que mudam o que se constrói e o que se
-testa, e não têm padrão razoável que possa ser adotado em silêncio:
+**16 de 16 · fechada em 26/08/2026**, no Ponto de Parada 1.
 
-- **FR-008** — a aparência da conversão "Processo seletivo" decide se falta um componente (achado
-  registrado na seção "Achado" da spec);
-- **FR-015** — o destino dos nove links sem página decide se esta feature entrega 1 ou 10 páginas
-  sob RP-06 e RP-07;
-- **FR-025** — o endereço da sede no rodapé é dado institucional com fonte nomeada, e o Princípio 6
-  proíbe decidir por conta própria o que da liga aparece na tela.
+Os três marcadores [NEEDS CLARIFICATION] foram respondidos e integrados:
 
-Enquanto os três estiverem abertos, "todos os requisitos funcionais têm critério de aceite claro"
-fica desmarcado — é o mesmo motivo, contado uma vez só.
+- **FR-008** — link com aparência de botão; o componente que falta entra como **escopo declarado**,
+  governado por FR-045 e SC-018 para não criar segunda fonte de verdade de aparência;
+- **FR-015** — rota mínima por destino, visivelmente marcada. Esta feature passa a entregar **dez**
+  páginas, e as dez entram sob RP-04, RP-05, RP-06 e RP-07;
+- **FR-025** — sede em forma curta, "FCTS · Campus UnB Ceilândia", com fonte nomeada.
+
+Cinco emendas do Ponto de Parada 1 integradas: **E1** (FR-044, SC-017 — uma lista, dois
+consumidores), **E2** (FR-039 — preset mobile, e a contradição de três features corrigida no
+`lighthouserc.json` e anotada no checklist), **E3** (SC-008 — regra de contagem escrita junto do
+número), **E4** (FR-045, SC-018 — origem única de aparência), **E5** (FR-046 — os comentários
+desatualizados ganharam dono).
 
 Duas verificações desta lista são deliberadamente **mais frouxas** que a spec, e isso está aqui para
 não parecer descuido: a spec exige número medido (altura do cabeçalho, alvos, contraste), e esta

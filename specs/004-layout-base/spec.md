@@ -16,7 +16,9 @@ Primeira feature da Fase 1 e a primeira que o visitante vê. Entrega a **moldura
 páginas públicas: cabeçalho, painel lateral de navegação no mobile, rodapé, os dez destinos e o
 caminho de teclado que atravessa tudo isso.
 
-Não entrega conteúdo de página. As páginas entram da F04 em diante.
+Não entrega conteúdo de página. As páginas entram da F04 em diante — mas entrega **dez rotas**, uma
+por destino, as nove ainda sem conteúdo visivelmente marcadas como em construção (FR-015). São dez
+páginas sob verificação, não uma.
 
 Três coisas nesta feature são de risco alto e por isso têm requisito próprio:
 
@@ -34,6 +36,19 @@ Três coisas nesta feature são de risco alto e por isso têm requisito próprio
 A feature também converte as classes `.nav` e `.nav-brand` do `liacup.css`, aplicando a correção de
 contraste já anotada no próprio arquivo e já decidida na ADR-0003 §2. Não é decisão nova: é dívida
 com endereço.
+
+## Clarifications
+
+### Session 2026-08-26
+
+- Q: O rodapé traz o endereço da sede? → A: **Forma curta — "FCTS · Campus UnB Ceilândia".** Fecha o FR-025. Sem CEP nem logradouro; o endereço completo, se for ao ar, é da F13.
+- Q: Para onde apontam os nove destinos que ainda não têm página? → A: **Rota mínima por destino, visivelmente marcada como em construção.** Fecha o FR-015. Esta feature passa a entregar **dez** páginas.
+- Q: "Processo seletivo" é link de texto ou link com aparência de botão? → A: **Link com aparência de botão**, com o componente novo **declarado como escopo** da F03. Fecha o FR-008.
+- Q: Em que largura os destinos passam a aparecer direto no cabeçalho? → A: **1024 px**, com plano B autorizado: se a medição reprovar, reduzir o espaçamento entre itens ao degrau anterior de token; se ainda assim reprovar, parar e reportar.
+- Q: A marca do cabeçalho é texto, logo, ou os dois? → A: **Só texto**, fiel ao `.nav-brand` aprovado.
+
+A premissa do **cabeçalho fixo em todas as larguras** foi mantida de pé por decisão explícita, não
+por omissão.
 
 ---
 
@@ -222,17 +237,22 @@ medir o contraste da cor de link do cabeçalho contra as duas superfícies.
   altura.
 - **FR-003**: A altura do cabeçalho **DEVE** ser **medida e reportada como número** em cada uma das
   sete larguras — 360, 390, 430, 480, 768, 1024 e 1280 px. Estimativa não conta.
-- **FR-004**: A marca no cabeçalho **DEVE** levar à página inicial.
+- **FR-004**: A marca no cabeçalho **DEVE** levar à página inicial, e **DEVE** ser **só texto**,
+  fiel ao `.nav-brand` aprovado. Logo no cabeçalho seria desvio a registrar no `FIDELIDADE.md` e
+  gastaria orçamento horizontal em 360 px, onde a conversão e o botão do painel também moram.
 - **FR-005**: Em largura de mobile, o destino **"Processo seletivo" DEVE** permanecer visível no
   cabeçalho, **fora** do painel recolhido, sem exigir nenhuma interação prévia.
 - **FR-006**: Em largura de mobile, os **nove** demais destinos **DEVEM** ficar no painel lateral,
   aberto por um botão do cabeçalho.
-- **FR-007**: Em largura de desktop, os destinos **DEVEM** aparecer direto no cabeçalho, **sem**
-  painel lateral e **sem** botão de abrir.
-- **FR-008**: A conversão "Processo seletivo" no cabeçalho **DEVE** ser
-  [NEEDS CLARIFICATION: um link de texto em destaque, ou um link com aparência de botão? A segunda
-  opção exige um componente que a F01 **não** entregou — o `Botao` renderiza `<button>` e o próprio
-  arquivo diz que navegação não é o papel dele. Ver "Achado" abaixo].
+- **FR-007**: A partir de **1024 px**, os destinos **DEVEM** aparecer direto no cabeçalho, **sem**
+  painel lateral e **sem** botão de abrir. Abaixo disso vale o painel. **Plano B autorizado**: se a
+  medição do FR-038 reprovar em 1024, reduzir o espaçamento entre itens ao **degrau anterior de
+  token**; se ainda assim reprovar, **parar e reportar** — não inventar ponto de corte fora de 480,
+  768 e 1024, que a seção 3 dos padrões chama de dívida.
+- **FR-008**: A conversão "Processo seletivo" no cabeçalho **DEVE** ser um **link com aparência de
+  botão**. Ele navega, então é `<a>` — nunca um `<button>` que navega. O componente **não existe** e
+  é **declarado como escopo desta feature**, com os requisitos FR-045 e SC-018 governando como ele
+  carrega a aparência.
 
 ### Requisitos funcionais — Painel lateral
 
@@ -249,10 +269,12 @@ medir o contraste da cor de link do cabeçalho contra as duas superfícies.
 
 - **FR-014**: **DEVEM** existir **dez** destinos: Início, Sobre, Notícias, Conteúdo educativo,
   Eventos, Projetos, Materiais, Galeria, Processo seletivo e Contato.
-- **FR-015**: Os destinos que ainda não têm página **DEVEM**
-  [NEEDS CLARIFICATION: apontar para rotas que só existem a partir da F04 — e portanto responder 404
-  até lá —, ou esta feature entrega uma rota mínima por destino, visivelmente marcada como em
-  construção? A segunda opção põe nove páginas sob RP-06 e RP-07 nesta feature].
+- **FR-015**: Cada destino **DEVE** ter uma rota que responde. Os que ainda não têm página recebem
+  uma **rota mínima, visivelmente marcada como em construção** — Princípio 6 ("o espaço reservado é
+  visivelmente marcado") e Princípio 8 ("o que está incompleto é declarado incompleto"). A rota
+  mínima **NÃO PODE** conter conteúdo institucional: ela é o aviso de que a página ainda não existe,
+  não um rascunho dela. Consequência declarada: esta feature entrega **dez** páginas, e as dez
+  entram sob RP-04, RP-05, RP-06 e RP-07.
 - **FR-016**: A página em que o visitante está **DEVE** ser indicada **visualmente** e também
   **anunciada** ao leitor de tela. A indicação visual **NÃO PODE** depender só de cor.
 - **FR-017**: **DEVE** existir um **link de pular para o conteúdo**, que é o **primeiro** elemento a
@@ -274,10 +296,10 @@ medir o contraste da cor de link do cabeçalho contra as duas superfícies.
   **NÃO PODE** existir em nenhum arquivo entregue — verificado por varredura, não por leitura.
 - **FR-024**: **NENHUM** dado institucional que não esteja em `docs/conteudo-institucional.md` com
   **fonte nomeada PODE** aparecer na tela.
-- **FR-025**: O rodapé **DEVE**
-  [NEEDS CLARIFICATION: trazer o endereço da sede — que está no `conteudo-institucional.md` seção 1
-  com fonte nomeada (Estatuto, Art. 1º) — em forma completa, em forma curta, ou nenhum endereço
-  postal? Até esta decisão, **nenhum** endereço postal entra].
+- **FR-025**: O rodapé **DEVE** trazer a sede em **forma curta** — "FCTS · Campus UnB Ceilândia" —,
+  com fonte nomeada em `docs/conteudo-institucional.md` §1 (Estatuto, Art. 1º). **NENHUM** endereço
+  postal completo entra: nem logradouro, nem CEP. O protótipo traz "Faculdade de Medicina · Campus
+  Darcy Ribeiro", que é inventado; a §7 do mesmo documento manda corrigir, e é o que esta linha faz.
 
 ### Requisitos funcionais — Fidelidade e estilo
 
@@ -321,7 +343,12 @@ medir o contraste da cor de link do cabeçalho contra as duas superfícies.
 - **FR-038**: **Zero** rolagem horizontal em **360, 390, 430, 480, 768, 1024 e 1280 px**. Origem:
   **RP-05**.
 - **FR-039**: Lighthouse **desempenho ≥ 90** e **acessibilidade ≥ 95**, contra a versão
-  **compilada**. Origem: **RP-06**.
+  **compilada** e em **mobile simulado**. Origem: **RP-06**. O preset **DEVE** estar declarado, e o
+  número só vale no preset declarado. **Contradição corrigida nesta feature**: o item F1 do
+  `docs/checklist-validacao.md` manda "execução em mobile simulado" desde a F00, e o
+  `lighthouserc.json` fixava `preset: desktop`. Os dois se contradiziam por escrito havia três
+  features. Foi inofensivo porque nenhuma delas era sobre o mobile; **esta é** — o objeto inteiro da
+  F03 é derrubar um cabeçalho que come 29% de um iPhone. Medir isso em desktop é medir outra coisa.
 - **FR-040**: **Zero** violações do axe-core em **toda página entregue**. Origem: **RP-07**.
 - **FR-041**: Toda verificação nova **DEVE** ser demonstrada **falhando** diante de violação real e
   voltando ao verde, **DEVE dizer quanto mediu**, e **DEVE checar o resultado, não a configuração**.
@@ -334,6 +361,17 @@ medir o contraste da cor de link do cabeçalho contra as duas superfícies.
   visual.
 - **FR-043**: A contagem de **dependências diretas DEVE** ser declarada, e toda dependência nova
   **DEVE** estar justificada por escrito no `plan.md` **antes** de entrar. Origem: **RP-01**.
+- **FR-044**: O conjunto de páginas verificadas **DEVE** ser **derivado da mesma lista de destinos
+  que a navegação desenha** — **uma lista, dois consumidores**. Acrescentar um destino **NÃO PODE**
+  deixar uma página fora da verificação. Vale para **todas** as verificações por página: axe,
+  rolagem horizontal, alvo de toque, altura do cabeçalho e Lighthouse.
+- **FR-045**: O `Botao` e o link com aparência de botão **DEVEM** ter uma **única origem de
+  aparência**. Alteração visual em um **DEVE** aparecer no outro **sem edição em dois lugares**.
+- **FR-046**: Os comentários de `src/componentes/layout/Rodape.tsx` e
+  `src/componentes/layout/LinksDeContato.tsx` **DEVEM** ser atualizados nesta feature. Os dois
+  descrevem hoje um arranjo que esta feature desfaz — que o rodapé traz só a linha institucional e
+  que os canais de contato moram fora dele. Comentário que descreve o arranjo antigo é pior que
+  comentário nenhum, porque é lido como se valesse.
 
 ### Requisitos permanentes aplicáveis
 
@@ -346,34 +384,43 @@ Da seção 8.1 de `docs/PADROES-DE-CODIGO.md`. Esta feature não os redescobre: 
 | **RP-03** nenhum token alterado | **Sim** | FR-028. Token novo com origem nomeada é permitido; alterar existente, não |
 | **RP-04** alvo de toque 44 px | **Sim** | FR-037, com o número de elementos medidos |
 | **RP-05** sete larguras sem rolagem | **Sim** | FR-038. É onde um cabeçalho de dez destinos pode quebrar |
-| **RP-06** Lighthouse 90 / 95 | **Sim** | FR-039, contra a versão compilada |
+| **RP-06** Lighthouse 90 / 95 | **Sim** | FR-039, contra a versão compilada e em **mobile simulado** — o preset era desktop e contradizia o checklist |
 | **RP-07** zero violações do axe | **Sim** | FR-040, em toda página entregue |
 | **RP-08** diferença do aprovado com veredito | **Sim** | FR-035. `.nav` e `.nav-brand` são convertidos aqui |
 | **RP-09** contraste nomeia as duas cores | **Sim** | FR-033, FR-034, FR-036 |
 | **RP-10** nenhum segredo no repositório | Sim | Herdado; esta feature não introduz credencial |
 | **RP-11** RLS ativa e política testada bloqueando | **Não** | Nenhuma tabela nesta feature — a moldura não lê banco |
-| **RP-12** verificação vista falhando, com contador | **Sim** | FR-041, FR-042. As verificações de teclado são novas |
+| **RP-12** verificação vista falhando, com contador | **Sim** | FR-041, FR-042, SC-017. As verificações de teclado são novas |
+| **RP-13** artefato gerado fora do controle de versão | **Sim** | Herdado. Esta feature acrescenta rotas e componentes, nenhum artefato gerado — mas o verificador roda no CI como os demais |
 
-### Achado — falta um componente para link com aparência de botão
+### Achado — falta um componente, e ele entra como escopo declarado
 
 Registrado aqui porque **componente faltando é informação, não obstáculo a contornar** (FR-030).
 
 O `Botao` da F01 renderiza `<button>` e o comentário do próprio arquivo diz, em "QUANDO NÃO USAR",
-que navegação não é papel dele: se leva a outro endereço, é `<a>`. A seção 5 dos padrões de código
-diz o mesmo. Portanto:
+que navegação não é papel dele: se leva a outro endereço, é `<a>`. A seção 5 dos padrões diz o
+mesmo. Com o FR-008 decidido, **falta um componente**, e ele entra nesta feature **declarado**, não
+como extra silencioso.
 
-- se a conversão "Processo seletivo" for um **link de texto em destaque**, os sete componentes da
-  F01 bastam;
-- se ela for um **link com aparência de botão**, **falta um componente** — e ele não pode ser
-  improvisado com estilo solto nem com um `<button>` que navega, que quebra o menu de contexto, o
-  abrir em nova aba e o que o leitor de tela anuncia.
+**Ele não é especulativo.** Tem três consumidores nomeados antes de existir: o cabeçalho aqui, a
+chamada da home na F04, e o "Botão de inscrição" que o `docs/conteudo-institucional.md` §5.1 já
+especifica para a F12 — um link para o formulário externo da liga. É o oposto da API adivinhada que
+a F01 recusou.
 
-A decisão está em **FR-008**. Se a resposta for a segunda, esta spec ganha um requisito próprio para
-o componente novo, e ele vira escopo declarado — não um extra silencioso.
+**O risco não é o componente; é como ele carrega a aparência.** Uma cópia própria do visual do
+`Botao` são duas fontes de verdade para a mesma aparência, e a próxima correção de contraste acerta
+uma e esquece a outra. É a classe da cascata escondida que a F01 pegou no `liacup.css` — só que
+criada nova, hoje, de propósito. Por isso o FR-045 exige **origem única de aparência**, e o SC-018
+exige que a igualdade seja **verificada, não olhada**, com os dois lado a lado na vitrine.
+
+A vitrine não é enfeite aqui: foi nela que os quatro defeitos de contraste da F01 apareceram,
+porque foi a primeira vez que todas as combinações estiveram juntas na mesma tela.
 
 ### Escopo — o que **não** entra nesta feature
 
-- **O conteúdo das páginas** — F04 em diante. Nem "de brinde".
+- **O conteúdo das páginas** — F04 em diante. Nem "de brinde". A rota mínima do FR-015 **não é
+  exceção a isto**: ela declara que a página ainda não existe e não carrega uma linha de conteúdo
+  institucional. Se alguém sentir vontade de "só adiantar o texto do Sobre", isso é F05.
 - **O painel administrativo** — Fase 2.
 - **A autenticação** — F14.
 - **Qualquer componente que só o painel usa.**
@@ -407,6 +454,17 @@ o componente novo, e ele vira escopo declarado — não um extra silencioso.
   separadores.
 - **SC-008**: **Zero** ocorrências de `.nav` e `.nav-brand` no `liacup.css`, e a contagem de
   seletores restantes declarada: **27 hoje, 22 depois**.
+
+  **Regra de contagem, porque o número sozinho não é reproduzível**: contam-se os **seletores
+  abaixo do banner "O QUE AINDA NAO FOI CONVERTIDO", separados por vírgula**. O mesmo arquivo
+  admite outras leituras defensáveis — **59** se forem todos os seletores, incluindo `body`, `h1`,
+  `a` e o reset; **29** se forem as classes de componente incluindo as que estão acima do banner. A
+  diferença entre 27 e 29 é `.washed` (L75) e `.text-muted` (L104), que **seguem no arquivo, fora
+  desta conta e fora desta feature**. `.text-muted` não é neutro: está no encerramento da Fase 0
+  como pendência aberta, com **3,58:1** medido. Esta feature não o toca, e não o esconde.
+
+  Mesma ambiguidade do SC-012 da F00, que precisou da emenda R2. Mesmo remédio: a regra de contagem
+  vai escrita junto do número.
 - **SC-009**: **Zero** ocorrências do e-mail inventado do protótipo em qualquer arquivo entregue,
   verificado por varredura.
 - **SC-010**: **Zero** dados institucionais na tela sem fonte nomeada em
@@ -423,6 +481,12 @@ o componente novo, e ele vira escopo declarado — não um extra silencioso.
   registrado. Um terceiro é desvio a reportar.
 - **SC-016**: Todas as verificações herdadas continuam passando: tipos, análise estática, formatação,
   tokens, camadas, testes de unidade, de ponta a ponta e de políticas.
+- **SC-017**: O **número de páginas verificadas é reportado** e é **igual ao número de destinos
+  entregues**. Hoje: **10 e 10**. **Demonstrado falhando (RP-12)**: acrescentar um destino sem tocar
+  em mais nada deixa a verificação **vermelha, nomeando a página que ficou de fora**.
+- **SC-018**: O `Botao` e o link com aparência de botão aparecem **lado a lado na vitrine**, em
+  **todas as variantes e estados**, e a **aparência calculada dos dois é idêntica — verificado, não
+  olhado**. O alvo do link é **≥ 44 px**.
 
 ## Dependencies
 
@@ -446,8 +510,8 @@ Padrões adotados onde a descrição não decidiu. Cada um é reversível na res
   descrito. Repetir dez destinos no rodapé é decisão da F04 em diante, se alguém quiser.
 - **Os canais de contato passam a morar no rodapé.** Hoje o `LinksDeContato` é renderizado dentro do
   `<main>` da página provisória, e os comentários de `Rodape.tsx` e `LinksDeContato.tsx` descrevem
-  esse arranjo. Depois desta feature eles ficam **desatualizados** e precisam ser corrigidos junto —
-  comentário que descreve o arranjo antigo é pior que comentário nenhum.
+  esse arranjo. **Isto deixou de ser premissa e virou o FR-046**: premissa não tem dono e nenhuma
+  tarefa a cobra — foi por isso que subiu para requisito.
 - **A moldura não trata carregando, erro e vazio.** A seção 2.6 dos padrões cobre componente que
   **exibe dado**; a moldura não exibe dado nenhum. Isso volta a valer na F04.
 - **Os 64 px e os 44 px cabem juntos, mas com folga apertada.** 44 px de alvo mais `--space-2`
@@ -457,5 +521,11 @@ Padrões adotados onde a descrição não decidiu. Cada um é reversível na res
 - **Dez destinos lado a lado no cabeçalho são apertados mesmo em 1024 px.** Estimativa com a
   tipografia aprovada de 14 px: cerca de 644 px de texto mais cerca de 158 px de espaçamento entre
   itens, mais a marca e o preenchimento, chegam perto dos 1024 px antes de a conversão entrar. **É
-  estimativa, não medição** — mas é o motivo de a largura de troca ser uma pergunta, e de o FR-038
-  ser o requisito que decide.
+  estimativa, não medição.** A largura foi decidida em 1024 com plano B (FR-007), e quem dá o
+  veredito é o FR-038 — a medição, não esta conta.
+- **A verificação por página passa a ser derivada, não escrita à mão.** Acrescentar as nove URLs ao
+  `lighthouserc.json` e nove `page.goto` ao teste de ponta a ponta funcionaria hoje e criaria duas
+  listas mantidas em paralelo — a dos destinos que a navegação desenha e a das páginas que a
+  verificação visita. Listas paralelas divergem, e aqui a divergência é **silenciosa e verde**. É o
+  que o FR-044 e o SC-017 existem para impedir. **Como derivar é assunto do `plan.md`**; a spec só
+  exige que seja uma lista só.
