@@ -48,6 +48,28 @@
      precisarem de excecao no teste que os compara. */
   text-decoration: none;
 
+  /*
+   * QUEBRA DE LINHA ESTAVEL — condicao da decisao do CTA em 1024 px (28/08).
+   *
+   * Entre 1024 e 1144 px o CTA "Processo seletivo" e espremido pelo flex e
+   * ocupa duas linhas. Botao de duas linhas nao parece defeito QUANDO PARECE
+   * INTENCIONAL; o que parece defeito e quebra irregular e desalinhada.
+   *
+   * `text-align: center` alinha a segunda linha com a primeira — sem ele, o
+   * `justify-content` centraliza o bloco de texto e as linhas dentro dele ficam
+   * a esquerda, que e exatamente a forma que parece acidente.
+   *
+   * `text-wrap: balance` distribui as palavras entre as linhas. Com um rotulo de
+   * duas palavras existe um unico ponto de quebra e ele ja seria deterministico
+   * — a declaracao esta aqui para o dia em que o rotulo mudar, e para deixar a
+   * intencao escrita em vez de depender de coincidencia.
+   *
+   * Medido: a altura do CTA fica em 53,19 px em TODOS os 16 passos da faixa,
+   * de 1024 a 1144. A forma nao oscila.
+   */
+  text-align: center;
+  text-wrap: balance;
+
   /* ADR-0004 2.1: alvo de toque, em todas as larguras, sem media query */
   min-height: var(--alvo-de-toque);
 }

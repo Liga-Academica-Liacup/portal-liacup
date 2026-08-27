@@ -354,7 +354,58 @@ formulário da liga, onde tem de ser um `<a>` de verdade.
 
 ## 6. Percurso por teclado (US4 · FR-009 a FR-012, FR-017 a FR-019, FR-042)
 
-_A preencher na Fase 6._
+**`PERCURSOS DE TECLADO: 7/7`**, em 360 px, só com `page.keyboard.press`. Nenhum `element.focus()`
+para posicionar o foco, nenhum `click()` para abrir o painel.
+
+| # | Percurso | Número medido |
+| --- | --- | --- |
+| **E40** | 1 — primeiro Tab alcança o link de pular | `<a> "Pular para o conteúdo"` · **visível = true** |
+| **E41** | 2 — Enter no link move o foco | foco em `<main> id="conteudo-principal"` |
+| **E42** | 3 — botão alcançável e acionável | alcançado por Tab · `open` e `aria-expanded="true"` |
+| **E43** | 4 — Tab e Shift+Tab não escapam | **28 teclas · 9 destinos distintos · 2 paradas vazias do navegador · 0 escapes para controle da página** |
+| **E44** | 5 — Esc fecha e devolve o foco | foco em `testid="abrir-painel"` · `aria-expanded="false"` |
+| **E45** | 6 — escolher destino fecha o painel | destino "Sobre" por Enter · painel sem `open` |
+| **E46** | 7 — ordem de foco = ordem visual | **5 elementos na sequência · 0 fora de ordem** |
+
+### As sete demonstrações RP-12 — e **duas** revelaram detector insensível
+
+| # | Violação temporária | Resultado |
+| --- | --- | --- |
+| 1 | `:focus-visible` deixa o link fora da tela | **falhou** ✅ |
+| 2 | `tabIndex={-1}` removido do `<main>` | **PASSOU** ⚠️ |
+| 3 | `tabIndex={-1}` no acionador | **falhou** ✅ |
+| 4 | `show()` em vez de `showModal()` | **falhou** ✅ |
+| 5 | retorno de foco ao acionador removido | **PASSOU** ⚠️ |
+| 6 | `onClick={fechar}` removido do destino | **falhou** ✅ |
+| 7 | skip link movido para depois do `<header>` | **falhou** ✅ |
+
+**A demonstração 4 é a que mais vale**, porque mostra a asserção medindo o risco certo. Com `show()`
+no lugar de `showModal()`, a saída nomeou **9 escapes**, e os nomes são exatamente os controles da
+página atrás:
+
+```
+Tab 9: "Processo seletivo" | Tab 10: "@liacup.unb" | Tab 11: "liacup.unb@gmail.com"
+Tab 14: "LIACUP" | Shift+Tab 5: "Processo seletivo" ...
+```
+
+### Os dois detectores insensíveis, e por que não são o mesmo tipo de problema
+
+**Os percursos 2 e 5 continuam verificando o resultado certo. O que eles não conseguem é atribuir
+esse resultado ao nosso código** — porque o navegador já faz a mesma coisa sozinho:
+
+| Percurso | O que o Chromium faz sem a nossa linha |
+| --- | --- |
+| 2 | foca o alvo do fragmento mesmo sem `tabIndex={-1}` |
+| 5 | o `<dialog>` devolve o foco a quem o abriu, nativamente, ao fechar |
+
+**Nenhuma das duas linhas foi removida**, e o motivo está escrito: as duas existem para navegadores
+em que o comportamento nativo difere, e `tabIndex={-1}` no `<main>` é a recomendação padrão
+justamente porque nem todo navegador foca o alvo do fragmento. O que **não** se pode dizer é que
+estes testes provam que as linhas são necessárias — eles provam que o **resultado** acontece.
+
+Registrado porque é a distinção que esta obra persegue, aparecendo pelo avesso: aqui a verificação
+mede o resultado certo, e a tentação seria concluir que ela valida a implementação. Ela valida o
+comportamento; a implementação é uma das duas causas possíveis.
 
 ## 7. Estado e propósito anunciados (US5 · FR-013, FR-016, FR-020)
 

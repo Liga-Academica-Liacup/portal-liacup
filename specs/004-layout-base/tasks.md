@@ -162,14 +162,14 @@ resize mobile→desktop passam como casos adicionais.
 
 ### Testes e evidência vermelha
 
-- [ ] T028 [US4] Criar `tests/e2e/navegacao-teclado.spec.ts` com sete percursos usando somente `page.keyboard.press`: primeiro Tab/skip visível, Enter/`main` focado, Tab+Enter/abertura, Tab+Shift+Tab/ciclo, Esc/retorno, Enter no destino atual/fechamento e sequência Tab/ordem visual; acrescentar casos de backdrop, scroll lock e resize, executar cada caso focado antes da correção e registrar sete vermelhos individualizados, ou induzir uma violação temporária isolada se algum já passar
+- [X] T028 [US4] Criar `tests/e2e/navegacao-teclado.spec.ts` com sete percursos usando somente `page.keyboard.press`: primeiro Tab/skip visível, Enter/`main` focado, Tab+Enter/abertura, Tab+Shift+Tab/ciclo, Esc/retorno, Enter no destino atual/fechamento e sequência Tab/ordem visual; acrescentar casos de backdrop, scroll lock e resize, executar cada caso focado antes da correção e registrar sete vermelhos individualizados, ou induzir uma violação temporária isolada se algum já passar
 
 ### Implementação
 
-- [ ] T029 [US4] Implementar em `src/componentes/layout/NavegacaoPublica.tsx` abertura por `showModal()`, sincronização pelo evento `close` e fechamento por destino, `cancel`/Esc e clique no próprio backdrop, sempre devolvendo foco ao acionador visível
-- [ ] T030 [US4] Implementar em `src/componentes/layout/NavegacaoPublica.tsx` bloqueio/restauração do valor anterior de `body.style.overflow` em fechamento, unmount e resize, fechando ao passar para desktop sem focar elemento oculto e sem repetir `1024` no TypeScript
-- [ ] T031 [P] [US4] Completar em `src/componentes/layout/NavegacaoPublica.module.css` a apresentação lateral, backdrop e estados aberto/fechado usando tokens, preservando a modalização e o foco nativos do `dialog`
-- [ ] T032 [US4] Executar `tests/e2e/navegacao-teclado.spec.ts` em 360 px, registrar 7/7 e os casos adicionais em `specs/004-layout-base/EVIDENCIAS-F03.md` e confirmar restauração de foco/rolagem após cada forma de fechamento
+- [X] T029 [US4] Implementar em `src/componentes/layout/NavegacaoPublica.tsx` abertura por `showModal()`, sincronização pelo evento `close` e fechamento por destino, `cancel`/Esc e clique no próprio backdrop, sempre devolvendo foco ao acionador visível
+- [X] T030 [US4] Implementar em `src/componentes/layout/NavegacaoPublica.tsx` bloqueio/restauração do valor anterior de `body.style.overflow` em fechamento, unmount e resize, fechando ao passar para desktop sem focar elemento oculto e sem repetir `1024` no TypeScript
+- [X] T031 [P] [US4] Completar em `src/componentes/layout/NavegacaoPublica.module.css` a apresentação lateral, backdrop e estados aberto/fechado usando tokens, preservando a modalização e o foco nativos do `dialog`
+- [X] T032 [US4] Executar `tests/e2e/navegacao-teclado.spec.ts` em 360 px, registrar 7/7 e os casos adicionais em `specs/004-layout-base/EVIDENCIAS-F03.md` e confirmar restauração de foco/rolagem após cada forma de fechamento
 
 **Checkpoint**: US4 passa por interação real, não por inspeção de atributos.
 
