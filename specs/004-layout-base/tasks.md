@@ -210,7 +210,8 @@ real.
 - [ ] T048 Executar `npm test` e `npm run test:banco` e registrar totais reais, arquivos, testes passados/falhos e preservação das suítes em `specs/004-layout-base/EVIDENCIAS-F03.md`
 - [ ] T049 Executar `npm run build` e `npm run test:e2e`, registrar rotas geradas, 10/10, 70/70, alvos medidos, sete alturas, 7/7 teclado, 6/6 pares e zero axe/overflow em `specs/004-layout-base/EVIDENCIAS-F03.md`
 - [ ] T050 Executar `npm run test:desempenho` contra o build e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` 10/10 caminhos, 30/30 relatórios, três execuções por rota, status/URL final, perfil mobile simulado e menores notas de desempenho/acessibilidade
-- [ ] T051 Completar o veredito de `specs/004-layout-base/FIDELIDADE.md` e o resumo final de `specs/004-layout-base/EVIDENCIAS-F03.md`, executar por último `npm run verificar`, então conferir `git diff --check` e `git status -sb` e parar para revisão sem commit, push, PR ou merge
+- [ ] T051 Atualizar em `README.md` toda referência ao `lighthouserc.json`, que o T006 substitui por `lighthouserc.cjs` — hoje a linha 153 ("**O que NAO fazer:** baixar o limiar em `lighthouserc.json`") é a única instrução do repositório contra afrouxar o limiar, e depois do T006 ela aponta para um arquivo que não existe; varrer `README.md` inteiro por `lighthouserc` e registrar em `specs/004-layout-base/EVIDENCIAS-F03.md` a contagem de ocorrências antes e depois, com zero apontando para o nome antigo
+- [ ] T052 Completar o veredito de `specs/004-layout-base/FIDELIDADE.md` e o resumo final de `specs/004-layout-base/EVIDENCIAS-F03.md`, executar por último `npm run verificar`, então conferir `git diff --check` e `git status -sb` e parar para revisão sem commit, push, PR ou merge
 
 ---
 
@@ -262,6 +263,8 @@ Fundação
   `src/componentes/layout/NavegacaoPublica.tsx` sejam coordenadas.
 - T038 e T039.
 - T048 e as buscas somente leitura de T047, depois de todo código pronto.
+- T051 depende do T006 — só faz sentido depois que o `lighthouserc.cjs` existe —, e é somente
+  leitura e escrita em `README.md`, então roda em paralelo com T047 a T050.
 
 ## Exemplo de execução paralela: US3
 
