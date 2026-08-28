@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "verificar": "npm run verificar:artefatos && npm run verificar:tipos && npm run lint && npm run formatar:check && npm run verificar:tokens && npm run verificar:chave",
+    "verificar": "npm run verificar:artefatos && npm run verificar:tipos && npm run lint && npm run formatar:check && npm run verificar:tokens && npm run verificar:seletores && npm run verificar:chave",
     "verificar:tipos": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "formatar": "prettier --write .",
@@ -30,7 +30,8 @@
     "banco:rls": "node scripts/verificar-rls.mjs",
     "banco:rls:producao": "node scripts/verificar-rls.mjs --producao",
     "purgar:dado-pessoal": "node scripts/purgar-dado-pessoal.mjs",
-    "purgar:dado-pessoal:simular": "node scripts/purgar-dado-pessoal.mjs --simular"
+    "purgar:dado-pessoal:simular": "node scripts/purgar-dado-pessoal.mjs --simular",
+    "verificar:seletores": "node scripts/contar-seletores-pendentes.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

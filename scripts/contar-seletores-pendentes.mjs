@@ -88,10 +88,46 @@ for (const seletor of seletores) {
   familias.set(familia, (familias.get(familia) ?? 0) + 1)
 }
 
+/*
+ * O NUMERO DECLARADO NO BANNER, comparado com o que foi contado.
+ *
+ * Sem isto o script existe e ninguem o roda: o banner apontaria para um
+ * instrumento nao exercitado, e a Fase 2 vai converter justamente .dialog, .seg
+ * e .table — os seletores contados aqui. No dia em que isso acontecer o banner
+ * volta a mentir, em silencio, e terminamos onde comecamos. Medicao descartada
+ * nao guarda nada.
+ *
+ * LER o numero do comentario e seguro; o que quebrou a versao anterior foi
+ * CONTAR conteudo de comentario como se fosse seletor. Sao coisas diferentes, e
+ * a leitura acontece sobre o texto original, nao sobre o texto ja limpo.
+ */
+const declarado = css.match(/O QUE AINDA NAO FOI CONVERTIDO\s+—\s+(\d+)\s+seletores/)?.[1]
+
 console.log('\nSeletores pendentes no liacup.css\n')
 console.log(`  contagem a partir de ${PRIMEIRO_PENDENTE}, ate o fim do arquivo`)
 console.log(`  linhas de comentario removidas antes de contar: sim\n`)
 for (const [familia, quantidade] of [...familias].sort()) {
   console.log(`    ${familia.padEnd(16)} ${quantidade}`)
 }
-console.log(`\n  TOTAL: ${seletores.length} seletores\n`)
+console.log(`\n  contados: ${seletores.length}`)
+console.log(`  declarados no banner: ${declarado ?? 'NENHUM'}\n`)
+
+if (declarado === undefined) {
+  console.error('=== FALHA — o banner nao declara numero de seletores ===\n')
+  console.error('  Sem o numero no banner, quem le o arquivo nao tem com o que comparar,')
+  console.error('  e este script deixa de ter contraparte.\n')
+  process.exit(1)
+}
+
+if (Number(declarado) !== seletores.length) {
+  console.error('=== FALHA — o banner e a realidade divergiram ===\n')
+  console.error(`  o banner do liacup.css declara ${declarado} seletores pendentes`)
+  console.error(`  a contagem encontrou ${seletores.length}\n`)
+  console.error('  Uma das duas coisas aconteceu: seletores foram convertidos e o banner nao')
+  console.error('  foi atualizado, ou o banner foi editado sem a conversao. Nos dois casos o')
+  console.error('  arquivo passa a mentir para quem o abrir.\n')
+  process.exit(1)
+}
+
+console.log('=== VERIFICADO — seletores pendentes no liacup.css ===\n')
+console.log(`  ${seletores.length} seletores contados, e o banner declara ${declarado}.\n`)

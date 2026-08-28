@@ -76,6 +76,17 @@ jobs:
       - name: Verificar tokens
         run: npm run verificar:tokens
 
+      # O banner do liacup.css declara quantos seletores ainda esperam conversao,
+      # e este passo compara esse numero com a contagem real. Sem ele o script
+      # existiria sem ninguem roda-lo: encadear em `npm run verificar` NAO basta,
+      # porque o CI chama os passos um a um e nunca chama a cadeia inteira.
+      #
+      # A Fase 2 vai converter .dialog, .seg e .table, que sao justamente os
+      # seletores contados. No dia em que isso acontecer, o banner precisa cair
+      # junto — ou este passo fica vermelho dizendo os dois numeros.
+      - name: Seletores pendentes conferem com o banner
+        run: npm run verificar:seletores
+
       - name: Testes de unidade
         run: npm test
 
