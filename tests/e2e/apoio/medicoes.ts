@@ -42,16 +42,24 @@ export type ContagemDeLandmarks = {
 
 export type PropriedadeAcessivel = {
   valor: unknown
-  relacionados: Array<{
-    backendDOMNodeId?: number
-    idref?: string
-    texto?: string
-  }>
+  relacionados: NoRelacionadoAcessivel[]
+}
+
+export type NoRelacionadoAcessivel = {
+  backendDOMNodeId?: number
+  idref?: string
+  texto?: string
+}
+
+export type MotivoIgnoradoAcessivel = {
+  nome: string
+  relacionados: NoRelacionadoAcessivel[]
 }
 
 export type NoDaArvoreAcessivel = {
   nodeId: string
   ignored: boolean
+  ignoredReasons: MotivoIgnoradoAcessivel[]
   role: string
   name: string
   propriedades: Record<string, PropriedadeAcessivel>
@@ -75,6 +83,14 @@ export async function lerArvoreAcessivel(page: Page): Promise<NoDaArvoreAcessive
     return resposta.nodes.map((no) => ({
       nodeId: no.nodeId,
       ignored: no.ignored,
+      ignoredReasons: (no.ignoredReasons ?? []).map((motivo) => ({
+        nome: motivo.name,
+        relacionados: (motivo.value?.relatedNodes ?? []).map((relacionado) => ({
+          backendDOMNodeId: relacionado.backendDOMNodeId,
+          idref: relacionado.idref,
+          texto: relacionado.text,
+        })),
+      })),
       role: String(no.role?.value ?? ''),
       name: String(no.name?.value ?? ''),
       propriedades: Object.fromEntries(
@@ -120,6 +136,14 @@ export async function lerSubarvoreAcessivel(
     return resposta.nodes.map((no) => ({
       nodeId: no.nodeId,
       ignored: no.ignored,
+      ignoredReasons: (no.ignoredReasons ?? []).map((motivo) => ({
+        nome: motivo.name,
+        relacionados: (motivo.value?.relatedNodes ?? []).map((relacionado) => ({
+          backendDOMNodeId: relacionado.backendDOMNodeId,
+          idref: relacionado.idref,
+          texto: relacionado.text,
+        })),
+      })),
       role: String(no.role?.value ?? ''),
       name: String(no.name?.value ?? ''),
       propriedades: Object.fromEntries(

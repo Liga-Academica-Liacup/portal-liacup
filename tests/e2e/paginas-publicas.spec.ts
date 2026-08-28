@@ -592,6 +592,15 @@ test.describe('estado e proposito anunciados', () => {
     expect(antes?.ignored).toBe(false)
     expect(antes?.propriedades.expanded?.valor).toBe(false)
 
+    const ariaControls = await page.getByTestId('abrir-painel').getAttribute('aria-controls')
+    const alvosDoControle = await page.locator('#painel-de-navegacao').count()
+    console.log(
+      `[${informacoes.project.name}] aria-controls DOM: ${ariaControls === 'painel-de-navegacao' ? '1/1' : '0/1'}`
+    )
+    console.log(
+      `[${informacoes.project.name}] alvo DOM com id="painel-de-navegacao": ${alvosDoControle === 1 ? '1/1' : `${alvosDoControle}/1`}`
+    )
+
     await page.getByTestId('abrir-painel').click()
     await expect(page.getByTestId('abrir-painel')).toHaveAttribute('aria-expanded', 'true')
     const arvore = await lerArvoreAcessivel(page)
@@ -608,26 +617,54 @@ test.describe('estado e proposito anunciados', () => {
     )
     expect(depois, 'canal AX nao devolveu o no DOM do botao aberto').toBeDefined()
 
-    if (!depois?.ignored) {
-      expect(depois.name).toBe('Fechar menu de navegação')
-      expect(depois.propriedades.expanded?.valor).toBe(true)
-    } else {
-      console.log(
-        `[${informacoes.project.name}] limite do canal: botao aberto fica ignored=true ` +
-          `porque o dialog modal torna o restante da pagina inerte; nome e expanded nao sao expostos`
-      )
-    }
+    expect(depois?.ignored, 'botao externo ao dialog modal deveria ficar ignorado').toBe(true)
+    const motivosIgnorados = depois?.ignoredReasons ?? []
+    const motivosDoDialogoAtivo = motivosIgnorados.filter(
+      (motivo) => motivo.nome === 'activeModalDialog'
+    )
+    const relacoesDoDialogoAtivo = motivosDoDialogoAtivo.flatMap((motivo) => motivo.relacionados)
+    const relacoesComPainel = relacoesDoDialogoAtivo.filter(
+      (relacionado) => relacionado.idref === 'painel-de-navegacao'
+    )
+    console.log(
+      `[${informacoes.project.name}] motivos ignored examinados: ${motivosIgnorados.length}`
+    )
+    console.log(
+      `[${informacoes.project.name}] activeModalDialog encontrados: ${motivosDoDialogoAtivo.length}`
+    )
+    console.log(
+      `[${informacoes.project.name}] idref activeModalDialog recebido: ` +
+        `${relacoesDoDialogoAtivo.map((relacionado) => relacionado.idref ?? 'SEM IDREF').join(', ') || 'AUSENTE'}`
+    )
+    console.log(
+      `[${informacoes.project.name}] relacoes com painel-de-navegacao: ${relacoesComPainel.length}`
+    )
+    expect(motivosDoDialogoAtivo, 'motivo AX activeModalDialog ausente').toHaveLength(1)
+    expect(
+      relacoesDoDialogoAtivo,
+      'activeModalDialog deve expor exatamente uma relacao aplicavel'
+    ).toHaveLength(1)
+    expect(relacoesDoDialogoAtivo[0]?.idref).toBe('painel-de-navegacao')
+    expect(relacoesComPainel, 'activeModalDialog nao relacionado ao painel esperado').toHaveLength(
+      1
+    )
+
+    console.log(
+      `[${informacoes.project.name}] limite do canal: botao aberto fica ignored=true ` +
+        `porque o dialog modal torna o restante da pagina inerte; nome e expanded nao sao expostos`
+    )
 
     const controle = depois?.propriedades.controls ?? antes?.propriedades.controls
+    console.log(`[${informacoes.project.name}] controls AX: ${controle ? '1/1' : '0/1'}`)
     console.log(
       `[${informacoes.project.name}] relacao controls no AX: ` +
         (controle ? JSON.stringify(controle) : 'NAO EXPOSTA PELO CANAL')
     )
-    if (controle) {
-      expect(
-        controle.relacionados.length,
-        'controls exposto sem regiao relacionada'
-      ).toBeGreaterThan(0)
-    }
+    expect(
+      controle,
+      'controls AX passou a ser exposto; revisar a decisao documentada'
+    ).toBeUndefined()
+    expect(ariaControls).toBe('painel-de-navegacao')
+    expect(alvosDoControle, 'aria-controls nao encontra exatamente um alvo DOM').toBe(1)
   })
 })

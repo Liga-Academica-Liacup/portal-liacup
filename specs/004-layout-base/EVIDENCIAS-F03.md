@@ -432,10 +432,47 @@ comportamento; a implementação é uma das duas causas possíveis.
 | **E50** | Derivação da página atual, unidade | **13 testes**: um destino marcado em cada uma das **dez** rotas, **zero** em `/noticias-antigas`, **zero** em `/projetos-antigos` e estado/região do acionador conferidos |
 | **E51** | Marcação nas dez páginas, em 360 e 1280 px | Nove destinos: **2 no DOM · 1 visível · 1 distinto**. Conversão principal: **1 no DOM · 1 visível · 1 distinto**. Token exato `page` em todos os vinte casos |
 | **E52** | Pista não cromática no objeto visível, ignorando propriedades de cor | Nas sete larguras: **1 página atual visível · 8 irmãos visíveis · 1 diferença não cromática**, `text-decoration-line: "underline" vs "none"`. Em 360 px o painel é aberto antes da leitura; em 1280 px a navegação direta é lida. CTA visível isolada com e sem o estado: **`underline` vs `none`** |
-| **E53** | Nome, papel e estado calculados pelo Chrome | Painel aberto: **`role=dialog` · `name="Menu de navegação"` · `ignored=false`**. Botão fechado: **`role=button` · `name="Abrir menu de navegação"` · `expanded=false` · `ignored=false`**. Depois da abertura, a consulta parcial devolve literalmente **`ignored=true` por `activeModalDialog`**, relacionado ao `idref="painel-de-navegacao"`; nesse estado o canal **não expõe nome, `expanded` nem `controls`**, portanto nenhuma alegação é deduzida do atributo |
+| **E53** | Nome, papel e estado calculados pelo Chrome | Botão fechado: **`role=button` · `name="Abrir menu de navegação"` · `expanded=false` · `ignored=false`**; ação e propósito observados no nome acessível calculado. Painel aberto: **`role=dialog` · `modal=true` · `name="Menu de navegação"` · `ignored=false`**; propósito observado no nome acessível calculado. **`aria-controls` DOM: 1/1 · alvo DOM com `id="painel-de-navegacao"`: 1/1 · `controls AX: 0/1`**. O anúncio formal da relação **NÃO FOI VERIFICADO neste canal** e não é deduzido do atributo DOM. Limitação aceita por decisão do Gabriel, sem teste manual nesta fase e sem alteração do produto. Depois da abertura, o botão externo fica `ignored=true` por `activeModalDialog`, relacionado ao painel modal |
 | **E54** | Landmarks recebidos pela árvore acessível | Matriz AX de **10 rotas × 2 larguras = 20 combinações**: **banner 1 · navigation 1 · main 1 · contentinfo 1**, zero combinação fora de **1·1·1·1**. O contador DOM permanece como defesa estrutural separada |
 | **E55** | Estado vigente do fecho da fase no build de produção | **REPROVADO na execução pós-push.** `npx playwright test`: **826 casos contabilizados · 741 passaram · 75 pulados · 9 não rodaram · 1 falhou · `EXIT playwright=1`**. Falha: primeiro Tab focou o skip link com caixa `-24,97..19,03 px`, `:focus-visible=true`, mas `visível=false`. O resultado anterior — **751 passaram · 75 pulados · 0 falharam** — permanece apenas como histórico de uma execução pré-push e **não** é o fechamento vigente. `npm run verificar`: `EXIT verificar=0` · Vitest: **106/106**, `EXIT vitest=0` |
 | **E56** | Fechamento corrigido da Fase 7, depois da decisão visual A e das demonstrações RP-12 | Skip link sem transição: caixa **`8,8..52,8 px`**, `top=8,8px`, `:focus-visible=true`, `visivel=true`; prova focada **10/10**, `EXIT teclado=0`. Fase 7 focada: **25 passaram · 1 pulado por painel não aplicável no desktop**, `EXIT fase7-focada=0`. Suíte integral: **826 casos contabilizados · 751 passaram · 75 pulados por não aplicabilidade · 0 falharam · 0 não rodaram · `EXIT playwright=0`**; uma única linha `PERCURSOS DE TECLADO: 7/7 · CASOS ADICIONAIS: 3/3`. Vitest: **12 arquivos · 106/106**, `EXIT vitest=0`; `npm run verificar`: `EXIT verificar=0`; `git diff --check`: `EXIT diff-check=0` |
+| **E57** | Emendas de robustez do detector AX | Limite `controls AX: 0/1` aceito; correspondência DOM **1/1 + 1/1**. O tipo preserva os motivos de exclusão e seus nós relacionados. Verde focado: **1 motivo examinado · 1 `activeModalDialog` · 1 relação com `idref="painel-de-navegacao"` · 1 passou · `EXIT ax-painel=0`**. Suíte integral: **826 contabilizados · 751 passaram · 75 pulados · 0 falharam · 0 não executados · `EXIT playwright=0`**. Vitest: **106/106 · `EXIT vitest=0`**. Verificação integrada e integridade do diff repetidas depois da formatação, com os códigos registrados abaixo |
+
+### Emendas de robustez do detector AX — E57
+
+#### Decisão sobre a relação `controls`
+
+- **`aria-controls` DOM: 1/1.** O botão aponta literalmente para `painel-de-navegacao`.
+- **Alvo DOM: 1/1.** Existe exatamente um elemento com `id="painel-de-navegacao"`.
+- **`controls AX: 0/1`.** A relação não é exposta pelo canal CDP consultado.
+- **Anúncio formal da relação: NÃO VERIFICADO neste canal.** Não é deduzido do atributo DOM.
+- **Decisão do Gabriel:** aceitar a limitação, sem teste manual com leitor de tela nesta fase e sem
+  alterar o produto. Ação e propósito foram observados nos nomes acessíveis calculados do botão
+  `"Abrir menu de navegação"` e do diálogo `"Menu de navegação"`.
+
+#### `ignored=true` exige causa e relação exatas
+
+1. **Violação temporária real:** somente o `id` do diálogo foi alterado para
+   `painel-de-navegacao-incorreto`; o `aria-controls` do botão permaneceu
+   `painel-de-navegacao`.
+2. **Comando exato:**
+   `npx playwright test tests/e2e/paginas-publicas.spec.ts --grep "o painel e o botao expoem nome, papel e estado calculados" --project=largura-360 --reporter=line`.
+3. **Vermelho:** **1 motivo `ignored` examinado · 1 `activeModalDialog` · idref recebido
+   `painel-de-navegacao-incorreto` · 0 relações com `painel-de-navegacao`**; mensagem
+   `Expected: "painel-de-navegacao" · Received: "painel-de-navegacao-incorreto"`; **1 falhou ·
+   `EXIT ax-painel=1`**.
+4. **Restauração:** o diálogo voltou a `id={ID_DO_PAINEL}`, sem alteração do produto final.
+5. **Verde:** **1 motivo `ignored` examinado · 1 `activeModalDialog` · idref recebido
+   `painel-de-navegacao` · 1 relação com `painel-de-navegacao`**; DOM **1/1 + 1/1**, AX
+   `controls` **0/1**; **1 passou · `EXIT ax-painel=0`**.
+
+#### Fechamento das duas emendas
+
+- Playwright: **826 casos contabilizados · 751 passaram · 75 pulados · 0 falharam · 0 não
+  executados · `EXIT playwright=0`**.
+- Vitest: **12 arquivos · 106/106 testes · `EXIT vitest=0`**.
+- `npm run verificar`: **`EXIT verificar=0`**.
+- `git diff --check`: **`EXIT diff-check=0`**.
 
 ### Decisão visual A — skip link, vermelho preservado e verde corrigido
 
