@@ -71,6 +71,30 @@ export function NavegacaoPublica() {
   }, [])
 
   /*
+   * "O acionador está visível para a pessoa?" — e não "ele tem `offsetParent`".
+   *
+   * A primeira versão usava `offsetParent`, que é um proxy para `display: none`
+   * e só para isso. Medido em 28/08/2026: escondendo o acionador com
+   * `opacity: 0` em vez de `display: none`, o painel **continuava aberto no
+   * desktop com a rolagem travada** — uma página que não rola, sem nada na tela
+   * explicando por quê. A lógica estava acoplada a uma técnica de esconder que
+   * mora noutro arquivo.
+   *
+   * `checkVisibility` pergunta ao navegador o que a pessoa vê, cobrindo
+   * `display`, `visibility` e `opacity` de uma vez. O caminho alternativo cobre
+   * navegador sem o método e volta ao proxy antigo — que é pior, e por isso está
+   * na alternativa e não no caminho principal.
+   */
+  const acionadorVisivel = useCallback(() => {
+    const alvo = acionador.current
+    if (!alvo) return false
+    if (typeof alvo.checkVisibility === 'function') {
+      return alvo.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+    }
+    return Boolean(alvo.offsetParent)
+  }, [])
+
+  /*
    * Um ÚNICO ponto de sincronização: o evento `close` do próprio `<dialog>`.
    *
    * Ele dispara para todas as formas de fechar — `close()`, Esc tratado pelo
@@ -85,10 +109,18 @@ export function NavegacaoPublica() {
     const aoFechar = () => {
       destravarRolagem()
       setAberto(false)
-      // Só devolve o foco a um acionador que exista e esteja visível: no
-      // desktop ele sai da árvore, e focar elemento oculto perde o foco na
-      // página inteira.
-      if (acionador.current?.offsetParent) acionador.current.focus()
+      /*
+       * Só devolve o foco a um acionador VISÍVEL. No desktop ele não existe, e
+       * focar o que a pessoa não vê deixa o cursor de teclado num lugar
+       * invisível — a próxima tecla age onde ninguém está olhando.
+       *
+       * Medido em 28/08/2026: com o acionador escondido por `display: none`, o
+       * `focus()` é no-op e esta guarda não muda o resultado — removê-la deixava
+       * o teste verde. Ela vale para as formas de esconder em que o elemento
+       * CONTINUA focável, como `opacity: 0`. Foi puxando esse fio que apareceu o
+       * acoplamento de verdade, no `aoRedimensionar` logo abaixo.
+       */
+      if (acionadorVisivel()) acionador.current?.focus()
     }
 
     /*
@@ -112,7 +144,7 @@ export function NavegacaoPublica() {
       dialogo.removeEventListener('click', aoClicar)
       destravarRolagem()
     }
-  }, [destravarRolagem])
+  }, [destravarRolagem, acionadorVisivel])
 
   /*
    * Ao passar para desktop com o painel aberto, ele deixa de existir. Fecha, e a
@@ -121,12 +153,11 @@ export function NavegacaoPublica() {
    */
   useEffect(() => {
     const aoRedimensionar = () => {
-      const acionadorSumiu = !acionador.current?.offsetParent
-      if (acionadorSumiu && painel.current?.open) painel.current.close()
+      if (!acionadorVisivel() && painel.current?.open) painel.current.close()
     }
     window.addEventListener('resize', aoRedimensionar)
     return () => window.removeEventListener('resize', aoRedimensionar)
-  }, [])
+  }, [acionadorVisivel])
 
   const ehAtual = (caminho: string) => caminhoAtual === caminho
 

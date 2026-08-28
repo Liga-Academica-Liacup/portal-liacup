@@ -45,10 +45,25 @@ async function focoAtual(page: import('@playwright/test').Page) {
   })
 }
 
-const percursosVerificados: string[] = []
+/*
+ * DOIS contadores, e nao um.
+ *
+ * A primeira versao usava um contador so, compartilhado entre os sete percursos
+ * do FR-042 e os casos adicionais dos Edge Cases. A saida virou `10/7` — um
+ * numero que nao descreve nada, porque somava duas coisas diferentes. Um
+ * contador que conta o conjunto errado e pior que nenhum: ele parece medicao.
+ */
+const percursos: string[] = []
+const casosAdicionais: string[] = []
+
 function registrar(nome: string) {
-  percursosVerificados.push(nome)
-  console.log(`percurso ${percursosVerificados.length}/7 verificado: ${nome}`)
+  percursos.push(nome)
+  console.log(`percurso ${percursos.length}/7 verificado: ${nome}`)
+}
+
+function registrarAdicional(nome: string) {
+  casosAdicionais.push(nome)
+  console.log(`caso adicional ${casosAdicionais.length}/3 verificado: ${nome}`)
 }
 
 test.describe('percurso integral por teclado', () => {
@@ -253,6 +268,132 @@ test.describe('percurso integral por teclado', () => {
   })
 
   test.afterAll(() => {
-    console.log(`\nPERCURSOS DE TECLADO: ${percursosVerificados.length}/7`)
+    console.log(`\nPERCURSOS DE TECLADO: ${percursos.length}/7`)
+  })
+})
+
+/*
+ * CASOS ADICIONAIS — os que a spec lista nos Edge Cases e que os sete percursos
+ * não cobrem.
+ *
+ * O de redimensionamento existe porque a linha do retorno de foco tem uma guarda
+ * (`offsetParent`) que NÃO serve ao fechamento comum: ela serve ao acionador que
+ * SUMIU. A demonstração RP-12 do percurso 5 removeu a linha e fechou o painel em
+ * largura de mobile — cenário em que o `<dialog>` nativo já devolve o foco
+ * sozinho — e por isso não exercitou o motivo pelo qual a linha foi escrita.
+ *
+ * O risco concreto: `aoFechar` faz três coisas — destrava a rolagem, sincroniza
+ * o estado e devolve o foco — e as três dependem do evento `close` disparar. Se
+ * a largura cruzar para desktop com o painel aberto e o `<dialog>` sair da
+ * árvore, uma página de desktop poderia ficar sem rolagem, sem nada na tela
+ * explicando por quê.
+ */
+test.describe('casos adicionais do painel', () => {
+  test.beforeEach(({}, informacoes) => {
+    test.skip(informacoes.project.name !== PROJETO_MOBILE, `roda no projeto ${PROJETO_MOBILE}`)
+  })
+
+  test('redimensionar para desktop com o painel aberto destrava a rolagem e não deixa foco órfão', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+    await page.getByTestId('abrir-painel').press('Enter')
+
+    const comPainelAberto = await page.evaluate(() => ({
+      overflow: document.body.style.overflow,
+      aberto: (document.querySelector('[data-testid="painel-de-navegacao"]') as HTMLDialogElement)
+        ?.open,
+    }))
+    expect(comPainelAberto.aberto, 'o painel nao abriu').toBe(true)
+    expect(comPainelAberto.overflow, 'a rolagem nao foi travada com o painel aberto').toBe('hidden')
+
+    // A travessia que a spec prevê nos Edge Cases.
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await page.waitForTimeout(300)
+
+    const depois = await page.evaluate(() => {
+      const painel = document.querySelector(
+        '[data-testid="painel-de-navegacao"]'
+      ) as HTMLDialogElement | null
+      const ativo = document.activeElement as HTMLElement | null
+      const caixa = ativo?.getBoundingClientRect()
+      const estiloAtivo = ativo ? window.getComputedStyle(ativo) : null
+      return {
+        overflow: document.body.style.overflow,
+        painelAberto: painel?.open ?? false,
+        rolagemFunciona: document.documentElement.scrollHeight > 0,
+        focoEtiqueta: ativo?.tagName.toLowerCase() ?? 'nenhum',
+        // Foco órfão: num elemento que existe mas não ocupa espaço nenhum.
+        /*
+         * Foco órfão = foco num elemento que a pessoa NÃO VÊ.
+         *
+         * A primeira versão checava só caixa de tamanho zero, o que cobre
+         * `display: none` e mais nada. Elemento escondido com
+         * `visibility: hidden` ou `opacity: 0` continua tendo caixa, e focá-lo
+         * é o defeito de verdade: o cursor de teclado fica num lugar invisível e
+         * a próxima tecla age onde ninguém está olhando.
+         *
+         * Checar a visibilidade calculada cobre as três formas de esconder, e
+         * torna esta verificação independente de COMO o acionador é escondido no
+         * desktop — que é o que a deixa valendo se alguém trocar o CSS.
+         */
+        focoOrfao:
+          !!ativo &&
+          ativo !== document.body &&
+          (estiloAtivo?.display === 'none' ||
+            estiloAtivo?.visibility === 'hidden' ||
+            Number(estiloAtivo?.opacity ?? 1) === 0 ||
+            ((caixa?.width ?? 0) === 0 && (caixa?.height ?? 0) === 0)),
+      }
+    })
+
+    console.log(
+      `  apos 390→1280 com painel aberto: overflow="${depois.overflow}" · ` +
+        `painel aberto=${depois.painelAberto} · foco em <${depois.focoEtiqueta}> · ` +
+        `foco orfao=${depois.focoOrfao}`
+    )
+
+    expect(
+      depois.painelAberto,
+      'o painel continuou aberto numa largura em que ele nao existe'
+    ).toBe(false)
+    expect(
+      depois.overflow,
+      'a rolagem do fundo ficou travada depois de passar para desktop — a pagina nao rola e nada na tela explica'
+    ).not.toBe('hidden')
+    expect(depois.focoOrfao, 'o foco ficou num elemento invisivel na tela').toBe(false)
+    registrarAdicional('resize mobile→desktop destrava a rolagem e não deixa foco órfão')
+  })
+
+  test('clicar no backdrop fecha e devolve o foco ao acionador', async ({ page }) => {
+    await page.goto('/')
+    await page.getByTestId('abrir-painel').press('Enter')
+
+    // O backdrop não é elemento: clicar fora da caixa do painel atinge o dialog.
+    await page.mouse.click(10, 400)
+    await page.waitForTimeout(150)
+
+    const foco = await focoAtual(page)
+    console.log(`  apos clique no backdrop: painel fechado · foco em testid="${foco.testid}"`)
+    await expect(page.getByTestId('painel-de-navegacao')).not.toHaveAttribute('open', '')
+    expect(foco.testid).toBe('abrir-painel')
+    registrarAdicional('clique no backdrop fecha e devolve o foco')
+  })
+
+  test('a rolagem do fundo é travada e restaurada ao valor anterior', async ({ page }) => {
+    await page.goto('/')
+    const antes = await page.evaluate(() => document.body.style.overflow)
+    await page.getByTestId('abrir-painel').press('Enter')
+    const durante = await page.evaluate(() => document.body.style.overflow)
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(150)
+    const depois = await page.evaluate(() => document.body.style.overflow)
+
+    console.log(`  overflow do body: antes="${antes}" · durante="${durante}" · depois="${depois}"`)
+    expect(durante).toBe('hidden')
+    // Restaura o valor ANTERIOR, e não um vazio presumido.
+    expect(depois).toBe(antes)
+    registrarAdicional('trava de rolagem restaura o valor anterior')
   })
 })

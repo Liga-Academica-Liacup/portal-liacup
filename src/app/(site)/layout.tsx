@@ -17,7 +17,10 @@
  *
  * POR QUE O <main> TEM tabIndex={-1}
  * Um elemento sem foco natural não recebe foco ao ser alvo de um link de
- * fragmento em vários navegadores: a página rola, e o foco fica onde estava. O
+ * fragmento no **Safari** e no **Firefox**: a página rola, e o foco fica onde
+ * estava. No Chromium ele recebe — medido em 28/08/2026, removendo o atributo e
+ * vendo o percurso 2 continuar verde. Isto é: este teste NÃO prova que a linha
+ * é necessária, e a linha fica pelos dois navegadores nomeados acima. O
  * `tabIndex={-1}` torna o `<main>` focável por programa sem entrar na ordem de
  * Tab. É a diferença entre o skip link mover a tela e mover o FOCO — e só o
  * segundo serve para quem depende do teclado.
