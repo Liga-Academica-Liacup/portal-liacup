@@ -9,12 +9,12 @@ superfície. Valores previstos abaixo são ponto de comparação, não substitue
 
 | Propriedade/estado | Origem aprovada | Implementação medida | Veredito | Motivo quando não idêntico |
 | --- | --- | --- | --- | --- |
-| display/alinhamento/gap | `.nav` efetivo | PREENCHER | PREENCHER | |
-| padding | `.nav`: `--space-3` / `--space-4` | PREENCHER | PREENCHER | |
-| borda inferior | `.nav`: nenhuma | PREENCHER | PREENCHER | |
-| marca — família/peso | `.nav-brand`: heading/400 | PREENCHER | PREENCHER | |
-| marca — tamanho | `.nav-brand`: 18 px | PREENCHER | PREENCHER | token novo com origem literal |
-| link — tamanho | `.nav a`: 14 px | PREENCHER | PREENCHER | |
+| display/alinhamento/gap | `.nav`: flex, center, `--space-4` | flex, center, `--space-3` na lista | corrigido | plano B do FR-007 disparado por medição: com `--space-4` havia `scrollWidth 1041 > 1024` |
+| padding | `.nav`: `--space-3` / `--space-4` | `--space-2` / `--space-4` | corrigido | aritmética do teto de 64 px: 44 + 2 × 13,2 = 70,4 px estoura; com `--space-2`, 61,6 px. Medido: 62,59 px com a borda |
+| borda inferior | `.nav`: nenhuma | `--largura-borda` sólida em `--color-divider` | divergente | o cabeçalho passou a ser fixo e opaco; sem a borda ele não se separa do conteúdo que passa por baixo. `--color-divider` é decorativo e não carrega informação |
+| marca — família/peso | `.nav-brand`: heading/400 | `--font-heading` / `--font-heading-weight` | idêntico | |
+| marca — tamanho | `.nav-brand`: 18 px | `--font-size-marca: 18px` | idêntico | token novo com origem literal `.nav-brand`; 18 px não existia na escala, e usar o degrau vizinho seria mudar o aprovado para não criar token |
+| link — tamanho | `.nav a`: 14 px | `--font-size-controle` (14 px) | idêntico | |
 | link — decoração normal | `.nav a`: sem sublinhado | `text-decoration: none` no repouso; sublinhado só em `[aria-current]` | corrigido | o sublinhado da página atual é a pista não cromática exigida pelo FR-016; sem ela a marcação dependeria só de cor |
 | hover/atual — cor | accent reprovado | accent-700 | corrigido | ADR-0003 §2 |
 | atual — pista não cromática | não existia | `text-decoration: underline` + `--color-accent-700` | corrigido | FR-016: o protótipo marcava a página atual só por cor, o que exclui quem não a distingue |
@@ -67,27 +67,29 @@ a faixa, que é o Princípio 3 verificado onde a amostragem não olha.
 
 | Propriedade/estado | Origem/decisão | Implementação medida | Veredito | Motivo |
 | --- | --- | --- | --- | --- |
-| linha institucional | componente F00 | PREENCHER | PREENCHER | |
-| sede curta | conteúdo aprovado | PREENCHER | PREENCHER | FR-025 |
-| contatos | `LinksDeContato` F00 | PREENCHER | PREENCHER | movidos para o rodapé |
+| linha institucional | componente F00 | preservada, agora no layout do grupo `(site)` | idêntico | passou a aparecer nas dez rotas, e não só na provisória |
+| sede curta | conteúdo aprovado | "FCTS · Campus UnB Ceilândia" | corrigido | FR-025. O protótipo trazia "Faculdade de Medicina · Campus Darcy Ribeiro", inventado. Sem logradouro e sem CEP, por decisão de 27/08 |
+| contatos | `LinksDeContato` F00 | os dois canais preservados, `@liacup.unb` e `liacup.unb@gmail.com` | idêntico | movidos para o rodapé; nenhum endereço novo escrito (FR-023) |
 | contêiner semântico | `nav` na F00 | `address` | corrigido | exatamente um landmark de navegação |
-| borda/separador | divider decorativo | PREENCHER | PREENCHER | declarar se permanece só decorativo |
+| borda/separador | divider decorativo | `--color-divider` no topo do rodapé | idêntico | **permanece só decorativo**: separa blocos e não carrega informação, então o mínimo de 3:1 para elemento de interface não se aplica |
 
 ## Aparência compartilhada
 
 | Variante/dimensão | Pares medidos | Propriedades divergentes | Veredito | Motivo |
 | --- | ---: | ---: | --- | --- |
-| primário normal | 1 | **0** | idêntico | 29 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
-| secundário normal | 1 | **0** | idêntico | 29 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
-| fantasma normal | 1 | **0** | idêntico | 29 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
-| primário largura total | 1 | **0** | idêntico | 29 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
-| secundário largura total | 1 | **0** | idêntico | 29 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
-| fantasma largura total | 1 | **0** | idêntico | 29 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
+| primário normal | 1 | **0** | idêntico | 31 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
+| secundário normal | 1 | **0** | idêntico | 31 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
+| fantasma normal | 1 | **0** | idêntico | 31 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
+| primário largura total | 1 | **0** | idêntico | 31 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
+| secundário largura total | 1 | **0** | idêntico | 31 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
+| fantasma largura total | 1 | **0** | idêntico | 31 propriedades comparadas, derivadas do `AparenciaDeBotao.module.css` |
 
-**Total: 6/6 pares · 29 propriedades por par · 0 divergentes.** A lista de propriedades é derivada
+**Total: 6/6 pares · 31 propriedades por par · 0 divergentes.** A lista de propriedades é derivada
 do CSS da origem única, e não digitada — lista escrita à mão seria a cobertura. Duas defesas contra
 derivação quebrada: piso de sanidade (12) e `CSS.supports` por nome, esta última vista pegando
-**30 derivadas / 29 reconhecidas** quando uma propriedade inexistente foi injetada no CSS.
+**30 derivadas / 29 reconhecidas** quando uma propriedade inexistente foi injetada no CSS. Depois
+da demonstração, `text-align` e `text-wrap` entraram na origem única e a derivação subiu sozinha para
+**31 derivadas / 31 reconhecidas**, sem editar a lista do teste.
 
 ## Contrastes obrigatórios
 

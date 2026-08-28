@@ -26,7 +26,20 @@ const PROJETO_MOBILE = 'largura-360'
 async function focoAtual(page: import('@playwright/test').Page) {
   return page.evaluate(() => {
     const alvo = document.activeElement as HTMLElement | null
-    if (!alvo) return { etiqueta: 'nenhum', texto: '', testid: '', visivel: false }
+    if (!alvo)
+      return {
+        etiqueta: 'nenhum',
+        texto: '',
+        testid: '',
+        id: '',
+        visivel: false,
+        topo: 0,
+        base: 0,
+        largura: 0,
+        altura: 0,
+        topCalculado: '',
+        focoVisivel: false,
+      }
     const caixa = alvo.getBoundingClientRect()
     const estilo = window.getComputedStyle(alvo)
     return {
@@ -34,6 +47,12 @@ async function focoAtual(page: import('@playwright/test').Page) {
       texto: (alvo.textContent ?? '').trim().slice(0, 40),
       testid: alvo.getAttribute('data-testid') ?? '',
       id: alvo.id,
+      topo: Math.round(caixa.top * 100) / 100,
+      base: Math.round(caixa.bottom * 100) / 100,
+      largura: Math.round(caixa.width * 100) / 100,
+      altura: Math.round(caixa.height * 100) / 100,
+      topCalculado: estilo.top,
+      focoVisivel: alvo.matches(':focus-visible'),
       // "Visível" aqui é o que a pessoa vê: dentro da tela, não só no DOM.
       visivel:
         estilo.visibility !== 'hidden' &&
@@ -66,6 +85,21 @@ function registrarAdicional(nome: string) {
   console.log(`caso adicional ${casosAdicionais.length}/3 verificado: ${nome}`)
 }
 
+/*
+ * MODO SERIAL, e o motivo é o contador.
+ *
+ * Os contadores vivem no escopo do módulo, e o Playwright distribui os testes
+ * entre workers paralelos — cada worker carrega o módulo de novo, com o array
+ * zerado. Medido: a saída virou `PERCURSOS DE TECLADO: 1/7` repetida sete
+ * vezes, uma por worker, cada uma contando só o que caiu nela.
+ *
+ * Um contador que depende de onde o teste foi parar não mede nada, e ainda por
+ * cima parece medição. Em série, os sete percursos correm no mesmo worker e o
+ * número volta a descrever o conjunto. O custo é alguns segundos numa suíte que
+ * roda em um projeto só.
+ */
+test.describe.configure({ mode: 'serial' })
+
 test.describe('percurso integral por teclado', () => {
   /*
    * O `test.skip` no nível do describe não recebe `testInfo` — só fixtures. Em
@@ -87,7 +121,9 @@ test.describe('percurso integral por teclado', () => {
 
     const foco = await focoAtual(page)
     console.log(
-      `  primeiro Tab parou em: <${foco.etiqueta}> "${foco.texto}" · visivel=${foco.visivel}`
+      `  primeiro Tab parou em: <${foco.etiqueta}> "${foco.texto}" · ` +
+        `caixa=${foco.topo}..${foco.base} × ${foco.largura}x${foco.altura} · ` +
+        `top=${foco.topCalculado} · :focus-visible=${foco.focoVisivel} · visivel=${foco.visivel}`
     )
     expect(foco.texto).toBe('Pular para o conteúdo')
     // FR-017: ele fica VISÍVEL ao receber foco. Fora da tela não é atalho.
@@ -266,10 +302,6 @@ test.describe('percurso integral por teclado', () => {
     expect(forasDeOrdem.map((p) => p.texto)).toEqual([])
     registrar('ordem de foco corresponde à ordem visual')
   })
-
-  test.afterAll(() => {
-    console.log(`\nPERCURSOS DE TECLADO: ${percursos.length}/7`)
-  })
 })
 
 /*
@@ -396,4 +428,32 @@ test.describe('casos adicionais do painel', () => {
     expect(depois).toBe(antes)
     registrarAdicional('trava de rolagem restaura o valor anterior')
   })
+})
+
+/*
+ * FECHAMENTO DO ARQUIVO, depois dos dois grupos.
+ *
+ * Ele nao pode morar no `afterAll` dos sete percursos: naquele ponto os tres
+ * casos adicionais ainda nao rodaram, e a saida seria `7/7 · 0/3` mesmo com a
+ * suite perfeita. Tambem nao imprime numero nos seis projetos pulados — zero
+ * ali significaria "nao se aplicava", mas pareceria "mediu e encontrou zero".
+ *
+ * As contagens sao ASSERCOES. Console sem assercao e relatorio, nao garantia:
+ * perder um `registrar` deixaria os dez testes verdes e so mudaria uma linha
+ * que ninguem e obrigado a ler.
+ */
+test.afterAll(({}, informacoes) => {
+  if (informacoes.project.name !== PROJETO_MOBILE) return
+  // Uma falha anterior ja explica por que o conjunto nao chegou a 7/7. Nao
+  // empilhar uma segunda falha de contador sobre a causa original.
+  if (informacoes.status !== 'passed' || informacoes.errors.length > 0) return
+
+  expect(percursos, 'a suite nao registrou os sete percursos').toHaveLength(7)
+  expect(new Set(percursos).size, 'ha percurso duplicado no contador').toBe(7)
+  expect(casosAdicionais, 'a suite nao registrou os tres casos adicionais').toHaveLength(3)
+  expect(new Set(casosAdicionais).size, 'ha caso adicional duplicado no contador').toBe(3)
+
+  console.log(
+    `\nPERCURSOS DE TECLADO: ${percursos.length}/7 · CASOS ADICIONAIS: ${casosAdicionais.length}/3`
+  )
 })

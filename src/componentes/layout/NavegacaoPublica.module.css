@@ -126,13 +126,43 @@
   text-underline-offset: var(--underline-offset);
 }
 
+/* A conversao ja tem o contraste da variante primaria. Aqui entra somente a
+   pista nao cromatica; trocar sua cor por accent-700 reduziria o contraste. */
+.conversao[aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: var(--underline-offset);
+}
+
 /* ── A partir de 1024 px: navegacao direta, sem painel ─────────────────────── */
 @media (min-width: 1024px) {
   .lista {
     display: flex;
   }
 
-  /* Fora da arvore de acessibilidade, e nao apenas invisivel. */
+  /*
+   * `display: none` AQUI E ESCOLHA CARREGADA — leia antes de trocar.
+   *
+   * Duas coisas dependem dela, e a segunda nao e obvia:
+   *
+   * 1. Fora da arvore de acessibilidade, e nao apenas invisivel. O contrato de
+   *    navegacao exige que o acionador e o painel estejam AUSENTES da arvore no
+   *    desktop, e `opacity` ou `visibility` nao fazem isso do mesmo jeito.
+   *
+   * 2. O `NavegacaoPublica.tsx` pergunta "o acionador esta visivel?" para
+   *    decidir se fecha o painel ao passar para desktop. Ele usa
+   *    `checkVisibility()`, que cobre as tres formas de esconder — MAS tem um
+   *    caminho alternativo, para navegador sem esse metodo, que usa
+   *    `offsetParent`. E `offsetParent` so responde certo com `display: none`.
+   *
+   * Trocar por `opacity` ou `visibility` — para animar a saida do painel, por
+   * exemplo — faz voltar, nesses navegadores, um bug ja medido: o painel
+   * CONTINUA ABERTO NO DESKTOP COM A ROLAGEM TRAVADA. A pagina nao rola e nada
+   * na tela explica por que.
+   *
+   * A suite roda em Chromium, que tem `checkVisibility`. Entao a regressao
+   * passaria VERDE aqui. Se precisar animar, anime outra propriedade, ou troque
+   * o caminho alternativo antes.
+   */
   .acionador,
   .painel {
     display: none;

@@ -187,13 +187,13 @@ fora do catálogo; botão anuncia estado/região e diálogo tem nome acessível.
 
 ### Testes e evidência vermelha
 
-- [ ] T033 [US5] Criar `src/componentes/layout/NavegacaoPublica.test.tsx` para caminho exato e caminho sem correspondência e acrescentar a `tests/e2e/paginas-publicas.spec.ts` testes de `aria-current`, pista não cromática, `aria-expanded`, `aria-controls`, nome do diálogo e exatamente um landmark acessível de cada papel; registrar vermelho focado antes da correção
+- [X] T033 [US5] Criar `src/componentes/layout/NavegacaoPublica.test.tsx` para caminho exato e caminho sem correspondência e acrescentar a `tests/e2e/paginas-publicas.spec.ts` testes de `aria-current`, pista não cromática, `aria-expanded`, `aria-controls`, nome do diálogo e exatamente um landmark acessível de cada papel; registrar vermelho focado antes da correção
 
 ### Implementação
 
-- [ ] T034 [US5] Derivar o destino atual por igualdade exata com `usePathname` em `src/componentes/layout/NavegacaoPublica.tsx`, aplicar `aria-current=page` e sincronizar `aria-expanded`/`aria-controls` com o diálogo real
-- [ ] T035 [US5] Implementar em `src/componentes/layout/NavegacaoPublica.module.css` a pista visual não cromática e revisar `src/componentes/layout/Cabecalho.tsx`, `src/app/(site)/layout.tsx` e `src/componentes/layout/LinksDeContato.tsx` para garantir uma única região banner/navigation/main/contentinfo
-- [ ] T036 [US5] Executar os testes focados nas dez rotas em mobile e desktop, registrar contagens de landmarks e páginas atuais em `specs/004-layout-base/EVIDENCIAS-F03.md` e confirmar zero marcação em rota fora do catálogo
+- [X] T034 [US5] Derivar o destino atual por igualdade exata com `usePathname` em `src/componentes/layout/NavegacaoPublica.tsx`, aplicar `aria-current=page` e sincronizar `aria-expanded`/`aria-controls` com o diálogo real
+- [X] T035 [US5] Implementar em `src/componentes/layout/NavegacaoPublica.module.css` a pista visual não cromática e revisar `src/componentes/layout/Cabecalho.tsx`, `src/app/(site)/layout.tsx` e `src/componentes/layout/LinksDeContato.tsx` para garantir uma única região banner/navigation/main/contentinfo
+- [X] T036 [US5] Executar os testes focados nas dez rotas em mobile e desktop, registrar contagens de landmarks e páginas atuais em `specs/004-layout-base/EVIDENCIAS-F03.md` e confirmar zero marcação em rota fora do catálogo
 
 **Checkpoint**: US5 anunciada corretamente e sem landmark duplicado.
 

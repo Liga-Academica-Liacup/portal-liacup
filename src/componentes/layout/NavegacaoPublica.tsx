@@ -29,7 +29,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Icone } from '@/componentes/ui/Icone'
-import { DESTINOS_PUBLICOS, destinosSecundarios } from './destinos-publicos'
+import { classesDaAparencia } from '@/componentes/ui/aparencia-de-botao'
+import { conversaoPrincipal, destinosSecundarios } from './destinos-publicos'
 import estilos from './NavegacaoPublica.module.css'
 
 const ID_DO_PAINEL = 'painel-de-navegacao'
@@ -228,9 +229,26 @@ export function NavegacaoPublica() {
           </ul>
         </dialog>
       </nav>
+
+      {/*
+       * A CONVERSAO PRINCIPAL tambem mora nesta ilha porque ela e o decimo
+       * destino do catalogo. Deixa-la no Server Component do cabecalho tornava
+       * impossivel aplicar o mesmo pathname atual sem duplicar a derivacao ou
+       * manipular o DOM depois da hidratacao.
+       *
+       * Ela continua fora do painel e visivel em todas as larguras (FR-005), e
+       * continua usando o <Link> interno com a origem unica da aparencia. O que
+       * mudou foi apenas quem conhece `usePathname`: agora os dez destinos, e
+       * nao nove, conseguem anunciar `aria-current="page"`.
+       */}
+      <Link
+        className={`${classesDaAparencia('primario', false)} ${estilos.conversao}`}
+        href={conversaoPrincipal.caminho}
+        data-testid="conversao-principal"
+        aria-current={ehAtual(conversaoPrincipal.caminho) ? 'page' : undefined}
+      >
+        {conversaoPrincipal.rotulo}
+      </Link>
     </>
   )
 }
-
-/** Exportado para o teste de unidade da Fase 7 conferir a derivação exata. */
-export const totalDeDestinos = DESTINOS_PUBLICOS.length

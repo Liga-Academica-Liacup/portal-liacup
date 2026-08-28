@@ -292,20 +292,41 @@ test.describe('conversao principal e painel lateral', () => {
       const geometria = await page.getByTestId('navegacao-direta').evaluate((lista) => {
         const itens = Array.from(lista.querySelectorAll('a')).map((item) => {
           const caixa = item.getBoundingClientRect()
-          return { topo: Number(caixa.top.toFixed(2)), altura: Number(caixa.height.toFixed(2)) }
+          return {
+            topo: Number(caixa.top.toFixed(2)),
+            base: Number(caixa.bottom.toFixed(2)),
+            altura: Number(caixa.height.toFixed(2)),
+          }
         })
+        /* Topos diferentes nao significam linhas diferentes: em 1024 px os
+           inline-flex ficam desalinhados por menos de 1 px dentro da mesma
+           faixa vertical. Duas linhas reais nao se sobrepoem verticalmente. */
+        const linhas: { topo: number; base: number }[] = []
+        for (const item of [...itens].sort((a, b) => a.topo - b.topo)) {
+          const linha = linhas.find((faixa) => item.topo < faixa.base && item.base > faixa.topo)
+          if (linha) {
+            linha.topo = Math.min(linha.topo, item.topo)
+            linha.base = Math.max(linha.base, item.base)
+          } else {
+            linhas.push({ topo: item.topo, base: item.base })
+          }
+        }
         const caixaDaLista = lista.getBoundingClientRect()
+        const topos = itens.map((item) => item.topo)
         return {
           alturaDaLista: Number(caixaDaLista.height.toFixed(2)),
           maiorAlturaDeItem: Math.max(...itens.map((item) => item.altura)),
-          toposDistintos: [...new Set(itens.map((item) => item.topo))],
+          quantidadeDeLinhas: linhas.length,
+          desnivelDosTopos: Number((Math.max(...topos) - Math.min(...topos)).toFixed(2)),
         }
       })
       console.log(
         `[${largura}px] geometria da navegacao direta: lista ${geometria.alturaDaLista} px · ` +
           `maior item ${geometria.maiorAlturaDeItem} px · ` +
-          `${geometria.toposDistintos.length} topo(s) distinto(s)`
+          `${geometria.quantidadeDeLinhas} linha(s) · ` +
+          `desnivel dos topos ${geometria.desnivelDosTopos} px`
       )
+      expect(geometria.quantidadeDeLinhas, `${largura}px: a lista direta quebrou linha`).toBe(1)
       expect(
         geometria.alturaDaLista - geometria.maiorAlturaDeItem,
         `${largura}px: a lista direta ocupa mais de uma linha`
@@ -349,5 +370,174 @@ test.describe('conversao principal e painel lateral', () => {
     console.log(`[${largura}px] acionador: ${caixa?.width}×${caixa?.height}`)
     expect(caixa?.width ?? 0).toBeGreaterThanOrEqual(ALVO_MINIMO_PX)
     expect(caixa?.height ?? 0).toBeGreaterThanOrEqual(ALVO_MINIMO_PX)
+  })
+})
+
+/*
+ * US5 — o que o leitor de tela recebe, e a pista que nao depende de cor.
+ *
+ * Depois do episodio do aria-label no <address>, a regra desta feature e
+ * explicita: PRESENTE NO DOM E ANUNCIADO SAO COISAS DIFERENTES. `aria-current`
+ * no HTML prova configuracao; o que prova resultado e a arvore de
+ * acessibilidade do navegador, que e de onde o leitor de tela le.
+ */
+test.describe('estado e proposito anunciados', () => {
+  test('as dez paginas atuais sao marcadas, com token valido', async ({ page }, informacoes) => {
+    const largura = larguraDoProjeto(informacoes.project.name)
+    test.skip(
+      largura !== 360 && largura !== 1280,
+      'a cobertura focada da Fase 7 usa as larguras-limite mobile e desktop'
+    )
+
+    /*
+     * O QUE ESTE TESTE PROVA, E O QUE ELE NAO PROVA — medido, nao suposto.
+     *
+     * A intencao era ler a arvore de acessibilidade pelo CDP, como se fez com o
+     * <address> na Fase 3, e cobrar "anunciado" em vez de "presente no DOM".
+     * Medido em 28/08/2026: o `Accessibility.getFullAXTree` deste Chrome NAO
+     * expoe `aria-current` como propriedade do no. O link "Sobre" volta com
+     * `props=[["focusable",true],["url","..."]]` e nada mais, mesmo com
+     * `aria-current="page"` no DOM e o link visivel.
+     *
+     * Entao a verificacao pelo canal mais forte NAO ESTA DISPONIVEL aqui, e
+     * dizer o contrario seria inventar. O que sobra, e que nao e pouco:
+     *
+     *   - o atributo existe e carrega o token exato `page`, que e o que o leitor
+     *     de tela le. Token invalido nao seria anunciado;
+     *   - o axe-core roda em todas as dez rotas e tem a regra
+     *     `aria-valid-attr-value`, que reprova `aria-current` com valor invalido.
+     *     Zero violacoes nas dez rotas cobre essa metade;
+     *   - exatamente UM destino distinto e marcado nas DEZ rotas, e nenhum em
+     *     caminho fora do catalogo (coberto no teste de unidade).
+     *
+     * Isto e mais fraco que o caso do <address>, onde a arvore expos o nome e
+     * respondeu a pergunta direto. Fica escrito qual ferramenta prova o que.
+     */
+    for (const destino of DESTINOS_PUBLICOS) {
+      await page.goto(destino.caminho)
+
+      // No mobile, os nove destinos secundarios so ficam visiveis com o painel
+      // aberto. A conversao principal permanece visivel fora dele.
+      if (largura === 360 && !destino.ehConversaoPrincipal) {
+        await page.getByTestId('abrir-painel').click()
+      }
+
+      const marcados = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('a[aria-current]')).map((a) => ({
+          texto: (a.textContent ?? '').trim(),
+          valor: a.getAttribute('aria-current'),
+          visivel:
+            (a as HTMLElement).checkVisibility?.({
+              checkOpacity: true,
+              checkVisibilityCSS: true,
+            }) ?? true,
+        }))
+      )
+      const visiveis = marcados.filter((m) => m.visivel)
+      const destinosDistintos = new Set(visiveis.map((m) => m.texto))
+
+      console.log(
+        `[${largura}px ${destino.caminho}] marcados no DOM: ${marcados.length} · ` +
+          `visiveis: ${visiveis.length} · destinos distintos: ${destinosDistintos.size}`
+      )
+
+      expect(
+        visiveis.length,
+        `${destino.caminho}: nenhum destino visivel marcado como pagina atual`
+      ).toBeGreaterThan(0)
+      expect(
+        destinosDistintos.size,
+        `${destino.caminho}: mais de um destino distinto marcado`
+      ).toBe(1)
+      expect(visiveis[0]?.texto, `${destino.caminho}: destino marcado incorreto`).toBe(
+        destino.rotulo
+      )
+      // Token exato: qualquer outro valor nao e anunciado como pagina atual.
+      expect(new Set(marcados.map((m) => m.valor))).toEqual(new Set(['page']))
+    }
+  })
+
+  test('a pista da pagina atual sobrevive a remocao da cor', async ({ page }, informacoes) => {
+    await page.goto('/sobre')
+
+    /*
+     * Compara o link atual com um irmao nao-atual, ignorando TODA propriedade de
+     * cor. Se a unica diferenca fosse cromatica, a lista abaixo ficaria vazia — e
+     * quem nao distingue as cores nao teria como saber em que pagina esta
+     * (criterio 1.4.1 do WCAG).
+     */
+    const resultado = await page.evaluate(() => {
+      const links = Array.from(document.querySelectorAll('a[href]')) as HTMLElement[]
+      const atual = links.find((l) => l.getAttribute('aria-current') === 'page')
+      const outro = links.find(
+        (l) => l !== atual && l.getAttribute('aria-current') !== 'page' && l.closest('nav')
+      )
+      if (!atual || !outro)
+        return { erro: 'nao achei o par para comparar', diferencas: [] as string[] }
+
+      const a = window.getComputedStyle(atual)
+      const b = window.getComputedStyle(outro)
+      const ehCor = (nome: string) => /color|shadow|background|outline-color|fill|stroke/.test(nome)
+      const diferencas: string[] = []
+      for (let i = 0; i < a.length; i += 1) {
+        const nome = a.item(i)
+        if (ehCor(nome)) continue
+        if (a.getPropertyValue(nome) !== b.getPropertyValue(nome)) {
+          diferencas.push(
+            `${nome}: atual "${a.getPropertyValue(nome)}" vs outro "${b.getPropertyValue(nome)}"`
+          )
+        }
+      }
+      return { erro: '', diferencas }
+    })
+
+    console.log(
+      `[${informacoes.project.name}] diferencas NAO cromaticas entre a pagina atual e um irmao: ` +
+        `${resultado.diferencas.length} — ${resultado.diferencas.slice(0, 3).join(' | ')}`
+    )
+    expect(resultado.erro).toBe('')
+    expect(
+      resultado.diferencas.length,
+      'a unica diferenca da pagina atual e a COR: quem nao a distingue nao sabe onde esta'
+    ).toBeGreaterThan(0)
+
+    /* O CTA e visualmente diferente dos links do menu mesmo sem ser atual, por
+       isso compara-lo com um irmao provaria a coisa errada. Aqui a comparacao e
+       do CTA consigo mesmo, com e sem o estado, e ignora cor por construcao. */
+    await page.goto(conversaoPrincipal.caminho)
+    const pistaDaConversao = await page.getByTestId('conversao-principal').evaluate((cta) => {
+      const antes = getComputedStyle(cta).textDecorationLine
+      const valor = cta.getAttribute('aria-current')
+      cta.removeAttribute('aria-current')
+      const depois = getComputedStyle(cta).textDecorationLine
+      if (valor !== null) cta.setAttribute('aria-current', valor)
+      return { antes, depois }
+    })
+    console.log(
+      `[${informacoes.project.name}] pista nao cromatica da conversao: ` +
+        `atual="${pistaDaConversao.antes}" · sem estado="${pistaDaConversao.depois}"`
+    )
+    expect(pistaDaConversao.antes).toContain('underline')
+    expect(pistaDaConversao.depois).not.toContain('underline')
+  })
+
+  test('o painel tem nome acessivel e o botao anuncia o que controla', async ({
+    page,
+  }, informacoes) => {
+    await page.goto('/')
+    const acionadorVisivel = await estaAcessivelmenteVisivel(page, '[data-testid="abrir-painel"]')
+    test.skip(!acionadorVisivel, 'o painel nao existe nesta largura')
+
+    const botao = page.getByTestId('abrir-painel')
+    await expect(botao).toHaveAttribute('aria-controls', 'painel-de-navegacao')
+    await expect(botao).toHaveAttribute('aria-expanded', 'false')
+    await botao.click()
+    await expect(botao).toHaveAttribute('aria-expanded', 'true')
+
+    const nome = await page.evaluate(() =>
+      document.querySelector('[data-testid="painel-de-navegacao"]')?.getAttribute('aria-label')
+    )
+    console.log(`[${informacoes.project.name}] nome acessivel do painel: "${nome}"`)
+    expect(nome).toBe('Menu de navegação')
   })
 })

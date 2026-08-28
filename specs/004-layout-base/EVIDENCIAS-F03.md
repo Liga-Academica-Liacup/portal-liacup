@@ -347,7 +347,7 @@ formulário da liga, onde tem de ser um `<a>` de verdade.
 | **E32** | **T024 — o primeiro vermelho de permanência não apareceu** com `position: static` | O teste passou porque a página provisória não tinha altura para rolar: `rolagemAplicada` era zero e o `if` pulava a asserção. Era verde sem medição |
 | **E33** | **T024 — vermelho real da permanência**, depois de o medidor criar altura temporária e exigir rolagem > 0 | **Código 1** · `topo -400 depois de 400 px` com `position: static`. O medidor restaura a altura inline e a posição da página depois de cada caso |
 | **E34** | Cobertura dos alvos móveis com o painel aberto, nas dez rotas | Painel fechado: **6** medidos. Painel aberto: **15** medidos, exatamente **9 acrescentados**, **zero** abaixo de 44 px. Em desktop: **14** medidos e painel ausente da árvore acessível |
-| **E35** | Origem dos 71,78 px em 1024 | Lista direta **44,69 px**, maior item **44 px**: uma única linha. Filhos do cabeçalho: marca `73,02×44`, navegação `784,23×44,69`, CTA **`96,38×53,19`** — é a CTA que quebra o texto |
+| **E35** | Origem dos 71,78 px em 1024 | Lista direta **44,69 px**, maior item **44 px**: **1 linha**, com só **0,34 px** de desnível subpixel entre topos. Filhos do cabeçalho: marca `73,02×44`, navegação `784,23×44,69`, CTA **`96,38×53,19`** — é a CTA que quebra o texto |
 | **E36** | Tentativa isolada de manter a CTA em uma linha | Cabeçalho caiu para **63,28 px**, mas a CTA foi a `153,73×44` e as dez rotas reprovaram: **`scrollWidth 1064 > 1024`**. Restaurado. O plano B do FR-007 já havia sido aplicado; novo breakpoint ou novo aperto são proibidos. Divergência registrada em `FIDELIDADE.md` |
 | **E37** | T025 | `--font-size-marca: 18px` já havia entrado no T011 por necessidade de compilação, com origem literal `.nav-brand`; conferido: um token novo, nenhum token existente alterado |
 | **E38** | **T027 — matriz completa no build final** | **726 passaram · 0 falharam · 2 puladas e cobertas** · 70/70 combinações públicas com zero overflow · rolagem de **400 px realmente aplicada** em cada medição · alturas 360/390/430/480/768/1280: **62,59 px**, 1024: **71,78 px** · mobile **6 fechado / 15 aberto / 9 acrescentados / zero pequenos** · desktop **14 / zero pequenos** |
@@ -359,13 +359,31 @@ para posicionar o foco, nenhum `click()` para abrir o painel.
 
 | # | Percurso | Número medido |
 | --- | --- | --- |
-| **E40** | 1 — primeiro Tab alcança o link de pular | `<a> "Pular para o conteúdo"` · **visível = true** |
+| **E40** | 1 — primeiro Tab alcança o link de pular | `<a> "Pular para o conteúdo"` · caixa **8,8..52,8 px**, `top=8,8 px`, `:focus-visible=true` · **visível = true** |
 | **E41** | 2 — Enter no link move o foco | foco em `<main> id="conteudo-principal"` |
 | **E42** | 3 — botão alcançável e acionável | alcançado por Tab · `open` e `aria-expanded="true"` |
 | **E43** | 4 — Tab e Shift+Tab não escapam | **28 teclas · 9 destinos distintos · 2 paradas vazias do navegador · 0 escapes para controle da página** |
 | **E44** | 5 — Esc fecha e devolve o foco | foco em `testid="abrir-painel"` · `aria-expanded="false"` |
 | **E45** | 6 — escolher destino fecha o painel | destino "Sobre" por Enter · painel sem `open` |
 | **E46** | 7 — ordem de foco = ordem visual | **5 elementos na sequência · 0 fora de ordem** |
+
+### O contador também precisou provar que contava o conjunto certo
+
+A primeira saída somava os sete percursos e os três casos adicionais no mesmo acumulador:
+**`10/7`**. Separar os conjuntos revelou um segundo defeito: com workers paralelos, cada processo
+carregava o módulo com o array zerado e a saída virou **`1/7` sete vezes**. Nenhum dos dois números
+descrevia a cobertura, embora ambos parecessem medição.
+
+O arquivo passou a rodar em série somente no projeto `largura-360`, com um único `afterAll` depois
+dos dois grupos e quatro asserções: total e unicidade de **7 percursos**, total e unicidade de **3
+casos adicionais**. Nos seis projetos não aplicáveis, não imprime `0/7`. Prova focada, inclusive
+pedindo dez workers com
+`npx playwright test tests/e2e/navegacao-teclado.spec.ts --project=largura-360 --reporter=line --workers=10`:
+**10 testes rodaram em 1 worker · 10 passaram · uma única saída final**:
+
+```text
+PERCURSOS DE TECLADO: 7/7 · CASOS ADICIONAIS: 3/3
+```
 
 ### As sete demonstrações RP-12 — e **duas** revelaram detector insensível
 
@@ -409,7 +427,70 @@ comportamento; a implementação é uma das duas causas possíveis.
 
 ## 7. Estado e propósito anunciados (US5 · FR-013, FR-016, FR-020)
 
-_A preencher na Fase 7._
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E50** | Derivação da página atual, unidade | **13 testes**: um destino marcado em cada uma das **dez** rotas, **zero** em `/noticias-antigas`, **zero** em `/projetos-antigos` e estado/região do acionador conferidos |
+| **E51** | Marcação nas dez páginas, em 360 e 1280 px | Nove destinos: **2 no DOM · 1 visível · 1 distinto**. Conversão principal: **1 no DOM · 1 visível · 1 distinto**. Token exato `page` em todos os vinte casos |
+| **E52** | Pista não cromática, ignorando toda propriedade de cor | Link do menu: **3 diferenças em 360 px · 7 em 1280 px**, encabeçadas por `text-decoration: "underline" vs "none"`. CTA isolada com e sem o estado: **`underline` vs `none`** nas duas larguras |
+| **E53** | Nome acessível do painel e estado do botão | `aria-controls="painel-de-navegacao"` · `aria-expanded` de `false` para `true` ao abrir · nome do painel **"Menu de navegação"** |
+| **E54** | Landmarks | **1·1·1·1** nas dez rotas, em 360 e 1280 px |
+| **E55** | Fecho da fase no build de produção | `npm run verificar`: verde · Vitest: **106/106** · Playwright: **826 casos, 751 passaram, 75 pulados por não aplicabilidade, 0 falharam** · aparência: **31/31 propriedades, 6/6 pares, 0 divergentes** |
+
+### O décimo destino estava fora da implementação — vermelho antes do fecho
+
+O primeiro teste unitário filtrava a conversão principal e, portanto, provava somente as nove rotas
+do painel. Ao derivar os casos dos **dez** itens do catálogo e executar
+`npm test -- NavegacaoPublica.test.tsx --run`, o vermelho foi nominal:
+
+```text
+marca exatamente um destino em /processo-seletivo
+esperado 1 · recebido 0
+12 passaram · 1 falhou
+```
+
+O CTA ficava no Server Component `Cabecalho`, fora da única ilha que conhece `usePathname`. Ele foi
+movido para o fragmento de `NavegacaoPublica`, sem mudar sua posição no DOM, sua aparência
+compartilhada nem sua disponibilidade fora do painel. Resultado verde: **13/13** na unidade; no
+Playwright focado —
+`npx playwright test tests/e2e/paginas-publicas.spec.ts --grep "estado e proposito anunciados" --project=largura-360 --project=largura-1280 --reporter=line`
+— **5 passaram e 1 foi pulado porque o painel não existe no desktop**, cobrindo as dez rotas em 360
+e 1280 px.
+
+### O canal mais forte não estava disponível, e isso fica escrito
+
+A intenção era cobrar **"anunciado"** pela árvore de acessibilidade, como se fez com o `<address>` na
+Fase 3. **Medido em 28/08/2026: o `Accessibility.getFullAXTree` deste Chrome não expõe
+`aria-current` como propriedade do nó.** O link "Sobre", visível e com `aria-current="page"` no DOM,
+volta assim:
+
+```
+role=link name="Sobre" ignored=false props=[["focusable",true],["url","http://localhost:3000/sobre"]]
+```
+
+Nem `current`, nem nada equivalente. A primeira versão do teste lia zero e eu atribuí ao painel
+fechado no mobile — **explicação errada**: o zero aparecia igual em 1280 px, com a navegação visível.
+A causa é a ausência da propriedade no canal, não a visibilidade.
+
+**O que o teste passa a provar, e o que não prova:**
+
+| Prova | Como |
+| --- | --- |
+| Exatamente um destino distinto marcado, e visível | contagem no DOM com `checkVisibility` |
+| O token é exatamente `page` | valor comparado; token inválido não seria anunciado |
+| Nenhuma marcação fora do catálogo | teste de unidade, com `/noticias-antigas` e `/projetos-antigos` |
+| O valor é válido para leitor de tela | axe-core nas dez rotas, regra `aria-valid-attr-value`, **zero violações** |
+
+**Isto é mais fraco que o caso do `<address>`**, onde a árvore expôs o nome e respondeu direto. Fica
+registrado qual ferramenta prova o quê, em vez de escrever "anunciado" e deixar a impressão de que a
+árvore confirmou.
+
+### Limite real no celular
+
+Nas nove rotas secundárias, a pista fica dentro do painel e aparece quando ele é aberto; navegação
+recolhida não consegue mostrar simultaneamente os nove destinos. Na rota de conversão, porém, o CTA
+permanece visível e agora mostra a página atual mesmo com o painel fechado. A formulação anterior
+dizia que a conversão continuava visível, mas não verificava se ela própria era o destino atual; foi
+essa contradição que expôs o décimo caso ausente.
 
 ## 8. Conversão da família `.nav` e contraste (US6 · FR-031 a FR-036)
 
