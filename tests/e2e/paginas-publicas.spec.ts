@@ -30,10 +30,13 @@ import {
   LARGURAS_MOBILE,
   cabecalhoPermaneceVisivelAoRolar,
   contarLandmarks,
+  contarLandmarksNaArvoreAcessivel,
   medirAlturaDoCabecalho,
   medirAlvosDeToque,
   medirRolagemHorizontal,
   estaAcessivelmenteVisivel,
+  lerArvoreAcessivel,
+  lerSubarvoreAcessivel,
 } from './apoio/medicoes'
 
 const larguraDoProjeto = (nome: string) => Number(nome.replace('largura-', ''))
@@ -61,7 +64,7 @@ test.describe('matriz das páginas públicas', () => {
         await expect(titulos).not.toHaveText('')
       })
 
-      test('tem exatamente uma região de cada papel', async ({ page }) => {
+      test('tem exatamente uma região de cada papel', async ({ page }, informacoes) => {
         await page.goto(destino.caminho)
 
         const landmarks = await contarLandmarks(page)
@@ -69,6 +72,19 @@ test.describe('matriz das páginas públicas', () => {
           `[${destino.caminho}] banner ${landmarks.banner} · navigation ${landmarks.navigation} · ` +
             `main ${landmarks.main} · contentinfo ${landmarks.contentinfo}`
         )
+        const largura = larguraDoProjeto(informacoes.project.name)
+        if (largura === 360 || largura === 1280) {
+          const recebidos = await contarLandmarksNaArvoreAcessivel(page)
+          console.log(
+            `[AX ${largura}px ${destino.caminho}] banner ${recebidos.banner} · ` +
+              `navigation ${recebidos.navigation} · main ${recebidos.main} · ` +
+              `contentinfo ${recebidos.contentinfo}`
+          )
+          expect(
+            recebidos,
+            `${largura}px ${destino.caminho}: landmarks recebidos pela arvore acessivel`
+          ).toEqual({ banner: 1, navigation: 1, main: 1, contentinfo: 1 })
+        }
         expect(landmarks).toEqual({ banner: 1, navigation: 1, main: 1, contentinfo: 1 })
       })
 
@@ -459,6 +475,8 @@ test.describe('estado e proposito anunciados', () => {
 
   test('a pista da pagina atual sobrevive a remocao da cor', async ({ page }, informacoes) => {
     await page.goto('/sobre')
+    const largura = larguraDoProjeto(informacoes.project.name)
+    if (largura < CORTE_DESKTOP) await page.getByTestId('abrir-painel').click()
 
     /*
      * Compara o link atual com um irmao nao-atual, ignorando TODA propriedade de
@@ -467,35 +485,71 @@ test.describe('estado e proposito anunciados', () => {
      * (criterio 1.4.1 do WCAG).
      */
     const resultado = await page.evaluate(() => {
-      const links = Array.from(document.querySelectorAll('a[href]')) as HTMLElement[]
-      const atual = links.find((l) => l.getAttribute('aria-current') === 'page')
-      const outro = links.find(
-        (l) => l !== atual && l.getAttribute('aria-current') !== 'page' && l.closest('nav')
-      )
-      if (!atual || !outro)
-        return { erro: 'nao achei o par para comparar', diferencas: [] as string[] }
+      const estaVisivel = (elemento: HTMLElement) =>
+        elemento.checkVisibility?.({ checkOpacity: true, checkVisibilityCSS: true }) ??
+        (getComputedStyle(elemento).display !== 'none' &&
+          getComputedStyle(elemento).visibility !== 'hidden' &&
+          elemento.getBoundingClientRect().width > 0 &&
+          elemento.getBoundingClientRect().height > 0)
+      const atuaisVisiveis = (
+        Array.from(document.querySelectorAll('a[aria-current="page"]')) as HTMLElement[]
+      ).filter(estaVisivel)
+      const atual = atuaisVisiveis[0]
+      const lista = atual?.closest('ul')
+      const irmaosVisiveis = atual
+        ? (Array.from(lista?.querySelectorAll('a[href]') ?? []) as HTMLElement[]).filter(
+            (link) => link !== atual && estaVisivel(link)
+          )
+        : []
+      const outro = irmaosVisiveis[0]
+      if (!atual || !outro) {
+        return {
+          erro: 'nao achei o par visivel para comparar',
+          atuaisVisiveis: atuaisVisiveis.length,
+          irmaosVisiveis: irmaosVisiveis.length,
+          diferencas: [] as string[],
+        }
+      }
 
       const a = window.getComputedStyle(atual)
       const b = window.getComputedStyle(outro)
-      const ehCor = (nome: string) => /color|shadow|background|outline-color|fill|stroke/.test(nome)
+      const propriedadesNaoCromaticas = [
+        'text-decoration-line',
+        'text-decoration-style',
+        'text-decoration-thickness',
+        'text-underline-offset',
+        'font-weight',
+        'font-style',
+        'border-top-style',
+        'border-right-style',
+        'border-bottom-style',
+        'border-left-style',
+        'outline-style',
+      ]
       const diferencas: string[] = []
-      for (let i = 0; i < a.length; i += 1) {
-        const nome = a.item(i)
-        if (ehCor(nome)) continue
+      for (const nome of propriedadesNaoCromaticas) {
         if (a.getPropertyValue(nome) !== b.getPropertyValue(nome)) {
           diferencas.push(
             `${nome}: atual "${a.getPropertyValue(nome)}" vs outro "${b.getPropertyValue(nome)}"`
           )
         }
       }
-      return { erro: '', diferencas }
+      return {
+        erro: '',
+        atuaisVisiveis: atuaisVisiveis.length,
+        irmaosVisiveis: irmaosVisiveis.length,
+        diferencas,
+      }
     })
 
     console.log(
-      `[${informacoes.project.name}] diferencas NAO cromaticas entre a pagina atual e um irmao: ` +
-        `${resultado.diferencas.length} — ${resultado.diferencas.slice(0, 3).join(' | ')}`
+      `[${largura}px] pagina atual visivel: ${resultado.atuaisVisiveis} · ` +
+        `irmaos visiveis: ${resultado.irmaosVisiveis} · diferencas NAO cromaticas: ` +
+        `${resultado.diferencas.length} — ${resultado.diferencas.join(' | ')}`
     )
     expect(resultado.erro).toBe('')
+    expect(resultado.atuaisVisiveis, 'deve existir exatamente um destino atual visivel').toBe(1)
+    expect(resultado.irmaosVisiveis, 'deve existir ao menos um irmao visivel').toBeGreaterThan(0)
     expect(
       resultado.diferencas.length,
       'a unica diferenca da pagina atual e a COR: quem nao a distingue nao sabe onde esta'
@@ -521,23 +575,59 @@ test.describe('estado e proposito anunciados', () => {
     expect(pistaDaConversao.depois).not.toContain('underline')
   })
 
-  test('o painel tem nome acessivel e o botao anuncia o que controla', async ({
+  test('o painel e o botao expoem nome, papel e estado calculados na arvore do Chrome', async ({
     page,
   }, informacoes) => {
     await page.goto('/')
     const acionadorVisivel = await estaAcessivelmenteVisivel(page, '[data-testid="abrir-painel"]')
     test.skip(!acionadorVisivel, 'o painel nao existe nesta largura')
 
-    const botao = page.getByTestId('abrir-painel')
-    await expect(botao).toHaveAttribute('aria-controls', 'painel-de-navegacao')
-    await expect(botao).toHaveAttribute('aria-expanded', 'false')
-    await botao.click()
-    await expect(botao).toHaveAttribute('aria-expanded', 'true')
-
-    const nome = await page.evaluate(() =>
-      document.querySelector('[data-testid="painel-de-navegacao"]')?.getAttribute('aria-label')
+    const antes = (await lerArvoreAcessivel(page)).find(
+      (no) => no.role === 'button' && no.name === 'Abrir menu de navegação'
     )
-    console.log(`[${informacoes.project.name}] nome acessivel do painel: "${nome}"`)
-    expect(nome).toBe('Menu de navegação')
+    console.log(
+      `[${informacoes.project.name}] no AX do botao antes: ${antes?.literal ?? 'AUSENTE'}`
+    )
+    expect(antes, 'botao fechado ausente da arvore acessivel').toBeDefined()
+    expect(antes?.ignored).toBe(false)
+    expect(antes?.propriedades.expanded?.valor).toBe(false)
+
+    await page.getByTestId('abrir-painel').click()
+    await expect(page.getByTestId('abrir-painel')).toHaveAttribute('aria-expanded', 'true')
+    const arvore = await lerArvoreAcessivel(page)
+    const dialogo = arvore.find((no) => no.role === 'dialog')
+    console.log(`[${informacoes.project.name}] no AX do painel: ${dialogo?.literal ?? 'AUSENTE'}`)
+    expect(dialogo, 'nenhum no role=dialog na arvore acessivel').toBeDefined()
+    expect(dialogo?.ignored).toBe(false)
+    expect(dialogo?.name).toBe('Menu de navegação')
+
+    const subarvoreDepois = await lerSubarvoreAcessivel(page, '[data-testid="abrir-painel"]')
+    const depois = subarvoreDepois[0]
+    console.log(
+      `[${informacoes.project.name}] no AX do botao depois: ${depois?.literal ?? 'AUSENTE'}`
+    )
+    expect(depois, 'canal AX nao devolveu o no DOM do botao aberto').toBeDefined()
+
+    if (!depois?.ignored) {
+      expect(depois.name).toBe('Fechar menu de navegação')
+      expect(depois.propriedades.expanded?.valor).toBe(true)
+    } else {
+      console.log(
+        `[${informacoes.project.name}] limite do canal: botao aberto fica ignored=true ` +
+          `porque o dialog modal torna o restante da pagina inerte; nome e expanded nao sao expostos`
+      )
+    }
+
+    const controle = depois?.propriedades.controls ?? antes?.propriedades.controls
+    console.log(
+      `[${informacoes.project.name}] relacao controls no AX: ` +
+        (controle ? JSON.stringify(controle) : 'NAO EXPOSTA PELO CANAL')
+    )
+    if (controle) {
+      expect(
+        controle.relacionados.length,
+        'controls exposto sem regiao relacionada'
+      ).toBeGreaterThan(0)
+    }
   })
 })

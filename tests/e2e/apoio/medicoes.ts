@@ -40,14 +40,128 @@ export type ContagemDeLandmarks = {
   contentinfo: number
 }
 
+export type PropriedadeAcessivel = {
+  valor: unknown
+  relacionados: Array<{
+    backendDOMNodeId?: number
+    idref?: string
+    texto?: string
+  }>
+}
+
+export type NoDaArvoreAcessivel = {
+  nodeId: string
+  ignored: boolean
+  role: string
+  name: string
+  propriedades: Record<string, PropriedadeAcessivel>
+  literal: string
+}
+
 /**
- * Conta as regiões de referência por papel, do jeito que o leitor de tela as vê.
+ * Consulta a árvore que o Chromium entrega às tecnologias assistivas.
  *
- * Conta o papel ACESSÍVEL, não a etiqueta HTML: um `<nav>` dentro de `<main>`
- * continua sendo `navigation`, e um `<header>` aninhado NÃO é `banner`. É a
- * diferença que faz o FR-020 ("uma de cada") ser verificável de verdade — e foi
- * por causa dela que o `LinksDeContato` virou `<address>`: como `<nav>`, ele
- * criava um segundo landmark de navegação no rodapé.
+ * Isso é deliberadamente diferente de ler atributos do DOM: `aria-label` e
+ * `aria-expanded` são entradas; nome, papel, estado e relações calculados são
+ * o resultado que este canal permite observar. O campo `literal` preserva o nó
+ * bruto para que uma propriedade ausente seja registrada como ausente, e não
+ * deduzida a partir do HTML.
+ */
+export async function lerArvoreAcessivel(page: Page): Promise<NoDaArvoreAcessivel[]> {
+  const sessao = await page.context().newCDPSession(page)
+  try {
+    await sessao.send('Accessibility.enable')
+    const resposta = await sessao.send('Accessibility.getFullAXTree')
+    return resposta.nodes.map((no) => ({
+      nodeId: no.nodeId,
+      ignored: no.ignored,
+      role: String(no.role?.value ?? ''),
+      name: String(no.name?.value ?? ''),
+      propriedades: Object.fromEntries(
+        (no.properties ?? []).map((propriedade) => [
+          propriedade.name,
+          {
+            valor: propriedade.value.value ?? null,
+            relacionados: (propriedade.value.relatedNodes ?? []).map((relacionado) => ({
+              backendDOMNodeId: relacionado.backendDOMNodeId,
+              idref: relacionado.idref,
+              texto: relacionado.text,
+            })),
+          },
+        ])
+      ),
+      literal: JSON.stringify(no),
+    }))
+  } finally {
+    await sessao.detach()
+  }
+}
+
+/**
+ * Consulta um nó DOM específico pelo canal AX, inclusive quando um diálogo
+ * modal torna o restante da página inerte e o retira da árvore completa.
+ */
+export async function lerSubarvoreAcessivel(
+  page: Page,
+  seletor: string
+): Promise<NoDaArvoreAcessivel[]> {
+  const sessao = await page.context().newCDPSession(page)
+  try {
+    await sessao.send('Accessibility.enable')
+    const documento = await sessao.send('DOM.getDocument')
+    const alvo = await sessao.send('DOM.querySelector', {
+      nodeId: documento.root.nodeId,
+      selector: seletor,
+    })
+    const resposta = await sessao.send('Accessibility.getPartialAXTree', {
+      nodeId: alvo.nodeId,
+      fetchRelatives: true,
+    })
+    return resposta.nodes.map((no) => ({
+      nodeId: no.nodeId,
+      ignored: no.ignored,
+      role: String(no.role?.value ?? ''),
+      name: String(no.name?.value ?? ''),
+      propriedades: Object.fromEntries(
+        (no.properties ?? []).map((propriedade) => [
+          propriedade.name,
+          {
+            valor: propriedade.value.value ?? null,
+            relacionados: (propriedade.value.relatedNodes ?? []).map((relacionado) => ({
+              backendDOMNodeId: relacionado.backendDOMNodeId,
+              idref: relacionado.idref,
+              texto: relacionado.text,
+            })),
+          },
+        ])
+      ),
+      literal: JSON.stringify(no),
+    }))
+  } finally {
+    await sessao.detach()
+  }
+}
+
+/** FR-020 pelo canal acessível real, sem inferir papel a partir de seletores. */
+export async function contarLandmarksNaArvoreAcessivel(page: Page): Promise<ContagemDeLandmarks> {
+  const papeis: Array<keyof ContagemDeLandmarks> = ['banner', 'navigation', 'main', 'contentinfo']
+  const contagem: ContagemDeLandmarks = { banner: 0, navigation: 0, main: 0, contentinfo: 0 }
+  const arvore = await lerArvoreAcessivel(page)
+  for (const no of arvore) {
+    if (!no.ignored && papeis.includes(no.role as keyof ContagemDeLandmarks)) {
+      contagem[no.role as keyof ContagemDeLandmarks] += 1
+    }
+  }
+  return contagem
+}
+
+/**
+ * Conta a estrutura DOM que deveria originar as regiões de referência.
+ *
+ * É uma defesa estrutural por seletores e regras de aninhamento, não uma leitura
+ * da árvore acessível. A prova do que o Chrome realmente entrega fica em
+ * `contarLandmarksNaArvoreAcessivel`; manter as duas separadas ajuda a localizar
+ * se uma regressão nasceu no HTML ou no papel calculado.
  */
 export async function contarLandmarks(page: Page): Promise<ContagemDeLandmarks> {
   return page.evaluate(() => {

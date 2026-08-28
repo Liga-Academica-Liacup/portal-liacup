@@ -431,10 +431,94 @@ comportamento; a implementação é uma das duas causas possíveis.
 | --- | --- | --- |
 | **E50** | Derivação da página atual, unidade | **13 testes**: um destino marcado em cada uma das **dez** rotas, **zero** em `/noticias-antigas`, **zero** em `/projetos-antigos` e estado/região do acionador conferidos |
 | **E51** | Marcação nas dez páginas, em 360 e 1280 px | Nove destinos: **2 no DOM · 1 visível · 1 distinto**. Conversão principal: **1 no DOM · 1 visível · 1 distinto**. Token exato `page` em todos os vinte casos |
-| **E52** | Pista não cromática, ignorando toda propriedade de cor | Link do menu: **3 diferenças em 360 px · 7 em 1280 px**, encabeçadas por `text-decoration: "underline" vs "none"`. CTA isolada com e sem o estado: **`underline` vs `none`** nas duas larguras |
-| **E53** | Nome acessível do painel e estado do botão | `aria-controls="painel-de-navegacao"` · `aria-expanded` de `false` para `true` ao abrir · nome do painel **"Menu de navegação"** |
-| **E54** | Landmarks | **1·1·1·1** nas dez rotas, em 360 e 1280 px |
-| **E55** | Fecho da fase no build de produção | `npm run verificar`: verde · Vitest: **106/106** · Playwright: **826 casos, 751 passaram, 75 pulados por não aplicabilidade, 0 falharam** · aparência: **31/31 propriedades, 6/6 pares, 0 divergentes** |
+| **E52** | Pista não cromática no objeto visível, ignorando propriedades de cor | Nas sete larguras: **1 página atual visível · 8 irmãos visíveis · 1 diferença não cromática**, `text-decoration-line: "underline" vs "none"`. Em 360 px o painel é aberto antes da leitura; em 1280 px a navegação direta é lida. CTA visível isolada com e sem o estado: **`underline` vs `none`** |
+| **E53** | Nome, papel e estado calculados pelo Chrome | Painel aberto: **`role=dialog` · `name="Menu de navegação"` · `ignored=false`**. Botão fechado: **`role=button` · `name="Abrir menu de navegação"` · `expanded=false` · `ignored=false`**. Depois da abertura, a consulta parcial devolve literalmente **`ignored=true` por `activeModalDialog`**, relacionado ao `idref="painel-de-navegacao"`; nesse estado o canal **não expõe nome, `expanded` nem `controls`**, portanto nenhuma alegação é deduzida do atributo |
+| **E54** | Landmarks recebidos pela árvore acessível | Matriz AX de **10 rotas × 2 larguras = 20 combinações**: **banner 1 · navigation 1 · main 1 · contentinfo 1**, zero combinação fora de **1·1·1·1**. O contador DOM permanece como defesa estrutural separada |
+| **E55** | Estado vigente do fecho da fase no build de produção | **REPROVADO na execução pós-push.** `npx playwright test`: **826 casos contabilizados · 741 passaram · 75 pulados · 9 não rodaram · 1 falhou · `EXIT playwright=1`**. Falha: primeiro Tab focou o skip link com caixa `-24,97..19,03 px`, `:focus-visible=true`, mas `visível=false`. O resultado anterior — **751 passaram · 75 pulados · 0 falharam** — permanece apenas como histórico de uma execução pré-push e **não** é o fechamento vigente. `npm run verificar`: `EXIT verificar=0` · Vitest: **106/106**, `EXIT vitest=0` |
+| **E56** | Fechamento corrigido da Fase 7, depois da decisão visual A e das demonstrações RP-12 | Skip link sem transição: caixa **`8,8..52,8 px`**, `top=8,8px`, `:focus-visible=true`, `visivel=true`; prova focada **10/10**, `EXIT teclado=0`. Fase 7 focada: **25 passaram · 1 pulado por painel não aplicável no desktop**, `EXIT fase7-focada=0`. Suíte integral: **826 casos contabilizados · 751 passaram · 75 pulados por não aplicabilidade · 0 falharam · 0 não rodaram · `EXIT playwright=0`**; uma única linha `PERCURSOS DE TECLADO: 7/7 · CASOS ADICIONAIS: 3/3`. Vitest: **12 arquivos · 106/106**, `EXIT vitest=0`; `npm run verificar`: `EXIT verificar=0`; `git diff --check`: `EXIT diff-check=0` |
+
+### Decisão visual A — skip link, vermelho preservado e verde corrigido
+
+1. **Violação temporária nomeada:** transição `top 0.15s ease-in-out`; o foco começava enquanto a
+   caixa ainda estava fora da viewport.
+2. **Comando exato:**
+   `npx playwright test tests/e2e/navegacao-teclado.spec.ts --project=largura-360 --reporter=line --workers=10`.
+3. **Vermelho:** primeiro Tab em `<a> "Pular para o conteúdo"`; caixa **`-24,97..19,03 px`**,
+   `top=-24,9749px`, `:focus-visible=true`, `visível=false`; **1 falhou · 9 não rodaram ·
+   `EXIT teclado=1`**. A execução integral pós-push permanece em E55.
+4. **Restauração:** decisão A aplicada: transição removida por completo, junto do bloco
+   `prefers-reduced-motion` e dos comentários mortos; nenhuma espera foi acrescentada ao teste.
+5. **Verde:** caixa **`8,8..52,8 px`**, `top=8,8px`, `:focus-visible=true`, `visivel=true` logo
+   após o Tab; **10 passaram · 7/7 percursos · 3/3 adicionais · uma linha de contagem ·
+   `EXIT teclado=0`**.
+
+### Demonstrações RP-12 que reabriram T033
+
+#### Caminhos fora do catálogo
+
+1. **Violação temporária nomeada:** igualdade exata substituída por prefixo para destinos diferentes
+   de `/`.
+2. **Comando exato:**
+   `npx vitest run src/componentes/layout/NavegacaoPublica.test.tsx`.
+3. **Vermelho:** `/noticias-antigas` marcou **1** destino (`Notícias`) e
+   `/projetos-antigos` marcou **1** (`Projetos`); mensagens `expected [...] to deeply equal []`;
+   **2 falharam · 11 passaram · `EXIT navegacao-unidade=1`**.
+4. **Restauração:** `caminhoAtual === caminho` restaurado.
+5. **Verde:** as duas rotas voltaram a **zero marcações**; **13/13 passaram ·
+   `EXIT navegacao-unidade=0`**.
+
+#### Pista não cromática no elemento visível
+
+1. **Violação temporária nomeada:** `text-decoration` e `text-underline-offset` removidos dos
+   seletores visíveis `.destino[aria-current='page']` e
+   `.destinoDoPainel[aria-current='page']`.
+2. **Comando exato:**
+   `npx playwright test tests/e2e/paginas-publicas.spec.ts --grep "a pista da pagina atual sobrevive" --project=largura-360 --project=largura-1280 --reporter=line`.
+3. **Vermelho:** em **360 e 1280 px**, **1 atual visível · 8 irmãos visíveis · 0 diferenças não
+   cromáticas**; mensagem `a unica diferenca da pagina atual e a COR`; **2 falharam ·
+   `EXIT pista-nao-cromatica=1`**.
+4. **Restauração:** sublinhado e deslocamento restaurados nos dois seletores.
+5. **Verde:** em **360 e 1280 px**, **1 atual visível · 8 irmãos visíveis · 1 diferença**, literal
+   `text-decoration-line: atual "underline" vs outro "none"`; CTA `underline` vs `none`;
+   **2 passaram · `EXIT pista-nao-cromatica=0`**. A suíte integral repete a prova nas sete larguras.
+
+#### Nome acessível calculado do diálogo
+
+1. **Violação temporária nomeada:** `aria-label="Menu de navegação"` removido do `<dialog>`.
+2. **Comando exato:**
+   `npx playwright test tests/e2e/paginas-publicas.spec.ts --grep "o painel tem nome acessivel calculado" --project=largura-360 --reporter=line`.
+3. **Vermelho:** nó real **`role=dialog · ignored=false · name=""`**; mensagem
+   `Expected: "Menu de navegação" · Received: ""`; **1 falhou · `EXIT nome-dialogo=1`**.
+4. **Restauração:** nome do diálogo restaurado.
+5. **Verde:** nó real **`role=dialog · ignored=false · name="Menu de navegação"`**;
+   **1 passou · `EXIT nome-dialogo=0`**.
+
+#### Estado expandido calculado do botão
+
+1. **Violação temporária nomeada:** botão fechado forçado a `aria-expanded={true}`.
+2. **Comando exato:**
+   `npx playwright test tests/e2e/paginas-publicas.spec.ts --grep "o botao expoe nome e estado" --project=largura-360 --reporter=line`.
+3. **Vermelho:** nó real fechado **`role=button · name="Abrir menu de navegação" ·
+   ignored=false · expanded=true`**; mensagem `Expected: false · Received: true`; **1 falhou ·
+   `EXIT estado-expandido=1`**.
+4. **Restauração:** `aria-expanded={aberto}` restaurado.
+5. **Verde:** antes de abrir, nó real **`expanded=false`**, **1 passou ·
+   `EXIT estado-expandido=0`**. Depois de abrir, a consulta parcial devolveu o nó literal como
+   `ignored=true` por `activeModalDialog`, relacionado a `painel-de-navegacao`; o Chrome não expôs
+   nome, `expanded` ou `controls` nesse estado, e o teste limita explicitamente a alegação.
+
+#### Landmarks recebidos pela árvore acessível
+
+1. **Violação temporária nomeada:** `<footer role="navigation">`, convertendo o rodapé em um segundo
+   landmark de navegação e removendo seu papel de `contentinfo`.
+2. **Comando exato:**
+   `npx playwright test tests/e2e/paginas-publicas.spec.ts --grep "tem exatamente uma região de cada papel" --project=largura-360 --project=largura-1280 --reporter=line`.
+3. **Vermelho:** nas **20 combinações AX**, `banner 1 · navigation 2 · main 1 · contentinfo 0`;
+   mensagem `landmarks recebidos pela arvore acessivel`; **20 falharam ·
+   `EXIT landmarks-ax=1`**.
+4. **Restauração:** papel explícito removido; `<footer>` voltou ao papel nativo.
+5. **Verde:** nas **20 combinações AX**, `banner 1 · navigation 1 · main 1 · contentinfo 1`;
+   **20 passaram · `EXIT landmarks-ax=0`**.
 
 ### O décimo destino estava fora da implementação — vermelho antes do fecho
 

@@ -187,7 +187,7 @@ fora do catálogo; botão anuncia estado/região e diálogo tem nome acessível.
 
 ### Testes e evidência vermelha
 
-- [X] T033 [US5] Criar `src/componentes/layout/NavegacaoPublica.test.tsx` para caminho exato e caminho sem correspondência e acrescentar a `tests/e2e/paginas-publicas.spec.ts` testes de `aria-current`, pista não cromática, `aria-expanded`, `aria-controls`, nome do diálogo e exatamente um landmark acessível de cada papel; registrar vermelho focado antes da correção
+- [X] T033 [US5] Criar `src/componentes/layout/NavegacaoPublica.test.tsx` para caminho exato e caminho sem correspondência e acrescentar a `tests/e2e/paginas-publicas.spec.ts` testes de `aria-current`, pista não cromática, `aria-expanded`, `aria-controls`, nome do diálogo e exatamente um landmark acessível de cada papel; registrar vermelho focado antes da correção — **fechado em E56** com demonstrações RP-12 separadas de caminhos fora do catálogo, pista no objeto visível, nome calculado do diálogo, estado calculado do botão e landmarks na árvore AX
 
 ### Implementação
 

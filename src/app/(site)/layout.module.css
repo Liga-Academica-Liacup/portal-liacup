@@ -36,17 +36,8 @@
   color: var(--color-text);
   font-size: var(--font-size-controle);
   text-decoration: none;
-  transition: top 0.15s ease-in-out;
 }
 
 .pularParaConteudo:focus-visible {
   top: var(--space-2);
-}
-
-/* Quem navega com o teclado e tem `prefers-reduced-motion` nao precisa da
-   animacao para entender que o atalho apareceu. */
-@media (prefers-reduced-motion: reduce) {
-  .pularParaConteudo {
-    transition: none;
-  }
 }

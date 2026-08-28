@@ -56,7 +56,9 @@ describe('NavegacaoPublica — página atual', () => {
     render(<NavegacaoPublica />)
 
     const atuais = marcados()
-    console.log(`Caminho fora do catálogo · destinos marcados: ${atuais.length}`)
+    console.log(
+      `/noticias-antigas · caminho fora do catálogo · destinos marcados: ${atuais.length}`
+    )
     expect(atuais).toEqual([])
   })
 
@@ -64,7 +66,11 @@ describe('NavegacaoPublica — página atual', () => {
     caminhoSimulado.atual = '/projetos-antigos'
     render(<NavegacaoPublica />)
 
-    expect(marcados()).toEqual([])
+    const atuais = marcados()
+    console.log(
+      `/projetos-antigos · caminho fora do catálogo · destinos marcados: ${atuais.length}`
+    )
+    expect(atuais).toEqual([])
   })
 
   it('o botão do painel anuncia o estado e a região que controla', () => {

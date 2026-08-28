@@ -115,10 +115,6 @@ test.describe('percurso integral por teclado', () => {
   test('1 — o primeiro Tab alcança o link de pular, e ele fica visível', async ({ page }) => {
     await page.goto('/')
     await page.keyboard.press('Tab')
-    // O link desliza para dentro da tela em 0,15 s. Medir antes disso mede a
-    // animacao, nao o resultado — foi o que a primeira versao deste teste fez.
-    await page.waitForTimeout(300)
-
     const foco = await focoAtual(page)
     console.log(
       `  primeiro Tab parou em: <${foco.etiqueta}> "${foco.texto}" · ` +
