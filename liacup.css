@@ -151,15 +151,17 @@ figcaption {
 
    COMO CONTAR, porque "abaixo do banner" nao reproduzia o numero: este bloco de
    comentario fica NO MEIO das classes que conta — .radio e .seg estao acima
-   dele. A contagem vai do primeiro seletor pendente, `.radio`, ate o fim do
-   arquivo, separando por virgula. Reproduzivel assim:
+   dele. A contagem vai do primeiro seletor pendente, .radio, ate o fim do
+   arquivo, separando por virgula, com os comentarios removidos antes.
 
-     L=$(grep -n '^\.radio {' liacup.css | cut -d: -f1)
-     awk -v l="$L" 'NR>=l' liacup.css | grep -oE '^[^/@}][^{]*\{' \
-       | sed 's/{$//' | tr ',' '\n' | sed 's/^\s*//;s/\s*$//' | grep -v '^$' | wc -l
+   Quem faz isso e o scripts/contar-seletores-pendentes.mjs, e o comando NAO
+   mora mais aqui. O motivo esta escrito la: enquanto morava, ele contava a si
+   proprio — tres linhas do texto entravam na conta, e uma sequencia dentro do
+   comando fechava este comentario antes da hora. Regra de contagem dentro da
+   coisa contada faz o instrumento se medir junto.
 
-   F03: 27 -> 22, com a saida da familia .nav (5 seletores: .nav, .nav-brand,
-   .nav a, .nav a:hover e .nav a[aria-current='page']).
+   F03: 27 -> 22, com a saida da familia .nav — cinco seletores: .nav,
+   .nav-brand, .nav a, .nav a:hover e o de pagina atual.
 
    REGRA DE LEITURA, que custou caro para descobrir: ate a F01 este arquivo
    tinha tres regras no fim que sobrescreviam o raio e o espacamento declarados

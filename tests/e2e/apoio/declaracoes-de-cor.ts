@@ -116,3 +116,33 @@ export function declaracoesDeCorDaMoldura(): DeclaracaoDeCor[] {
 export function declaracoesQueExigemPar(): DeclaracaoDeCor[] {
   return declaracoesDeCorDaMoldura().filter((d) => d.papel !== 'superficie')
 }
+
+/*
+ * O NOME DO TOKEN sai da declaração que produziu a medição.
+ *
+ * Na Fase 8 o hex era medido e o nome era digitado ao lado, em segundo lugar. Na
+ * demonstração vermelha isso apareceu: a saída imprimiu `--color-accent-700`
+ * junto de `#9b6aaf`, que é o `--color-accent`. O número certo, o rótulo
+ * mentindo — e o RP-09 pede que o registro nomeie **as duas cores**, então
+ * rótulo errado nomeia a cor errada e manda quem lê procurar o token que não é.
+ *
+ * Enquanto forem duas fontes elas divergem. É o mesmo princípio que a Fase 8
+ * aplicou ao conjunto de pares, um nível abaixo: o nome vem de onde a cor vem.
+ */
+export function tokenDaDeclaracao(id: string): string {
+  const declaracao = declaracoesDeCorDaMoldura().find((d) => d.id === id)
+  if (!declaracao) {
+    throw new Error(
+      `declaracao "${id}" nao existe entre as derivadas. ` +
+        'O rotulo do token nao pode ser inventado: ele sai da declaracao que produziu a medicao.'
+    )
+  }
+  const token = declaracao.valor.match(/var\(\s*(--color-[a-z0-9-]+)\s*\)/i)?.[1]
+  if (!token) {
+    throw new Error(
+      `a declaracao "${id}" (${declaracao.propriedade}: ${declaracao.valor}) nao referencia ` +
+        'nenhum token --color-*. Sem token derivavel, o rotulo seria digitado de novo.'
+    )
+  }
+  return token
+}
