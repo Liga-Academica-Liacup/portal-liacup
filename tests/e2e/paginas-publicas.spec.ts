@@ -24,6 +24,7 @@ import {
   DESTINOS_PUBLICOS,
   conversaoPrincipal,
 } from '../../src/componentes/layout/destinos-publicos'
+import { declaracoesQueExigemPar } from './apoio/declaracoes-de-cor'
 import {
   ALTURA_MAXIMA_CABECALHO_MOBILE_PX,
   ALVO_MINIMO_PX,
@@ -33,6 +34,7 @@ import {
   contarLandmarksNaArvoreAcessivel,
   medirAlturaDoCabecalho,
   medirAlvosDeToque,
+  medirContrasteCalculado,
   medirRolagemHorizontal,
   estaAcessivelmenteVisivel,
   lerArvoreAcessivel,
@@ -214,6 +216,262 @@ test.describe('matriz das páginas públicas', () => {
       })
     })
   }
+})
+
+test('mede TODAS as combinacoes de cor que a moldura declara', async ({ page }, informacoes) => {
+  test.skip(
+    larguraDoProjeto(informacoes.project.name) !== 360,
+    'uma execucao cobre os dois layouts'
+  )
+
+  /*
+   * O CONJUNTO DE PARES E DERIVADO, e nao digitado.
+   *
+   * A tarefa fala em "nove combinacoes". Nove era um numero contado a mao: uma
+   * decima que aparecesse amanha nao entraria sozinha, e o detector continuaria
+   * dizendo "todas". Aqui a lista sai das declaracoes de cor que os tres
+   * componentes DECLARAM — mesma forma do FR-044 com os destinos. Regra de cor
+   * nova faz este teste ficar vermelho ate alguem medi-la.
+   *
+   * O LIMITE E DERIVADO DO VEREDITO, e nao escrito ao lado dele.
+   * Borda julgada "necessaria" carrega o minimo de 3:1 da SC 1.4.11; julgada
+   * "decorativa" nao tem minimo. Assim mudar o veredito muda o limite sozinho, e
+   * nao existe o estado em que alguem marca "necessaria" e esquece o 3:1.
+   */
+  type Veredito = 'necessaria' | 'decorativa'
+  type Registro = {
+    nome: string
+    declaracoes: string[]
+    primeiroPlano: string
+    fundo: string
+    superficie: string
+    razao: number
+    veredito: Veredito | null
+    motivo: string
+  }
+  const registros: Registro[] = []
+  const limiteDe = (r: Registro): number | null =>
+    r.veredito === null ? 4.5 : r.veredito === 'necessaria' ? 3 : null
+  const registrar = (r: Registro) => registros.push(r)
+
+  await page.goto('/sobre')
+  await page.getByTestId('abrir-painel').click()
+
+  const textoPainel = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: '[data-testid="painel-de-navegacao"]',
+    seletorFundo: '[data-testid="painel-de-navegacao"]',
+  })
+  registrar({
+    nome: 'texto do painel',
+    declaracoes: ['NavegacaoPublica.module.css:45'],
+    primeiroPlano: `--color-text ${textoPainel.primeiroPlanoEfetivo}`,
+    fundo: `--color-surface ${textoPainel.fundo}`,
+    superficie: 'painel lateral',
+    razao: textoPainel.razao,
+    veredito: null,
+    motivo: '',
+  })
+
+  const atualPainel = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: '[data-testid="painel-de-navegacao"] a[aria-current="page"]',
+    seletorFundo: '[data-testid="painel-de-navegacao"]',
+  })
+  registrar({
+    nome: 'link atual e hover no painel',
+    declaracoes: ['NavegacaoPublica.module.css:113', 'NavegacaoPublica.module.css:124'],
+    primeiroPlano: `--color-accent-700 ${atualPainel.primeiroPlanoEfetivo}`,
+    fundo: `--color-surface ${atualPainel.fundo}`,
+    superficie: 'painel lateral',
+    razao: atualPainel.razao,
+    veredito: null,
+    motivo: '',
+  })
+
+  const bordaPainel = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: '[data-testid="painel-de-navegacao"]',
+    propriedadePrimeiroPlano: 'border-left-color',
+    seletorFundo: '[data-testid="painel-de-navegacao"]',
+  })
+  registrar({
+    nome: 'aresta esquerda do painel',
+    declaracoes: ['NavegacaoPublica.module.css:43'],
+    primeiroPlano: `--color-divider composto ${bordaPainel.primeiroPlanoEfetivo}`,
+    fundo: `--color-surface ${bordaPainel.fundo}`,
+    superficie: 'painel lateral',
+    razao: bordaPainel.razao,
+    veredito: 'decorativa',
+    motivo:
+      'a aresta nao e o que distingue o painel do fundo: ele e --color-surface sobre um backdrop ' +
+      'escurecido a 50% de --color-neutral-900, e essa diferenca e grande. A linha de 1 px nao ' +
+      'identifica componente nem estado, e some sem que nada deixe de ser identificavel',
+  })
+
+  await page.keyboard.press('Escape')
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await expect(page.getByTestId('navegacao-direta')).toBeVisible()
+
+  const marca = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: '[data-testid="marca-do-cabecalho"]',
+    seletorFundo: 'header',
+  })
+  registrar({
+    nome: 'marca do cabecalho',
+    declaracoes: ['Cabecalho.module.css:31'],
+    primeiroPlano: `--color-text ${marca.primeiroPlanoEfetivo}`,
+    fundo: `--color-bg ${marca.fundo}`,
+    superficie: 'cabecalho',
+    razao: marca.razao,
+    veredito: null,
+    motivo: '',
+  })
+
+  const atualDireto = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: '[data-testid="navegacao-direta"] a[aria-current="page"]',
+    seletorFundo: 'header',
+  })
+  registrar({
+    nome: 'link atual e hover na navegacao direta',
+    declaracoes: ['NavegacaoPublica.module.css:113', 'NavegacaoPublica.module.css:124'],
+    primeiroPlano: `--color-accent-700 ${atualDireto.primeiroPlanoEfetivo}`,
+    fundo: `--color-bg ${atualDireto.fundo}`,
+    superficie: 'cabecalho',
+    razao: atualDireto.razao,
+    veredito: null,
+    motivo: '',
+  })
+
+  const bordaCabecalho = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: 'header',
+    propriedadePrimeiroPlano: 'border-bottom-color',
+    seletorFundo: 'header',
+  })
+  registrar({
+    nome: 'borda inferior do cabecalho',
+    declaracoes: ['Cabecalho.module.css:32'],
+    primeiroPlano: `--color-divider composto ${bordaCabecalho.primeiroPlanoEfetivo}`,
+    fundo: `--color-bg ${bordaCabecalho.fundo}`,
+    superficie: 'cabecalho',
+    razao: bordaCabecalho.razao,
+    veredito: 'decorativa',
+    motivo:
+      'o caso mais discutivel dos tres, e por isso o motivo e longo. O cabecalho e fixo e usa ' +
+      '--color-bg, a mesma cor da pagina, entao ao rolar o conteudo passa por baixo e a linha e a ' +
+      'unica separacao visual. Ainda assim ela nao identifica COMPONENTE nem ESTADO: marca, ' +
+      'navegacao e conversao continuam legiveis e operaveis sem ela, cada um com contraste proprio. ' +
+      'Difere do caso da F01, em que a borda era a unica coisa que dizia onde o campo comecava — la ' +
+      'o componente sumia, aqui some a separacao. Se a coordenacao julgar necessaria, trocar o ' +
+      'veredito faz o limite de 3:1 passar a valer sozinho, e --color-neutral-600 (3,21:1) e o ' +
+      'caminho ja precedido pelo adendo da ADR-0003',
+  })
+
+  await page.setViewportSize({ width: 360, height: 720 })
+  const acionador = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: '[data-testid="abrir-painel"]',
+    seletorFundo: 'header',
+  })
+  registrar({
+    nome: 'icone do acionador do painel',
+    declaracoes: ['NavegacaoPublica.module.css:31'],
+    primeiroPlano: `--color-accent-700 ${acionador.primeiroPlanoEfetivo}`,
+    fundo: `--color-bg ${acionador.fundo}`,
+    superficie: 'cabecalho no mobile',
+    razao: acionador.razao,
+    veredito: null,
+    motivo: '',
+  })
+
+  const textoRodape = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: 'footer p',
+    seletorFundo: 'body',
+  })
+  registrar({
+    nome: 'texto do rodape',
+    declaracoes: ['Rodape.module.css:19'],
+    primeiroPlano: `--color-neutral-700 ${textoRodape.primeiroPlanoEfetivo}`,
+    fundo: `--color-bg ${textoRodape.fundo}`,
+    superficie: 'rodape sobre o fundo da pagina',
+    razao: textoRodape.razao,
+    veredito: null,
+    motivo: '',
+  })
+
+  const bordaRodape = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: 'footer',
+    propriedadePrimeiroPlano: 'border-top-color',
+    seletorFundo: 'body',
+  })
+  registrar({
+    nome: 'borda superior do rodape',
+    declaracoes: ['Rodape.module.css:8'],
+    primeiroPlano: `--color-divider composto ${bordaRodape.primeiroPlanoEfetivo}`,
+    fundo: `--color-bg ${bordaRodape.fundo}`,
+    superficie: 'rodape',
+    razao: bordaRodape.razao,
+    veredito: 'decorativa',
+    motivo:
+      'separa blocos de conteudo, e nada depende dela para ser identificado: a linha institucional, ' +
+      'a sede e os dois canais de contato tem contraste proprio e continuam legiveis sem a borda',
+  })
+
+  const cta = await medirContrasteCalculado(page, {
+    seletorPrimeiroPlano: '[data-testid="conversao-principal"]',
+    seletorFundo: '[data-testid="conversao-principal"]',
+  })
+  registrar({
+    nome: 'texto da conversao principal',
+    declaracoes: ['AparenciaDeBotao.module.css (F01)'],
+    primeiroPlano: `--color-bg ${cta.primeiroPlanoEfetivo}`,
+    fundo: `--color-accent-600 ${cta.fundo}`,
+    superficie: 'conversao no cabecalho',
+    razao: cta.razao,
+    veredito: null,
+    motivo: '',
+  })
+
+  /* ── Cobertura: toda declaracao derivada tem par medido ──────────────────── */
+  const exigemPar = declaracoesQueExigemPar()
+  const cobertas = new Set(registros.flatMap((r) => r.declaracoes))
+  const semMedicao = exigemPar.filter((d) => !cobertas.has(d.id))
+
+  registros.forEach((r, i) => {
+    const limite = limiteDe(r)
+    const passa = limite === null || r.razao >= limite
+    console.log(
+      `[contraste ${i + 1}/${registros.length}] ${r.nome} · primeiro plano ${r.primeiroPlano} · ` +
+        `fundo ${r.fundo} · superficie ${r.superficie} · razao ${r.razao.toFixed(2)}:1 · ` +
+        `limite ${limite === null ? 'sem minimo' : `${limite.toFixed(1)}:1`}` +
+        `${r.veredito ? ` · veredito ${r.veredito}` : ''} · ${passa ? 'PASSA' : 'REPROVA'}`
+    )
+  })
+  console.log(
+    `[contraste] declaracoes de cor derivadas: ${exigemPar.length} · ` +
+      `pares medidos: ${registros.length} · declaracoes sem medicao: ${semMedicao.length}`
+  )
+  const bordas = registros.filter((r) => r.veredito !== null)
+  console.log(
+    `[contraste] bordas medidas: ${bordas.length} · com veredito e motivo escritos: ` +
+      `${bordas.filter((b) => b.motivo.trim().length > 0).length}`
+  )
+
+  expect(registros.length, 'nenhum par medido').toBeGreaterThan(0)
+  expect(
+    semMedicao.map((d) => `${d.id} (${d.propriedade})`),
+    'declaracoes de cor sem par medido — o detector diria "todas" tendo medido menos'
+  ).toEqual([])
+  expect(bordas.length, 'as tres bordas da moldura precisam estar medidas').toBe(3)
+  // Toda borda tem veredito COM motivo escrito. Decisao por omissao foi o que a F01 pagou.
+  expect(bordas.filter((b) => b.motivo.trim() === '').map((b) => b.nome)).toEqual([])
+
+  const reprovados = registros.filter((r) => {
+    const limite = limiteDe(r)
+    return limite !== null && r.razao < limite
+  })
+  expect(
+    reprovados,
+    `contrastes reprovados: ${reprovados
+      .map((r) => `${r.nome} ${r.razao}:1 < ${limiteDe(r)}:1`)
+      .join(' | ')}`
+  ).toEqual([])
 })
 
 /*

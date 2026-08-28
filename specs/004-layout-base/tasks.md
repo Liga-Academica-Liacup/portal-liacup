@@ -212,14 +212,14 @@ fidelidade com medidas reproduzíveis.
 
 ### Testes e evidência vermelha
 
-- [ ] T037 [US6] Acrescentar a `tests/e2e/paginas-publicas.spec.ts` medições das combinações de texto, CTA, link atual/hover, bordas e separadores usando `tests/e2e/apoio/medicoes.ts`; executar com violação temporária isolada para provar o detector de contraste e registrar pares nomeados no vermelho
+- [X] T037 [US6] Acrescentar a `tests/e2e/paginas-publicas.spec.ts` medições das combinações de texto, CTA, link atual/hover, bordas e separadores usando `tests/e2e/apoio/medicoes.ts`; executar com violação temporária isolada para provar o detector de contraste e registrar pares nomeados no vermelho
 
 ### Implementação e registro
 
-- [ ] T038 [P] [US6] Remover de `liacup.css` os cinco seletores `.nav`, `.nav-brand`, `.nav a`, `.nav a:hover` e `.nav a[aria-current='page']`, apagar a pendência correspondente e atualizar a contagem reproduzível sob o banner de 27 para 22
-- [ ] T039 [P] [US6] Auditar `src/estilos/tokens.css` e registrar em `specs/004-layout-base/FIDELIDADE.md` que a diferença contém somente o acréscimo `--font-size-marca`, com zero token existente alterado
-- [ ] T040 [US6] Preencher em `specs/004-layout-base/FIDELIDADE.md` os valores efetivos de navegação, rodapé, seis pares compartilhados, nove combinações de contraste, contagens e motivo/veredito de toda linha não idêntica
-- [ ] T041 [US6] Executar as buscas e medições de `liacup.css`/`tests/e2e/paginas-publicas.spec.ts`, registrar zero ocorrências, 22 seletores e todos os pares de cor nomeados em `specs/004-layout-base/EVIDENCIAS-F03.md`
+- [X] T038 [P] [US6] Remover de `liacup.css` os cinco seletores `.nav`, `.nav-brand`, `.nav a`, `.nav a:hover` e `.nav a[aria-current='page']`, apagar a pendência correspondente e atualizar a contagem reproduzível sob o banner de 27 para 22
+- [X] T039 [P] [US6] Auditar `src/estilos/tokens.css` e registrar em `specs/004-layout-base/FIDELIDADE.md` que a diferença contém somente o acréscimo `--font-size-marca`, com zero token existente alterado
+- [X] T040 [US6] Preencher em `specs/004-layout-base/FIDELIDADE.md` os valores efetivos de navegação, rodapé, seis pares compartilhados, nove combinações de contraste, contagens e motivo/veredito de toda linha não idêntica
+- [X] T041 [US6] Executar as buscas e medições de `liacup.css`/`tests/e2e/paginas-publicas.spec.ts`, registrar zero ocorrências, 22 seletores e todos os pares de cor nomeados em `specs/004-layout-base/EVIDENCIAS-F03.md`
 
 **Checkpoint**: US6 fecha a dívida do `liacup.css` sem apagar pendências de outras features.
 

@@ -615,7 +615,57 @@ essa contradição que expôs o décimo caso ausente.
 
 ## 8. Conversão da família `.nav` e contraste (US6 · FR-031 a FR-036)
 
-_A preencher na Fase 8._
+| # | O que foi medido | Resultado |
+| --- | --- | --- |
+| **E55** | Declarações de cor **derivadas** dos três componentes da moldura | **11 declarações**, das quais **8 exigem par medido** (3 são superfície) |
+| **E56** | Pares de contraste medidos | **10 pares · 0 declarações sem medição** |
+| **E57** | Bordas | **3 medidas · 3 com veredito e motivo escritos** |
+| **E58** | **T037 — vermelho.** `--color-accent-700` → `--color-accent` na linha 124 do `NavegacaoPublica.module.css` | **EXIT=1** · `link atual e hover na navegacao direta ... razao 3.48:1 · limite 4.5:1 · REPROVA` e `link atual e hover no painel ... 3.09:1 · limite 4.5:1 · REPROVA` |
+| **E59** | **T037 — verde**, depois de restaurar | **EXIT=0** · 8 declarações derivadas · 10 pares · 0 sem medição |
+| **E60** | **T038 —** família `.nav` no `liacup.css` | **0 ocorrências** de `^.nav`, e a pendência do cabeçalho removida junto |
+| **E61** | **T038 —** contagem de seletores pendentes | **27 → 22**, por comando reproduzível escrito no próprio banner |
+| **E62** | **T039 —** tokens existentes alterados | **0 linhas** removidas ou alteradas no diff de `tokens.css` contra a `main` |
+| **E63** | **T039 —** tokens acrescentados | **1**: `--font-size-marca: 18px`, origem literal `.nav-brand` |
+| **E64** | Suíte de ponta a ponta completa | **752 passaram · 0 falharam · 81 puladas** |
+| **E65** | Unidade | **12 arquivos · 106 testes** |
+
+### O conjunto de pares é derivado, e por isso ele achou o que "nove" escondia
+
+A tarefa falava em **nove** combinações. Nove era contado à mão. Derivando das declarações de cor
+que os três componentes escrevem, o número real de pares medidos é **dez** — e a diferença não é
+aritmética: o **ícone do acionador do painel** (`--color-accent-700` sobre `--color-bg`, 6,91:1)
+não estava na lista de nove. Ele é a única coisa visível do painel no mobile antes de alguém tocar
+nele.
+
+O detector imprime **declarações derivadas**, **pares medidos** e **declarações sem medição**. Regra
+de cor nova em qualquer um dos três arquivos aparece como declaração sem medição, e o teste fica
+vermelho até alguém medi-la.
+
+**Um falso positivo do próprio derivador, corrigido antes de valer:** a primeira versão aceitava
+qualquer `var()` numa propriedade `border*`, e `border-radius: var(--radius-pill)` entrou como se
+fosse cor. Um par a mais, vindo de uma declaração sem nada a medir, é o mesmo defeito da lista
+digitada — só que com cara de derivação. Passou a exigir referência a cor.
+
+### O limite é derivado do veredito
+
+Borda julgada **necessária** carrega o mínimo de 3:1 da SC 1.4.11; julgada **decorativa** não tem
+mínimo. O limite não é escrito ao lado do veredito: é **calculado a partir dele**. Assim não existe o
+estado em que alguém marca "necessária" e esquece o 3:1 — e trocar o veredito de uma borda é
+suficiente para o teste passar a cobrá-la.
+
+Os três vereditos, com o critério e o motivo de cada um, estão no `FIDELIDADE.md`. O da borda do
+cabeçalho é o mais discutível e está escrito por extenso, com o caminho de conserto pronto caso a
+coordenação decida o contrário.
+
+### Uma imprecisão do meu registro, declarada
+
+No detector, o **hex é medido** e o **nome do token é digitado** ao lado. Na demonstração vermelha
+isso apareceu: a saída imprimiu `--color-accent-700 #9b6aaf`, quando `#9b6aaf` é o
+`--color-accent`. O número está certo e o rótulo mentiu.
+
+Fica registrado porque é a mesma família de tudo o que esta feature vem catalogando: o hex é
+resultado, o nome é configuração, e só o primeiro sobrevive a alguém mexer no CSS. Quem ler a saída
+deve confiar no hex.
 
 ## 9. Verificação transversal e demonstrações RP-12
 

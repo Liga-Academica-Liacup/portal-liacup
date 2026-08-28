@@ -139,15 +139,27 @@ figcaption {
 .seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   O QUE AINDA NAO FOI CONVERTIDO — 27 seletores
+   O QUE AINDA NAO FOI CONVERTIDO — 22 seletores
    ══════════════════════════════════════════════════════════════════════════
    A F01 converteu 32 seletores das familias .btn, .card, .tag, .field/.input,
    .hr e .elev-* em componentes React (src/componentes/ui/). Eles sairam deste
    arquivo: o historico do Git guarda o que havia, e classe comentada continua
    sendo lida como se valesse.
 
-   O que resta aqui esta agrupado abaixo com a feature de destino nomeada.
+   O que resta aqui esta agrupado com a feature de destino nomeada.
    Ver specs/002-design-system/data-model.md, secao 2.
+
+   COMO CONTAR, porque "abaixo do banner" nao reproduzia o numero: este bloco de
+   comentario fica NO MEIO das classes que conta — .radio e .seg estao acima
+   dele. A contagem vai do primeiro seletor pendente, `.radio`, ate o fim do
+   arquivo, separando por virgula. Reproduzivel assim:
+
+     L=$(grep -n '^\.radio {' liacup.css | cut -d: -f1)
+     awk -v l="$L" 'NR>=l' liacup.css | grep -oE '^[^/@}][^{]*\{' \
+       | sed 's/{$//' | tr ',' '\n' | sed 's/^\s*//;s/\s*$//' | grep -v '^$' | wc -l
+
+   F03: 27 -> 22, com a saida da familia .nav (5 seletores: .nav, .nav-brand,
+   .nav a, .nav a:hover e .nav a[aria-current='page']).
 
    REGRA DE LEITURA, que custou caro para descobrir: ate a F01 este arquivo
    tinha tres regras no fim que sobrescreviam o raio e o espacamento declarados
@@ -155,23 +167,6 @@ figcaption {
    agora cada bloco declara o proprio valor efetivo. Nao ha mais cascata
    escondida — mas confira o fim do arquivo antes de converter qualquer coisa.
    ══════════════════════════════════════════════════════════════════════════ */
-
-/* PENDENTE: cabecalho publico — proxima feature de layout */
-/* — navigation — */
-.nav {
-  display: flex; align-items: center; gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  border-bottom: none;
-}
-.nav-brand {
-  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
-  font-size: 18px; margin-right: auto;
-}
-.nav a { color: inherit; text-decoration: none; font-size: 14px; }
-.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
-/* PENDENTE cabecalho: 3,48:1 sobre --color-bg, reprovado no AA. Corrigir para
-   var(--color-accent-700) (6,91:1) ao converter — e exatamente a reatribuicao de cor
-   de link ja decidida na ADR-0003, secao 2. */
 
 /* PENDENTE: painel administrativo — Fase 2 */
 /* — tables — */

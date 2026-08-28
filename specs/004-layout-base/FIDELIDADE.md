@@ -95,28 +95,65 @@ da demonstração, `text-align` e `text-wrap` entraram na origem única e a deri
 
 | Primeiro plano | Fundo/superfície | Valor previsto | Valor medido | Veredito |
 | --- | --- | ---: | ---: | --- |
-| `--color-text` `#201e1d` | `--color-bg` `#f5ead8` | 13,95:1 | PREENCHER | PREENCHER |
-| `--color-text` `#201e1d` | `--color-surface` `#ebddc5` | 12,40:1 | PREENCHER | PREENCHER |
-| `--color-accent-700` `#683f74` | `--color-bg` `#f5ead8` | 6,91:1 | PREENCHER | PREENCHER |
-| `--color-accent-700` `#683f74` | `--color-surface` `#ebddc5` | 6,15:1 | PREENCHER | PREENCHER |
-| `--color-neutral-700` `#645c50` | `--color-bg` `#f5ead8` | 5,53:1 | PREENCHER | PREENCHER |
-| `--color-neutral-700` `#645c50` | `--color-surface` `#ebddc5` | 4,92:1 | PREENCHER | PREENCHER |
-| `--color-bg` `#f5ead8` | CTA `--color-accent-600` `#82558f` | 4,84:1 | PREENCHER | PREENCHER |
-| `--color-neutral-600` `#82796a` | `--color-surface` `#ebddc5` | 3,21:1 | PREENCHER | PREENCHER |
-| `--color-divider` composto | superfície em que aparecer | 1,37:1 previsto | PREENCHER | só pode ser decorativo |
+| `--color-text` `#201e1d` | `--color-bg` `#f5ead8` | 13,95:1 | **13,95:1** | passa (marca do cabeçalho) |
+| `--color-text` `#201e1d` | `--color-surface` `#ebddc5` | 12,40:1 | **12,40:1** | passa (texto do painel) |
+| `--color-accent-700` `#683f74` | `--color-bg` `#f5ead8` | 6,91:1 | **6,91:1** | passa (link atual/hover e ícone do acionador) |
+| `--color-accent-700` `#683f74` | `--color-surface` `#ebddc5` | 6,15:1 | **6,15:1** | passa (link atual/hover no painel) |
+| `--color-neutral-700` `#645c50` | `--color-bg` `#f5ead8` | 5,53:1 | **5,53:1** | passa (texto do rodapé) |
+| `--color-neutral-700` `#645c50` | `--color-surface` `#ebddc5` | 4,92:1 | **não medido nesta fase** | o rodapé só aparece sobre `--color-bg`; o par sobre superfície não é produzido pela moldura |
+| `--color-bg` `#f5ead8` | CTA `--color-accent-600` `#82558f` | 4,84:1 | **4,84:1** | passa (conversão principal) |
+| `--color-neutral-600` `#82796a` | `--color-surface` `#ebddc5` | 3,21:1 | **não medido nesta fase** | é a borda de controle da F01; a moldura da F03 não a produz. Fica citada porque é o caminho já precedido caso alguma borda daqui seja julgada necessária |
+| `--color-divider` composto `#d3c9ba` | `--color-bg` `#f5ead8` | 1,37:1 previsto | **1,37:1** | cabeçalho e rodapé — **decorativa**, ver os três vereditos abaixo |
+| `--color-divider` composto `#cbbeaa` | `--color-surface` `#ebddc5` | 1,37:1 previsto | **1,36:1** | aresta do painel — **decorativa**, ver abaixo |
 
 ## Contagem da fonte
 
 | Medida | Antes | Depois esperado | Depois medido | Veredito |
 | --- | ---: | ---: | ---: | --- |
-| seletores pendentes sob o banner | 27 | 22 | PREENCHER | PREENCHER |
-| seletores da família `.nav` | 5 | 0 | PREENCHER | PREENCHER |
-| nomes em `NomeDoIcone` | 2 | 4 | PREENCHER | PREENCHER |
-| tokens existentes alterados | 0 | 0 | PREENCHER | PREENCHER |
-| tokens novos | 0 | 1 | PREENCHER | `--font-size-marca`, origem `.nav-brand` |
+| seletores pendentes, de `.radio` ao fim | 27 | 22 | **22** | idêntico ao esperado; comando reproduzível escrito no próprio banner |
+| seletores da família `.nav` | 5 | 0 | **0** | `.nav`, `.nav-brand`, `.nav a`, `.nav a:hover`, `.nav a[aria-current]` — nem ativos, nem comentados |
+| nomes em `NomeDoIcone` | 2 | 4 | **4** | `abrir` e `fechar`, a única extensão pré-autorizada (FR-029) |
+| tokens existentes alterados | 0 | 0 | **0** | o diff de `tokens.css` contra a `main` tem **zero** linhas removidas ou alteradas |
+| tokens novos | 0 | 1 | **1** | `--font-size-marca: 18px`, origem literal `.nav-brand`. É a única linha `+` com declaração no diff de `tokens.css` |
 
 ## Veredito final
 
-- Linhas não idênticas sem motivo: **PREENCHER**
-- Combinações de cor medidas: **PREENCHER/PREENCHER**
-- Resultado: **PREENCHER**
+- Linhas não idênticas sem motivo: **0**
+- Combinações de cor medidas: **10 pares**, cobrindo **8/8** declarações de cor derivadas dos três componentes — zero declarações sem medição
+- Resultado: **aprovado com uma decisão em aberto** — a borda inferior do cabeçalho está julgada *decorativa*, e é o caso mais discutível dos três (ver abaixo)
+
+
+## As três bordas, com veredito escrito (SC 1.4.11)
+
+Todas usam `--color-divider`, que é `color-mix(in srgb, #201e1d 16%, transparent)`. O valor
+composto foi medido no navegador, não calculado à mão.
+
+| Borda | Composto medido | Sobre | Razão | Veredito |
+| --- | --- | --- | ---: | --- |
+| `Cabecalho.module.css:32` — inferior | `#d3c9ba` | `--color-bg` `#f5ead8` | **1,37:1** | **decorativa** |
+| `NavegacaoPublica.module.css:43` — aresta do painel | `#cbbeaa` | `--color-surface` `#ebddc5` | **1,36:1** | **decorativa** |
+| `Rodape.module.css:8` — superior | `#d3c9ba` | `--color-bg` `#f5ead8` | **1,37:1** | **decorativa** |
+
+**O critério aplicado**: a SC 1.4.11 vale para informação visual **necessária para identificar**
+componente ou estado. O teste que usei foi: *se a borda sumisse, algum componente deixaria de ser
+identificável?*
+
+- **Aresta do painel** — não. O painel é `--color-surface` sobre um backdrop escurecido a 50% de
+  `--color-neutral-900`; a diferença que o distingue é essa, não a linha de 1 px.
+- **Borda do rodapé** — não. A linha institucional, a sede e os dois canais têm contraste próprio.
+- **Borda do cabeçalho** — **é o caso mais discutível, e por isso está escrito por extenso.** O
+  cabeçalho é fixo e usa `--color-bg`, a mesma cor da página: ao rolar, o conteúdo passa por baixo e
+  a linha é a única separação visual. Ainda assim, marca, navegação e conversão continuam legíveis e
+  operáveis sem ela, cada uma com o próprio contraste. **Difere do caso da F01**, em que a borda era
+  a única coisa que dizia onde o campo começava — lá o componente sumia; aqui some a separação.
+
+**Se a coordenação julgar necessária**, o conserto é de uma palavra: o detector deriva o limite do
+veredito, então trocar `decorativa` por `necessaria` faz o mínimo de 3:1 passar a valer sozinho, e
+o teste fica vermelho até a cor mudar. O caminho já precedido é `--color-neutral-600` (3,21:1),
+pelo adendo da ADR-0003.
+
+## A borda inferior do cabeçalho é divergência do aprovado (RP-08)
+
+| Propriedade | Origem aprovada | Implementação | Veredito | Motivo |
+| --- | --- | --- | --- | --- |
+| `border-bottom` do cabeçalho | `.nav`: `border-bottom: none` | `--largura-borda` sólida em `--color-divider` | **divergente, ratificada** | o `.nav` aprovado não era fixo. O FR-002 exige cabeçalho fixo, e fixo com a mesma cor da página deixa o conteúdo passar por baixo sem nenhuma separação. A borda é consequência da decisão de fixar, não escolha estética independente |

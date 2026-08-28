@@ -353,3 +353,118 @@ export async function estaAcessivelmenteVisivel(page: Page, seletor: string): Pr
     return caixa.width > 0 && caixa.height > 0
   }, seletor)
 }
+
+type CorRgba = { vermelho: number; verde: number; azul: number; alfa: number }
+
+export type MedidaDeContraste = {
+  primeiroPlanoCss: string
+  fundoCss: string
+  primeiroPlanoEfetivo: string
+  fundo: string
+  razao: number
+}
+
+function interpretarCorCss(cor: string): CorRgba {
+  const rgb = cor.match(
+    /^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)$/i
+  )
+  if (rgb) {
+    return {
+      vermelho: Number(rgb[1]),
+      verde: Number(rgb[2]),
+      azul: Number(rgb[3]),
+      alfa: rgb[4] === undefined ? 1 : Number(rgb[4]),
+    }
+  }
+
+  const srgb = cor.match(
+    /^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)$/i
+  )
+  if (srgb) {
+    return {
+      vermelho: Number(srgb[1]) * 255,
+      verde: Number(srgb[2]) * 255,
+      azul: Number(srgb[3]) * 255,
+      alfa: srgb[4] === undefined ? 1 : Number(srgb[4]),
+    }
+  }
+
+  throw new Error(`formato de cor calculada nao reconhecido: ${cor}`)
+}
+
+function comporCor(primeiroPlano: CorRgba, fundo: CorRgba): CorRgba {
+  const alfa = primeiroPlano.alfa + fundo.alfa * (1 - primeiroPlano.alfa)
+  const canal = (frente: number, tras: number) =>
+    (frente * primeiroPlano.alfa + tras * fundo.alfa * (1 - primeiroPlano.alfa)) / alfa
+  return {
+    vermelho: canal(primeiroPlano.vermelho, fundo.vermelho),
+    verde: canal(primeiroPlano.verde, fundo.verde),
+    azul: canal(primeiroPlano.azul, fundo.azul),
+    alfa,
+  }
+}
+
+function luminancia(cor: CorRgba): number {
+  const linearizar = (canal: number) => {
+    const normalizado = canal / 255
+    return normalizado <= 0.04045 ? normalizado / 12.92 : ((normalizado + 0.055) / 1.055) ** 2.4
+  }
+  return (
+    0.2126 * linearizar(cor.vermelho) +
+    0.7152 * linearizar(cor.verde) +
+    0.0722 * linearizar(cor.azul)
+  )
+}
+
+function paraHex(cor: CorRgba): string {
+  const canal = (valor: number) => Math.round(valor).toString(16).padStart(2, '0')
+  return `#${canal(cor.vermelho)}${canal(cor.verde)}${canal(cor.azul)}`
+}
+
+/** RP-09: calcula o contraste e preserva as duas cores realmente recebidas. */
+export function medirContrasteDeCores(
+  primeiroPlanoCss: string,
+  fundoCss: string
+): MedidaDeContraste {
+  const fundo = interpretarCorCss(fundoCss)
+  const primeiroPlano = comporCor(interpretarCorCss(primeiroPlanoCss), fundo)
+  const clara = Math.max(luminancia(primeiroPlano), luminancia(fundo))
+  const escura = Math.min(luminancia(primeiroPlano), luminancia(fundo))
+  return {
+    primeiroPlanoCss,
+    fundoCss,
+    primeiroPlanoEfetivo: paraHex(primeiroPlano),
+    fundo: paraHex(fundo),
+    razao: Number(((clara + 0.05) / (escura + 0.05)).toFixed(2)),
+  }
+}
+
+/** Lê cores calculadas do objeto renderizado; não confia no nome do token. */
+export async function medirContrasteCalculado(
+  page: Page,
+  configuracao: {
+    seletorPrimeiroPlano: string
+    propriedadePrimeiroPlano?: string
+    seletorFundo: string
+    propriedadeFundo?: string
+  }
+): Promise<MedidaDeContraste> {
+  const cores = await page.evaluate((entrada) => {
+    const primeiroPlano = document.querySelector(entrada.seletorPrimeiroPlano)
+    const fundo = document.querySelector(entrada.seletorFundo)
+    if (!primeiroPlano || !fundo) {
+      throw new Error(
+        `elemento ausente: primeiroPlano=${Boolean(primeiroPlano)} fundo=${Boolean(fundo)}`
+      )
+    }
+    return {
+      primeiroPlano: getComputedStyle(primeiroPlano).getPropertyValue(
+        entrada.propriedadePrimeiroPlano ?? 'color'
+      ),
+      fundo: getComputedStyle(fundo).getPropertyValue(
+        entrada.propriedadeFundo ?? 'background-color'
+      ),
+    }
+  }, configuracao)
+  return medirContrasteDeCores(cores.primeiroPlano, cores.fundo)
+}
