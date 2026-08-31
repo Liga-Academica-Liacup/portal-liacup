@@ -150,7 +150,7 @@ sem texto alternativo, campo sem rotulo e contraste insuficiente.
 **O que checa:** Lighthouse na versao compilada, exigindo desempenho maior ou igual a 90 e
 acessibilidade maior ou igual a 95.
 
-**O que NAO fazer:** baixar o limiar em `lighthouserc.json`. Se a nota caiu, alguma coisa piorou —
+**O que NAO fazer:** baixar o limiar em `lighthouserc.cjs`. Se a nota caiu, alguma coisa piorou —
 quase sempre uma imagem grande demais. Corrija a causa.
 
 ---

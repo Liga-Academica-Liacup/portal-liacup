@@ -1,182 +1,30 @@
 'use client'
 
 /*
- * A navegação do site público — a ÚNICA ilha cliente da moldura.
- *
- * Tudo o mais na F03 é Server Component. Este arquivo é cliente porque precisa
- * de estado de interface e de eventos de teclado; o `'use client'` fica no menor
- * componente possível, como manda a seção 2.1 dos padrões.
- *
- * FONTE ÚNICA
- * Os destinos vêm de `destinos-publicos.ts` e de lugar nenhum mais. Não há lista
- * escrita aqui, e é essa ausência que faz o FR-044 valer.
- *
- * O CORTE DE 1024 px MORA NO CSS, e não neste arquivo.
- * A navegação direta e o acionador do painel são mostrados e escondidos por
- * media query. O TypeScript nunca compara larguras: quando precisa saber se o
- * painel ainda faz sentido, ele **pergunta ao navegador** se o acionador está
- * visível. Repetir `1024` aqui criaria a segunda fonte que o plano proíbe — e a
- * que diverge é sempre a que ninguém lembra de atualizar.
- *
- * O PAINEL É UM `<dialog>` NATIVO
- * `showModal()` traz de graça, e implementado pelo navegador, o que uma
- * biblioteca de drawer venderia: modalização, prisão de foco, fechamento por
- * Esc e inertização do resto da página. O plano recusou dependência para painel
- * lateral, prisão de foco e trava de rolagem justamente porque o miolo já
- * existe na plataforma (research.md, D4/D5/D9).
+ * Única ilha cliente da moldura: o pathname e o diálogo exigem estado do
+ * navegador. O catálogo continua sendo a fonte única dos dez destinos, e o
+ * corte responsivo continua exclusivamente no CSS.
  */
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Icone } from '@/componentes/ui/Icone'
 import { classesDaAparencia } from '@/componentes/ui/aparencia-de-botao'
 import { conversaoPrincipal, destinosSecundarios } from './destinos-publicos'
 import estilos from './NavegacaoPublica.module.css'
+import { usePainelDeNavegacao } from './usePainelDeNavegacao'
 
 const ID_DO_PAINEL = 'painel-de-navegacao'
 
 export function NavegacaoPublica() {
   const caminhoAtual = usePathname()
-  const [aberto, setAberto] = useState(false)
-  const painel = useRef<HTMLDialogElement>(null)
-  const acionador = useRef<HTMLButtonElement>(null)
-  const overflowAnterior = useRef<string | null>(null)
-
-  /*
-   * Trava a rolagem do fundo guardando o valor ANTERIOR, e não assumindo que
-   * era vazio. Restaurar para `''` funcionaria hoje e apagaria em silêncio um
-   * `overflow` que outra coisa tivesse definido.
-   */
-  const travarRolagem = useCallback(() => {
-    if (overflowAnterior.current === null) {
-      overflowAnterior.current = document.body.style.overflow
-    }
-    document.body.style.overflow = 'hidden'
-  }, [])
-
-  const destravarRolagem = useCallback(() => {
-    if (overflowAnterior.current !== null) {
-      document.body.style.overflow = overflowAnterior.current
-      overflowAnterior.current = null
-    }
-  }, [])
-
-  const abrir = useCallback(() => {
-    painel.current?.showModal()
-    travarRolagem()
-    setAberto(true)
-  }, [travarRolagem])
-
-  const fechar = useCallback(() => {
-    painel.current?.close()
-  }, [])
-
-  /*
-   * "O acionador está visível para a pessoa?" — e não "ele tem `offsetParent`".
-   *
-   * A primeira versão usava `offsetParent`, que é um proxy para `display: none`
-   * e só para isso. Medido em 28/08/2026: escondendo o acionador com
-   * `opacity: 0` em vez de `display: none`, o painel **continuava aberto no
-   * desktop com a rolagem travada** — uma página que não rola, sem nada na tela
-   * explicando por quê. A lógica estava acoplada a uma técnica de esconder que
-   * mora noutro arquivo.
-   *
-   * `checkVisibility` pergunta ao navegador o que a pessoa vê, cobrindo
-   * `display`, `visibility` e `opacity` de uma vez. O caminho alternativo cobre
-   * navegador sem o método e volta ao proxy antigo — que é pior, e por isso está
-   * na alternativa e não no caminho principal.
-   */
-  const acionadorVisivel = useCallback(() => {
-    const alvo = acionador.current
-    if (!alvo) return false
-    if (typeof alvo.checkVisibility === 'function') {
-      return alvo.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
-    }
-    return Boolean(alvo.offsetParent)
-  }, [])
-
-  /*
-   * Um ÚNICO ponto de sincronização: o evento `close` do próprio `<dialog>`.
-   *
-   * Ele dispara para todas as formas de fechar — `close()`, Esc tratado pelo
-   * navegador, e o `cancel` — então o estado e a rolagem não podem ficar
-   * dessincronizados por um caminho que alguém esqueceu de cobrir. Devolver o
-   * foco aqui também garante que Esc e escolha de destino terminem igual.
-   */
-  useEffect(() => {
-    const dialogo = painel.current
-    if (!dialogo) return
-
-    const aoFechar = () => {
-      destravarRolagem()
-      setAberto(false)
-      /*
-       * Só devolve o foco a um acionador VISÍVEL. No desktop ele não existe, e
-       * focar o que a pessoa não vê deixa o cursor de teclado num lugar
-       * invisível — a próxima tecla age onde ninguém está olhando.
-       *
-       * Medido em 28/08/2026: com o acionador escondido por `display: none`, o
-       * `focus()` é no-op e esta guarda não muda o resultado — removê-la deixava
-       * o teste verde. Ela vale para as formas de esconder em que o elemento
-       * CONTINUA focável, como `opacity: 0`. Foi puxando esse fio que apareceu o
-       * acoplamento de verdade, no `aoRedimensionar` logo abaixo.
-       */
-      if (acionadorVisivel()) acionador.current?.focus()
-    }
-
-    /*
-     * Clique no backdrop. O alvo do evento é o próprio `<dialog>` quando o
-     * clique cai fora do conteúdo — o backdrop não é um elemento separado.
-     *
-     * Registrado aqui pelo `ref`, e não como `onClick` no JSX, de propósito: o
-     * `jsx-a11y` recusa manipulador de clique em elemento não interativo, e ele
-     * tem razão. Contornar com um `onKeyDown` de fachada só para calar a regra
-     * seria pior — Esc já é tratado pelo próprio `<dialog>` e cai no mesmo
-     * `close` acima. Assim toda a fiação nativa do painel fica num lugar só.
-     */
-    const aoClicar = (evento: MouseEvent) => {
-      if (evento.target === dialogo) dialogo.close()
-    }
-
-    dialogo.addEventListener('close', aoFechar)
-    dialogo.addEventListener('click', aoClicar)
-    return () => {
-      dialogo.removeEventListener('close', aoFechar)
-      dialogo.removeEventListener('click', aoClicar)
-      destravarRolagem()
-    }
-  }, [destravarRolagem, acionadorVisivel])
-
-  /*
-   * Ao passar para desktop com o painel aberto, ele deixa de existir. Fecha, e a
-   * checagem é "o acionador ainda está visível?", não "a largura é maior que
-   * 1024" — o corte continua morando só no CSS.
-   */
-  useEffect(() => {
-    const aoRedimensionar = () => {
-      if (!acionadorVisivel() && painel.current?.open) painel.current.close()
-    }
-    window.addEventListener('resize', aoRedimensionar)
-    return () => window.removeEventListener('resize', aoRedimensionar)
-  }, [acionadorVisivel])
-
+  const { aberto, painel, acionador, abrir, fechar } = usePainelDeNavegacao()
   const ehAtual = (caminho: string) => caminhoAtual === caminho
 
   return (
     <>
       {/*
-       * O `<nav>` EXISTE EM TODAS AS LARGURAS, e só o conteúdo dele troca.
-       *
-       * A primeira versão escondia o `<nav>` inteiro abaixo de 1024 px, e o
-       * teste de landmarks pegou: `navigation 0` nas dez rotas no mobile. Como
-       * `display: none` tira o elemento da árvore de acessibilidade, a página
-       * ficava **sem nenhum landmark de navegação** justamente no caso
-       * principal — quem navega por regiões no leitor de tela não achava o menu
-       * do site no celular.
-       *
-       * Agora a região é a mesma nas sete larguras; o que aparece dentro dela é
-       * que muda. O acionador e o painel moram aqui dentro pelo mesmo motivo:
-       * são a navegação, e não algo ao lado dela.
+       * A região existe em todas as larguras; o CSS troca somente seu conteúdo.
+       * Assim acionador e painel continuam dentro do landmark de navegação.
        */}
       <nav className={estilos.navegacao} aria-label="Navegação principal">
         <ul className={estilos.lista} data-testid="navegacao-direta">
@@ -230,17 +78,7 @@ export function NavegacaoPublica() {
         </dialog>
       </nav>
 
-      {/*
-       * A CONVERSAO PRINCIPAL tambem mora nesta ilha porque ela e o decimo
-       * destino do catalogo. Deixa-la no Server Component do cabecalho tornava
-       * impossivel aplicar o mesmo pathname atual sem duplicar a derivacao ou
-       * manipular o DOM depois da hidratacao.
-       *
-       * Ela continua fora do painel e visivel em todas as larguras (FR-005), e
-       * continua usando o <Link> interno com a origem unica da aparencia. O que
-       * mudou foi apenas quem conhece `usePathname`: agora os dez destinos, e
-       * nao nove, conseguem anunciar `aria-current="page"`.
-       */}
+      {/* A conversão fica fora do painel e visível em todas as larguras. */}
       <Link
         className={`${classesDaAparencia('primario', false)} ${estilos.conversao}`}
         href={conversaoPrincipal.caminho}

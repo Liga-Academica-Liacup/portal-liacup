@@ -1,6 +1,7 @@
 # Fidelidade — F03 Layout base
 
-**Estado**: template do plano; preencher com valores medidos durante a implementação.
+**Estado**: veredito final da F03, consolidado pelas medições registradas em
+`EVIDENCIAS-F03.md`.
 
 Regra: toda linha não idêntica exige motivo. Contraste sempre nomeia primeiro plano, fundo e
 superfície. Valores previstos abaixo são ponto de comparação, não substituem a medição final.
@@ -120,7 +121,8 @@ da demonstração, `text-align` e `text-wrap` entraram na origem única e a deri
 
 - Linhas não idênticas sem motivo: **0**
 - Combinações de cor medidas: **10 pares**, cobrindo **8/8** declarações de cor derivadas dos três componentes — zero declarações sem medição
-- Resultado: **aprovado com uma decisão em aberto** — a borda inferior do cabeçalho está julgada *decorativa*, e é o caso mais discutível dos três (ver abaixo)
+- Resultado: **aprovado com decisão registrada** — a borda inferior do cabeçalho está julgada
+  *decorativa*, e é o caso mais discutível dos três (ver abaixo).
 
 
 ## As três bordas, com veredito escrito (SC 1.4.11)

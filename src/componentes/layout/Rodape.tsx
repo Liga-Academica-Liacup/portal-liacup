@@ -12,9 +12,9 @@
  *      sem CEP. O endereço completo, se for ao ar, é assunto da F13;
  *   3. os canais de contato, pelo componente que já existe.
  *
- * O protótipo traz "Faculdade de Medicina · Campus Darcy Ribeiro" — inventado.
- * A seção 7 do documento institucional manda corrigir, e é o que a linha da
- * sede aqui faz.
+ * O protótipo atribuía à liga uma unidade e um campus sem fonte institucional.
+ * A seção 7 do documento institucional manda substituir essa informação pela
+ * sede curta documentada, como feito abaixo.
  *
  * Nenhum número, nenhuma associação de pessoa a cargo, nenhum endereço novo.
  */

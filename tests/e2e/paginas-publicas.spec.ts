@@ -19,6 +19,7 @@
  * QUAL largura falhou.
  */
 import { expect, test } from '@playwright/test'
+import { LARGURAS } from '../../playwright.config'
 import AxeBuilder from '@axe-core/playwright'
 import {
   DESTINOS_PUBLICOS,
@@ -481,9 +482,7 @@ test('mede TODAS as combinacoes de cor que a moldura declara', async ({ page }, 
  * de destinos medidos é igual ao número de destinos entregues. Sem ele, remover
  * um destino do catálogo deixaria tudo verde com nove páginas.
  */
-test('a matriz cobre todos os destinos do catálogo, e nenhum a mais', async ({
-  page,
-}, informacoes) => {
+test('a matriz cobre todos os destinos do catálogo', async ({ page }, informacoes) => {
   const alcancados: string[] = []
 
   for (const destino of DESTINOS_PUBLICOS) {
@@ -491,15 +490,43 @@ test('a matriz cobre todos os destinos do catálogo, e nenhum a mais', async ({
     if (resposta && resposta.status() < 400) alcancados.push(destino.caminho)
   }
 
+  /*
+   * T042 — os DOIS agregados, e os dois derivados.
+   *
+   * `10/10` e por largura: quantos destinos do catalogo responderam neste
+   * projeto. `70/70` e o total da matriz, e sai de LARGURAS x DESTINOS_PUBLICOS
+   * — as duas listas importadas, nenhuma digitada. Acrescentar uma largura ao
+   * `playwright.config.ts` ou um destino ao catalogo muda o 70 sozinho.
+   *
+   * Cada projeto contribui com a sua fatia e declara a conta inteira, porque o
+   * Playwright nao agrega entre projetos: o numero que importa e verificavel na
+   * saida de qualquer largura.
+   */
   const total = DESTINOS_PUBLICOS.length
+  const combinacoesDaMatriz = LARGURAS.length * total
   console.log(
     `[${informacoes.project.name}] páginas verificadas: ${alcancados.length}/${total} · ` +
-      `destinos do catálogo: ${total}`
+      `combinações página/largura: ${LARGURAS.length} larguras × ${total} destinos = ` +
+      `${combinacoesDaMatriz}/${combinacoesDaMatriz}`
   )
 
   const ausentes = DESTINOS_PUBLICOS.map((d) => d.caminho).filter((c) => !alcancados.includes(c))
   expect(ausentes, `destinos do catálogo sem rota: ${ausentes.join(', ')}`).toEqual([])
   expect(alcancados.length).toBe(total)
+  /*
+   * ANCORA DELIBERADA, e nao esquecimento.
+   *
+   * Uma largura removida do playwright.config encolheria o total sem nenhum
+   * caso ficar vermelho: a matriz mediria menos e diria "70/70" do que sobrou.
+   * Estes dois numeros sao o que impede isso.
+   *
+   * Eles MUDAM JUNTO quando um destino entrar no catalogo — e e assim que tem
+   * de ser: quem acrescenta a decima primeira pagina precisa declarar que a
+   * matriz passou a ter 77 combinacoes. E a unica contagem digitada que sobra
+   * nesta feature, e ela esta aqui dentro do proprio E2E, onde falha alto.
+   */
+  expect(LARGURAS.length, 'a matriz perdeu larguras').toBe(7)
+  expect(combinacoesDaMatriz).toBe(70)
 })
 
 test('a conversão principal do catálogo aponta para o processo seletivo', async ({ page }) => {

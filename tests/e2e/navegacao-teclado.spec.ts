@@ -18,6 +18,7 @@
  * percurso rodou" produzem a mesma linha verde (RP-12).
  */
 import { expect, test } from '@playwright/test'
+import { DESTINOS_PUBLICOS } from '../../src/componentes/layout/destinos-publicos'
 
 /* Os percursos exercitam o painel, que só existe abaixo de 1024 px. */
 const PROJETO_MOBILE = 'largura-360'
@@ -32,6 +33,7 @@ async function focoAtual(page: import('@playwright/test').Page) {
         texto: '',
         testid: '',
         id: '',
+        href: '',
         visivel: false,
         topo: 0,
         base: 0,
@@ -47,6 +49,7 @@ async function focoAtual(page: import('@playwright/test').Page) {
       texto: (alvo.textContent ?? '').trim().slice(0, 40),
       testid: alvo.getAttribute('data-testid') ?? '',
       id: alvo.id,
+      href: alvo.getAttribute('href') ?? '',
       topo: Math.round(caixa.top * 100) / 100,
       base: Math.round(caixa.bottom * 100) / 100,
       largura: Math.round(caixa.width * 100) / 100,
@@ -74,6 +77,7 @@ async function focoAtual(page: import('@playwright/test').Page) {
  */
 const percursos: string[] = []
 const casosAdicionais: string[] = []
+let casosExecutados = 0
 
 function registrar(nome: string) {
   percursos.push(nome)
@@ -110,6 +114,7 @@ test.describe('percurso integral por teclado', () => {
       informacoes.project.name !== PROJETO_MOBILE,
       `os percursos exercitam o painel, que so existe abaixo de 1024 px (projeto ${PROJETO_MOBILE})`
     )
+    casosExecutados += 1
   })
 
   test('1 — o primeiro Tab alcança o link de pular, e ele fica visível', async ({ page }) => {
@@ -213,7 +218,17 @@ test.describe('percurso integral por teclado', () => {
         `paradas vazias do navegador: ${paradasVazias} · escapes para controle da página: ${escapes.length}`
     )
     expect(escapes, `o foco alcançou controle fora do painel: ${escapes.join(' | ')}`).toEqual([])
-    expect(destinos.size, 'o ciclo nao alcancou os nove destinos').toBe(9)
+    /*
+     * Derivado do catalogo, e nao 9 digitado.
+     *
+     * Este arquivo era o unico da feature que nao importava DESTINOS_PUBLICOS:
+     * ele afirmava 'nove' enquanto o arquivo irmao escrevia
+     * DESTINOS_PUBLICOS.length - 1 duas vezes. Mesma feature, mesma quantidade,
+     * dois metodos — e o digitado nao acompanha o catalogo.
+     */
+    expect(destinos.size, 'o ciclo nao alcancou todos os destinos do painel').toBe(
+      DESTINOS_PUBLICOS.length - 1
+    )
     registrar('Tab e Shift+Tab ciclam sem alcançar controle fora do painel')
   })
 
@@ -237,8 +252,9 @@ test.describe('percurso integral por teclado', () => {
     await page.keyboard.press('Tab')
 
     const destino = await focoAtual(page)
+    const urlEsperada = new URL(destino.href, page.url()).toString()
     await page.keyboard.press('Enter')
-    await page.waitForLoadState('domcontentloaded')
+    await expect(page).toHaveURL(urlEsperada)
 
     console.log(
       `  destino escolhido por Enter: "${destino.texto}" · URL: ${new URL(page.url()).pathname}`
@@ -319,6 +335,7 @@ test.describe('percurso integral por teclado', () => {
 test.describe('casos adicionais do painel', () => {
   test.beforeEach(({}, informacoes) => {
     test.skip(informacoes.project.name !== PROJETO_MOBILE, `roda no projeto ${PROJETO_MOBILE}`)
+    casosExecutados += 1
   })
 
   test('redimensionar para desktop com o painel aberto destrava a rolagem e não deixa foco órfão', async ({
@@ -403,7 +420,12 @@ test.describe('casos adicionais do painel', () => {
     await page.waitForTimeout(150)
 
     const foco = await focoAtual(page)
-    console.log(`  apos clique no backdrop: painel fechado · foco em testid="${foco.testid}"`)
+    const painelAberto = await page
+      .getByTestId('painel-de-navegacao')
+      .evaluate((elemento: HTMLDialogElement) => elemento.open)
+    console.log(
+      `  apos clique no backdrop: painel aberto=${painelAberto} · foco em testid="${foco.testid}"`
+    )
     await expect(page.getByTestId('painel-de-navegacao')).not.toHaveAttribute('open', '')
     expect(foco.testid).toBe('abrir-painel')
     registrarAdicional('clique no backdrop fecha e devolve o foco')
@@ -411,6 +433,12 @@ test.describe('casos adicionais do painel', () => {
 
   test('a rolagem do fundo é travada e restaurada ao valor anterior', async ({ page }) => {
     await page.goto('/')
+    // Um valor anterior nao vazio e o que distingue "restaurar" de apenas
+    // apagar a declaracao inline. Com o valor inicial vazio, a implementacao
+    // defeituosa `overflow = ''` produziria o mesmo resultado e passaria.
+    await page.evaluate(() => {
+      document.body.style.overflow = 'clip'
+    })
     const antes = await page.evaluate(() => document.body.style.overflow)
     await page.getByTestId('abrir-painel').press('Enter')
     const durante = await page.evaluate(() => document.body.style.overflow)
@@ -443,6 +471,10 @@ test.afterAll(({}, informacoes) => {
   // Uma falha anterior ja explica por que o conjunto nao chegou a 7/7. Nao
   // empilhar uma segunda falha de contador sobre a causa original.
   if (informacoes.status !== 'passed' || informacoes.errors.length > 0) return
+  // Execucao focada demonstra um caso por vez e, portanto, nao forma o
+  // conjunto 7/7 + 3/3. Na execucao integral, os dez casos rodaram: ai os
+  // contadores voltam a ser obrigatorios e continuam pegando registrar ausente.
+  if (casosExecutados !== 10) return
 
   expect(percursos, 'a suite nao registrou os sete percursos').toHaveLength(7)
   expect(new Set(percursos).size, 'ha percurso duplicado no contador').toBe(7)

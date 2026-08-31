@@ -32,7 +32,11 @@ Fonte única: `src/componentes/layout/destinos-publicos.json`.
 
 ### Invariantes
 
-- exatamente 10 itens;
+- exatamente 10 itens no conjunto vigente — cobrado no **contrato de conjunto fechado**
+  (`destinos-publicos.test.ts`), e **não** na validação de carregamento do módulo: o carregamento
+  valida as propriedades estruturais abaixo e que o catálogo não esteja vazio. A antiga guarda de
+  tamanho derrubava o build antes de qualquer consumidor ou verificador reagir ao acréscimo exigido
+  pelo FR-044/SC-017 (decisão de 28/08/2026);
 - 10 rótulos e 10 caminhos únicos;
 - exatamente uma conversão principal;
 - o processo seletivo continua pertencendo ao conjunto total, mesmo aparecendo fora do painel no
