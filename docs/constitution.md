@@ -1,122 +1,93 @@
-# Constitution — Portal LIACUP
+# Constitution · Portal LIACUP
 
-**Versão 2 · 19 de agosto de 2026** — acrescenta o Princípio 9 (componentização), a pedido do Gabriel.
+**Versão 3 · 18 de novembro de 2026** · aprovada pelo Gabriel junto com o plano v7
 
-Princípios inegociáveis do projeto. Cole este conteúdo em `/speckit.constitution`.
-Toda spec, todo plano e todo código são avaliados contra este documento. Em caso de conflito entre este arquivo e qualquer outra instrução de implementação, este arquivo vence — exceto se o Gabriel decidir o contrário por escrito.
+A v3 encurta a v2 (19/08/2026): mantém os princípios de produto, troca o Spec Kit pelo OpenSpec e tira as regras que tinham virado verificação da verificação. Este texto alimenta o contexto do projeto no OpenSpec e o `CLAUDE.md` do repositório.
 
 ---
 
 ## Contexto
 
-O Portal LIACUP é o site institucional da Liga Acadêmica Multiprofissional de Cuidados Paliativos da Universidade de Brasília. Ele é mantido por estudantes voluntários da área da saúde, sem formação em tecnologia, e a diretoria que o opera muda todo ano. O site fala sobre cuidados paliativos para estudantes, profissionais e para o público geral — inclusive para pessoas que estão vivendo o adoecimento de alguém próximo.
+O Portal LIACUP é o site da Liga Acadêmica Multiprofissional de Cuidados Paliativos da Universidade de Brasília. É mantido por estudantes da saúde, sem formação em tecnologia, e a diretoria muda todo ano. O público inclui estudantes, profissionais e pessoas vivendo o adoecimento de alguém próximo, e a maioria chega pelo celular, vinda do Instagram.
 
-Essas três frases determinam quase tudo o que vem abaixo.
+## 1. Quem mantém vem antes de quem constrói
 
----
+- Código, nomes, comentários, commits e documentação em português, salvo termo técnico consagrado.
+- A solução óbvia vence a engenhosa.
+- Dependência nova só com motivo escrito na proposta da change.
+- Passo manual que existir está escrito no README.
 
-## Princípio 1 — Quem mantém vem antes de quem constrói
+## 2. Acessibilidade faz parte da entrega
 
-Toda escolha é avaliada pela pergunta: _um estudante de saúde, daqui a dois anos, sem nos conhecer, consegue entender e operar isto?_
+- WCAG 2.1 AA em toda página. Pares de cor conforme o ADR-0003: o lilás `#9B6AAF` não carrega texto pequeno.
+- Tudo operável por teclado, com foco visível. HTML semântico.
+- Alvo de toque de pelo menos 44 × 44 px. Campo de formulário com fonte de 16 px.
+- Toda imagem informativa tem texto alternativo.
 
-- Código, comentários, nomes de variáveis, mensagens de commit e documentação em **português**, exceto termos técnicos consagrados.
-- Preferir a solução óbvia à solução engenhosa. Esperteza é dívida.
-- Nenhuma dependência nova sem justificativa escrita no `plan.md`. Cada biblioteca é uma coisa a mais para alguém entender depois.
-- Nada de configuração que só exista na cabeça de quem escreveu: se precisa de um passo manual, esse passo está no README.
+## 3. O celular é o caso principal
 
-## Princípio 2 — Acessibilidade não é fase final
+- Toda tela é conferida primeiro em 360 e 390 px.
+- Nenhuma página tem rolagem horizontal em nenhuma largura.
+- Tabela vira cartões no celular.
 
-Este é um site de saúde, lido por pessoas idosas, por pessoas em sofrimento e por pessoas com deficiência. Acessibilidade é requisito de entrega, não item de polimento.
+## 4. O protótipo aprovado é a referência visual
 
-- **WCAG 2.1 nível AA** em toda página pública e em todo o painel.
-- Contraste mínimo de 4.5:1 para texto normal e 3:1 para texto grande. O lilás da marca não é usado para texto pequeno sobre fundo colorido.
-- Tudo operável por teclado, com foco visível.
-- HTML semântico. `<div>` com `onclick` não é botão.
-- Todo campo de formulário tem `<label>` associado.
-- Toda imagem informativa tem texto alternativo; imagem decorativa é marcada como tal.
-- Alvos de toque com no mínimo 44×44 px no mobile.
-- Feature que quebra acessibilidade não é feature pronta.
+- O design do protótipo foi aprovado pela liga e não muda. A referência é a **tela** do protótipo, não uma classe de CSS isolada. A fidelidade se confere com print do protótipo ao lado do print do site, nas mesmas larguras.
+- Melhorias de UI e UX são bem-vindas, mostradas lado a lado no PR e aprovadas pelo Gabriel. Paleta, fontes, borboletas e a estrutura das páginas não mudam.
+- O site é responsivo em toda largura, não só nas larguras dos prints.
+- As adaptações de acessibilidade listadas em `referencia-visual.md` entram sem perguntar.
+- Nenhum valor de cor, espaçamento, raio, sombra ou tipografia escrito à mão: sempre token.
 
-## Princípio 3 — Mobile é o caso principal
+## 5. O texto da liga vai ao ar como está
 
-A maior parte do público chega pelo celular, vindo do Instagram.
+- O conteúdo vem de `conteudo-institucional.md`. Nada é reescrito, resumido ou "melhorado".
+- Nada é inventado. Num site sobre cuidados paliativos, texto plausível e falso é pior que ausência.
+- Conteúdo pendente da liga não segura entrega: vai o que está aprovado no `conteudo-institucional.md`, a liga vê e ajustamos depois.
 
-- Toda tela é desenhada e verificada primeiro em 360 px de largura.
-- Nenhuma página gera rolagem horizontal em nenhuma largura.
-- Campos de formulário com fonte de 16 px ou mais no mobile, para não disparar zoom automático no iOS.
-- Nenhuma tabela com rolagem lateral no celular: vira cartões.
-- O que é pesado só carrega quando precisa.
+## 6. Segurança e dados pessoais
 
-## Princípio 4 — Segurança e dados pessoais
+- Row Level Security em toda tabela. Nenhum segredo no cliente ou no repositório.
+- Toda entrada validada no servidor.
+- Nenhum dado pessoal coletado sem finalidade, base legal e prazo de retenção declarados.
+- Autenticação por implementação consagrada (Supabase Auth).
 
-- **Row Level Security ativa em toda tabela**, sem exceção. Tabela nova sem política de acesso é bug.
-- Nenhuma chave secreta, credencial ou token no código do cliente ou no repositório.
-- Toda entrada é validada **no servidor**, mesmo quando já validada na tela.
-- Nenhum dado pessoal é coletado sem que exista finalidade declarada, base legal e prazo de retenção.
-- Registro de erro (log) nunca contém dado pessoal.
-- Autenticação usa implementação consagrada. Não escrevemos criptografia, hash de senha nem sessão à mão.
+## 7. Spec antes de código, e spec pequena
 
-## Princípio 5 — A spec manda no código
+- Nenhum código sem proposta do OpenSpec aprovada pelo Gabriel.
+- A proposta descreve comportamento e critério de aceite; o design técnico fica em `design.md`.
+- A proposta cabe em cinco minutos de leitura e a change tem no máximo umas quinze tarefas. Passou disso, vira duas changes.
+- Se a spec estiver errada, o agente para e reporta. Não corrige por conta própria.
 
-- Nenhum código é escrito sem spec aprovada.
-- Nenhuma feature nasce dentro de outra: se apareceu algo não previsto, vira spec nova, não linha extra.
-- A spec descreve comportamento e regra; o plano descreve tecnologia. Não misturar.
-- Se ao implementar ficar claro que a spec está errada, **parar e reportar** — não corrigir por conta própria. A spec errada é informação valiosa.
-- Todo critério de aceite é verificável objetivamente.
+## 8. Entrega pequena e frequente
 
-## Princípio 6 — Fidelidade ao que foi aprovado
+- Toda change deixa a `main` publicável e chega à `main` em poucos dias.
+- O que ainda não deve aparecer fica atrás do interruptor `SITE_PUBLICADO`, nunca numa branch longa.
+- O menu mostra só página que existe. Nenhuma rota vazia.
 
-O protótipo e o conteúdo passaram por revisão da liga e por documento de aceite assinado. Isso vale alguma coisa.
+## 9. Componentização
 
-- A identidade visual aprovada — paleta da logo, tipografia, borboletas, tokens do `liacup.css` — é seguida, não reinterpretada.
-- Nenhum texto institucional é reescrito, "melhorado" ou resumido por conta própria. O texto que a liga escreveu é o texto que vai no ar.
-- Onde falta conteúdo, o espaço reservado é **visivelmente marcado**. Nunca inventar conteúdo plausível: num site sobre cuidados paliativos, texto inventado que parece verdadeiro é pior que espaço em branco.
-- Mudança visual em relação ao aprovado só com aval explícito.
+- Um componente, uma responsabilidade, até 150 linhas.
+- Componentes de base não conhecem banco, rota nem regra de negócio.
+- Uma feature nunca importa de outra. Acesso a dado só na camada de dados.
+- Todo componente que mostra dado trata carregando, erro e vazio.
 
-## Princípio 7 — Nada entra sem verificação
+## 10. Honestidade sobre o estado da obra
 
-- O CI roda verificação de tipos, análise estática e testes. Falhou, não entra.
-- Toda feature tem teste automatizado do seu caminho principal.
-- Fluxos críticos — login, publicação, exclusão, envio de mensagem — têm teste de ponta a ponta.
-- Responsividade e acessibilidade são verificadas de forma automatizada, não no olho.
-- Nenhuma entrega é declarada pronta sem o checklist de validação preenchido com resultado real. Reportar número, não adjetivo: "0 elementos abaixo de 44 px", não "ficou bom no celular".
-
-## Princípio 8 — Honestidade sobre o estado da obra
-
-- O que está incompleto é declarado incompleto.
-- Nenhum dado falso é apresentado como real na interface — números de exemplo são identificados como exemplo.
-- Se algo foi feito de forma provisória, isso é registrado como pendência com nome e local, não deixado para alguém descobrir.
-- Se o desenvolvedor não conseguiu cumprir um item, ele diz. Item silenciosamente pulado é o pior resultado possível.
+- O incompleto é declarado incompleto.
+- Relatório com número quando houver número.
+- Item pulado é dito, nunca silenciado.
 
 ---
 
-## Princípio 9 — Componentização é requisito, não estilo pessoal
+## Hierarquia
 
-Um portal mantido por voluntários que se revezam só sobrevive se for possível mexer em um pedaço sem entender o todo.
-
-- Todo componente tem **uma responsabilidade**. Se o nome precisa de "e" para ser descrito, são dois.
-- Os componentes de base não conhecem regra de negócio, banco de dados nem rota. Recebem props e desenham.
-- **Uma feature nunca importa de outra feature.** Elas se encontram na rota que as compõe.
-- Acesso a dados vive na camada de dados. Regra de negócio vive em função pura, testável sem banco.
-- Nenhum valor de cor, espaçamento ou tipografia escrito à mão: sempre token.
-- Composição vence configuração. Componente com dezenas de props para cobrir todo caso cresce para sempre.
-- Todo componente que exibe dado trata carregando, erro e vazio.
-
-Estas regras estão detalhadas e tornadas verificáveis em `PADROES-DE-CODIGO.md`, e são conferidas automaticamente pelo CI. Regra que depende só de disciplina humana degrada; por isso elas quebram o build.
-
----
-
-## Hierarquia de decisão
-
-1. Este documento
+1. Esta constitution
 2. O documento de aceite assinado pela liga
-3. `PADROES-DE-CODIGO.md`
-4. A spec da feature
-5. O plano técnico
+3. `padroes-de-codigo.md` e `referencia-visual.md`
+4. A proposta e as specs da change
+5. O `design.md` da change
 6. Preferência de implementação
 
-Conflito entre níveis: o número menor vence. Conflito dentro do mesmo nível: parar e perguntar.
+Conflito entre níveis: vence o número menor. Conflito no mesmo nível: parar e perguntar ao Gabriel.
 
-## Emendas
-
-Este documento muda por decisão do Gabriel, registrada com data e motivo. Não muda por conveniência de implementação.
+A constitution muda por decisão do Gabriel, registrada com data e motivo.

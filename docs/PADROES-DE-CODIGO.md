@@ -1,6 +1,6 @@
 # Padrões de código — Portal LIACUP
 
-**Versão 1 · 19 de agosto de 2026**
+**Versão 2 · 1º de setembro de 2026**
 Este documento existe porque "bem componentizado" e "boas práticas" são frases que não se verificam. Aqui elas viram regra checável. Todo `plan.md` do SDD segue este arquivo, e o checklist de validação cobra o cumprimento.
 
 O princípio por trás de tudo: **um estudante de saúde, daqui a dois anos, sem nos conhecer, precisa conseguir abrir este código e entender.** Quando uma regra abaixo parecer excessiva, é essa a pergunta que a justifica.
@@ -132,6 +132,27 @@ Ensinar o verificador a ignorar literais de string em `.tsx` é possível e fica
 melhoria futura — não foi feito na F01 porque a regra do espaço resolve o caso sem tornar o script
 mais difícil de ler, e o script ser legível inteiro é o que o mantém confiável.
 
+### 3.1 Fontes de verdade visual e estados interativos
+
+O protótipo completo aprovado governa composição, hierarquia, distribuição visual e identidade das
+áreas da página. O `liacup.css` e o ADR-0003 governam somente paleta, tokens e primitivas; o conteúdo
+institucional vem de `docs/conteudo-institucional.md`; conflito entre essas fontes é resolvido por
+decisão explícita do Gabriel (ADR-0006).
+
+Todo controle interativo precisa declarar e apresentar seus estados aplicáveis: repouso, hover em
+dispositivo que suporta hover, pressionado para mouse, caneta e toque, `focus-visible`, desabilitado
+e página atual quando também navega. Controles equivalentes — por exemplo, botão e link com aparência
+de botão — compartilham o mesmo contrato visual nos estados comuns. Foco permanece distinguível de
+hover.
+
+Feedback de hover, pressão ou foco é imediato e não espera rede, lógica assíncrona, navegação
+concluída ou animação. A interface continua compreensível sem animação, respeita redução de
+movimento e preserva identidade e geometria enquanto fonte, logo ou outro ativo demora a carregar.
+Ativo crítico já disponível no projeto é local.
+
+Automação mede estrutura, geometria, acessibilidade e propriedades. Aprovação visual humana mede
+composição, hierarquia e acabamento; o CI não a automatiza nem a substitui.
+
 ---
 
 ## 4. Dados e regra de negócio
@@ -234,6 +255,7 @@ depósito.
 | **RP-11** | Toda tabela nasce com **controle de acesso por linha ativo**, e a política é testada provando que **bloqueia** — não só que permite | Princípio IV · F02 | Suíte de políticas, com o número de células de recusa verificadas |
 | **RP-12** | **Verificação que ninguém viu falhar não conta.** Toda verificação nova é demonstrada **falhando** diante de violação real e voltando ao verde. E toda verificação **diz quanto mediu** — arquivos varridos, elementos medidos, células checadas | F00 (V1–V5) · F01 · F02 | Duas execuções registradas com resultados opostos, **e o contador na saída** |
 | **RP-13** | **Artefato gerado não entra no controle de versão.** O que sai de um comando — build, cache, relatório, estado local de ferramenta — é reconstruível, difere em cada máquina e conflita em todo merge. Exceção é registrada por nome, e o motivo dela **nomeia o comando que demonstra o que quebra se o arquivo sair** — comando que é **executado quando a exceção entra** | F02 · F03 | `npm run verificar:artefatos` — pergunta ao git o que está **rastreado agora**, não o que o `.gitignore` lista |
+| **RP-14** | Toda feature com interface só fecha após portão de fidelidade visual humana: resultado renderizado comparado à referência aprovada, larguras e estados aplicáveis enumerados, diferenças encontradas registradas, diferenças deliberadas justificadas com motivo, **zero diferenças não explicadas** e aprovação nominal | ADR-0006 | Checklist de validação preenchido, registro de fidelidade com os três contadores e aprovação humana registrada antes do fechamento |
 
 **O RP-12 é o que sustenta os outros doze**, e tem duas metades que se completam:
 
@@ -354,6 +376,10 @@ Uso na validação de cada feature:
 - [ ] Nenhum valor de estilo escrito à mão
 - [ ] Trata carregando, erro e vazio
 - [ ] Semântica, rótulos, teclado e foco corretos
+- [ ] Estados interativos aplicáveis — repouso, hover, pressionado, `focus-visible`, desabilitado e página atual — estão definidos e perceptíveis
+- [ ] Feedback visual independe de rede, navegação concluída e animação; redução de movimento permanece compreensível
+- [ ] Controles visualmente equivalentes compartilham o contrato de estados comuns
+- [ ] Validação visual humana contra a referência aprovada foi registrada, quando o componente afeta interface
 - [ ] Nomes em português e descritivos
 - [ ] Tem teste
 - [ ] Não importa de outra feature

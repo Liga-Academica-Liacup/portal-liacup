@@ -34,7 +34,7 @@ Regra: cada item é respondido com **evidência** — um número, uma saída de 
 | C2  | Nenhum elemento ultrapassa a largura da tela                      | Varredura de `getBoundingClientRect`          |           |
 | C3  | Cabeçalho fixo ocupa no máximo 64 px no mobile                    | Medição                                       |           |
 | C4  | Nenhuma tabela com rolagem lateral no mobile                      | Inspeção das telas de lista                   |           |
-| C5  | O desktop continua idêntico ao aprovado                           | Comparação visual em 1280 px                  |           |
+| C5  | O desktop continua coerente com o aprovado                        | Comparação visual em 1280 px                  |           |
 
 ## D. Acessibilidade
 
@@ -88,6 +88,17 @@ Regra: cada item é respondido com **evidência** — um número, uma saída de 
 | H4  | Código compreensível por quem não participou                  | Leitura crítica do diff                      |           |
 | H5  | Pendências registradas como tarefa, não como comentário solto | Varredura de `TODO` no código                |           |
 
+## I. Validação visual humana
+
+| # | Item | Como verifico | Resultado |
+| --- | --- | --- | --- |
+| I1 | Composição, hierarquia e identidade comparadas ao protótipo completo aprovado | Revisão renderizada lado a lado | |
+| I2 | Layout global revisado em 360, 390, 430, 480, 768, 1024 e 1280 px | Registrar cada largura aplicável | |
+| I3 | Estados aplicáveis — repouso, hover, pressionado, foco, desabilitado e página atual — revisados | Interação direta, inclusive toque quando aplicável | |
+| I4 | Marca e controles equivalentes, incluindo botão e link com aparência de botão, permanecem consistentes | Revisão visual | |
+| I5 | Ativos lentos não causam salto ou perda de identidade; redução de movimento continua compreensível | Simulação e inspeção | |
+| I6 | Diferenças encontradas registradas; diferenças deliberadas com motivo; **zero diferenças não explicadas**; aprovação nominal de Gabriel obtida | Registro de revisão com os três contadores | |
+
 ---
 
 ## Veredito
@@ -114,6 +125,10 @@ Três linhas, sempre no mesmo formato:
 
 
 ---
+
+> **Nota de 1º de setembro de 2026:** o preenchimento histórico da F01 abaixo preserva os números
+> medidos naquela data. Seu veredito foi posteriormente superado pela reabertura para retificação
+> visual aprovada por Gabriel; ele não substitui o portão de validação humana do ADR-0006.
 
 # Preenchimento — F01 Design system em componentes
 
