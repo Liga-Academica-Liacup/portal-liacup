@@ -1,327 +1,194 @@
-# Portal LIACUP — Plano de Desenvolvimento
+# Portal LIACUP · Plano de desenvolvimento v7 (reorganização)
 
-**Versão 5 · 19 de agosto de 2026**
-Documento mestre da fase de desenvolvimento. Complementa o documento de aceite v2.
+**Status:** aprovado pelo Gabriel em 18/11/2026
+**Data:** 18 de novembro de 2026
+**Substitui:** a v6 de 20/08/2026, que organizava o projeto em 26 features sequenciais com Spec Kit.
 
-_v2: ADR-0001 validado; contas, domínio e e-mail definidos; ADR-0002 e padrões de código acrescentados._
-_v3: Estatuto e Edital 02/2026 recebidos; nove pendências resolvidas e onze divergências levantadas._
-_v4: divergências decididas; F12 liberada; conteúdo de Projetos, Equipe e Processo Seletivo fechado._
-_v5: contas criadas, domínio registrado (pagamento pendente), ADR-0002 validado. F00 especificada e liberada para desenvolvimento._
+## Decisões do Gabriel na aprovação (18/11/2026)
 
----
+1. **Interruptor** `SITE_PUBLICADO` em vez de branch longa (seção 6).
+2. **O design do protótipo não muda.** Ele foi aprovado pela liga. O que recomeça é a implementação, que não ficou boa. Melhorias de UI e UX são bem-vindas, desde que mostradas lado a lado com o protótipo e aprovadas pelo Gabriel. O site precisa ser responsivo em todas as larguras.
+3. **O CI não é simplificado.** Todas as verificações ficam. A change de CI só entra para melhorar a automação e o fluxo (seção 7, R0).
+4. **Conteúdo pendente não segura entrega.** Texto da Secretaria, acréscimo do FAQ 1, números da home e confirmação da marca UnB: a R1 sai sem eles, mostramos à liga e ajustamos depois.
+5. **Pasta local do repositório:** `C:\Projetos\portal-liacup` (não mais `C:\Dev`).
+6. **A rodada mobile v3 foi aplicada no protótipo.** Medido em 18/11: cabeçalho de 62 px em 390 px, nenhum alvo de toque abaixo de 44 px nas 10 páginas públicas em 390 px, nenhuma rolagem horizontal, menu lateral com `aria-expanded` e `aria-controls`.
 
-## 1. Onde estamos
-
-| Etapa                             | Situação                                                  |
-| --------------------------------- | --------------------------------------------------------- |
-| Planejamento, requisitos e design | Concluída                                                 |
-| Protótipo visual                  | Concluída — desktop aprovado, ajustes mobile em aplicação |
-| **Desenvolvimento**               | **Etapa atual — este documento a abre**                   |
-| Testes                            | A iniciar                                                 |
-| Lançamento                        | A iniciar                                                 |
-
-O que já temos em mãos e não precisa ser refeito: identidade visual e paleta extraídas da logo, design system em CSS (`liacup.css`), protótipo navegável de 12 páginas públicas e do painel administrativo, conteúdo institucional validado pela liga (números, orientadoras, eixos, FAQ), e o documento de aceite assinado pela diretoria.
-
-O que ainda não temos e é pré-requisito para lançar: nove itens de conteúdo listados na seção 9.
+Documentos que andam junto com este: `equipe-de-agentes.md` (quem faz o quê e como os agentes trabalham), `constitution-sdd.md` v3 (as regras), `referencia-visual.md` (como o visual volta a seguir o protótipo) e `historico-fase-anterior.md` (o que foi feito até agosto e o que se aprendeu).
 
 ---
 
-## 1.1 Decisões e ativos travados
+## 1. Onde estamos de verdade
+
+Medido em 18/11/2026, no repositório e no ar, não pelos documentos antigos.
 
-Isto aqui é o que deixou de ser hipótese. Tudo abaixo está confirmado e vale como fonte de verdade.
+| Item | Situação |
+|---|---|
+| Produção | `liacup.com.br` e `portal-liacup.vercel.app` mostram a página "Portal em construção" (logo, Instagram, e-mail). **Fica no ar até a R1.** |
+| Repositório | `github.com/Liga-Academica-Liacup/portal-liacup`, público. Os documentos antigos citam `github.com/liacup`, que não é o endereço atual |
+| `main` | `1cd261f`, de 27/08. Tem a F00 (fundação e CI), a F01 (7 componentes e vitrine), a F02 (13 tabelas no Supabase com RLS) e o RP-13 |
+| `feat/F03-layout-base` | 23 commits à frente da `main`, parada desde 31/08, nunca incorporada. 75 arquivos, 8.579 linhas acrescentadas: cabeçalho, menu lateral, rodapé e dez rotas vazias |
+| Ferramenta de SDD | Spec Kit 0.16.6. Não é OpenSpec |
+| Domínio | Registrado, pago e apontando para a Vercel |
 
-| Item                               | Definição                                                                                     | Situação                                                                                               |
-| ---------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **Stack**                          | Next.js + TypeScript + Supabase + Vercel                                                      | **Validado pelo Gabriel** (ADR-0001)                                                                   |
-| **Envio de e-mail**                | Resend, plano gratuito, com domínio próprio                                                   | **Validado pelo Gabriel** (ADR-0002)                                                                   |
-| **E-mail da liga**                 | `liacup.unb@gmail.com`                                                                        | Confirmado pela liga                                                                                   |
-| **GitHub**                         | `github.com/liacup`                                                                           | **Criado** — confirmar se é organização ou conta de usuário (ver abaixo)                               |
-| **Vercel · Supabase · Resend**     | Acesso via login do GitHub da liga                                                            | **Criadas**                                                                                            |
-| **Domínio**                        | `liacup.com.br`                                                                               | **Registrado** no Registro.br sob o CPF do irmão do Gabriel, fundador da liga — **pagamento pendente** |
-| **Logo oficial**                   | Recebida em alta resolução, fundo transparente                                                | **Resolvido**                                                                                          |
-| **Ícone de e-mail**                | Ícone do Gmail, recebido                                                                      | **Resolvido**                                                                                          |
-| **Padrão de código**               | `PADROES-DE-CODIGO.md`, cobrado pelo CI                                                       | Definido                                                                                               |
-| **Inscrição do processo seletivo** | Permanece no Google Forms. O portal publica edital, cronograma, FAQ e o botão que redireciona | **Decidido pelo Gabriel**                                                                              |
-| **Analytics**                      | Adiado — Gabriel vai tratar com a liga                                                        | Em aberto, não bloqueia                                                                                |
+Em três meses foram quatro features e nenhuma página com conteúdo que a liga pudesse ver. No repositório há perto de 12.400 linhas de spec e documentação, 4.000 de código de produto, 3.400 de testes e 1.400 de scripts de verificação.
 
-Com as contas criadas no e-mail da liga e o GitHub como login único de Vercel, Supabase e Resend, o maior risco de sucessão está em grande parte resolvido: nada nasceu na conta pessoal de ninguém, e trocar de gestão não exige caçar credenciais espalhadas.
+## 2. O que saiu do trilho
 
-**Duas coisas para fechar esse ponto de vez:**
+1. **Cascata.** As 26 features andavam em fila, e a Fase 0 inteira (fundação, design system e banco) veio antes de qualquer página. O primeiro marco que a liga veria só chegaria depois de 14 features.
+2. **O processo ficou maior que o produto.** A spec da F03, que é cabeçalho e menu, tem 461 linhas, 46 requisitos e 52 tarefas. Cada feature passou por três paradas com veredito escrito, e boa parte do esforço foi verificar os próprios verificadores (RP-13, `next-env.d.ts`, proteção de branch, contagem de seletores).
+3. **A fidelidade foi medida no lugar errado.** O visual foi remontado classe a classe a partir do `liacup.css`, e cada ajuste (contraste, 44 px, espaçamento) foi justificado sozinho. Nunca houve comparação de tela inteira contra o protótipo. Cada linha estava certa e o conjunto ficou diferente. O protótipo nem está no repositório.
+4. **A coordenação trocou de mãos.** Claude, GPT e um agente no ChatGPT se revezaram, e regras importantes ficaram em notas fora do repositório. Foram cinco episódios de trabalho perdido no Git.
+5. **Documento demais.** O projeto chegou a 41 documentos, mais da metade vereditos de rodada.
 
-**Conta de usuário ou organização no GitHub?** Faz diferença real. Numa _organização_, cada diretor entra com o próprio login e recebe o papel de proprietário — a passagem de gestão é adicionar e remover pessoas. Numa _conta de usuário compartilhada_, a passagem de gestão vira compartilhar senha, o que quebra assim que alguém ativa verificação em duas etapas e é exatamente o tipo de coisa que trava uma liga no pior momento. Se for conta de usuário, dá para converter em organização depois, e vale fazer cedo — como agora só existe um repositório, é o momento mais barato.
+## 3. O que muda
 
-**Pagamento do domínio.** Registro sem pagamento não segura o nome: o Registro.br mantém o pedido por um prazo e depois libera. Enquanto não estiver pago, `liacup.com.br` está reservado, não é da liga.
-
-**Titularidade do domínio — registrada aqui para não se perder.** O `liacup.com.br` está sob o CPF do irmão do Gabriel, que é um dos fundadores da liga. É uma escolha razoável: melhor um fundador que segue na liga do que alguém de fora. Mas o fato continua valendo — **quem está no cadastro do Registro.br é quem manda no domínio**, e transferir titularidade depois é burocrático e depende da boa vontade de quem está lá.
-
-Duas consequências práticas que entram no plano de sucessão: o nome do titular e o acesso à conta do Registro.br fazem parte do que se transmite na troca de gestão; e, se a liga vier a ter CNPJ, vale transferir a titularidade para ele.
-
----
+| Antes | Agora |
+|---|---|
+| Spec Kit: spec, plan, tasks | **OpenSpec**: explore, propose, apply, archive |
+| 26 features em fila | **Releases pequenas**, cada uma publicável sozinha |
+| Três paradas com veredito longo | **Dois portões**: a proposta e o PR com prévia |
+| Fidelidade por propriedade de CSS | **Fidelidade por tela**: print do protótipo ao lado do print do site, nas mesmas larguras |
+| Coordenação trocando de ferramenta | **Eu como gestor** neste projeto; **Claude Code como líder técnico** com uma equipe de subagentes no repositório |
+| Verificação da verificação | **Definição de pronto curta** e CI com o essencial |
 
-## 2. Papéis
+## 4. O que fica
 
-| Papel                                | Quem                | Responsabilidade                                                                                                                                                                    |
-| ------------------------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Desenvolvedor**                    | Claude Code         | Escreve spec, plano, tarefas e código, seguindo o fluxo SDD. Não decide escopo sozinho                                                                                              |
-| **Coordenação e primeira validação** | Eu                  | Escrevo e mantenho os documentos de projeto, quebro o produto em specs, defino critério de aceite, revejo cada entrega antes de você olhar, e sinalizo o que está fora do combinado |
-| **Validação final e decisão**        | Gabriel             | Passa o pente fino depois de mim e dá o siga / não siga. Decisões de escopo, prazo e tecnologia são suas                                                                            |
-| **Cliente**                          | Diretoria da LIACUP | Fornece conteúdo, valida o que é visível para o usuário, aprova entregas de fase                                                                                                    |
+- **Stack** (ADR-0001, validado): Next.js, TypeScript, Supabase, Vercel.
+- **E-mail** (ADR-0002, validado): Resend com domínio próprio. Só entra na R3.
+- **Paleta, contraste e fontes locais** (ADR-0003, validado) e as duas regras de controle: alvo de toque de 44 px e campo com fonte de 16 px.
+- **Fontes de verdade visual, estados interativos e validação visual humana** (ADR-0006, aprovado pelo Gabriel em 01/09). A consequência que ele previa, reabrir F01 e F03, é exatamente o recomeço deste plano.
+- **Conteúdo institucional** e as decisões D1 a D6 (`conteudo-institucional.md` e `relatorio-divergencias.md`).
+- **Contas da liga**, domínio, Vercel e o CI básico.
+- **A camada de dados da F02**, que está na `main`. Fica dormente até a R2. Não é apagada.
+- **Estrutura de pastas e regra de camadas** (`padroes-de-codigo.md`).
+- **A página "Portal em construção"** em produção, até o lançamento da R1.
 
-**Regra de ouro do fluxo:** nada vai para o Gabriel sem passar pela minha validação, e nada vai para a liga sem passar pela do Gabriel. Se eu reprovar, volta para o Claude Code com o problema descrito — não com a solução pronta, para não enviesar a correção.
+## 5. O que recomeça
 
-### O ciclo de uma feature
+- **A implementação do visual.** O design do protótipo continua valendo como está. Os componentes da F01 e o layout da F03 são refeitos a partir dele, tela por tela, com liberdade para melhorias de UI e UX aprovadas pelo Gabriel. Os tokens (cores, fontes e escala de espaçamento do `liacup.css`) continuam, porque são da identidade aprovada.
+- **A branch da F03 não é incorporada.** Ela vira a tag `arquivo/F03-layout-base`, para consulta. A lógica do menu lateral com `<dialog>` nativo e os testes de teclado servem de referência.
+- **O Spec Kit sai.** A pasta `.specify`, as skills `speckit-*` e as pastas `specs/001` a `004` vão para `docs/historico/`, fora do caminho.
 
-```
-1. Coordenação  →  define a feature e o critério de aceite
-2. Claude Code  →  /speckit.specify        gera spec.md
-3. Coordenação  →  revisa a spec  ◄── primeiro ponto de parada
-4. Claude Code  →  /speckit.plan           gera plan.md
-5. Claude Code  →  /speckit.tasks          gera tasks.md
-6. Coordenação  →  revisa plano e tarefas  ◄── segundo ponto de parada
-7. Claude Code  →  /speckit.implement      escreve o código
-8. Coordenação  →  aplica o checklist de validação  ◄── terceiro ponto de parada
-9. Gabriel      →  pente fino e decisão    ◄── portão final
-10. Merge e deploy
-```
+## 6. Como o "em construção" continua no ar enquanto o site cresce
 
-Revisar a spec **antes** do código é o que dá economia real: um erro de entendimento corrigido no passo 3 custa um parágrafo; o mesmo erro descoberto no passo 8 custa uma feature inteira.
+**Decidido: um interruptor por variável de ambiente**, `SITE_PUBLICADO`.
 
----
-
-## 3. O SDD neste projeto
+- Em produção ele fica desligado e toda rota responde a página em construção.
+- Nas prévias da Vercel ele fica ligado, e a liga vê o site real pelo link de prévia.
+- Todo trabalho entra na `main` em pedaços pequenos, sem branch de longa duração.
+- Lançar a R1 é ligar a variável em produção. Voltar atrás é desligar.
 
-Usaremos o **Spec Kit** do GitHub, que tem integração oficial com o Claude Code.
+A alternativa descartada era uma branch `desenvolvimento` de longa duração, que foi o que travou a F03 (23 commits sem chegar à `main`).
 
-**Instalação e início do repositório:**
+## 7. Releases
 
-```bash
-uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
-specify init portal-liacup --integration claude
-```
-
-Isso instala os comandos como skills em `.claude/skills` e cria a estrutura de specs.
-
-**Comandos que vamos usar, na ordem:**
-
-| Comando                 | Para que serve                                        | Quando                                      |
-| ----------------------- | ----------------------------------------------------- | ------------------------------------------- |
-| `/speckit.constitution` | Grava os princípios do projeto                        | Uma vez, no início                          |
-| `/speckit.specify`      | Descreve **o que** construir, em linguagem de produto | Início de cada feature                      |
-| `/speckit.clarify`      | Levanta o que ficou vago na spec                      | Sempre que a spec tocar em regra de negócio |
-| `/speckit.plan`         | Descreve **como** construir, com o stack definido     | Depois da spec aprovada                     |
-| `/speckit.tasks`        | Quebra em tarefas executáveis                         | Depois do plano                             |
-| `/speckit.analyze`      | Confere se spec, plano e tarefas conversam entre si   | Antes de implementar                        |
-| `/speckit.implement`    | Escreve o código                                      | Depois do meu aval                          |
-| `/speckit.checklist`    | Gera checklist de qualidade da feature                | Complementa meu checklist fixo              |
-
-**Duas disciplinas que não podem ser afrouxadas:**
-
-1. **A spec não fala de tecnologia.** Ela descreve comportamento, regra e critério de aceite. Se aparecer "usar `useState`" numa spec, a spec está errada. Tecnologia é assunto do `plan.md`.
-2. **Uma feature por branch, uma spec por feature.** Nada de spec guarda-chuva que faz meio site. Se a spec não cabe em uma leitura de cinco minutos, ela precisa ser quebrada.
-
----
-
-## 4. Mapa de documentos
+Cada release é publicável. Cada item da lista é uma *change* do OpenSpec, pensada para caber em um a três dias de trabalho dos agentes.
 
-### Já existem
+### R0 · Reorganização (nenhuma página nova)
 
-| Documento                      | Onde             | Papel                                                                              |
-| ------------------------------ | ---------------- | ---------------------------------------------------------------------------------- |
-| Proposta e aceite v2           | `.docx` entregue | Contrato com a liga: escopo, identidade, MVP                                       |
-| Revisão v2 da liga             | projeto          | Conteúdo validado e ambiguidades                                                   |
-| Design system e pendências     | projeto          | Paleta, tipografia, componentes                                                    |
-| Auditoria mobile v3            | projeto          | Medições de responsividade                                                         |
-| **ADR-0001 — stack**           | este pacote      | Decisão de tecnologia — **validada**                                               |
-| **ADR-0002 — envio de e-mail** | este pacote      | Provedor de e-mail transacional                                                    |
-| **Padrões de código**          | este pacote      | Componentização e boas práticas, verificáveis                                      |
-| **Conteúdo institucional**     | este pacote      | Textos e dados da liga aprovados para o site                                       |
-| **Relatório de divergências**  | este pacote      | Conflitos entre Estatuto, Edital, formulário e protótipo — aguarda decisão da liga |
-| **Constitution**               | este pacote      | Princípios inegociáveis                                                            |
-| **Checklist de validação**     | este pacote      | Meu portão de qualidade                                                            |
-| **Este plano**                 | este pacote      | Como o desenvolvimento acontece                                                    |
-
-### A escrever durante o desenvolvimento
-
-| Documento                            | Quando                                                | Quem escreve                                |
-| ------------------------------------ | ----------------------------------------------------- | ------------------------------------------- |
-| `README.md` do repositório           | Fase 0                                                | Claude Code, eu reviso                      |
-| Modelo de dados definitivo           | Fase 0, com a primeira feature de dados               | Claude Code no `plan.md`                    |
-| ADRs adicionais                      | Sempre que uma decisão técnica tiver alternativa real | Claude Code propõe, eu formalizo            |
-| `spec.md` / `plan.md` / `tasks.md`   | Uma trinca por feature                                | Claude Code                                 |
-| **Manual de operação do painel**     | Antes do lançamento                                   | Eu — em português simples, para a diretoria |
-| **Política de privacidade e LGPD**   | Antes do lançamento                                   | Eu, com validação do Gabriel                |
-| **Plano de passagem de bastão**      | Antes do lançamento                                   | Eu                                          |
-| Relatório de testes e acessibilidade | Fase de testes                                        | Claude Code executa, eu reviso              |
-| Runbook de produção                  | Lançamento                                            | Eu                                          |
-
-### A escrever no fim
-
-Um documento de encerramento de projeto, com o que foi entregue, o que ficou de fora e por quê, e o que a liga precisa saber para tocar sozinha.
-
----
-
-## 5. Fases e backlog
+| Change | O que entrega |
+|---|---|
+| `trocar-spec-kit-por-openspec` | `openspec init`, contexto do projeto preenchido com a constitution v3, Spec Kit e specs antigas movidos para `docs/historico/` |
+| `montar-equipe-de-agentes` | `CLAUDE.md` do repositório e os subagentes em `.claude/agents/`, conforme `equipe-de-agentes.md` |
+| `interruptor-em-construcao` | A variável `SITE_PUBLICADO` e a página em construção servida em produção para toda rota |
+| `prototipo-no-repositorio` | Arquivo do protótipo em `prototipo/`, o script que tira os prints e os prints de referência das 10 páginas em 390 e 1280 px |
+| `ajustar-ci-ao-novo-fluxo` | Todas as verificações atuais ficam. Entram: validação do OpenSpec, prints automáticos das páginas como anexo do CI e cobertura de e2e e Lighthouse derivada da lista de páginas |
 
-Cada linha da tabela vira uma trinca spec/plan/tasks. A ordem importa: ela foi montada para que cada feature só dependa de coisas já prontas.
-
-### Fase 0 — Fundação
-
-| #   | Feature                                                               | Por que primeiro                 |
-| --- | --------------------------------------------------------------------- | -------------------------------- |
-| F00 | Repositório, CI, ambientes e deploy contínuo                          | Sem isso nada é verificável      |
-| F01 | Design system em código (tokens, tipografia, botões, campos, cartões) | Toda tela depende dele           |
-| F02 | Camada de dados: esquema, RLS, cliente do Supabase, dados de exemplo  | Todo o resto lê ou escreve daqui |
-
-### Fase 1 — Site público
+Ao fim da R0, o Gabriel recebe um link de prévia que ainda mostra pouco, e um repositório pronto para andar rápido.
 
-| #   | Feature                                                          |
-| --- | ---------------------------------------------------------------- |
-| F03 | Layout base: cabeçalho, menu mobile em drawer, rodapé, navegação |
-| F04 | Página inicial (hero, indicadores, agenda, notícias, chamadas)   |
-| F05 | Sobre, Equipe e Docentes                                         |
-| F06 | Notícias: lista, filtro por categoria, link externo no cartão    |
-| F07 | Conteúdo educativo e Recomendações de leitura                    |
-| F08 | Eventos: próximos e anteriores                                   |
-| F09 | Projetos: os quatro eixos                                        |
-| F10 | Materiais: listagem e download                                   |
-| F11 | Galeria: álbuns e fotos                                          |
-| F12 | Processo seletivo e perguntas frequentes                         |
-| F13 | Contato e formulário "Fale com a Liga"                           |
-
-### Fase 2 — Painel administrativo
-
-| #   | Feature                                                                  |
-| --- | ------------------------------------------------------------------------ |
-| F14 | Autenticação real: login, sessão, recuperação de senha, papéis           |
-| F15 | Estrutura do painel: layout, menu, controle de acesso por papel          |
-| F16 | CRUD genérico: listar, criar, editar, excluir com confirmação e desfazer. **Inclui listar o que está arquivado e restaurar** — decidido no clarify da F02: excluir arquiva em vez de apagar, e arquivar só é recuperação se a diretoria conseguir ver e restaurar pelo painel |
-| F17 | Formulários por seção, reaproveitando um formulário por coleção          |
-| F18 | Upload de imagens com redimensionamento e limite de tamanho              |
-| F19 | Caixa de mensagens: lista, leitura, arquivar, excluir, contador          |
-| F20 | Usuários e permissões                                                    |
-| F21 | Exportar e importar conteúdo (backup manual pela diretoria)              |
+### R1 · Site institucional mínimo (o lançamento)
 
-### Fase 3 — Pronto para o mundo
+Conteúdo fixo, vindo do `conteudo-institucional.md`. Nenhum banco, nenhum formulário, nenhum dado pessoal coletado. O menu mostra só as páginas que existem e cresce a cada release, sem rota vazia.
 
-| #   | Feature                                                                |
-| --- | ---------------------------------------------------------------------- |
-| F22 | SEO: metadados, Open Graph, `sitemap.xml`, dados estruturados. **Decide o que acontece com a vitrine em produção** — a página `/vitrine` da F01 é ferramenta de quem desenvolve, não conteúdo da liga; a decisão é entre não publicá-la, publicá-la fora do `sitemap.xml` e do índice dos buscadores, ou protegê-la. Fica aqui porque é aqui que o projeto passa a dizer, arquivo por arquivo, o que os buscadores enxergam |
-| F23 | Acessibilidade WCAG 2.1 AA e desempenho                                |
-| F24 | LGPD: política de privacidade, base legal, retenção e purga            |
-| F25 | Observabilidade: monitor de disponibilidade, rotina anti-pausa, backup. **Dona nominal da automação da purga de dado pessoal** — o ADR-0001 R6 promete "purga automática"; a F02 entrega o procedimento manual testado e adia a automação para cá, junto do agendador que já vai existir |
-| F26 | Domínio, produção, manual de operação e passagem de bastão             |
+| Change | O que entrega |
+|---|---|
+| `layout-publico` | Cabeçalho, menu lateral no celular e rodapé, iguais ao protótipo |
+| `pagina-inicial` | Hero, frase, números e chamadas para Sobre, Projetos e Processo seletivo |
+| `pagina-sobre-e-equipe` | Apresentação, história, objetivo, finalidade, docentes, fundadores e os seis cargos do Estatuto |
+| `pagina-projetos` | As quatro frentes de trabalho |
+| `pagina-processo-seletivo` | Apresentação, pré-requisitos, etapas, FAQ e o estado "inscrições fechadas" com convite para o Instagram |
+| `pagina-contato` | E-mail, Instagram e sede (FCTS, Campus UnB Ceilândia), sem formulário |
+| `lancamento-r1` | Metadados, `sitemap.xml`, imagem de compartilhamento, página 404, nota de privacidade curta, e o interruptor ligado em produção |
 
-**26 features.** Sem prazo fixo, o que importa não é a data e sim a ordem: nunca começar uma fase com a anterior pela metade.
+### R2 · Notícias e eventos
 
-### Marcos para mostrar à liga
+| Change | O que entrega |
+|---|---|
+| `leitura-de-noticias-e-eventos` | Leitura do Supabase com o esquema da F02, com dados inseridos por nós |
+| `pagina-noticias` | Lista, filtro por categoria e cartão com link externo |
+| `pagina-eventos` | Próximos e anteriores |
+| `inicio-com-agenda-e-noticias` | A home ganha os blocos dinâmicos |
+| `banco-sempre-acordado` | Rotina que impede a pausa do Supabase e aviso de indisponibilidade |
 
-- **M1 — Fim da Fase 1:** site público navegável com conteúdo real. É o momento de a liga ver e reagir.
-- **M2 — Fim da Fase 2:** a diretoria consegue publicar sem ajuda. Teste de verdade: uma pessoa da liga publica uma notícia sozinha, sem ninguém do lado.
-- **M3 — Fim da Fase 3:** no ar, no domínio próprio, com manual entregue.
+### R3 · Painel mínimo
 
----
+Login com recuperação de senha (Supabase Auth com Resend), painel com listar, criar, editar e excluir notícias e eventos, exclusão com confirmação. **Teste de aceite da release:** uma pessoa da liga publica uma notícia sozinha.
 
-## 6. Definition of Ready e Definition of Done
+### R4 · Fale com a Liga
 
-### Pronto para começar (Definition of Ready)
+Formulário de contato, caixa de mensagens no painel, aviso por e-mail, aviso de privacidade no formulário, retenção e purga.
 
-Uma feature só entra em desenvolvimento se:
+### R5 · Acervo e acabamento
 
-1. A spec descreve comportamento, não implementação.
-2. Todo critério de aceite é verificável — dá para dizer "passou" ou "não passou" sem discussão.
-3. Os dados de que ela depende existem ou têm origem definida.
-4. O conteúdo real necessário está disponível, ou está explicitamente marcado como espaço reservado.
-5. Não há pergunta em aberto capaz de mudar o desenho da solução.
+Materiais, conteúdo educativo e recomendações de leitura, galeria (Julho Verde), edição das demais seções no painel, usuários e papéis, exportar e importar conteúdo, manual de operação e passagem de bastão.
 
-### Pronto de verdade (Definition of Done)
+**R1 a R3 são o núcleo.** Do R4 em diante a ordem pode mudar conforme a liga pedir.
 
-Uma feature só é dada como concluída se **todos** os itens do checklist de validação passarem, incluindo o checklist de revisão de componente do `PADROES-DE-CODIGO.md`. Sem exceção "a gente arruma depois" — item que fica para depois vira tarefa registrada, não é dívida invisível.
+## 8. Ritmo
 
----
+- **Sprint de uma semana.** Começa com o briefing das changes e termina com um link de prévia.
+- **A cada duas sprints**, uma prévia para a liga, com um resumo curto em linguagem não técnica.
+- **Limites que impedem o inchaço:** a proposta de uma change cabe em cinco minutos de leitura, e uma change tem no máximo umas quinze tarefas. Passou disso, quebra em duas.
 
-## 7. Riscos do projeto
+## 9. O ciclo de uma change, passo a passo
 
-Riscos de tecnologia estão no ADR-0001. Estes são os de projeto.
+1. **Gestor:** escreve o briefing da change (o quê, por quê, critérios de aceite, prints de referência) e salva no projeto.
+2. **Gabriel:** cola o briefing no Claude Code.
+3. **Claude Code:** roda `/opsx:propose`. O subagente especificador escreve `proposal.md`, as specs e `tasks.md` dentro de `openspec/changes/<change>/`.
+4. **Portão 1.** Gestor revisa a proposta lendo o repositório; Gabriel aprova ou pede ajuste. Nenhuma linha de código antes disso.
+5. **Claude Code:** roda `/opsx:apply`. Desenvolvedor implementa, QA testa, guardião visual compara com o protótipo, revisor revisa o diff.
+6. **Claude Code:** entrega os arquivos prontos e a lista de comandos Git com a mensagem de commit.
+7. **Gabriel:** faz o commit, o push e abre o PR. A Vercel gera a prévia.
+8. **Portão 2.** Gestor confere o PR contra a definição de pronto e os prints; Gabriel olha a prévia e faz o merge.
+9. **Claude Code:** roda `/opsx:archive`. A spec atualizada passa a descrever o sistema.
 
-| #   | Risco                                                                             | Impacto                             | O que fazemos                                                                                                              |
-| --- | --------------------------------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| P1  | **O conteúdo real não chega.** Nove itens dependem da liga. Sem eles não se lança | Bloqueia o lançamento               | Cobrança nominal com responsável e prazo; o desenvolvimento não para, usa espaço reservado marcado                         |
-| P2  | **Aumento de escopo.** "Já que estamos mexendo, dá para colocar..."               | Projeto não termina                 | Tudo que não está no MVP do documento de aceite vira lista de melhorias futuras. Só entra por decisão explícita do Gabriel |
-| P3  | **Sucessão.** Ninguém assume depois                                               | O portal morre                      | Manual de operação, contas em nome da liga, passagem de bastão gravada — todas na Fase 3, nenhuma opcional                 |
-| P4  | **A liga só vê o resultado no fim** e descobre tarde que não era aquilo           | Retrabalho grande                   | Os três marcos M1, M2 e M3 existem para isso. Mostrar cedo, mostrar feio, mostrar sempre                                   |
-| P5  | **Validação por IA vira carimbo.** Eu aprovar tudo sem rigor                      | Qualidade cai e ninguém percebe     | O checklist é objetivo e mensurável, não impressionista. Eu reporto número, não adjetivo                                   |
-| P6  | **Dados pessoais tratados sem base legal** (mensagens, processo seletivo)         | Exposição jurídica da liga e da UnB | F24 é obrigatória antes do lançamento, não depois                                                                          |
-| P7  | **Uso da marca UnB.** A logo e o nome usam "UnB"                                  | Pedido de remoção                   | Confirmar com a coordenação do curso ou a instituição antes do lançamento. Baixo custo agora, caro depois                  |
+## 10. Definição de pronto
 
----
+Uma change está pronta quando:
 
-## 8. LGPD e questões institucionais
+1. os critérios de aceite da proposta passam;
+2. o CI está verde, com todas as verificações que ele já tem: tipos, lint, formatação, tokens, unidade, e2e (zero violações do axe e sem rolagem horizontal em 360, 390, 768, 1024 e 1280 px) e Lighthouse;
+3. o PR traz os prints do protótipo e do site lado a lado em 390 e 1280 px, com as diferenças listadas e aceitas pelo Gabriel;
+4. todo texto vem do `conteudo-institucional.md`, e nada foi inventado;
+5. alvos de toque têm pelo menos 44 px, campos usam fonte de 16 px, os pares de cor seguem o ADR-0003 e cada controle mostra os estados interativos do ADR-0006;
+6. o subagente revisor aprovou.
 
-O portal coleta dados pessoais em pelo menos dois pontos: o formulário "Fale com a Liga" (nome, e-mail, mensagem) e, futuramente, o processo seletivo. Isso não é detalhe burocrático — é a Lei 13.709/2018 e a liga é parte de uma universidade pública.
+## 11. Pendências que dependem da liga ou do Gabriel
 
-O mínimo que precisa existir antes do lançamento:
+| Item | Bloqueia |
+|---|---|
+**Decisão de 18/11: nenhum destes itens segura entrega.** Seguimos com o que temos, mostramos à liga e ajustamos depois.
 
-- **Política de privacidade** acessível de qualquer página, em linguagem clara.
-- **Base legal declarada** para cada dado coletado. Para o formulário de contato, o consentimento do titular ao enviar.
-- **Finalidade e prazo de retenção** definidos: por quanto tempo a liga guarda uma mensagem de contato, e o que acontece depois. Sugestão: purga automática após 24 meses.
-- **Canal para exercício de direitos** — quem quiser saber, corrigir ou apagar seus dados precisa saber a quem escrever.
-- **Aviso no próprio formulário**, antes do envio, não escondido no rodapé.
-- **Sem cookies de rastreio** sem consentimento. Se houver analytics, que seja sem cookies.
+| Item | Como entra até a liga responder |
+|---|---|
+| ~~Arquivo do protótipo~~ | **Recebido em 18/11**, com a rodada mobile v3 aplicada |
+| Texto da frente Secretaria | Vai o texto provisório do `conteudo-institucional.md` §3 |
+| Acréscimo do FAQ item 1 | Vai a resposta atual |
+| Números da home | Vão os aprovados: 21 membros, 7 cursos, 4 ações, fundação em 2026 |
+| Confirmação do uso do nome e da marca UnB | A R1 é mostrada à liga antes; o ajuste vem depois |
+| Fotos dos ligantes | A R1 sai sem elas |
+| Notícias: quadros 2 e 3 com a mesma descrição | Decidir na R2 |
+| Definição da seção Materiais e fotos do Julho Verde | R5 |
+| Licença do repositório | Não bloqueia |
 
-Não sou advogado e isto não é parecer jurídico. Vale a liga consultar a assessoria jurídica da UnB ou a coordenação do curso antes de publicar a política — em geral a universidade já tem modelo institucional.
+O Edital 02/2026 encerrou em 31/08. A página de Processo seletivo nasce no estado "inscrições fechadas", que é o caso normal fora de edital.
 
-Além disso, confirmar com a UnB o uso do nome e da marca no site e na logo.
+## 12. Riscos
 
----
-
-## 9. Dependências de conteúdo — bloqueiam o lançamento
-
-Nenhuma impede desenvolver; todas impedem lançar. **Nove das quatorze já saíram da lista**, com o Relato, o Estatuto e o Edital 02/2026.
-
-| Item                                      | Situação                            |
-| ----------------------------------------- | ----------------------------------- |
-| Logo em alta resolução · logo do e-mail   | **Resolvido**                       |
-| História, Objetivo e Apresentação da Liga | **Resolvido**                       |
-| E-mail oficial · @ do Instagram           | **Resolvido**                       |
-| Descrição dos eixos de Projetos           | **Resolvido** — Estatuto, Art. 2º   |
-| Edital, cronograma e link de inscrição    | **Resolvido** — Edital 02/2026      |
-| FAQ item 1                                | Provavelmente resolvido — confirmar |
-| Foto de perfil do Instagram               | Pendente                            |
-| Fotos do Julho Verde                      | Pendente                            |
-| Fotos dos ligantes                        | Pendente                            |
-| Definição da seção Materiais              | Pendente                            |
-| Notícias — quadros 2 e 3 idênticos        | Pendente                            |
-
-Os textos aprovados e as fontes estão em `conteudo-institucional.md`.
-
-### Divergências: resolvidas
-
-O Estatuto, o Edital e o formulário divergiam em quatro pontos que o site publicaria lado a lado. Todas as decisões foram tomadas e estão em `RELATORIO-DIVERGENCIAS.md`, junto com os riscos aceitos. **A F12 está liberada.**
-
-Uma decisão de escopo saiu daí e vale destacar: a página de Processo Seletivo permanece — com apresentação, pré-requisitos, etapas, cronograma, edital e FAQ — mas **o portal não recebe inscrição**. O botão redireciona para o formulário da liga.
-
-### Correções obrigatórias no protótipo
-
-Três dados que eu inventei como exemplo e que agora sabemos estarem errados: o e-mail `liacup@unb.br`, o endereço "Faculdade de Medicina · Campus Darcy Ribeiro" e os oito cargos de diretoria. Todos são plausíveis o bastante para alguém tomar por verdadeiros. Saem antes de qualquer publicação.
-
-## 10. Primeiros passos concretos
-
-Os três primeiros passos da v1 eram de governança. Um já está feito.
-
-| #   | Passo                                                                  | Situação                                    |
-| --- | ---------------------------------------------------------------------- | ------------------------------------------- |
-| 1   | Organização no GitHub em nome da liga                                  | **Feito** — `github.com/liacup`             |
-| 2   | Contas de Vercel, Supabase e Resend criadas com `liacup.unb@gmail.com` | A fazer — **não usar conta pessoal**        |
-| 3   | Registrar `liacup.com.br` no Registro.br                               | A fazer — definir antes quem será o titular |
-| 4   | Criar o repositório `portal-liacup` na organização                     | A fazer                                     |
-| 5   | `specify init portal-liacup --integration claude`                      | Comigo                                      |
-| 6   | `/speckit.constitution` com a constitution v2                          | Comigo                                      |
-| 7   | Abrir a F00 e seguir o ciclo da seção 2                                | Comigo                                      |
-
-Os passos 2 e 3 dependem de você e da liga. Os passos 4 a 7 eu conduzo com o Claude Code assim que os anteriores estiverem prontos — e o passo 3 destrava a verificação do domínio no Resend, que é pré-requisito do envio de e-mail.
-
-## 11. Como acompanhamos
-
-A cada feature concluída eu reporto, em três linhas: o que entrou, o resultado do checklist com números, e o que ficou pendente. A cada marco, um resumo maior para a liga, em linguagem não técnica.
-
-Se em algum momento eu perceber que estamos construindo algo diferente do que foi aprovado, ou que uma decisão sua e uma decisão da liga se contradizem, meu trabalho é parar e apontar — não seguir e entregar algo que ninguém pediu.
+| Risco | O que fazemos |
+|---|---|
+| O processo voltar a inchar | Limite de tamanho da proposta e de tarefas. O gestor corta escopo antes do Portão 1 |
+| O visual divergir de novo | Prints lado a lado obrigatórios desde a primeira change de layout, julgados pelo Gabriel |
+| Melhoria de UI virar redesenho | Toda melhoria aparece lado a lado com o protótipo no PR, com o motivo, e só entra com aval do Gabriel. Paleta, fontes, borboletas e a estrutura das páginas não mudam |
+| Os agentes gastarem esforço verificando a si mesmos | Cada subagente tem escopo fixo, e relatório de no máximo uma tela |
+| O conteúdo da liga atrasar | A R1 sai com o que está aprovado; o que falta fica fora da tela, não aparece como rascunho |

@@ -27,3 +27,7 @@ src/lib/supabase/tipos.ts
 # Estado local da ferramenta do Supabase: ref do projeto ligado, versoes. Nao e
 # codigo do projeto e nao vai para o repositorio.
 supabase/.temp/
+
+# Prototipo aprovado pela liga (exportado do Claude Design) e os prints de referencia.
+# E gabarito visual, nao codigo do projeto: o Prettier nao o reformata.
+prototipo/
