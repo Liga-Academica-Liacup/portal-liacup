@@ -7,10 +7,13 @@ Se voce esta lendo isto porque assumiu o projeto e nao conhece ninguem do time a
 arquivo foi escrito para voce. Ele responde o que e o portal, como rodar, como testar, como
 publicar, onde estao as decisoes e o que fazer quando alguma verificacao reclamar.
 
-> **Estado atual: fundacao tecnica (F00).** O que esta no ar e uma pagina provisoria com a logo e
-> a frase "Portal em construção". Ela existe so para provar que o caminho do codigo ate o ar
-> funciona. As paginas de verdade — Sobre, Projetos, Equipe, Noticias, Processo Seletivo — ainda
-> nao foram construidas.
+> **Estado atual: R0, a reorganização do projeto.** O que está no ar é uma página provisória com
+> a logo e a frase "Portal em construção". Ela existe só para provar que o caminho do código até o
+> ar funciona, e fica no ar até o lançamento da R1. As páginas de verdade — Sobre, Projetos,
+> Equipe, Notícias, Processo seletivo — ainda não foram construídas. O que já está pronto por
+> baixo: a fundação técnica, o CI, os componentes de base e a camada de dados do Supabase.
+> O plano das releases está em
+> [`docs/PLANO-DE-DESENVOLVIMENTO.md`](docs/PLANO-DE-DESENVOLVIMENTO.md).
 
 ---
 
@@ -240,18 +243,60 @@ Se der para incorporar com o CI vermelho, a protecao nao esta valendo — e todo
 
 ---
 
+## Como trabalhamos
+
+O projeto usa **OpenSpec**: nenhuma linha de código entra sem uma proposta aprovada. O Spec Kit,
+usado até agosto de 2026, saiu — está preservado em `docs/historico/spec-kit/`.
+
+Cada pedaço de trabalho é uma _change_, pensada para caber em um a três dias. O ciclo tem quatro
+comandos e **dois portões**, e os portões são as únicas paradas obrigatórias:
+
+| Passo | Comando            | O que acontece                                                                                                  |
+| ----- | ------------------ | --------------------------------------------------------------------------------------------------------------- |
+| 1     | `openspec explore` | Pensar o problema antes de propor. Opcional                                                                     |
+| 2     | `openspec propose` | Escreve `proposal.md`, as specs e `tasks.md` em `openspec/changes/<change>/`                                    |
+| —     | **Portão 1**       | A proposta é revisada e aprovada. **Nenhuma linha de código antes disso**                                       |
+| 3     | `openspec apply`   | A implementação acontece, com os testes e a comparação visual                                                   |
+| 4     | `openspec archive` | **Antes do PR**: as specs da change entram em `openspec/specs/` e a change vai para `openspec/changes/archive/` |
+| —     | **Portão 2**       | O PR é conferido contra a definição de pronto, e a prévia da Vercel é olhada antes do merge                     |
+
+O arquivamento vem **antes** do PR porque a `main` é protegida: arquivar depois do merge exigiria
+um segundo PR só para isso. Se o Portão 2 pedir ajuste, a change volta do arquivo antes do merge.
+
+`openspec/specs/` descreve **o sistema como ele é hoje**, e `openspec/changes/`, o que está em
+andamento. Quem chega ao projeto lê o primeiro; quem vai mexer em alguma coisa escreve no segundo.
+
+Quem faz o quê — o dono do produto, o gestor, o líder técnico e os subagentes — está em
+[`docs/EQUIPE-DE-AGENTES.md`](docs/EQUIPE-DE-AGENTES.md). O ciclo completo, com os portões, está
+na seção 9 de [`docs/PLANO-DE-DESENVOLVIMENTO.md`](docs/PLANO-DE-DESENVOLVIMENTO.md).
+
+### A versão do OpenSpec importa
+
+O CLI é global e não entra no `package.json`. **A versão em uso é a 2.1.0**, instalada com
+`npm install -g @fission-ai/openspec`. Confira com `openspec --version`.
+
+Está escrito aqui por um motivo mecânico, não informativo. As seis skills de
+`.claude/skills/openspec-*` são geradas pela ferramenta e ficam versionadas, o que é uma exceção
+ao RP-13 de [`docs/PADROES-DE-CODIGO.md`](docs/PADROES-DE-CODIGO.md). A exceção se demonstra
+rodando `openspec update --force` e exigindo que `git status --porcelain` não acuse nenhuma
+delas — e esse resultado só vale contra a mesma versão do CLI. Numa versão diferente, um
+`git status` sujo diria "alguém editou à mão" quando, na verdade, a ferramenta mudou.
+
+---
+
 ## Onde ficam as decisoes
 
 Nada neste projeto foi decidido por preferencia pessoal. Tudo o que e regra esta escrito em
 `docs/`, e em caso de conflito vale a ordem abaixo — numero menor vence:
 
-| #   | Documento                                                | O que decide                                 |
-| --- | -------------------------------------------------------- | -------------------------------------------- |
-| 1   | [`docs/constitution.md`](docs/constitution.md)           | Os 9 principios inegociaveis do projeto      |
-| 2   | Documento de aceite assinado pela liga                   | O que foi aprovado com a diretoria           |
-| 3   | [`docs/PADROES-DE-CODIGO.md`](docs/PADROES-DE-CODIGO.md) | Estrutura de pastas, componentizacao, testes |
-| 4   | `specs/<feature>/spec.md`                                | O comportamento daquela feature              |
-| 5   | `specs/<feature>/plan.md`                                | A tecnologia daquela feature                 |
+| #   | Documento                                                                                                           | O que decide                                          |
+| --- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| 1   | [`docs/constitution.md`](docs/constitution.md)                                                                      | Os 10 princípios inegociáveis do projeto              |
+| 2   | Documento de aceite assinado pela liga                                                                              | O que foi aprovado com a diretoria                    |
+| 3   | [`docs/PADROES-DE-CODIGO.md`](docs/PADROES-DE-CODIGO.md) e [`docs/REFERENCIA-VISUAL.md`](docs/REFERENCIA-VISUAL.md) | Estrutura de pastas, componentização, testes e visual |
+| 4   | `openspec/changes/<change>/proposal.md` e `openspec/specs/`                                                         | O comportamento daquela change e do sistema           |
+| 5   | `openspec/changes/<change>/design.md`                                                                               | A tecnologia daquela change                           |
+| 6   | Preferência de implementação                                                                                        | O resto                                               |
 
 Decisoes de arquitetura ficam em ADRs, que **nao se editam**: decisao nova substitui a anterior com
 um ADR novo.
@@ -262,11 +307,17 @@ um ADR novo.
 - [`docs/ADR-0005-modelo-de-branches.md`](docs/ADR-0005-modelo-de-branches.md) — GitHub Flow, e por que não GitFlow
 - [`docs/ADR-0003-tokens-e-acessibilidade.md`](docs/ADR-0003-tokens-e-acessibilidade.md) — de onde
   vem os tokens e as correcoes de contraste
+- [`docs/ADR-0006-fonte-visual-e-validacao-humana.md`](docs/ADR-0006-fonte-visual-e-validacao-humana.md)
+  — qual fonte decide o visual, e por que a validação final é humana
 
 Outros documentos uteis: [`docs/conteudo-institucional.md`](docs/conteudo-institucional.md) (os
-textos aprovados pela liga), [`docs/checklist-validacao.md`](docs/checklist-validacao.md) (o que e
-conferido antes de cada entrega) e
+textos aprovados pela liga), [`docs/REFERENCIA-VISUAL.md`](docs/REFERENCIA-VISUAL.md) (como o
+visual segue o protótipo aprovado), [`docs/checklist-validacao.md`](docs/checklist-validacao.md)
+(o que e conferido antes de cada entrega) e
 [`docs/PLANO-DE-DESENVOLVIMENTO.md`](docs/PLANO-DE-DESENVOLVIMENTO.md).
+
+O material da fase anterior — o Spec Kit e as specs das features F00 a F02 — está preservado em
+`docs/historico/`, fora do caminho e disponível para consulta.
 
 ---
 
@@ -411,7 +462,8 @@ src/
 tests/e2e/        Testes de ponta a ponta
 scripts/          Verificacoes proprias do projeto
 docs/             Decisoes, padroes e conteudo aprovado
-specs/            Specs, planos e tarefas de cada feature
+docs/historico/   Material da fase anterior, preservado fora do caminho
+openspec/         Propostas, specs e tarefas de cada change
 ```
 
 `src/features/exemplo/` existe de proposito: e o **molde** que as features seguintes copiam. Ele
@@ -426,7 +478,8 @@ Na F00 nenhuma variavel e usada ainda; elas estao listadas para que ninguem desc
 ## Dependencias
 
 O projeto tem **20 dependencias diretas** — 3 de execucao e 17 de desenvolvimento —, e cada uma
-esta justificada em [`specs/001-fundacao-tecnica/plan.md`](specs/001-fundacao-tecnica/plan.md).
+esta justificada em
+[`docs/historico/specs/001-fundacao-tecnica/plan.md`](docs/historico/specs/001-fundacao-tecnica/plan.md).
 
 **Dependencia nova se justifica na tabela do plano ANTES de entrar, nao depois.** Nao e burocracia:
 cada biblioteca e uma coisa a mais para a proxima pessoa entender.

@@ -1,0 +1,72 @@
+schema: spec-driven
+
+# Contexto do projeto. O OpenSpec lê este campo em toda geração de artefato.
+# A fonte é docs/constitution.md v3, aprovada pelo Gabriel em 18/11/2026; este
+# campo é o resumo que restringe o agente, não uma cópia do documento.
+context: |
+  O Portal LIACUP é o site da Liga Acadêmica Multiprofissional de Cuidados Paliativos da
+  Universidade de Brasília. É mantido por estudantes da saúde, sem formação em tecnologia, e a
+  diretoria muda todo ano. O público inclui pessoas vivendo o adoecimento de alguém próximo, e a
+  maioria chega pelo celular, vinda do Instagram.
+
+  As regras completas estão em docs/constitution.md. Em resumo, e todas valendo sempre:
+
+  1. Quem mantém vem antes de quem constrói. Código, nomes, comentários, commits e documentação
+     em português, salvo termo técnico consagrado. A solução óbvia vence a engenhosa. Dependência
+     nova só com motivo escrito na proposta. Passo manual que existir está escrito no README.
+  2. Acessibilidade faz parte da entrega: WCAG 2.1 AA, tudo operável por teclado com foco
+     visível, HTML semântico, alvo de toque de pelo menos 44 px, campo de formulário com fonte de
+     16 px, texto alternativo em toda imagem informativa.
+  3. O celular é o caso principal. Toda tela é conferida primeiro em 360 e 390 px. Nenhuma página
+     tem rolagem horizontal em nenhuma largura. Tabela vira cartões no celular.
+  4. O protótipo aprovado é a referência visual e não muda. A fidelidade se confere por tela
+     inteira, print do protótipo ao lado do print do site, nas mesmas larguras. Nenhum valor de
+     cor, espaçamento, raio, sombra ou tipografia escrito à mão: sempre token.
+     Melhorias de UI e UX são bem-vindas, desde que apareçam no PR lado a lado com o protótipo,
+     com o motivo escrito, e entrem com o aval do Gabriel. Paleta, fontes, borboletas e a
+     estrutura das páginas não mudam.
+     O site é responsivo em toda largura, não só nas larguras dos prints.
+     Todo controle mostra os estados interativos do ADR-0006 que se aplicam a ele: repouso,
+     hover, pressionado, focus-visible, desabilitado e página atual.
+  5. O texto da liga vai ao ar como está, vindo de docs/conteudo-institucional.md. Nada é
+     reescrito nem inventado. Num site sobre cuidados paliativos, texto plausível e falso é pior
+     que ausência.
+  6. Segurança: Row Level Security em toda tabela, nenhum segredo no cliente ou no repositório,
+     toda entrada validada no servidor, nenhum dado pessoal sem finalidade, base legal e prazo de
+     retenção declarados.
+  7. Spec antes de código, e spec pequena. Nenhum código sem proposta aprovada pelo Gabriel. Se a
+     spec estiver errada, o agente para e reporta; não corrige por conta própria.
+  8. Entrega pequena e frequente. Toda change deixa a main publicável. O que ainda não deve
+     aparecer fica atrás do interruptor SITE_PUBLICADO, nunca numa branch longa. O menu mostra só
+     página que existe.
+  9. Componentização: um componente, uma responsabilidade, até 150 linhas. Componente de base não
+     conhece banco, rota nem regra de negócio. Uma feature nunca importa de outra. Acesso a dado
+     só na camada de dados. Todo componente que mostra dado trata carregando, erro e vazio.
+  10. Honestidade sobre o estado da obra. O incompleto é declarado incompleto. Relatório com
+      número quando houver número. Item pulado é dito, nunca silenciado.
+
+  Hierarquia de decisão, em que o número menor vence: (1) a constitution; (2) o documento de
+  aceite assinado pela liga; (3) docs/PADROES-DE-CODIGO.md e docs/REFERENCIA-VISUAL.md; (4) a
+  proposta e as specs da change; (5) o design.md da change; (6) preferência de implementação.
+  Conflito no mesmo nível: parar e perguntar ao Gabriel.
+
+  Quem escreve no Git é o Gabriel. Os agentes preparam os arquivos e entregam os comandos
+  prontos, com mensagem no padrão convencional, em português, sem rodapé de coautoria.
+
+# Limites por artefato. Vêm do princípio 7 da constitution e passam a valer em
+# toda proposta futura sem ninguém precisar lembrar deles.
+rules:
+  proposal:
+    - Escreva em português.
+    - A proposta cabe em cinco minutos de leitura.
+    - Liste sempre o que fica fora de escopo.
+  tasks:
+    - Escreva em português.
+    - No máximo 15 tarefas. Passou disso, a change vira duas.
+    - Cada tarefa diz como se verifica que ficou pronta, com comando ou resultado observável.
+  specs:
+    - Escreva em português.
+    - A spec descreve comportamento observável, não implementação.
+    - Não cite nome de biblioteca, framework nem arquivo interno.
+  design:
+    - Escreva em português.

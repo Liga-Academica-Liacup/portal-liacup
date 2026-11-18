@@ -52,10 +52,10 @@ Líder técnico   /opsx:apply    ->  dev-frontend / dev-dados implementam
                                ->  qa-acessibilidade testa
                                ->  guardiao-visual compara com o protótipo
                                ->  revisor revisa o diff
+Líder técnico   /opsx:archive  (antes do PR: a main é protegida)
 Líder técnico   entrega arquivos + comandos Git + mensagem de commit
 Gabriel         commit, push, PR  ->  Vercel gera a prévia
 PORTÃO 2        gestor confere o PR, Gabriel olha a prévia e faz o merge
-Líder técnico   /opsx:archive
 ```
 
 ## 5. Modelo de arquivo de subagente
