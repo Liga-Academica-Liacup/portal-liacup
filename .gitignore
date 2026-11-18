@@ -40,3 +40,9 @@ supabase/.temp/
 # passa sem ela. Quem a regera e `next typegen`, encadeado em `verificar:tipos`
 # — entao um clone novo a tem antes de qualquer verificacao precisar dela.
 next-env.d.ts
+
+# Skills do OpenSpec geradas em duplicata pelo `openspec init`: o mesmo conteudo
+# vai para .claude/skills/, que e a pasta que o Claude Code le e a que fica
+# versionada. Versionar as duas seria guardar o mesmo arquivo duas vezes e
+# conflitar em todo merge (RP-13).
+.agents/

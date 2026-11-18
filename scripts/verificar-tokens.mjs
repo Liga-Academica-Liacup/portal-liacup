@@ -11,7 +11,7 @@
  * fuzzy produz falso positivo, e falso positivo destroi a confianca na
  * verificacao — que e o mesmo que nao ter verificacao.
  *
- * Ver docs/PADROES-DE-CODIGO.md, secao 3, e specs/001-fundacao-tecnica/research.md, D4.
+ * Ver docs/PADROES-DE-CODIGO.md, secao 3, e docs/historico/specs/001-fundacao-tecnica/research.md, D4.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'

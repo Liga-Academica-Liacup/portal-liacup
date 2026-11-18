@@ -147,10 +147,10 @@ Materiais, conteúdo educativo e recomendações de leitura, galeria (Julho Verd
 3. **Claude Code:** roda `/opsx:propose`. O subagente especificador escreve `proposal.md`, as specs e `tasks.md` dentro de `openspec/changes/<change>/`.
 4. **Portão 1.** Gestor revisa a proposta lendo o repositório; Gabriel aprova ou pede ajuste. Nenhuma linha de código antes disso.
 5. **Claude Code:** roda `/opsx:apply`. Desenvolvedor implementa, QA testa, guardião visual compara com o protótipo, revisor revisa o diff.
-6. **Claude Code:** entrega os arquivos prontos e a lista de comandos Git com a mensagem de commit.
-7. **Gabriel:** faz o commit, o push e abre o PR. A Vercel gera a prévia.
-8. **Portão 2.** Gestor confere o PR contra a definição de pronto e os prints; Gabriel olha a prévia e faz o merge.
-9. **Claude Code:** roda `/opsx:archive`. A spec atualizada passa a descrever o sistema.
+6. **Claude Code:** roda `/opsx:archive` antes do PR. As specs da change entram em `openspec/specs/` e a change vai para `openspec/changes/archive/`. É antes, e não depois do merge, porque a `main` é protegida: arquivar depois exigiria um segundo PR só para isso.
+7. **Claude Code:** entrega os arquivos prontos e a lista de comandos Git com a mensagem de commit.
+8. **Gabriel:** faz o commit, o push e abre o PR. A Vercel gera a prévia.
+9. **Portão 2.** Gestor confere o PR contra a definição de pronto e os prints; Gabriel olha a prévia e faz o merge. Se o Portão 2 pedir ajuste, a change volta do arquivo antes do merge.
 
 ## 10. Definição de pronto
 
