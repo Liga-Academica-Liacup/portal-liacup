@@ -70,7 +70,7 @@ que o esperado ou encontrar alguma imagem que não gerou, nomeando cada uma.
 #### Scenario: Uma página não foi encontrada
 
 - **WHEN** o comando não consegue chegar a uma das páginas esperadas
-- **THEN** imprime quantos gerou de 23 e nomeia o print que faltou
+- **THEN** imprime quantos gerou de 23 e nomeia cada print que faltou
 - **AND** sai com código diferente de zero, para que nenhuma verificação trate o resultado como
   verde
 
@@ -84,8 +84,9 @@ que o esperado ou encontrar alguma imagem que não gerou, nomeando cada uma.
 ### Requirement: Gerar o gabarito é estável e não toca no protótipo
 
 Duas execuções seguidas do comando SHALL produzir exatamente o mesmo conjunto de nomes de arquivo,
-com cada print tirado depois de as fontes do protótipo carregarem e sem nenhum elemento no meio de
-uma animação, e o arquivo do protótipo SHALL continuar idêntico depois de qualquer execução.
+com cada print tirado depois de as fontes carregarem, com as entradas de página concluídas e as
+borboletas na pose de repouso do protótipo. O comando SHALL conferir essa pose em cada print e
+falhar se alguma borboleta estiver fora dela. O arquivo do protótipo SHALL continuar idêntico.
 
 #### Scenario: O comando roda duas vezes seguidas
 
@@ -93,6 +94,19 @@ uma animação, e o arquivo do protótipo SHALL continuar idêntico depois de qu
 - **THEN** a lista de nomes de arquivo do gabarito é a mesma nas duas vezes, sem nome a mais nem a
   menos
 - **AND** nenhum print mostra texto na fonte de reserva nem página em transição
+
+#### Scenario: As borboletas saem na pose do protótipo
+
+- **WHEN** o comando tira o print de uma página, em qualquer das duas larguras
+- **THEN** imprime, para essa página e largura, quantas borboletas animadas encontrou e quantas
+  estão na pose de repouso do protótipo
+- **AND** uma página sem borboleta animada aparece com zero de zero, e isso não é falha
+
+#### Scenario: Uma borboleta sai fora da pose de repouso
+
+- **WHEN** alguma borboleta, no momento do print, não está na pose de repouso do protótipo
+- **THEN** o comando nomeia a página e a largura em que isso aconteceu
+- **AND** sai com código diferente de zero
 
 #### Scenario: Alguém confere o que o comando alterou
 

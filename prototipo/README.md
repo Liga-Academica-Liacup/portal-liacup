@@ -6,4 +6,4 @@ O design foi aprovado pela liga e não muda: o arquivo do protótipo não se edi
 
 Para regerar os prints, rode `npm run prints:prototipo` (na primeira vez, antes, `npx playwright install --with-deps chromium`); só se regera quando o arquivo do protótipo muda.
 
-A regra de como usar o gabarito ao conferir uma tela está em [`docs/REFERENCIA-VISUAL.md`](../docs/REFERENCIA-VISUAL.md).
+A regra de como usar o gabarito ao conferir uma tela está em [`docs/REFERENCIA-VISUAL.md`](../docs/REFERENCIA-VISUAL.md); atenção: o protótipo traz dados de exemplo errados (e-mail, sede, cargos), e as correções obrigatórias estão na seção 6 desse documento, então não copie esses dados do gabarito.

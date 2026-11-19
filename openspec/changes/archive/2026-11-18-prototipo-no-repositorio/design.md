@@ -98,12 +98,79 @@ garante os mesmos nomes em toda execução.
 
 O que se fixa: janela de tamanho fixo (1280 × 800 e 390 × 844), escala de pixel 1, contexto de
 navegador novo a cada execução, `document.fonts.ready` antes de cada print, redução de movimento
-emulada, e animações desligadas no print — as finitas terminam e as infinitas (borboletas) voltam
-ao quadro inicial — além de uma folha de estilo injetada que zera `animation` e `transition`, porque
-o protótipo não respeita a redução de movimento no `<main>` nem nas borboletas. O cursor de texto é
-escondido.
+emulada, e uma folha de estilo injetada que desliga só `transition` e o cursor de texto. As
+animações são tratadas pelo próprio script, antes de cada print:
 
-Por que bytes não são critério: o briefing pede os mesmos nomes. A rasterização de fonte e de
+- **as finitas** (a `entra` do `<main>`, a da gaveta do menu) vão até o fim;
+- **as infinitas** (as borboletas, `voa`) são pausadas no **início do primeiro ciclo**,
+  descontando o atraso: o tempo corrente de cada uma vira igual ao atraso dela, e não ao tempo 0
+  do documento;
+- o print sai com `animations: 'allow'`, para o Playwright não desfazer o congelamento.
+
+**Por que assim (rodadas 3 e 4, Q6 e Q7 do Portão de apply).** A `voa` vai de `rotate(-8deg)` em
+0% a −2° em 50% e volta a −8° em 100%: **−8° é a pose de repouso** da borboleta no protótipo.
+Duas tentativas anteriores deixaram as borboletas a 0°, pose que o protótipo nunca exibe e que a
+constitution não admite (princípio 4, borboletas não mudam):
+
+- `animation: none` na folha injetada tira a animação e deixa o estilo de base, sem rotação;
+- `animations: 'disabled'` do print **cancela** a animação infinita, com o mesmo efeito — ele não
+  para no primeiro quadro, como a rodada 3 supunha.
+
+E pausar no tempo 0 do documento também não serve: uma borboleta usa `voa 7s ease-in-out
+infinite`, e a outra `voa 9s ease-in-out infinite .8s`. Durante o atraso de 0,8 s a animação ainda
+não se aplica, e essa borboleta ficaria a 0°. Por isso o tempo corrente é o atraso de cada uma.
+
+**A conferência das borboletas (RP-12; corrigida na rodada 6, depois da reprovação do
+revisor).** No momento de cada print — inclusive o do menu —, o script acha as borboletas pela
+**marcação do protótipo**: todo elemento cuja declaração de animação no próprio HTML (atributo
+`style`) usa `voa`, **esteja a animação rodando ou não**. De cada uma, lê o ângulo no estilo
+computado (o ângulo da matriz de `transform`). Esperado: **−8°, com tolerância de ±0,5°**. A saída
+traz, por página e largura, uma linha como `borboletas: 2 de 2 a -8°`; página sem borboleta
+declarada imprime `borboletas: 0 de 0` e não é falha. Se alguma estiver fora da tolerância, a linha
+diz quantas e o script nomeia a página e a largura e sai com código 1 — junto com as faltas e os
+estranhos do D5, na mesma saída final. A tolerância existe para arredondamento da matriz, não para
+pose aproximada: −2°, o outro extremo da `voa`, fica bem fora dela.
+
+Por que pela marcação, e não pelas animações em execução: a versão anterior contava só as
+animações `voa` **rodando**. Com a animação desligada — `animation: none`, ou uma regra futura de
+redução de movimento no protótipo —, as borboletas sumiam da lista, a saída dava `0 de 0` e o
+código era 0. É exatamente a falha que esta change existe para pegar, e o requisito da spec manda
+falhar nesse caso. Pela marcação, a borboleta sem animação continua na conta, aparece a 0° e
+reprova.
+
+**Zero no total é falha.** Se a soma de borboletas de todos os prints der zero, o comando sai com
+código 1: o protótipo tem borboletas, então zero no total significa que a medição quebrou, e
+"nada medido" não pode sair verde (RP-12).
+
+**Limite conhecido.** A conferência roda **antes** do print e não enxerga o que uma opção do
+próprio print faça durante a captura — `animations: 'disabled'` cancelaria as animações depois de
+medidas e antes de fotografadas, com a conferência verde. Por isso o script fixa
+`animations: 'allow'`, com um comentário no código dizendo por quê. Trocar essa opção é desfazer a
+garantia sem que nenhuma verificação perceba.
+
+Duas medidas acrescentadas pelo `dev-frontend` na implementação, registradas aqui:
+
+- **O ponteiro sai de cima do link depois de cada clique.** Sem isso, o ponteiro continua sobre o
+  último controle clicado e o botão Processo seletivo sai no print em estado de hover.
+- **O navegador do script roda sem rede** (contexto `offline`). O protótipo é autocontido; se
+  algum recurso dependesse de rede, ele faltaria em toda execução, e não só em algumas — o que
+  mantém o resultado igual entre quem roda com e sem internet.
+
+**Duas esperas de desenho, acrescentadas pela implementação (rodada 5, medido pelo
+`dev-frontend`):**
+
+| Instabilidade | Causa medida | Correção | Antes → depois |
+|---|---|---|---|
+| `noticias-390.png` saía às vezes sem o contorno tracejado e sem o texto "Imagem da publicação" do 2º cartão | O print saía antes de o navegador terminar de desenhar depois da troca de largura 1280 → 390 | Depois de cada troca de largura, esperar dois quadros de desenho | 9 defeituosos em 20 → 0 em 20 |
+| `sobre-1280.png` variava em 1 pixel (x 67, y 103): resto da marca de "página atual" debaixo de Início | O navegador só redesenha o que mudou ao trocar de página. Os dois quadros acima não bastaram (1 em 15) | Antes de todo print, esconder a página por dois quadros e mostrá-la de novo, mais dois quadros | 1 em 15 → 0 em 25 |
+
+O mecanismo interno do navegador por trás da segunda instabilidade **não foi confirmado**; o que
+está registrado é o efeito medido e a correção que o eliminou.
+
+**Prova:** 10 execuções seguidas, com as listas de sha256 dos 23 arquivos idênticas nas 10.
+
+Por que bytes não são critério, mesmo assim: o briefing pede os mesmos nomes, e a estabilidade de
+bytes acima vale **nesta máquina**. A rasterização de fonte e de
 imagem muda entre sistemas operacionais e versões do navegador, então o mesmo comando dá bytes
 diferentes no Windows do Gabriel e num Linux. Exigir bytes iguais faria o critério depender da
 máquina. **Medida informativa:** a tarefa 2.3 roda duas vezes na mesma máquina e registra quantos
@@ -120,17 +187,21 @@ Ao fim, o script imprime `gerados: N de 23` e a lista dos que faltaram. Uma pág
 ao título esperado em tempo razoável conta como falta; o script segue para as próximas, para que a
 saída mostre **todas** as faltas de uma vez.
 
-Depois, lista os PNG da pasta `prototipo/prints/` que não estão entre os 23 nomes — `estranhos: N`,
-seguido de cada nome. O script **não apaga** nenhum: apagar arquivo que alguém pôs ali é decisão de
-pessoa, e a saída diz qual é.
+Depois, diz quantos arquivos a pasta `prototipo/prints/` tinha e lista **todo arquivo** dela que
+não está entre os 23 nomes, de qualquer extensão, não só PNG — `estranhos: N`, seguido de cada
+nome. O script **não apaga** nenhum: apagar arquivo que alguém pôs ali é decisão de pessoa, e a
+saída diz qual é.
 
-Código 1 se N < 23 **ou** se houver algum estranho; código 0 só com 23 de 23 e zero estranhos.
-Isso vive dentro do script e não vira verificação nova no CI.
+Código 1 se N < 23, **ou** se houver algum estranho, **ou** se alguma borboleta estiver fora da
+pose, **ou** se o total de borboletas medidas for zero (D4). Código 0 só com 23 de 23, zero
+estranhos e todas as borboletas na pose. Isso vive dentro do script e não vira verificação nova no
+CI.
 
 Demonstração (tarefa 1.5), quatro execuções registradas: um título esperado trocado por um
-inexistente (`22 de 23`, nomeia o print, código 1); desfeita a troca (`23 de 23`, código 0); um PNG
-estranho copiado para a pasta (`estranhos: 1`, nomeia o arquivo, código 1); removido o estranho
-(`estranhos: 0`, código 0).
+inexistente (`21 de 23`, porque a página perde os dois prints, 1280 e 390; nomeia os dois; código
+1); desfeita a troca (`23 de 23`, código 0); um arquivo estranho que **não é PNG** copiado para a
+pasta (`estranhos: 1`, nomeia o arquivo, código 1); removido o estranho (`estranhos: 0`,
+código 0).
 
 ### D6 — A exceção do RP-13 para os prints: texto final
 
@@ -184,7 +255,7 @@ conferência do navegador já dá); onde está a regra de uso
 | Os prints novos diferirem dos do gestor (navegador e máquina diferentes) | Esperado: é a troca que o briefing pede. O lado a lado antigo × novo de 2 páginas vai no relatório (tarefa 2.2), para o gestor ver que é o mesmo design |
 | Regerar em outra máquina produzir 23 arquivos modificados por diferença de rasterização | O gabarito só se regera quando o arquivo do protótipo muda; o diff aparece inteiro no PR (D6) |
 | Um título do protótipo mudar e o script parar de achar a página | É o comportamento desejado: falha com código 1 e nomeia a página (D5) |
-| O print sair no meio de uma animação | D4: animações desligadas e espera do título e das fontes. Conferido na tarefa 1.3 |
+| O print sair no meio de uma animação, ou com a borboleta fora da pose | D4: finitas até o fim, infinitas pausadas no início do primeiro ciclo, espera do título e das fontes, e a conferência das borboletas, que falha com código 1. Conferido na tarefa 1.3 |
 | O link do cabeçalho não estar visível em 1280 px | O cabeçalho em 1280 px tem 114,4 px e traz os links (medido pelo gestor em `REFERENCIA-VISUAL.md` §1); a tarefa 1.2 confirma |
 | O `dev-frontend` trabalhar fora do `src/`, que é o escopo dele de costume | Escopo desta change fixado no Portão 1 (Q4): exatamente `scripts/prints-do-prototipo.mjs`, a linha no `package.json`, `prototipo/prints/` e `prototipo/README.md`. O líder técnico confere pelo `git status` |
 

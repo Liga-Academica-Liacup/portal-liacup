@@ -254,7 +254,7 @@ depósito.
 | **RP-10** | **Nenhum segredo** no repositório nem no histórico | Princípio IV · F00 FR-023 | Varredura do estado atual e do histórico |
 | **RP-11** | Toda tabela nasce com **controle de acesso por linha ativo**, e a política é testada provando que **bloqueia** — não só que permite | Princípio IV · F02 | Suíte de políticas, com o número de células de recusa verificadas |
 | **RP-12** | **Verificação que ninguém viu falhar não conta.** Toda verificação nova é demonstrada **falhando** diante de violação real e voltando ao verde. E toda verificação **diz quanto mediu** — arquivos varridos, elementos medidos, células checadas | F00 (V1–V5) · F01 · F02 | Duas execuções registradas com resultados opostos, **e o contador na saída** |
-| **RP-13** | **Artefato gerado não entra no controle de versão.** O que sai de um comando — build, cache, relatório, estado local de ferramenta — é reconstruível, difere em cada máquina e conflita em todo merge. Exceção é registrada por nome, e o motivo dela **nomeia o comando que demonstra o que quebra se o arquivo sair** — comando que é **executado quando a exceção entra** | F02 · F03 | `npm run verificar:artefatos` — pergunta ao git o que está **rastreado agora**, não o que o `.gitignore` lista |
+| **RP-13** | **Artefato gerado não entra no controle de versão.** O que sai de um comando — build, cache, relatório, estado local de ferramenta — é reconstruível, difere em cada máquina e conflita em todo merge. Exceção é registrada por nome, e o motivo dela **nomeia o comando que demonstra o que quebra se o arquivo sair** — comando que é **executado quando a exceção entra**. A única exceção sem comando é o gabarito visual (`prototipo/prints/`), aprovado pela liga e versionado por decisão do Gabriel em 18/11/2026: ele só se regera quando o arquivo do protótipo muda | F02 · F03 | `npm run verificar:artefatos` — pergunta ao git o que está **rastreado agora**, não o que o `.gitignore` lista |
 | **RP-14** | Toda feature com interface só fecha após portão de fidelidade visual humana: resultado renderizado comparado à referência aprovada, larguras e estados aplicáveis enumerados, diferenças encontradas registradas, diferenças deliberadas justificadas com motivo, **zero diferenças não explicadas** e aprovação nominal | ADR-0006 | Checklist de validação preenchido, registro de fidelidade com os três contadores e aprovação humana registrada antes do fechamento |
 
 **O RP-12 é o que sustenta os outros doze**, e tem duas metades que se completam:
@@ -275,7 +275,7 @@ Foi assim que `tsconfig.tsbuildinfo` e `supabase/.temp/cli-latest` seguiram vers
 linhas correspondentes serem escritas. Por isso a verificação não lê o `.gitignore`: ela pergunta ao
 git **o que está rastreado agora**, que é a única pergunta cuja resposta não engana.
 
-**A exceção é nominal, e o motivo dela nomeia um comando.** Hoje são **duas**:
+**A exceção é nominal, e o motivo dela nomeia um comando, salvo o gabarito visual** (emenda de 18/11/2026, change `prototipo-no-repositorio`, decisão do Gabriel na Q2). Hoje são **duas**:
 `src/lib/supabase/tipos.ts`, porque é o contrato tipado que as features consomem sem acesso ao
 banco — e que não fica à deriva, já que **`npm run banco:tipos:check`** regera a partir do esquema e
 falha se o versionado divergir. E `prototipo/prints/*.png`, os 23 prints do protótipo aprovado,
