@@ -21,7 +21,7 @@
 | Nome | Entra em | Responsabilidade | Ferramentas |
 |---|---|---|---|
 | `especificador` | Toda change | Escreve `proposal.md`, specs e `tasks.md` a partir do briefing, no formato do OpenSpec. Aponta o que ficou vago em vez de preencher | Leitura e escrita só em `openspec/` |
-| `dev-frontend` | Toda change de tela | Implementa páginas e componentes em Next.js e CSS Modules, só com tokens, seguindo `padroes-de-codigo.md` | Leitura, escrita, terminal |
+| `dev-frontend` | Toda change de tela | Implementa páginas e componentes em Next.js e CSS Modules, só com tokens, seguindo `docs/PADROES-DE-CODIGO.md` | Leitura, escrita, terminal |
 | `dev-dados` | A partir da R2 | Supabase: consultas, migrações, RLS, tipos gerados | Leitura, escrita, terminal |
 | `guardiao-visual` | Toda change de tela | Tira prints do site e do protótipo nas mesmas larguras (390 e 1280 px), monta o lado a lado e lista as diferenças. **Não corrige nada**: aponta | Leitura, terminal (Playwright) |
 | `qa-acessibilidade` | Toda change | Escreve e roda os testes e2e: axe, teclado, alvos de toque, rolagem horizontal nas larguras da definição de pronto | Leitura, escrita em `tests/`, terminal |
@@ -39,7 +39,9 @@ O Claude Code orquestra: chama cada subagente com uma tarefa e recebe de volta o
 
 O gestor (eu) conversa com o Claude Code através do Gabriel: eu escrevo o briefing e os ajustes de portão aqui no projeto, o Gabriel cola no Claude Code, e eu leio o resultado direto no repositório.
 
-Se a versão do Claude Code do Gabriel tiver o modo de equipes em que os agentes trocam mensagens entre si, dá para ligá-lo depois. Confiro isso na change `montar-equipe-de-agentes`, em vez de supor.
+**Medido em 18/11/2026, Claude Code 2.1.212:** não existe modo de equipes para ligar. Subagentes da mesma sessão não conversam entre si: a mensagem de um subagente sai e volta pela sessão principal. Sessões diferentes conseguem trocar mensagens, mas cada agente como sessão própria foi descartado: as permissões são por sessão (uma poderia fazer o que outra teve negado), a memória compartilhada já é o repositório, e seriam seis contextos para coordenar o que um coordena. Fica a orquestração com relatório.
+
+**Escopo de escrita é instrução, não trava**, para todo agente que tem ferramenta de escrita ou de terminal (`especificador`, `dev-frontend`, `dev-dados`, `guardiao-visual`, `qa-acessibilidade`). A lista de ferramentas não restringe pasta. Por isso o líder técnico confere pelo resultado: depois de cada passagem, o `git status` só pode mostrar arquivos dentro do escopo daquele agente. Só o `revisor`, sem nenhuma ferramenta de escrita, tem trava de verdade.
 
 ## 4. O ciclo, visto pela equipe
 
@@ -69,7 +71,7 @@ description: Compara as telas do site com o protótipo aprovado. Use ao fim de t
 tools: Read, Glob, Grep, Bash
 ---
 Você compara, não corrige.
-1. Leia docs/referencia-visual.md.
+1. Leia docs/REFERENCIA-VISUAL.md.
 2. Suba o site em modo de produção e tire prints das páginas da change em 390 e 1280 px.
 3. Pegue os prints de referência em prototipo/prints/ nas mesmas larguras.
 4. Gere o lado a lado em openspec/changes/<change>/prints/.
@@ -88,3 +90,33 @@ Cada uma custou pelo menos um episódio de trabalho perdido nesta obra.
 4. **Apagar branch com `git branch -d`, minúsculo, pelo terminal.** O botão do GitHub Desktop equivale a `-D` e apaga mesmo com trabalho não incorporado.
 5. **Conferir o resultado, não a aparência:** `git status --porcelain` vazio e `git rev-parse HEAD` igual ao `git ls-remote origin <branch>`.
 6. **Uma change, uma branch curta**, incorporada em poucos dias. Nada de branch de semanas.
+7. **O terminal do Gabriel é o Git Bash (MINGW64).** Todo comando entregue vem em sintaxe de bash. Mensagem de commit com mais de uma linha vai num arquivo temporário e entra com `git commit -F <arquivo>`.
+
+## 7. Protocolo de retorno
+
+O trabalho passa por três mãos (Claude Code, Gabriel, gestor), e cada retorno tem um formato fixo para ninguém precisar caçar o que importa.
+
+### 7.1 Claude Code para o Gabriel (e o gestor)
+
+O modelo literal fica no `CLAUDE.md`, que todo agente carrega sozinho. O princípio de cada parte:
+
+| Parte | Regra |
+|---|---|
+| Cabeçalho | Portão, change, estado em uma linha e **o que se pede ao Gabriel** (aprovar, decidir Qn, commitar) |
+| Decisões | Primeiro, antes de qualquer evidência. Cada Qn com opções, custo de cada uma e a recomendação. A numeração Qn não muda entre rodadas |
+| Para o gestor conferir | Branch, `HEAD`, caminhos dos artefatos e os comandos que reproduzem cada número. É o que permite ao gestor conferir no repositório em vez de acreditar no relato |
+| Evidência | Comando, código de saída e contadores. Saída literal curta, nunca resumo |
+| Mudanças | Contagem A/M/R/D e qualquer arquivo fora do escopo esperado |
+| Desvios e incompleto | O que saiu diferente do briefing, e o que não foi feito ou não foi medido, com essas palavras |
+| Próximo passo | Comandos em bash, mensagem de commit em arquivo com `git commit -F` |
+
+### 7.2 Gestor para o Gabriel
+
+1. **Primeira linha:** veredito (aprovado, aprovado com emendas, reprovado) e o que o Gabriel faz agora.
+2. **Decisões do Gabriel**, se houver: opções, custo e a recomendação.
+3. **O que o gestor conferiu**, com número, em poucas linhas.
+4. **Emendas** numeradas, cada uma com o motivo em uma frase.
+5. **Um bloco único para colar** no Claude Code, completo, que termina pedindo a entrega no formato do `CLAUDE.md`.
+6. **Comandos Git**, se houver, em bash.
+
+Fora o bloco para colar, cabe em uma tela.
