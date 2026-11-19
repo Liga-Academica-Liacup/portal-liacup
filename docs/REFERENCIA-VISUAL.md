@@ -12,14 +12,14 @@
 
 **O design não muda.** Foi aprovado pela liga. O que recomeça é a implementação no site.
 
-A change `prototipo-no-repositorio` põe o arquivo em `prototipo/` e, para cada uma das 10 páginas públicas, um print de página inteira em 390 px e outro em 1280 px em `prototipo/prints/`. Esses prints são o gabarito de toda change de tela.
+A change `prototipo-no-repositorio` põe o arquivo em `prototipo/` e, para cada uma das 11 páginas públicas, um print de página inteira em 390 px e outro em 1280 px em `prototipo/prints/`, mais o menu aberto em 390 px: 23 arquivos. A 11ª página, Processo seletivo, abre pelo botão do cabeçalho e não pelo menu; ela ficou fora dos 21 prints que o gestor gerou em 18/11, e a change a acrescenta. Esses prints são o gabarito de toda change de tela.
 
 **A rodada mobile v3 foi aplicada no protótipo.** Medido em 18/11, renderizando o arquivo no Chrome:
 
 | Medida | 390 px | 1280 px |
 |---|---|---|
 | Altura do cabeçalho | **62 px** (era 244) | 114,4 px |
-| Alvos de toque abaixo de 44 px, nas 10 páginas | **0** | entre 22 e 32 por página (links do menu e botões do desktop) |
+| Alvos de toque abaixo de 44 px, nas 10 páginas medidas (Processo seletivo não foi medida) | **0** | entre 22 e 32 por página (links do menu e botões do desktop) |
 | Páginas com rolagem horizontal | **0 de 10** | 0 de 10 |
 | Menu lateral | existe, com `aria-expanded`, `aria-controls` e botão de fechar | não se aplica |
 

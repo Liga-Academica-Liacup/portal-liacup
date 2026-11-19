@@ -21,6 +21,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node scripts/verificar-navegador.mjs && playwright test",
+    "prints:prototipo": "node scripts/verificar-navegador.mjs && node scripts/prints-do-prototipo.mjs",
     "test:banco": "vitest run --config vitest.banco.config.mts",
     "test:desempenho": "lhci autorun",
     "banco:migrar": "supabase db push",
