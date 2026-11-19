@@ -275,10 +275,15 @@ Foi assim que `tsconfig.tsbuildinfo` e `supabase/.temp/cli-latest` seguiram vers
 linhas correspondentes serem escritas. Por isso a verificação não lê o `.gitignore`: ela pergunta ao
 git **o que está rastreado agora**, que é a única pergunta cuja resposta não engana.
 
-**A exceção é nominal, e o motivo dela nomeia um comando.** Hoje é **uma**:
+**A exceção é nominal, e o motivo dela nomeia um comando.** Hoje são **duas**:
 `src/lib/supabase/tipos.ts`, porque é o contrato tipado que as features consomem sem acesso ao
 banco — e que não fica à deriva, já que **`npm run banco:tipos:check`** regera a partir do esquema e
-falha se o versionado divergir.
+falha se o versionado divergir. E `prototipo/prints/*.png`, os 23 prints do protótipo aprovado,
+saída de `npm run prints:prototipo`. O motivo é o único desta lista que **não é mecânico**: o
+gabarito precisa ser visto no GitHub por quem confere o Portão 2 sem rodar comando — o gestor e a
+liga. Não fica à deriva porque o design não muda; regerar é decisão, e o diff dos 23 arquivos
+aparece inteiro no PR que a tomar. O gabarito só se regera quando o arquivo do protótipo muda,
+porque regerar em outra máquina altera pixels sem que nada tenha mudado.
 
 ### Por que "motivo escrito" não bastava — o requisito pegou a própria exceção
 

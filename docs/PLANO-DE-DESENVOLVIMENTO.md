@@ -11,7 +11,7 @@
 3. **O CI não é simplificado.** Todas as verificações ficam. A change de CI só entra para melhorar a automação e o fluxo (seção 7, R0).
 4. **Conteúdo pendente não segura entrega.** Texto da Secretaria, acréscimo do FAQ 1, números da home e confirmação da marca UnB: a R1 sai sem eles, mostramos à liga e ajustamos depois.
 5. **Pasta local do repositório:** `C:\Projetos\portal-liacup` (não mais `C:\Dev`).
-6. **A rodada mobile v3 foi aplicada no protótipo.** Medido em 18/11: cabeçalho de 62 px em 390 px, nenhum alvo de toque abaixo de 44 px nas 10 páginas públicas em 390 px, nenhuma rolagem horizontal, menu lateral com `aria-expanded` e `aria-controls`.
+6. **A rodada mobile v3 foi aplicada no protótipo.** Medido em 18/11: cabeçalho de 62 px em 390 px, nenhum alvo de toque abaixo de 44 px em 390 px nas 10 páginas medidas (de 11; a de Processo seletivo, aberta pelo botão do cabeçalho, ficou fora da medição), nenhuma rolagem horizontal, menu lateral com `aria-expanded` e `aria-controls`.
 
 Documentos que andam junto com este: `equipe-de-agentes.md` (quem faz o quê e como os agentes trabalham), `constitution-sdd.md` v3 (as regras), `referencia-visual.md` (como o visual volta a seguir o protótipo) e `historico-fase-anterior.md` (o que foi feito até agosto e o que se aprendeu).
 
@@ -91,7 +91,7 @@ Cada release é publicável. Cada item da lista é uma *change* do OpenSpec, pen
 | `trocar-spec-kit-por-openspec` | `openspec init`, contexto do projeto preenchido com a constitution v3, Spec Kit e specs antigas movidos para `docs/historico/` |
 | `montar-equipe-de-agentes` | `CLAUDE.md` do repositório e os subagentes em `.claude/agents/`, conforme `equipe-de-agentes.md` |
 | `interruptor-em-construcao` | A variável `SITE_PUBLICADO` e a página em construção servida em produção para toda rota |
-| `prototipo-no-repositorio` | Arquivo do protótipo em `prototipo/`, o script que tira os prints e os prints de referência das 10 páginas em 390 e 1280 px |
+| `prototipo-no-repositorio` | Arquivo do protótipo em `prototipo/`, o script que tira os prints e os prints de referência das 11 páginas públicas em 390 e 1280 px |
 | `ajustar-ci-ao-novo-fluxo` | Todas as verificações atuais ficam. Entram: validação do OpenSpec, prints automáticos das páginas como anexo do CI e cobertura de e2e e Lighthouse derivada da lista de páginas |
 
 Ao fim da R0, o Gabriel recebe um link de prévia que ainda mostra pouco, e um repositório pronto para andar rápido.
