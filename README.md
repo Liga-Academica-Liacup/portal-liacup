@@ -61,6 +61,12 @@ npm run test:e2e
 
 Na primeira vez, o teste de ponta a ponta pede que voce instale o navegador. Ele diz o comando.
 
+O teste de ponta a ponta compila o site uma vez e sobe dois servidores, um em cada modo do
+interruptor `SITE_PUBLICADO`: a porta 3000 publicada e a 3001 não publicada. Antes de rodar, as
+portas 3000 e 3001 precisam estar livres: feche o `npm run dev` e qualquer `npm start`. Se uma
+delas estiver ocupada, o teste usa o servidor que já está aberto em vez de compilar o site de novo,
+e pode passar testando uma versão antiga do código.
+
 ## Todos os comandos
 
 | Comando                    | O que faz                                                                   |
@@ -161,7 +167,8 @@ quase sempre uma imagem grande demais. Corrija a causa.
 ## Como publicar
 
 Nao ha passo manual. O que entra na `main` vai para o ar sozinho, e toda alteracao proposta ganha
-um endereco de pre-visualizacao proprio.
+um endereco de pre-visualizacao proprio. Ate o lancamento da R1, o que vai para o ar fica atras do
+interruptor `SITE_PUBLICADO`: o publico ve so a pagina em construcao (ver "Variaveis de ambiente").
 
 O modelo de branches é **GitHub Flow**, escrito no
 [`docs/ADR-0005-modelo-de-branches.md`](docs/ADR-0005-modelo-de-branches.md). Em uma frase:
@@ -433,7 +440,9 @@ separador, ícone e estado vazio — convertidos do design que a liga aprovou.
 npm run dev
 ```
 
-Depois acesse <http://localhost:3000/vitrine>. Em produção, o mesmo endereço, no domínio do portal.
+Depois acesse <http://localhost:3000/vitrine>, com `SITE_PUBLICADO=true` no `.env.local`. Em
+produção, o mesmo endereço, no domínio do portal, só depois do lançamento: até lá, ele leva à
+página em construção (ver "Variaveis de ambiente").
 
 A vitrine é interna: **não recebe link de nenhuma página pública e não é indexada por buscador**.
 Ela existe para revisar o design system sem precisar navegar o site, e é sobre ela que rodam as
@@ -473,7 +482,47 @@ dado trata os tres estados obrigatorios — carregando, erro e vazio.
 ## Variaveis de ambiente
 
 Copie `.env.example` para `.env.local` e preencha. **Nenhum segredo real entra no repositorio.**
-Na F00 nenhuma variavel e usada ainda; elas estao listadas para que ninguem descubra tarde.
+O `.env.example` diz, ao lado de cada nome, para que a variável serve e se ela é segredo.
+
+### `SITE_PUBLICADO`: o interruptor "em construção"
+
+É ela que decide se quem visita vê o site ou só a página "Portal em construção". Ela existe para
+que o trabalho entre na `main` aos poucos sem aparecer para o público antes do lançamento: lançar é
+ligar o interruptor, e voltar atrás é desligá-lo. Não é segredo.
+
+**Só o texto exato `true` publica.** `TRUE`, `True`, `1`, `sim`, um espaço antes do `true`, vazio
+ou a variável ausente: o site fica **não publicado**. Erro de digitação esconde o site, nunca o
+expõe antes da hora.
+
+O que o visitante vê em cada modo:
+
+| Endereço                                         | Site não publicado                                                                  | Site publicado (`true`)                                        |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| A raiz (`/`)                                     | A página em construção, com `/` na barra                                            | A página em construção, até a página inicial nova ficar pronta |
+| `/em-construcao`                                 | A página em construção                                                              | Página não encontrada (404)                                    |
+| Qualquer outro (`/vitrine`, `/sobre`, inventado) | É levado para a raiz (redirecionamento temporário, 307) e vê a página em construção | A página que existe ali, ou página não encontrada (404)        |
+
+**Como fica na Vercel.** Na tela do projeto, _Settings › Environment Variables_:
+
+- **Production** (o endereço oficial do portal): **sem** `SITE_PUBLICADO` até o lançamento da R1.
+  Sem a variável, o público vê só a página em construção;
+- **Preview** (o endereço de pré-visualização de cada alteração proposta): `SITE_PUBLICADO` igual a
+  `true`, para revisar o site como ele está na `main`.
+
+**Mudar a variável só vale depois de uma nova implantação.** A Vercel lê a variável quando monta
+cada versão do site, e a versão que já está no ar continua com o valor antigo. Para pedir uma nova
+implantação: _Deployments_, na versão mais recente do ambiente que você mudou, menu `⋯` ›
+_Redeploy_. Uma alteração nova incorporada na `main` também gera uma nova implantação.
+
+- **Lançar a R1:** em _Production_, criar `SITE_PUBLICADO` com o valor `true` e pedir uma nova
+  implantação.
+- **Voltar atrás:** em _Production_, apagar a variável e pedir uma nova implantação.
+- **Conferir depois:** abra `/vitrine` no endereço oficial. Publicado, ela abre; não publicado, você
+  volta para a página em construção.
+
+**Na sua máquina.** O `.env.example` já traz `SITE_PUBLICADO=true`: copiado para o `.env.local`,
+`npm run dev` mostra o site inteiro. Para ver o que a produção mostra hoje, apague a linha do
+`.env.local`, ou troque por `false`, e reinicie o `npm run dev`.
 
 ## Dependencias
 
