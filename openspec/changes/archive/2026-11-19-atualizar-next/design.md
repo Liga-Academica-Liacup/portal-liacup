@@ -41,7 +41,8 @@ fixa as duas. A versão fixa é o que faz duas máquinas e o CI instalarem o mes
 ### D3 — O `sharp` não é instalado à parte
 
 Ele não é dependência direta, e o `next@16.4.6` já pede `^0.35.5`. Instalá-lo à parte criaria a
-23ª dependência direta (RP-01). A tarefa só lê a versão que veio e a registra; abaixo de 0.35.5, para.
+23ª dependência direta (RP-01). A tarefa confere a versão que veio, que é critério de aceite (emenda do Portão 1); abaixo de
+0.35.5, para e volta ao Gabriel, sem forçar nada.
 
 ### D4 — Prints antes e depois, pixel a pixel
 
@@ -93,5 +94,5 @@ satisfazer validação.
 
 ## Open Questions
 
-Q1 (o `proxy-addr`) e Q2 (quem executa a troca) estão na proposta, em "Decisões pendentes do
-Gabriel".
+Nenhuma aberta. Q1 = (a) e Q2 = (a), mais as emendas do `sharp` e da evidência, foram decididas
+pelo Gabriel no Portão 1, em 19/11/2026, e estão na proposta, em "Decisões do Portão 1".
