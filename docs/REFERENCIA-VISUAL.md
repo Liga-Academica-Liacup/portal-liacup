@@ -97,3 +97,4 @@ Dados que eram exemplo no protótipo e estão errados. Conferido em 18/11: o arq
 | Oito cargos de diretoria | Os seis do Estatuto, Art. 11º |
 | Kerolyn Ramos | Kerolyn Ramos Garcia |
 | Credenciais de demonstração do login | Saem; o login real é da R3 |
+| Processo seletivo: "Inscrições abertas até 28/08", "Prova de conhecimentos", entrevista "de 15 minutos", "Aula de integração" e as datas do cronograma | Eram exemplo. O edital tem duas etapas (formulário e entrevista online), e a página nasce no estado "inscrições fechadas". Texto e etapas vêm do `conteudo-institucional.md` §5; do protótipo vale só a composição |

@@ -26,6 +26,9 @@
 | `guardiao-visual` | Toda change de tela | Tira prints do site e do protótipo nas mesmas larguras (390 e 1280 px), monta o lado a lado e lista as diferenças. **Não corrige nada**: aponta | Leitura, terminal (Playwright) |
 | `qa-acessibilidade` | Toda change | Escreve e roda os testes e2e: axe, teclado, alvos de toque, rolagem horizontal nas larguras da definição de pronto | Leitura, escrita em `tests/`, terminal |
 | `revisor` | Fim de toda change | Revisão independente do diff contra a proposta, a constitution e os padrões. Começa com contexto limpo, sem ter visto a implementação | Só leitura |
+| `guardiao-appsec` | Fim de toda change, depois do revisor | Auditor de confiança zero: confere o diff contra o checklist de segurança AS-01 a AS-16 e dá o veredito BLOQUEADO, APROVADO COM RESSALVAS ou APROVADO. Não corrige; escreve o critério da correção. BLOQUEADO impede o Portão 2, e só o Gabriel aceita risco, por escrito | Só leitura |
+
+**Limite de rodadas:** depois de qualquer correção, o `revisor` e o `guardiao-appsec` rodam de novo. Se o mesmo agente pedir correção pela terceira rodada seguida, o líder técnico para e leva ao Gabriel o que está girando. Na change `montar-guardiao-appsec` o revisor rodou 13 vezes; o limite existe para isso não se repetir.
 
 **Regra de relatório para todos:** no máximo uma tela, com número quando houver número ("0 violações em 6 páginas", não "ficou acessível"), e o que ficou incompleto escrito como incompleto.
 
@@ -41,7 +44,7 @@ O gestor (eu) conversa com o Claude Code através do Gabriel: eu escrevo o brief
 
 **Medido em 18/11/2026, Claude Code 2.1.212:** não existe modo de equipes para ligar. Subagentes da mesma sessão não conversam entre si: a mensagem de um subagente sai e volta pela sessão principal. Sessões diferentes conseguem trocar mensagens, mas cada agente como sessão própria foi descartado: as permissões são por sessão (uma poderia fazer o que outra teve negado), a memória compartilhada já é o repositório, e seriam seis contextos para coordenar o que um coordena. Fica a orquestração com relatório.
 
-**Escopo de escrita é instrução, não trava**, para todo agente que tem ferramenta de escrita ou de terminal (`especificador`, `dev-frontend`, `dev-dados`, `guardiao-visual`, `qa-acessibilidade`). A lista de ferramentas não restringe pasta. Por isso o líder técnico confere pelo resultado: depois de cada passagem, o `git status` só pode mostrar arquivos dentro do escopo daquele agente. Só o `revisor`, sem nenhuma ferramenta de escrita, tem trava de verdade.
+**Escopo de escrita é instrução, não trava**, para todo agente que tem ferramenta de escrita ou de terminal (`especificador`, `dev-frontend`, `dev-dados`, `guardiao-visual`, `qa-acessibilidade`). A lista de ferramentas não restringe pasta. Por isso o líder técnico confere pelo resultado: depois de cada passagem, o `git status` só pode mostrar arquivos dentro do escopo daquele agente. Só o `revisor` e o `guardiao-appsec`, sem nenhuma ferramenta de escrita, têm trava de verdade.
 
 ## 4. O ciclo, visto pela equipe
 
@@ -54,6 +57,7 @@ Líder técnico   /opsx:apply    ->  dev-frontend / dev-dados implementam
                                ->  qa-acessibilidade testa
                                ->  guardiao-visual compara com o protótipo
                                ->  revisor revisa o diff
+                               ->  guardiao-appsec audita (BLOQUEADO volta para o dev)
 Líder técnico   /opsx:archive  (antes do PR: a main é protegida)
 Líder técnico   entrega arquivos + comandos Git + mensagem de commit
 Gabriel         commit, push, PR  ->  Vercel gera a prévia
@@ -62,7 +66,7 @@ PORTÃO 2        gestor confere o PR, Gabriel olha a prévia e faz o merge
 
 ## 5. Modelo de arquivo de subagente
 
-Os seis arquivos entram no repositório na change `montar-equipe-de-agentes`. O formato é este:
+Os arquivos dos agentes ficam em `.claude/agents/` (os seis primeiros entraram na change `montar-equipe-de-agentes`, o `guardiao-appsec` na `montar-guardiao-appsec`). O formato é este:
 
 ```markdown
 ---
