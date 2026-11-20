@@ -18,7 +18,7 @@ documento de origem, não para cá.
 | [`docs/constitution.md`](docs/constitution.md)                         | Os dez princípios e a hierarquia de decisão                                    |
 | [`docs/PADROES-DE-CODIGO.md`](docs/PADROES-DE-CODIGO.md)               | Pastas, camadas, componentes, testes e os requisitos permanentes RP-01 a RP-14 |
 | [`docs/REFERENCIA-VISUAL.md`](docs/REFERENCIA-VISUAL.md)               | O protótipo aprovado como gabarito, e o que pode ser diferente dele            |
-| [`docs/SEGURANCA.md`](docs/SEGURANCA.md)                               | O que se protege, a superfície de cada release e o checklist AS-01 a AS-16     |
+| [`docs/SEGURANCA.md`](docs/SEGURANCA.md)                               | O que se protege, a superfície de cada release e o checklist de segurança      |
 | [`docs/conteudo-institucional.md`](docs/conteudo-institucional.md)     | Todo texto que vai ao ar. Nada é reescrito nem inventado                       |
 | [`docs/PLANO-DE-DESENVOLVIMENTO.md`](docs/PLANO-DE-DESENVOLVIMENTO.md) | As releases, o ciclo de uma change e a definição de pronto                     |
 | [`docs/EQUIPE-DE-AGENTES.md`](docs/EQUIPE-DE-AGENTES.md)               | Quem faz o quê, e o protocolo de retorno                                       |

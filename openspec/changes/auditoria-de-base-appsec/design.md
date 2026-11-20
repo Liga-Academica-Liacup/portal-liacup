@@ -7,17 +7,18 @@ na `main` (HEAD `8bf8204`), salvo onde está dito outro autor.
 
 | O que | Situação |
 | --- | --- |
-| Arquivos rastreados | 297. Binários por extensão: 32, todos PNG. São 8 em `assets/`, 23 em `prototipo/prints/` e 1 em `public/` (`logo-liacup-256.png`) |
+| Arquivos rastreados | 297, por `git ls-tree -r --name-only main`. `git ls-files main` não aceita revisão e devolve 0 linhas. Binários por extensão: 32, todos PNG. São 8 em `assets/`, 23 em `prototipo/prints/` e 1 em `public/` (`logo-liacup-256.png`) |
 | `.gitattributes` | Marca `*.png`, `*.jpg`, `*.woff2` e `*.ico` como `binary`. O `git grep -I` da lista fechada pula esses arquivos sem avisar |
-| Origem já conhecida | `prototipo/prints/` sai de `scripts/prints-do-prototipo.mjs`. A origem de `assets/` e de `public/` não está escrita em lugar nenhum |
+| Origem dos binários | Os 23 de `prototipo/prints/` saem de `npm run prints:prototipo`. A origem dos outros 9 foi confirmada pelo Gabriel no Portão 1 (D6). Os 9 entraram no commit `6636202` (F00, 21/08). `public/logo-liacup-256.png` tem o mesmo blob de `assets/logo-liacup-256.png` (`bfa1d3d5`) |
 | Chave de serviço | Citada em 7 arquivos: `ci.yml`, `scripts/purgar-dado-pessoal.mjs`, `scripts/verificar-chave-de-servico.mjs`, `src/lib/supabase/servidor.ts`, `supabase/migrations/0012_concessoes_de_tabela.sql`, `supabase/verificacoes/rls-por-tabela.sql` e `tests/politicas/clientes.ts` |
 | Banco | 13 migrações e 13 tabelas da F02 |
 | Rotas com página | `(site)/` raiz, `(site)/em-construcao` e `(interno)/vitrine`. Para o `curl`, viram `/`, `/em-construcao` e `/vitrine` |
+| Produção | `https://liacup.com.br/` responde 308 para `https://www.liacup.com.br/` (P10 da `montar-guardiao-appsec`). O `www` é a produção de fato (E1) |
 | `npm audit` | 34 avisos: 2 baixos, 12 moderados, 20 altos, 0 críticos. Medido na retomada da `montar-guardiao-appsec`, depois do `next` 16.4.6 |
 | OpenSpec | CLI global, 2.1.0, fora do `package.json`. São 6 skills em `.claude/skills/`, todas `openspec-*`, e cada uma declara `allowed-tools: Bash(openspec:*)` no cabeçalho |
 | `.agents/` | Existe no disco com as mesmas 6 skills. É ignorado pelo `.gitignore` (RP-13) e fica fora da lista auditada |
 | Configuração de ambiente | `.claude/settings.json`, `.claude/settings.local.json` e `.mcp.json` não existem |
-| "AS-01 a AS-16" | Aparece em 7 lugares: `docs/constitution.md:86`, `docs/EQUIPE-DE-AGENTES.md:29`, `CLAUDE.md:21`, `openspec/config.yaml:51` e `.claude/agents/guardiao-appsec.md:3`, `:25` e `:105`. A linha `:3` foi achada pelo especificador; o levantamento do líder técnico tinha 6 |
+| "AS-01 a AS-16" | Aparecia em 7 lugares. Os do gestor, `docs/constitution.md:86` e `docs/EQUIPE-DE-AGENTES.md:29`, já foram emendados por ele no disco (Q1). Ficam 5, do líder técnico: `CLAUDE.md:21`, `openspec/config.yaml:51` e `.claude/agents/guardiao-appsec.md:3`, `:25` e `:105` |
 
 **Pendências herdadas da `montar-guardiao-appsec`.** Cada uma tem bloco de destino (D4):
 
@@ -71,11 +72,11 @@ binário. A ordem das tarefas é fixa:
 3. A auditoria por blocos (grupo 3).
 4. O aceite, a revisão do diff e a validação (grupo 4).
 
-Os arquivos que esta change altera (`docs/SEGURANCA.md`, `.claude/agents/guardiao-appsec.md`,
-`CLAUDE.md`, `openspec/config.yaml` e, pela Q1, dois documentos do gestor) são lidos na versão nova,
-da árvore de trabalho. A versão antiga deixa de existir com o merge, e a versão nova também passa
-pela auditoria do diff, na tarefa 4.2. Os arquivos plantados dos RP-12 não existem durante o grupo
-3. O líder técnico confere isso pelo `git status` antes do primeiro bloco.
+Alguns arquivos mudam nesta change: `docs/SEGURANCA.md`, `.claude/agents/guardiao-appsec.md`,
+`CLAUDE.md`, `openspec/config.yaml` e os dois documentos que o gestor já emendou (Q1). Eles são
+lidos na versão nova, da árvore de trabalho. A versão antiga deixa de existir com o merge, e a nova
+também passa pela auditoria do diff, na tarefa 4.2. Os arquivos plantados dos RP-12 não existem
+durante o grupo 3. O líder técnico confere isso pelo `git status` antes do primeiro bloco.
 
 O sha da `main` no começo do grupo 3 vai para o relatório. A contagem de 297 vale para esse sha.
 
@@ -83,16 +84,25 @@ O sha da `main` no começo do grupo 3 vai para o relatório. A contagem de 297 v
 
 O texto novo da §5 diz:
 
-- **A lista auditada** é a saída de `git ls-files` da `main` naquele sha. Como todo arquivo dela é
-  uma linha de `git ls-files` da `main`, a condição de `<caminho>` das formas que mostram conteúdo
-  já está cumprida.
+- **A lista auditada** é a saída de `git ls-tree -r --name-only main` naquele sha. Essa é uma
+  **forma nova da lista fechada**, `git ls-tree -r --name-only <rev>`, sem lacuna além de `<rev>`.
+  Ela só lista nomes de arquivo, não mostra conteúdo.
+- **A condição de `<caminho>`.** A §5 de hoje exige, nas formas que mostram conteúdo, que
+  `<caminho>` apareça numa linha "de `git ls-files` da `main`". Essa formulação tem o mesmo defeito
+  medido acima: `git ls-files main` não lê revisão. A condição passa a citar a saída de
+  `git ls-tree -r --name-only main`. Como todo arquivo da lista auditada é uma linha dessa saída, a
+  condição fica cumprida.
 - **AS-01 no histórico:** por `git log --all --oneline -S '<texto>'`, forma que já existe, um
   padrão por pedido.
 - **A conferência curta não se aplica.** O modo base é sempre o checklist inteiro, AS-01 a AS-17.
 - **As precondições da §5 valem iguais:** ambiente, `.npmrc`, registro e `MSYS_NO_PATHCONV=1`.
+- **Os hosts do `curl` passam a ser quatro (E1).** A lacuna `<endereço>` aceita
+  `https://liacup.com.br`, `https://www.liacup.com.br`, `https://portal-liacup.vercel.app` e a
+  prévia da change. O motivo: `liacup.com.br` responde 308 para o `www`, então o `www` é a
+  produção de fato. A conferência do host montado vale igual: o host é exatamente um dos quatro.
 - **O `curl` em produção vale como resultado no modo base**, porque produção é a `main`. É o
-  contrário do modo diff, em que produção não mede a change. Os caminhos possíveis são `/`,
-  `/em-construcao` e `/vitrine`.
+  contrário do modo diff, em que produção não mede a change. O host de produção é o `www`, e os
+  caminhos possíveis são `/`, `/em-construcao` e `/vitrine`.
 - **Quando roda:** nesta change e na última change de cada release, antes de a release ir ao ar.
   Pelo plano de hoje, são a `ajustar-ci-ao-novo-fluxo` na R0 e a `lancamento-r1` na R1.
 - **O formato da lista de achados:** as seis coisas, mais a release e a change proposta, ordenadas
@@ -109,8 +119,8 @@ mistura os dois modos e deixa a conferência curta aplicável por engano.
 
 ### D4 — Os blocos e a junção (Q7)
 
-Cada arquivo de `git ls-files` cai em exatamente um bloco, pela primeira regra que casar, na ordem
-da tabela.
+Cada arquivo de `git ls-tree -r --name-only main` cai em exatamente um bloco, pela primeira regra
+que casar, na ordem da tabela.
 
 | Bloco | Caminhos | Códigos em foco |
 | --- | --- | --- |
@@ -152,9 +162,16 @@ Bloqueia, como diz o briefing:
 - agente que ganha ferramenta de escrita ou de terminal sem decisão registrada;
 - gancho, variável de ambiente ou servidor MCP novo sem decisão do Gabriel;
 - instrução que enfraquece regra da constitution, dos padrões ou do `SEGURANCA.md`;
-- skill gerada pelo OpenSpec alterada à mão. A forma de conferir isso é a Q5.
+- skill gerada pelo OpenSpec alterada à mão.
 
-Três leituras, para o Gabriel confirmar no Portão 1:
+**Como se confere a skill (Q5 (b)).** Diff que toca `.claude/skills/` só vale se a proposta da
+change disser que rodou `openspec update`, com a versão antes e depois. Ele também precisa trazer a
+saída de `openspec --version`. Sem isso, BLOQUEADO. O `openspec --version` é forma nova da lista
+fechada, só de leitura e sem lacuna. No modo base, o guardião confere o conteúdo das 6 skills como
+configuração: `allowed-tools`, ganchos e instruções. Limite declarado: a regra não prova a origem.
+Uma alteração à mão feita junto com um update verdadeiro passaria.
+
+Três leituras do texto do briefing, que o Portão 1 não emendou:
 
 - **"Ferramenta" inclui o `allowed-tools` de skill**, e não só o `tools` de agente. As 6 skills já
   declaram `Bash(openspec:*)`. Skill que ganha outra ferramenta é o mesmo caso que agente que ganha
@@ -167,19 +184,34 @@ Esta change também mexe em `.claude/agents/guardiao-appsec.md`. A mudança não
 ferramenta, e a decisão é esta proposta, então ela não deve bloquear. A auditoria do diff (4.2)
 confere isso como qualquer outra mudança de AS-17.
 
-O "AS-01 a AS-16" dos 7 lugares muda conforme a Q1.
+**O intervalo (Q1 (b)).** Nos 5 lugares do líder técnico, "AS-01 a AS-16" vira "o checklist de
+segurança", sem intervalo. A linha `:105` do agente passa a dizer "cada código da §4". A frase da
+§4 sobre o próximo código livre passa a citar AS-18.
 
-### D6 — Segredo em binário (Q3, Q4)
+### D6 — Segredo em binário (Q3 (b), Q4 (a) com (i))
 
-- **Origem declarada.** Cada um dos 32 binários casa com uma linha do registro de origem. Onde o
-  registro mora é a Q4. A linha diz o padrão de caminho e o tipo de origem: "gerado por" e o
-  script versionado, ou "ativo aprovado por" e quem aprovou. A origem de `assets/` e de
-  `public/logo-liacup-256.png` o especificador não sabe, e não inventa: o Gabriel diz no Portão 1.
-- **A forma de contagem** entra na lista fechada da §5, pela Q3. Ela usa `-c`, que devolve só
+- **O registro de origem** é uma tabela nova no `docs/SEGURANCA.md` (Q4 (a)), com estas linhas:
+
+  | Caminho | Arquivos | Origem |
+  | --- | --- | --- |
+  | `prototipo/prints/*.png` | 23 | Gerado por rotina versionada: saída de `npm run prints:prototipo` |
+  | `assets/logo-liacup.png` | 1 | Ativo aprovado: logo oficial enviada pela liga, em alta resolução e fundo transparente. Está registrada como resolvida no plano de agosto e no `conteudo-institucional.md` |
+  | `assets/icone-email-gmail.png` | 1 | Ativo aprovado: ícone do Gmail entregue pela liga para o contato |
+  | `assets/logo-liacup-{32,48,96,180,256,512}.png` | 6 | Ativo aprovado: gerados pela coordenação a partir da logo oficial, no pacote da F00 |
+  | `public/logo-liacup-256.png` | 1 | Ativo aprovado: cópia idêntica de `assets/logo-liacup-256.png`, com o mesmo blob, `bfa1d3d5` |
+
+  São 32 arquivos. Os 9 de `assets/` e `public/` entraram no commit `6636202` (F00, 21/08). As 6
+  logos derivadas contam como "ativo aprovado", e não como "gerado por rotina versionada": a rotina
+  da coordenação que as gerou não está no repositório.
+- **Binário fora do registro** é achado de AS-01, alto e confirmado (Q4 (i)), então BLOQUEADO até
+  a linha entrar. A falta da linha é o que está confirmado.
+- **A forma de contagem** entra na lista fechada da §5. Ela usa `-c`, que devolve só
   `arquivo:número`, e `-a`, que trata binário como texto. Há uma variante para uma versão
-  registrada (`<rev>`) e outra para a árvore de trabalho (`--untracked`). As lacunas e as recusas
-  são as da §5. **A medir na tarefa 2.2:** se `-a` vence o atributo `binary` do `.gitattributes`.
-  Se não vencer, a forma não serve, e a change para e volta ao Gabriel.
+  registrada (`<rev>`) e outra para a árvore de trabalho (`--untracked`). Pela Q3 (b), `<caminho>`
+  pode ser um arquivo ou uma das pastas com binário: `assets`, `prototipo/prints` e `public`. É a
+  única exceção à regra "arquivo, nunca pasta", e vale porque a saída não mostra conteúdo. As
+  outras recusas da §5 valem iguais. **A medir na tarefa 2.2:** se `-a` vence o atributo `binary`
+  do `.gitattributes`. Se não vencer, a forma não serve, e a change para e volta ao Gabriel.
 - **Histórico de binário.** Não se presume que `git log -S` ache texto dentro de binário. A tarefa
   2.2 mede isso com `git log --all --oneline -S 'IHDR'`, porque todo PNG tem esse texto no
   cabeçalho. Se a saída trouxer os commits que acrescentaram os PNG, o `-S` alcança binário. Se
@@ -192,13 +224,16 @@ O "AS-01 a AS-16" dos 7 lugares muda conforme a Q1.
 **Alternativa descartada:** o guardião ler o binário com a própria ferramenta de leitura. O `Read`
 mostra a imagem, não os metadados, e o `Grep` pula binário. Foi esse o cenário da Q11.
 
-### D7 — A classificação dos 34 avisos (Q2)
+### D7 — A classificação dos 34 avisos (Q2 (c))
+
+A lista fechada ganha a forma `npm audit --omit=dev`, sem lacuna e com as mesmas precondições de
+`npm`. Ela conta os avisos que chegam à produção. "Quem traz" sai da leitura do lockfile.
 
 O bloco 2 devolve uma tabela com uma linha por aviso e estas colunas:
 
 - pacote e versão;
 - severidade;
-- produção ou desenvolvimento;
+- produção ou desenvolvimento, conferido contra a saída de `npm audit --omit=dev`;
 - onde roda: navegador, servidor, compilação, CI ou só a máquina de quem desenvolve;
 - quem o traz, pela cadeia até uma dependência direta;
 - se é explorável hoje: sim, não ou hipótese, com o motivo.
@@ -228,8 +263,8 @@ qualquer agente. Nenhum `npm run verificar` roda enquanto ela existe.
 2. Cria `assets/rp12-teste.png`, não rastreado, com um comando de uma linha que usa o Node já
    instalado. Nenhum arquivo de `scripts/` e nenhuma dependência nova entram. O PNG leva um bloco
    tEXt não comprimido com um segredo falso, num formato que não é de chave real de provedor.
-3. Roda a forma de contagem da Q3 na árvore de trabalho. Espera `arquivo:número`, com número de 1
-   ou mais, e nenhum pedaço do valor na saída.
+3. Roda a forma de contagem na árvore de trabalho, com `<caminho>` `assets`. Espera
+   `assets/rp12-teste.png:<n>`, com n de 1 ou mais, e nenhum pedaço do valor na saída.
 4. Apaga o arquivo, roda a mesma forma e espera saída vazia, com código 1. Confere que o
    `git status` voltou ao do passo 1.
 5. Faz as duas medições da D6: `-a` contra o atributo `binary`, e `git log -S 'IHDR'`.
@@ -237,7 +272,7 @@ qualquer agente. Nenhum `npm run verificar` roda enquanto ela existe.
 A pasta `assets/` foi escolhida porque não vai ao ar. Em `public/` um erro de commit publicaria o
 arquivo.
 
-### D10 — O aceite (Q6, recomendação (a))
+### D10 — O aceite (Q6 (a))
 
 A junção (3.6) termina numa entrega curta ao Gabriel, no modelo do `CLAUDE.md`, só com a lista. O
 Gabriel aceita os achados um por um ou em bloco, com a release como prazo, ou recusa. O líder
@@ -248,6 +283,9 @@ técnico então faz duas coisas:
 
 Só depois disso rodam o `revisor` e o guardião sobre o diff (4.2). Assim, eles veem a §6 como ela
 vai entrar na `main`, e não há rodada extra depois do Portão 2.
+
+É um desvio aprovado do briefing, que punha o aceite no Portão 2. O Portão 2 passa a conferir o
+aceite já transcrito.
 
 Achado que o Gabriel não aceitar continua bloqueando. A change não chega ao Portão 2 até haver
 correção, que é outra change, entrando antes.
@@ -261,7 +299,7 @@ líder técnico transcreveu, e o gestor confere o aceite literal no Portão 2.
 | Quem | Arquivos |
 | --- | --- |
 | Líder técnico | `docs/SEGURANCA.md`, `.claude/agents/guardiao-appsec.md`, `CLAUDE.md`, a linha da hierarquia em `openspec/config.yaml` e as transcrições do `relatorio.md`. Nenhum desses arquivos está no escopo de um subagente; é o mesmo caso da D11 da `montar-guardiao-appsec` |
-| Gestor, por decisão do Gabriel (Q1) | `docs/constitution.md:86` e `docs/EQUIPE-DE-AGENTES.md:29`. A constitution muda com data e motivo registrados |
+| Gestor (Q1) | `docs/constitution.md:86` e `docs/EQUIPE-DE-AGENTES.md:29`, já emendados no disco. Entram no commit da change. O líder técnico não escreve neles; confere |
 | Ninguém | `src/`, `tests/`, `supabase/`, `scripts/`, `.github/` e as dependências. Nenhum dev entra nesta change |
 
 ### D12 — A parte 6 sai
@@ -269,8 +307,7 @@ líder técnico transcreveu, e o gestor confere o aceite literal no Portão 2.
 Com a parte 6 seriam 16 tarefas. Pela regra do briefing, ela vai para a change de CI
 (`ajustar-ci-ao-novo-fluxo`), junto com a I3 (busca de segredo antes de cada envio). Os blocos
 deixam no relatório o insumo dela: para cada item conferido aqui à mão, se a conferência é mecânica.
-Isso é observação, não recomendação com custo. Se a Q6 for para a opção (b), a tarefa 4.1 sai do
-rastreio, e a parte 6 pode voltar como tarefa 4.4.
+Isso é observação, não recomendação com custo.
 
 ## Risks / Trade-offs
 
@@ -279,127 +316,36 @@ rastreio, e a parte 6 pode voltar como tarefa 4.4.
 | São pelo menos 12 invocações de `opus`: 5 blocos, as decisões, a junção, 2 do RP-12 e a do diff | Bloco sem pedido dispensa a decisão. O número de invocações vai para o relatório |
 | A auditoria acha bloqueante explorável e a change fica parada | É a regra. A correção imediata entra antes, como o `next`, e o bloco roda de novo (D3) |
 | O Gabriel não aceita algum achado, e a change não pode corrigir | O achado continua bloqueando, e vira change de correção antes desta fechar (D10) |
-| `https://liacup.com.br/` responde 308 para `www.liacup.com.br` (P10 da change anterior), e `www` não está entre os três hosts da §5. O `curl` mostra só os cabeçalhos do redirecionamento | AS-15 se mede em `https://portal-liacup.vercel.app`. Se ele também redirecionar, AS-15 sai pela leitura do `next.config.ts` e o `curl` fica não verificado. Acrescentar host à §5 exige decisão do Gabriel e não entra aqui |
 | `git log -S` não examina commit de merge (A4) | A busca no histórico declara esse limite. A contagem por `<rev>` na `main` cobre o estado final |
 | Busca por texto não acha conteúdo comprimido | A origem declarada cobre, e o relatório diz "coberto só pela origem declarada" (D6) |
 | A forma `-a` não vence o atributo `binary` | Medido na 2.2. Se falhar, a change para e volta ao Gabriel, sem inventar outra forma |
+| A forma de contagem por pasta, na árvore de trabalho, mostra o nome de um arquivo não rastreado | A saída só traz nome e contagem, nunca conteúdo. É o custo aceito na Q3 (b) |
+| A regra da skill (Q5 (b)) não prova a origem | Limite declarado na D5. O conteúdo da skill é auditado como configuração em todo caso |
 | A cópia do agente plantada em `.claude/agents/` é carregada como agente na sessão | Ninguém a invoca, ela é apagada antes da passagem seguinte e o `git status` é conferido (D8) |
 | Gancho no cabeçalho de agente ou skill roda antes de o guardião ler (passagem 13) | O bloco 1 vem primeiro (D4). Mudar o `CLAUDE.md` para "parar antes do próximo agente" é mudança de processo e fica fora desta change, como achado possível do bloco 1 |
 | `.agents/` existe no disco, ignorado, com cópias das skills | Fica fora da lista por definição (D3). Registrado aqui para não parecer esquecido |
 | Duas auditorias de base seguidas na R0: esta e a `ajustar-ci-ao-novo-fluxo` | A segunda começa pela §6 e por esta lista, mas continua sendo da `main` inteira, como manda o briefing. O custo dela é declarado na proposta da change de CI |
-| Dar nome de dono à lista sem ser dono do backlog | Pela Q8, o guardião sugere a release pela §3, e quem agrupa em change é o líder técnico. O Gabriel ratifica no aceite |
+| Dar nome de dono à lista sem ser dono do backlog | Pela Q8 (b), o guardião sugere a release pela §3, e quem agrupa em change é o líder técnico. O Gabriel ratifica no aceite |
 
 ## Migration Plan
 
 Não há migração nem mudança no site. Para voltar atrás, basta reverter o commit: o checklist volta
 a AS-16, a §5 perde o modo base e a §6 perde as linhas aceitas.
 
-## Questões para o Portão 1
+## Decisões do Portão 1 (20/11/2026)
 
-São decisões do Gabriel. Cada uma muda texto de regra ou o número de tarefas, então nenhuma pode
-ficar para depois.
-
-**Q1. O intervalo "AS-01 a AS-16" nos 7 lugares.** A constitution (`:86`) e o
-`EQUIPE-DE-AGENTES.md` (`:29`) são do gestor, e a constitution só muda por decisão do Gabriel.
-
-- (a) Trocar por "AS-01 a AS-17" nos 7 lugares · custo: envelhece de novo no AS-18, e cada código
-  novo obriga uma emenda da constitution.
-- (b) Trocar por "o checklist de segurança", sem intervalo, nos 7 lugares. No agente, a linha
-  `:105` passa a dizer "cada código da §4" · custo: uma emenda agora e nenhuma depois; o leitor
-  perde o número à vista.
-- (c) Mudar só os 5 lugares do líder técnico e deixar a constitution e o `EQUIPE` · custo: os
-  documentos do topo da hierarquia ficam errados.
-- Recomendo (b), porque o número já mora na §4 e não precisa estar repetido em mais 7 lugares. O
-  gestor emenda os dois documentos dele, com data e motivo; o líder técnico, os outros 5.
-
-**Q2. Uma forma nova de `npm` para classificar os 34 avisos.** O briefing só autorizou forma nova
-para o binário.
-
-- (a) Duas formas: `npm audit --omit=dev` e `npm explain '<pacote>'`, com `<pacote>` num padrão
-  fixo · custo: duas entradas a mais na lista fechada; o `npm explain` lê `node_modules` e a lacuna
-  nova precisa do mesmo cuidado da passagem 4 do revisor.
-- (b) Nenhuma forma. O guardião classifica lendo o `package-lock.json`, pelo campo `"dev": true` e
-  pelas cadeias · custo: "quem traz" vira inferência, com confiança "provável", e não medição.
-- (c) Uma forma, `npm audit --omit=dev`, que conta os avisos de produção. "Quem traz" sai da
-  leitura do lockfile · custo: uma entrada a mais, sem lacuna nova, com as mesmas precondições de
-  `npm`.
-- Recomendo (c), porque o número que decide "chega ao servidor ou ao navegador" passa a ser medido
-  e não inferido, sem lacuna nova.
-
-**Q3. A forma de contagem para binário.** São duas variantes: `<rev>` e `--untracked`.
-
-- (a) `<caminho>` é um arquivo, um por pedido, como nas formas que mostram conteúdo · custo: 32
-  binários vezes uns 8 padrões, perto de 256 pedidos.
-- (b) `<caminho>` pode ser uma das pastas com binário (`assets`, `prototipo/prints`, `public`),
-  porque a forma só devolve `arquivo:número` · custo: a recusa "arquivo, nunca pasta" ganha uma
-  exceção, só nessas formas; pelo nome do arquivo na saída, dá para saber que um arquivo ignorado
-  existe.
-- Recomendo (b), porque a saída não mostra conteúdo, e 256 pedidos tornariam a conferência
-  impraticável em toda release.
-
-**Q4. Onde mora a origem declarada, e o que acontece com binário fora dela.**
-
-- Onde:
-  - (a) Uma tabela nova no `docs/SEGURANCA.md` · custo: o documento cresce; em compensação, todo
-    binário novo toca um documento que governa e recebe o checklist inteiro.
-  - (b) Um documento novo em `docs/` · custo: mais um arquivo para a diretoria manter, que precisa
-    entrar na lista do que governa da §5.
-  - (c) Um `README.md` por pasta · custo: a regra fica espalhada, e o `prototipo/README.md` já tem
-    outro assunto.
-- Binário fora do registro:
-  - (i) Achado de AS-01, alto e confirmado (a falta da linha está confirmada), então BLOQUEADO até
-    a linha entrar · custo: trava a change que acrescenta imagem sem a linha, mas a correção é uma
-    linha.
-  - (ii) Achado médio, com AS-01 "não verificado" para o arquivo · custo: não bloqueia, e um PNG em
-    `public/` vai ao ar sem origem.
-- Recomendo (a) com (i). O Gabriel informa no Portão 1 quem aprovou os 8 PNG de `assets/` e o de
-  `public/`, porque o especificador não sabe e não inventa.
-
-**Q5. Como conferir que uma skill não foi alterada à mão.** O guardião não roda
-`openspec update`, e esse comando escreve no disco.
-
-- (a) O líder técnico roda `openspec update` num clone temporário fora do repositório e traz o
-  `git status` do clone · custo: forma que escreve e roda a CLI. A lista fechada hoje só tem forma
-  que lê.
-- (b) Regra de declaração. Diff que toca `.claude/skills/` só vale com a proposta dizendo "rodou
-  `openspec update`", com a versão antes e depois, e com a saída de `openspec --version` (forma
-  nova, só leitura). Sem isso, BLOQUEADO. No modo base, o guardião confere o conteúdo das 6 skills
-  como configuração (`allowed-tools`, ganchos, instruções) · custo: não prova a origem; uma
-  alteração à mão junto com um update verdadeiro passaria.
-- (c) Desistir de detectar "à mão". Toda mudança em skill é auditada pelo conteúdo, como
-  configuração de agente · custo: a regra do briefing fica sem conferência própria.
-- Recomendo (b), porque é mecânica e não põe na lista fechada uma forma que escreve.
-
-**Q6. Quando o Gabriel aceita os riscos.** O archive é antes do PR, e o Portão 2 é no PR. Pela §5
-e pelo `CLAUDE.md`, BLOQUEADO impede o Portão 2, e um achado da `main` sem aceite bloqueia.
-
-- (a) Uma entrega intermediária, depois da junção e antes da revisão do diff, só para o aceite
-  (D10) · custo: uma ida e volta a mais com o Gabriel, e uma tarefa rastreada (4.1). Com ela são 15
-  tarefas, e a parte 6 sai.
-- (b) O aceite no Portão 2, como diz o briefing. A change volta do arquivo, ganha a §6 num commit a
-  mais na mesma branch, e o `revisor` e o guardião rodam de novo depois disso · custo: a §5 precisa
-  de uma exceção escrita ("na auditoria de base, achado anterior à change não impede o Portão 2 dela
-  enquanto espera o aceite"), que afrouxa a regra do bloqueio. Ainda há o commit extra e a rodada
-  extra. Ficam 14 tarefas, e a parte 6 cabe.
-- Recomendo (a), porque mantém a regra do bloqueio como está e põe a §6 no mesmo PR que o gestor
-  confere.
-
-**Q7. Os blocos.** O briefing lista cinco: dependências, CI, banco, código do site e configuração
-de agente.
-
-- (a) Os cinco, com a tabela da D4. `docs/`, `openspec/` e `README.md` entram no bloco de
-  configuração e governança; `assets/` e `prototipo/` no de código do site; a configuração da raiz
-  no de CI · custo: o bloco 1 fica grande, porque lê 7 agentes, 6 skills e toda a governança.
-- (b) Um sexto bloco, "documentação e ativos" · custo: mais uma tarefa, 16 no total, e a change
-  vira duas.
-- Recomendo (a), porque o que fica de fora dos cinco é quase todo governança, e o AS-17 já manda o
-  bloco 1 ler os documentos que as instruções não podem enfraquecer.
-
-**Q8. Quem preenche a release e a change de cada achado.**
-
-- (a) O guardião preenche as duas · custo: o auditor passa a planejar o backlog, fora do "aponta e
-  exige".
-- (b) O guardião diz a release pela superfície da §3, e o líder técnico agrupa em changes na
-  junção · custo: o agrupamento é proposta do líder técnico, que o gestor confere no Portão 2.
-- (c) O gestor preenche depois · custo: a lista sai incompleta, contra o critério de aceite.
-- Recomendo (b), e o Gabriel ratifica as duas colunas no aceite.
+- **Q1 (b).** "O checklist de segurança", sem intervalo. O gestor já emendou
+  `docs/constitution.md` e `docs/EQUIPE-DE-AGENTES.md`, que entram no commit; os outros 5 lugares
+  são do líder técnico (D5).
+- **Q2 (c).** Uma forma nova, `npm audit --omit=dev`; "quem traz" sai da leitura do lockfile (D7).
+- **Q3 (b).** Na forma de contagem, `<caminho>` pode ser uma das pastas com binário (D6).
+- **Q4 (a) com (i).** O registro de origem é uma tabela no `docs/SEGURANCA.md`. Binário fora dele é
+  AS-01 alto confirmado. A origem dos 9 binários foi confirmada pelo Gabriel (D6).
+- **Q5 (b).** Skill só muda com `openspec update` declarado na proposta e com a saída de
+  `openspec --version` (D5).
+- **Q6 (a).** O aceite é dado numa entrega intermediária, antes da revisão do diff. É desvio
+  aprovado do briefing (D10).
+- **Q7 (a).** Os cinco blocos do briefing, com a tabela da D4.
+- **Q8 (b).** O guardião diz a release, e o líder técnico agrupa os achados em changes.
+- **E1.** `https://www.liacup.com.br` entra entre os hosts da forma de `curl`, que passam a ser
+  quatro. O `www` é a produção de fato (D3).

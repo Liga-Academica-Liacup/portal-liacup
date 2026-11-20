@@ -48,7 +48,7 @@ context: |
 
   Hierarquia de decisão, em que o número menor vence: (1) a constitution; (2) o documento de
   aceite assinado pela liga; (3) docs/PADROES-DE-CODIGO.md, docs/REFERENCIA-VISUAL.md e
-  docs/SEGURANCA.md, onde mora o checklist de segurança AS-01 a AS-16; (4) a proposta e as specs
+  docs/SEGURANCA.md, onde mora o checklist de segurança; (4) a proposta e as specs
   da change; (5) o design.md da change; (6) preferência de implementação.
   Conflito no mesmo nível: parar e perguntar ao Gabriel.
 

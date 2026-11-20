@@ -14,9 +14,10 @@ for achado vira lista com dono e prazo. Nada de produto é corrigido aqui.
 ## What Changes
 
 - **Modo "auditoria de base"** na §5 de `docs/SEGURANCA.md`. A lista auditada deixa de ser o diff
-  e passa a ser a `main` inteira (`git ls-files` da `main`), com o histórico para AS-01. Roda nesta
-  change e na última change de cada release, antes de a release ir ao ar. É feita por blocos e
-  juntada no fim.
+  e passa a ser a `main` inteira (`git ls-tree -r --name-only main`), com o histórico para AS-01.
+  Roda nesta change e na última change de cada release, antes de a release ir ao ar. É feita por
+  blocos e juntada no fim. A forma de `curl` ganha o host `https://www.liacup.com.br`, que é a
+  produção de fato (E1).
 - **AS-17, configuração de agente:** `CLAUDE.md`, `.claude/agents/`, `.claude/skills/`,
   `.claude/settings*.json`, `.mcp.json` e `openspec/config.yaml`. Bloqueia:
   - agente que ganha ferramenta de escrita ou de terminal sem decisão registrada;
@@ -24,8 +25,9 @@ for achado vira lista com dono e prazo. Nada de produto é corrigido aqui.
   - instrução que enfraquece regra da constitution, dos padrões ou do próprio `SEGURANCA.md`;
   - skill gerada pelo OpenSpec alterada à mão.
 - **Segredo em arquivo binário.** Todo binário do que for auditado tem origem declarada, e a busca
-  de AS-01 cobre binários sem imprimir o conteúdo. A forma nova de pedido de comando, se for
-  preciso, entra na lista fechada da §5 e só conta, nunca mostra. Uma limitação fica escrita: texto
+  de AS-01 cobre binários sem imprimir o conteúdo. A forma nova de contagem entra na lista
+  fechada da §5 e só conta, nunca mostra. O registro de origem dos 32 binários fica no
+  `SEGURANCA.md`. Uma limitação fica escrita: texto
   dentro de bloco comprimido não aparece em busca por texto, e quem cobre esse caso é a origem
   declarada.
 - **O `guardiao-appsec.md`** passa a conhecer o modo base, os blocos e a junção. A lista de
@@ -48,8 +50,7 @@ for achado vira lista com dono e prazo. Nada de produto é corrigido aqui.
 
 **Contagem de tarefas.** Com a parte 6 do briefing (recomendação de verificação automática no CI,
 incluída a busca de segredo antes do push, I3), seriam 16 tarefas. Pela regra do briefing, **a
-parte 6 sai e vai direto para a change de CI** (`ajustar-ci-ao-novo-fluxo`). Ficam 15. Se a Q6 for
-decidida pela opção (b), sobra uma vaga, e a parte 6 pode voltar (ver `design.md`).
+parte 6 sai e vai direto para a change de CI** (`ajustar-ci-ao-novo-fluxo`). Ficam 15.
 
 ## Fora de escopo
 
@@ -87,27 +88,24 @@ Nenhuma.
 
 | O que | Efeito |
 | --- | --- |
-| `docs/SEGURANCA.md` | §4 ganha AS-17. §5 ganha o modo base, a regra do binário e as formas novas da lista fechada (Q2, Q3). Ganha também a origem dos binários (Q4). A §6 recebe as linhas aceitas (Q6). Versão 2 (líder técnico) |
-| `.claude/agents/guardiao-appsec.md` | Modo base, blocos e junção. `tools` igual (líder técnico) |
-| `CLAUDE.md`, `openspec/config.yaml` | O intervalo "AS-01 a AS-16", conforme a Q1 (líder técnico) |
-| `docs/constitution.md`, `docs/EQUIPE-DE-AGENTES.md` | O mesmo intervalo, conforme a Q1 (gestor, por decisão do Gabriel) |
+| `docs/SEGURANCA.md` | §4 ganha AS-17. A §5 ganha o modo base, a regra do binário e cinco formas novas na lista fechada. São elas: `git ls-tree -r --name-only <rev>`, as duas de contagem de binário, `npm audit --omit=dev` e `openspec --version`. O `curl` passa a ter quatro hosts (E1). Entra o registro de origem dos 32 binários. A §6 recebe as linhas aceitas. Versão 2 (líder técnico) |
+| `.claude/agents/guardiao-appsec.md` | Modo base, blocos e junção, e "o checklist de segurança" no lugar do intervalo. `tools` igual (líder técnico) |
+| `CLAUDE.md`, `openspec/config.yaml` | "AS-01 a AS-16" vira "o checklist de segurança" (Q1 (b), líder técnico) |
+| `docs/constitution.md`, `docs/EQUIPE-DE-AGENTES.md` | Já emendados pelo gestor no disco (Q1 (b)). Entram no commit da change |
 | `openspec/changes/auditoria-de-base-appsec/relatorio.md` | A lista de achados e as passagens do guardião (líder técnico transcreve) |
 | `src/`, `tests/`, `supabase/`, `scripts/`, `.github/`, dependências | Nada muda |
 | Comportamento do site | Nenhum. Não há prévia visual |
 
-## Questões para o Portão 1
+## Decisões do Portão 1 (20/11/2026)
 
-As opções, o custo de cada uma e a recomendação estão em `design.md`, seção "Questões para o
-Portão 1".
+O texto de cada decisão está em `design.md`, seção "Decisões do Portão 1".
 
-- **Q1.** Quem atualiza o "AS-01 a AS-16" nos 7 lugares que o citam, e se o texto passa a ser
-  "AS-01 a AS-17" ou "o checklist", sem intervalo.
-- **Q2.** Se a lista fechada ganha forma nova de `npm` para separar aviso de produção de aviso de
-  desenvolvimento.
-- **Q3.** A forma nova de contagem para binário: arquivo por arquivo ou pasta inteira.
-- **Q4.** Onde mora a origem declarada dos binários, e o que acontece com binário fora dela.
-- **Q5.** Como o guardião confere que uma skill não foi alterada à mão.
-- **Q6.** Quando o Gabriel aceita os riscos: numa entrega antes do archive, ou no Portão 2 com a
-  change voltando do arquivo.
-- **Q7.** Os cinco blocos do briefing absorvem o resto da `main`, ou entra um sexto bloco.
-- **Q8.** Quem preenche a release e a change de cada achado da lista.
+- Q1 (b), Q2 (c), Q3 (b), Q4 (a) com (i), Q5 (b), Q6 (a), Q7 (a) e Q8 (b).
+- E1: `https://www.liacup.com.br` entra entre os hosts do `curl`.
+
+**Desvio aprovado do briefing (Q6 (a)).** O briefing punha o aceite dos riscos no Portão 2. Ele
+passa para uma entrega intermediária, depois da junção da auditoria e antes da revisão do diff. O
+Portão 2 confere o aceite já transcrito e as linhas da §6 no mesmo PR.
+
+**Correção de fato.** `git ls-files main` não aceita revisão e devolve 0 linhas. A lista da
+`main` é `git ls-tree -r --name-only main`, que devolve 297 (medido pelo líder técnico).

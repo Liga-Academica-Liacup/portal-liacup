@@ -1,6 +1,6 @@
 # Constitution · Portal LIACUP
 
-**Versão 3.1 · 19 de novembro de 2026** · a v3 foi aprovada pelo Gabriel junto com o plano v7 em 18/11; a 3.1 acrescenta o `docs/SEGURANCA.md` à hierarquia (decisão do Gabriel na Q3 da change `montar-guardiao-appsec`)
+**Versão 3.2 · 20 de novembro de 2026** · a v3 foi aprovada pelo Gabriel junto com o plano v7 em 18/11; a 3.1 (19/11) acrescentou o `docs/SEGURANCA.md` à hierarquia; a 3.2 (20/11) troca o intervalo "AS-01 a AS-16" por "o checklist de segurança" (Q1 da change `auditoria-de-base-appsec`)
 
 A v3 encurta a v2 (19/08/2026): mantém os princípios de produto, troca o Spec Kit pelo OpenSpec e tira as regras que tinham virado verificação da verificação. Este texto alimenta o contexto do projeto no OpenSpec e o `CLAUDE.md` do repositório.
 
@@ -83,7 +83,7 @@ O Portal LIACUP é o site da Liga Acadêmica Multiprofissional de Cuidados Palia
 
 1. Esta constitution
 2. O documento de aceite assinado pela liga
-3. `docs/PADROES-DE-CODIGO.md`, `docs/REFERENCIA-VISUAL.md` e `docs/SEGURANCA.md` (o checklist de segurança AS-01 a AS-16 mora neste)
+3. `docs/PADROES-DE-CODIGO.md`, `docs/REFERENCIA-VISUAL.md` e `docs/SEGURANCA.md` (o checklist de segurança mora neste)
 4. A proposta e as specs da change
 5. O `design.md` da change
 6. Preferência de implementação

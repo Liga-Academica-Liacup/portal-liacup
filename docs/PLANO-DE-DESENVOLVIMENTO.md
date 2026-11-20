@@ -142,6 +142,7 @@ Materiais, conteúdo educativo e recomendações de leitura, galeria (Julho Verd
 - **Sprint de uma semana.** Começa com o briefing das changes e termina com um link de prévia.
 - **A cada duas sprints**, uma prévia para a liga, com um resumo curto em linguagem não técnica.
 - **Limites que impedem o inchaço:** a proposta de uma change cabe em cinco minutos de leitura, e uma change tem no máximo umas quinze tarefas. Passou disso, quebra em duas.
+- **Dieta de processo (20/11):** uma sessão do Claude Code por change; guardião proporcional ao risco da release; relatório de uma tela por agente, sem transcrição literal; no máximo duas rodadas por agente. Detalhes em `EQUIPE-DE-AGENTES.md` §2.
 
 ## 9. O ciclo de uma change, passo a passo
 
@@ -149,7 +150,7 @@ Materiais, conteúdo educativo e recomendações de leitura, galeria (Julho Verd
 2. **Gabriel:** cola o briefing no Claude Code.
 3. **Claude Code:** roda `/opsx:propose`. O subagente especificador escreve `proposal.md`, as specs e `tasks.md` dentro de `openspec/changes/<change>/`.
 4. **Portão 1.** Gestor revisa a proposta lendo o repositório; Gabriel aprova ou pede ajuste. Nenhuma linha de código antes disso.
-5. **Claude Code:** roda `/opsx:apply`. Desenvolvedor implementa, QA testa, guardião visual compara com o protótipo, revisor revisa o diff, e o guardião de segurança audita por último. BLOQUEADO volta para o dev. Depois de **qualquer** correção, o revisor e o guardião rodam de novo, com contexto limpo. Se o mesmo agente pedir correção pela terceira rodada seguida, o líder técnico para e leva ao Gabriel o que está girando, em vez de seguir corrigindo.
+5. **Claude Code:** roda `/opsx:apply`. Desenvolvedor implementa, QA testa, guardião visual compara com o protótipo, revisor revisa o diff, e o guardião de segurança audita por último. BLOQUEADO volta para o dev. Depois de **qualquer** correção, o revisor e o guardião rodam de novo, com contexto limpo. Se o mesmo agente pedir correção numa terceira rodada, o líder técnico para e leva ao Gabriel o que está girando, em vez de seguir corrigindo.
 6. **Claude Code:** roda `/opsx:archive` antes do PR. As specs da change entram em `openspec/specs/` e a change vai para `openspec/changes/archive/`. É antes, e não depois do merge, porque a `main` é protegida: arquivar depois exigiria um segundo PR só para isso.
 7. **Claude Code:** entrega os arquivos prontos e a lista de comandos Git com a mensagem de commit.
 8. **Gabriel:** faz o commit, o push e abre o PR. A Vercel gera a prévia.
