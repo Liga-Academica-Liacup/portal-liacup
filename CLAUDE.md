@@ -18,6 +18,7 @@ documento de origem, não para cá.
 | [`docs/constitution.md`](docs/constitution.md)                         | Os dez princípios e a hierarquia de decisão                                    |
 | [`docs/PADROES-DE-CODIGO.md`](docs/PADROES-DE-CODIGO.md)               | Pastas, camadas, componentes, testes e os requisitos permanentes RP-01 a RP-14 |
 | [`docs/REFERENCIA-VISUAL.md`](docs/REFERENCIA-VISUAL.md)               | O protótipo aprovado como gabarito, e o que pode ser diferente dele            |
+| [`docs/SEGURANCA.md`](docs/SEGURANCA.md)                               | O que se protege, a superfície de cada release e o checklist AS-01 a AS-16     |
 | [`docs/conteudo-institucional.md`](docs/conteudo-institucional.md)     | Todo texto que vai ao ar. Nada é reescrito nem inventado                       |
 | [`docs/PLANO-DE-DESENVOLVIMENTO.md`](docs/PLANO-DE-DESENVOLVIMENTO.md) | As releases, o ciclo de uma change e a definição de pronto                     |
 | [`docs/EQUIPE-DE-AGENTES.md`](docs/EQUIPE-DE-AGENTES.md)               | Quem faz o quê, e o protocolo de retorno                                       |
@@ -37,6 +38,7 @@ Líder técnico   /opsx:apply    ->  dev-frontend / dev-dados implementam
                                ->  qa-acessibilidade testa
                                ->  guardiao-visual compara com o protótipo
                                ->  revisor revisa o diff
+                               ->  guardiao-appsec audita (BLOQUEADO volta para o dev)
 Líder técnico   /opsx:archive  (antes do PR: a main é protegida)
 Líder técnico   entrega arquivos + comandos Git + mensagem de commit
 Gabriel         commit, push, PR  ->  Vercel gera a prévia
@@ -46,16 +48,31 @@ PORTÃO 2        gestor confere o PR, Gabriel olha a prévia e faz o merge
 **Nenhuma linha de código sem proposta aprovada pelo Gabriel.** Se a spec estiver errada, pare e
 reporte; não corrija por conta própria.
 
+**O guardião de segurança bloqueia.** As regras moram em [`docs/SEGURANCA.md`](docs/SEGURANCA.md)
+§5; em resumo:
+
+- BLOQUEADO impede o Portão 2, e o dev corrige. Depois de **toda** correção feita depois da revisão
+  do diff, o `revisor` e o `guardiao-appsec` rodam de novo, cada um numa invocação nova, sem o
+  relatório anterior.
+- Só o Gabriel aceita um risco, por escrito, e o líder técnico transcreve o aceite literal no
+  `relatorio.md`. Agente nenhum aceita risco. Bloqueante confirmado e já explorável hoje em
+  produção nunca vira risco aceito: vira change de correção imediata, antes de qualquer outra.
+- O que o guardião não verifica sem terminal volta como pedido de comando. O líder técnico roda só
+  o pedido que usa uma forma da lista fechada da §5, recusa o resto, e devolve a saída literal, com
+  o código de saída, mascarando todo valor que pareça segredo.
+
 ## Escopo de escrita é instrução, não trava
 
-A lista de `tools` de um subagente concede capacidade — ler, escrever, rodar comando — e **não
-restringe pasta**. Então o escopo de `especificador`, `dev-frontend`, `dev-dados`,
-`guardiao-visual` e `qa-acessibilidade` vale por instrução. Só o `revisor`, sem nenhuma ferramenta
-de escrita ou de terminal, tem trava de verdade.
+São sete agentes, um arquivo cada, em `.claude/agents/`. A lista de `tools` de um subagente concede
+capacidade — ler, escrever, rodar comando — e **não restringe pasta**. Então o escopo de
+`especificador`, `dev-frontend`, `dev-dados`, `guardiao-visual` e `qa-acessibilidade` vale por
+instrução. Só o `revisor` e o `guardiao-appsec`, sem nenhuma ferramenta de escrita ou de terminal,
+têm trava de verdade.
 
 **Obrigação do líder técnico:** depois de chamar qualquer subagente, conferir que o `git status` só
 mostra arquivos do escopo daquele agente. Arquivo fora do escopo entra na seção 4 da entrega, pelo
-nome.
+nome. O escopo do `revisor` e do `guardiao-appsec` é nenhum: o `git status` fica igual antes e
+depois da passagem deles.
 
 Cada agente registra o que fez em `openspec/changes/<change>/relatorio.md`, copiado de
 [`openspec/changes/MODELO-relatorio.md`](openspec/changes/MODELO-relatorio.md).
@@ -107,6 +124,7 @@ Comandos que reproduzem os números da seção 3: `<comandos>`
 | ------- | --------------- | ---------- |
 
 Saída literal curta quando ela for o critério de aceite; nunca resumo no lugar dela.
+No Portão 2: **veredito do `guardiao-appsec`**, com a contagem por severidade e os riscos aceitos.
 
 **4. Mudanças**
 A <n> · M <n> · R <n> · D <n>. Arquivos fora do escopo esperado: <lista ou "nenhum">.

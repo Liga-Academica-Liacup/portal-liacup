@@ -92,6 +92,9 @@ Cada release é publicável. Cada item da lista é uma *change* do OpenSpec, pen
 | `montar-equipe-de-agentes` | `CLAUDE.md` do repositório e os subagentes em `.claude/agents/`, conforme `equipe-de-agentes.md` |
 | `interruptor-em-construcao` | A variável `SITE_PUBLICADO` e a página em construção servida em produção para toda rota |
 | `prototipo-no-repositorio` | Arquivo do protótipo em `prototipo/`, o script que tira os prints e os prints de referência das 11 páginas públicas em 390 e 1280 px |
+| `montar-guardiao-appsec` | O sétimo agente, guardião de segurança, como etapa obrigatória antes do Portão 2, com checklist de bloqueio e `docs/SEGURANCA.md`. Ideia do Gabriel, 19/11 |
+| `atualizar-next` | **Correção imediata**, aberta pelo primeiro veredito do guardião em 19/11: o `next` 16.3.1 está na faixa de duas falhas críticas de execução remota de código (uma delas a CVE-2026-96889, no otimizador de imagem). Sobe para a versão corrigida mais recente da linha 16.4 |
+| `auditoria-de-base-appsec` | Auditoria de linha de base da `main` inteira pelo guardião, com cada achado ligado a uma release. Saiu da `montar-guardiao-appsec` pela E2 |
 | `ajustar-ci-ao-novo-fluxo` | Todas as verificações atuais ficam. Entram: validação do OpenSpec, prints automáticos das páginas como anexo do CI e cobertura de e2e e Lighthouse derivada da lista de páginas |
 
 Ao fim da R0, o Gabriel recebe um link de prévia que ainda mostra pouco, e um repositório pronto para andar rápido.
@@ -146,7 +149,7 @@ Materiais, conteúdo educativo e recomendações de leitura, galeria (Julho Verd
 2. **Gabriel:** cola o briefing no Claude Code.
 3. **Claude Code:** roda `/opsx:propose`. O subagente especificador escreve `proposal.md`, as specs e `tasks.md` dentro de `openspec/changes/<change>/`.
 4. **Portão 1.** Gestor revisa a proposta lendo o repositório; Gabriel aprova ou pede ajuste. Nenhuma linha de código antes disso.
-5. **Claude Code:** roda `/opsx:apply`. Desenvolvedor implementa, QA testa, guardião visual compara com o protótipo, revisor revisa o diff.
+5. **Claude Code:** roda `/opsx:apply`. Desenvolvedor implementa, QA testa, guardião visual compara com o protótipo, revisor revisa o diff, e o guardião de segurança audita por último. BLOQUEADO volta para o dev. Depois de **qualquer** correção, o revisor e o guardião rodam de novo, com contexto limpo. Se o mesmo agente pedir correção pela terceira rodada seguida, o líder técnico para e leva ao Gabriel o que está girando, em vez de seguir corrigindo.
 6. **Claude Code:** roda `/opsx:archive` antes do PR. As specs da change entram em `openspec/specs/` e a change vai para `openspec/changes/archive/`. É antes, e não depois do merge, porque a `main` é protegida: arquivar depois exigiria um segundo PR só para isso.
 7. **Claude Code:** entrega os arquivos prontos e a lista de comandos Git com a mensagem de commit.
 8. **Gabriel:** faz o commit, o push e abre o PR. A Vercel gera a prévia.
@@ -161,7 +164,8 @@ Uma change está pronta quando:
 3. o PR traz os prints do protótipo e do site lado a lado em 390 e 1280 px, com as diferenças listadas e aceitas pelo Gabriel;
 4. todo texto vem do `conteudo-institucional.md`, e nada foi inventado;
 5. alvos de toque têm pelo menos 44 px, campos usam fonte de 16 px, os pares de cor seguem o ADR-0003 e cada controle mostra os estados interativos do ADR-0006;
-6. o subagente revisor aprovou.
+6. o subagente revisor aprovou;
+7. o guardião de segurança não deu BLOQUEADO, ou o Gabriel aceitou por escrito cada risco que sobrou, com motivo, prazo e a change que vai resolver. Achado bloqueante confirmado que já seja explorável em produção não se aceita: vira change de correção imediata.
 
 ## 11. Pendências que dependem da liga ou do Gabriel
 

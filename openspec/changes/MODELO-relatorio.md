@@ -47,11 +47,23 @@ número. Incompleto declarado incompleto.
 - **Achados:** <arquivo · o que está errado · regra violada, ou "nenhum">
 - **Não conseguiu conferir:** <o que, ou "nada">
 
+## guardiao-appsec
+
+O guardião não escreve: o líder técnico transcreve o relatório literal, uma subseção por passagem.
+
+- **Veredito:** <BLOQUEADO | APROVADO COM RESSALVAS | APROVADO> · bloqueante <n> · alta <n> ·
+  média <n> · baixa <n> · informativa <n> · conferência <completa | curta (AS-01 e AS-09)>
+- **Achados:** <código · severidade · confiança · arquivo:linha · cenário · critério, ou "nenhum">
+- **Pedidos de comando:** <Pn · AS-xx · comando · saída literal, mascarada · código de saída; ou
+  Pn · AS-xx · recusado · motivo; ou "nenhum">
+- **Riscos aceitos pelo Gabriel:** <código · achado · aceite literal do Gabriel · motivo · prazo ·
+  change que resolve · data, ou "nenhum">
+
 ## Líder técnico — conferência de escopo
 
 Escopo de escrita é instrução, não trava: depois de cada passagem, o `git status` só pode mostrar
 arquivos do escopo daquele agente. Escopos esperados — `especificador` `openspec/` ·
 `dev-frontend` `src/` · `dev-dados` `src/` e `supabase/` · `guardiao-visual` prints da change ·
-`qa-acessibilidade` `tests/` · `revisor` nenhum.
+`qa-acessibilidade` `tests/` · `revisor` nenhum · `guardiao-appsec` nenhum.
 
 - **Arquivos fora do escopo, por agente:** <agente · arquivo, ou "nenhum em nenhuma passagem">
