@@ -49,7 +49,8 @@ número. Incompleto declarado incompleto.
 
 ## guardiao-appsec
 
-O guardião não escreve: o líder técnico transcreve o relatório literal, uma subseção por passagem.
+O guardião não escreve: o líder técnico registra o relatório em uma tela por passagem, com a lista
+de achados inteira; a saída de comando e o aceite do Gabriel vão literais.
 
 - **Veredito:** <BLOQUEADO | APROVADO COM RESSALVAS | APROVADO> · bloqueante <n> · alta <n> ·
   média <n> · baixa <n> · informativa <n> · conferência <completa | curta (AS-01 e AS-09)>

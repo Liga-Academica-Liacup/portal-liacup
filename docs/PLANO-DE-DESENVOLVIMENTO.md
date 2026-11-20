@@ -101,22 +101,27 @@ Ao fim da R0, o Gabriel recebe um link de prévia que ainda mostra pouco, e um r
 
 ### R1 · Site institucional mínimo (o lançamento)
 
-Conteúdo fixo, vindo do `conteudo-institucional.md`. Nenhum banco, nenhum formulário, nenhum dado pessoal coletado. O menu mostra só as páginas que existem e cresce a cada release, sem rota vazia.
+Conteúdo fixo, vindo do `conteudo-institucional.md`. Nenhum banco, nenhum formulário, nenhum dado pessoal coletado. O menu, o rodapé e os botões mostram só as páginas que existem, a partir de uma lista única que também alimenta os testes; cada página nova se acrescenta a ela. Ordem decidida pelo Gabriel em 20/11: as duas changes técnicas que sobraram da R0 entram entre as páginas.
 
-| Change | O que entrega |
-|---|---|
-| `layout-publico` | Cabeçalho, menu lateral no celular e rodapé, iguais ao protótipo |
-| `pagina-inicial` | Hero, frase, números e chamadas para Sobre, Projetos e Processo seletivo |
-| `pagina-sobre-e-equipe` | Apresentação, história, objetivo, finalidade, docentes, fundadores e os seis cargos do Estatuto |
-| `pagina-projetos` | As quatro frentes de trabalho |
-| `pagina-processo-seletivo` | Apresentação, pré-requisitos, etapas, FAQ e o estado "inscrições fechadas" com convite para o Instagram |
-| `pagina-contato` | E-mail, Instagram e sede (FCTS, Campus UnB Ceilândia), sem formulário |
-| `lancamento-r1` | Metadados, `sitemap.xml`, imagem de compartilhamento, página 404, nota de privacidade curta, e o interruptor ligado em produção |
+| # | Change | O que entrega |
+|---|---|---|
+| 1 | `layout-e-hero` | Cabeçalho, menu lateral no celular, rodapé e o hero da página inicial. Com o site publicado, a raiz passa a mostrar a inicial. Nasce a lista única de páginas |
+| 2 | `pagina-processo-seletivo` | A conversão principal: apresentação, quem pode, pré-requisitos, etapas, FAQ, estado "inscrições fechadas". O botão do cabeçalho e o "Quero participar" aparecem |
+| 3 | `endurecer-agentes-e-git-local` | Os 7 achados de configuração de agente e Git local da auditoria, e a regra 2 da dieta escrita na §5 do `SEGURANCA.md` e na spec |
+| 4 | `pagina-sobre-e-equipe` | Apresentação, história, objetivo, finalidade, impacto, docentes, fundadores e os seis cargos |
+| 5 | `ajustar-ci-ao-novo-fluxo` | Os 4 achados de CI da auditoria, a validação do OpenSpec, os prints automáticos e a busca de segredo antes do push |
+| 6 | `pagina-projetos` | As quatro frentes de trabalho |
+| 7 | `pagina-contato` | E-mail, Instagram e sede, sem formulário |
+| 8 | `inicio-completo` | Números, chamadas para as páginas que existem, bloco de contato e faixa do processo seletivo |
+| 9 | `lancamento-r1` | Os 6 achados da auditoria para a R1 (inclusive cabeçalhos de segurança), metadados, `sitemap.xml`, 404, nota de privacidade, auditoria completa do guardião e o interruptor ligado em produção |
+
+Ficam para depois, na página inicial: próximos eventos e notícias (R2) e conteúdo educativo (R5).
 
 ### R2 · Notícias e eventos
 
 | Change | O que entrega |
 |---|---|
+| `papeis-da-diretoria-no-banco` | **Antes de tudo na R2.** Os 10 achados de banco da auditoria, entre eles o LB-01: papel atribuído por administrador, recusa testada para conta comum. Até lá, cadastro público e login anônimo desligados em produção |
 | `leitura-de-noticias-e-eventos` | Leitura do Supabase com o esquema da F02, com dados inseridos por nós |
 | `pagina-noticias` | Lista, filtro por categoria e cartão com link externo |
 | `pagina-eventos` | Próximos e anteriores |
@@ -125,11 +130,11 @@ Conteúdo fixo, vindo do `conteudo-institucional.md`. Nenhum banco, nenhum formu
 
 ### R3 · Painel mínimo
 
-Login com recuperação de senha (Supabase Auth com Resend), painel com listar, criar, editar e excluir notícias e eventos, exclusão com confirmação. **Teste de aceite da release:** uma pessoa da liga publica uma notícia sozinha.
+Começa pela `seguranca-do-painel` (4 achados da auditoria). Login com recuperação de senha (Supabase Auth com Resend), painel com listar, criar, editar e excluir notícias e eventos, exclusão com confirmação. **Teste de aceite da release:** uma pessoa da liga publica uma notícia sozinha.
 
 ### R4 · Fale com a Liga
 
-Formulário de contato, caixa de mensagens no painel, aviso por e-mail, aviso de privacidade no formulário, retenção e purga.
+Começa pela `seguranca-do-formulario` (4 achados da auditoria). Formulário de contato, caixa de mensagens no painel, aviso por e-mail, aviso de privacidade no formulário, retenção e purga.
 
 ### R5 · Acervo e acabamento
 

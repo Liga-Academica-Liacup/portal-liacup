@@ -122,6 +122,7 @@ sentido. Todo relatório do guardião cita os achados por código.
     conhecido: a regra não prova a origem, e uma alteração à mão feita junto com um update
     verdadeiro passaria. Por isso o conteúdo da skill é auditado como configuração em todo caso.
 
+  Mudança nomeada numa decisão registrada não bloqueia por causa dela, em nenhum dos quatro casos.
   **Decisão registrada** é a proposta aprovada no Portão 1 que nomeia a mudança, ou o aceite escrito
   do Gabriel no `relatorio.md`. O relatório do guardião cita onde ela está.
 
@@ -247,7 +248,8 @@ As lacunas:
   técnico recusa também, **pelo nome e sem
   depender do `.gitignore`**, todo caminho cujo último
   trecho começa com `.env`, e todo caminho que o `.gitignore` da `main` ignora. Se o diff mexe no
-  `.gitignore`, essas duas formas só valem para arquivos já rastreados na `main`: o `.gitignore`
+  `.gitignore`, as formas de conteúdo (`git grep -n` e `git diff`) e as duas de contagem só valem
+  para arquivos já rastreados na `main`, e a exceção de pasta das formas de contagem deixa de valer: o `.gitignore`
   está no diff, e o diff não pode desfazer a regra que o protege. Nas formas que só respondem sim
   ou não (`git ls-files` e `git check-ignore`), vale qualquer caminho no padrão, inclusive
   `.env.local`.
@@ -286,10 +288,9 @@ devolve `https://registry.npmjs.org/`; se não, recusa. O `npm audit` manda a á
 ao registro configurado, e o npm lê o `.npmrc` em todo comando.
 
 Se o diff da change toca algum `.gitattributes`, de qualquer pasta, a busca de AS-01 nas formas
-de `git grep -n -I` **não pode concluir "sem achado"**: um atributo `-diff` ou `binary` faz o `git
-grep -I` pular o arquivo em silêncio. O item fica **não verificado**, com esse motivo, até o
-guardião pedir a mesma busca por uma forma de contagem (`-a`) e ler o arquivo com a própria
-ferramenta de leitura.
+de `git grep` **não pode concluir "sem achado"**: um atributo `-diff` ou `binary` faz o `git grep
+-I` pular o arquivo em silêncio. O item fica **não verificado**, com esse motivo, e o guardião lê o
+arquivo com a própria ferramenta de leitura.
 
 O líder técnico roda as formas no Git Bash com `MSYS_NO_PATHCONV=1` no ambiente. Sem isso, o
 Git Bash troca um `<texto>` que começa com `/` por um caminho do Windows antes de entregá-lo ao
@@ -312,6 +313,7 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 
 | Código | Achado | Prazo | Change que resolve | Aceite |
 | --- | --- | --- | --- | --- |
+| LB-01 · AS-10 · bloqueante | Qualquer conta autenticada do Supabase vale como diretoria: lê mensagens e rascunhos e altera conteúdo. **Condição do aceite:** cadastro público e login anônimo desligados em produção até a R2 (conferido pelo Gabriel em 20/11: desligados, 0 contas, 0 mensagens). O Gabriel confere de novo no painel antes de cada release; se a condição cair, o LB-01 volta a bloquear | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em separado |
 | LB-02 · AS-09 · alta | O PAT do Supabase e a chave de serviço chegam a passos do CI que rodam código do PR e das dependências | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-03 · AS-10 · alta | O seed apaga sem filtro as 11 coleções do projeto ligado, que pode ser o de produção | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-04 · AS-13 · alta | O anônimo insere em `mensagens` direto pela API, sem limite, e escolhe `situacao` e `recebida_em` | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
@@ -345,7 +347,7 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 | LB-32 · AS-03 · informativa | `alterarComVersao` grava qualquer coluna que recebe | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-33 · AS-06 · informativa | A mensagem crua do banco volta ao chamador | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-34 · AS-15 · informativa | Produção responde `Access-Control-Allow-Origin: *`, que não pode ir para página com sessão | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-35 · AS-08 · informativa | O Node 22 do `.nvmrc` sai de suporte em 30/04/2027 | 30/04/2027 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-35 · AS-08 · informativa | O Node 22 do `.nvmrc` sai de suporte em 30/04/2027 | R1 (o Node 22 sai de suporte em 30/04/2027) | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 
 ## 7. Origem dos arquivos binários
 

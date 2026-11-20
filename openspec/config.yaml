@@ -1,8 +1,9 @@
 schema: spec-driven
 
 # Contexto do projeto. O OpenSpec lê este campo em toda geração de artefato.
-# A fonte é docs/constitution.md v3, aprovada pelo Gabriel em 18/11/2026, com a
-# emenda de 19/11/2026 no nível 3 da hierarquia (docs/SEGURANCA.md); este campo
+# A fonte é docs/constitution.md v3.2: a v3 foi aprovada pelo Gabriel em 18/11/2026,
+# a 3.1 (19/11) pôs docs/SEGURANCA.md no nível 3 e a 3.2 (20/11) tirou o intervalo
+# de códigos do checklist; este campo
 # é o resumo que restringe o agente, não uma cópia do documento.
 context: |
   O Portal LIACUP é o site da Liga Acadêmica Multiprofissional de Cuidados Paliativos da

@@ -49,9 +49,29 @@ número. Incompleto declarado incompleto.
 
 ## revisor
 
-- **Não rodou.** A tarefa 4.2 previa o `revisor` e depois o guardião sobre o diff da change. O
-  Gabriel decidiu em 20/11 fechar a change "sem nova invocação do guardião nem do revisor". A
-  definição de pronto, item 6, fica sem cumprir nesta change, e isso vai declarado na entrega.
+- **Veredito:** reprovado, numa passagem única (decisão do Gabriel, 20/11), só sobre o diff de
+  `docs/SEGURANCA.md`, `CLAUDE.md`, `.claude/agents/guardiao-appsec.md` e `openspec/config.yaml`
+- **Conferiu:** 4 arquivos inteiros e o diff de 328 linhas · tarefas 1.1 a 1.4 e as 11 verificações
+  delas · Q1 a Q8, E1 e as 4 regras da dieta · 5 requisitos da spec delta e 6 da spec em vigor · as
+  35 linhas da §6 e as 5 da §7
+- **Achados (10) e o que a rodada única de correção fez:**
+  1. dieta 2 no `CLAUDE.md` contradiz o "sempre" da §4, a §5, o guardião e a spec. Corrigido pela
+     opção (b) do revisor: a regra só vale depois de escrita na §5 e na spec; até lá, checklist
+     inteiro. Escrevê-la lá fica para a C1;
+  2. dieta 3 sem as qualificações "da resposta do agente" e "fora a lista de achados". Corrigido;
+  3. `guardiao-appsec.md` mandava transcrever literal. Corrigido, e o `MODELO-relatorio.md`
+     também;
+  4. dieta 4 lida como "não roda a terceira". Corrigido: o limite nunca dispensa a passagem;
+  5. o parágrafo do `.gitattributes` mudou de desfecho sem decisão. Voltou ao texto da v1;
+  6. "essas duas formas" ficou ambíguo depois das formas de contagem. Corrigido, nomeando as formas;
+  7. AS-17 não dizia que decisão registrada desbloqueia os quatro casos. Corrigido;
+  8. a decisão do guardião não citava o bloco no modo base. Corrigido;
+  9. o comentário do `config.yaml` citava a constitution v3 de 19/11. Corrigido para 3.2;
+  10. §6: o LB-35 tinha uma data como prazo, e agora tem R1. O LB-01 passa a dizer quem confere a
+      condição (o Gabriel, antes de cada release) e que ela, se cair, volta a bloquear. O caminho do
+      arquivo vale porque o archive rodou em 20/11.
+- **Não conseguiu conferir:** o `relatorio.md`, por instrução; as medições de 20/11 da §5
+- **Depois da correção:** nenhuma passagem nova, por decisão do Gabriel ("uma rodada, e acabou")
 
 ## guardiao-appsec
 
@@ -64,8 +84,8 @@ O guardião não escreve: o líder técnico transcreve o relatório literal, uma
   decisão do Gabriel (20/11)
 - **Achados:** os 35 da lista LB-01 a LB-35, na transcrição da junção e na tabela abaixo
 - **Pedidos de comando:** todos rodados e transcritos em cada passagem; nenhum recusado
-- **Riscos aceitos pelo Gabriel:** LB-02 a LB-35, em bloco, em 20/11/2026 (seção "Aceite do
-  Gabriel"); LB-01 ainda não aceito
+- **Riscos aceitos pelo Gabriel:** os 35, em 20/11/2026: LB-02 a LB-35 em bloco, LB-01 em separado
+  (seção "Aceite do Gabriel")
 
 
 **Passagens, em ordem.** Sha da `main` auditada: `8bf820415a92e039caf5febda3cc9109dbdbd020` (297 arquivos). Precondições conferidas antes de cada leva de formas: `test -e` devolveu 1 para `.claude/settings.json`, `.claude/settings.local.json`, `.mcp.json` e `.npmrc`; `npm config get registry` devolveu `https://registry.npmjs.org/`. Todas as formas rodaram no Git Bash com `MSYS_NO_PATHCONV=1`. Nenhum pedido foi recusado. São 11 invocações do guardião: 2 do RP-12 do AS-17, 8 de blocos (levantamento e decisão nos blocos 1, 3 e 5; uma só nos blocos 2 e 4) e 1 de junção.
@@ -967,7 +987,7 @@ acima. Release é o prazo do aceite; a change pode resolver antes.
 | LB-32 | informativa | `alterarComVersao` grava qualquer coluna que recebe | R3 | C5 |
 | LB-33 | informativa | A mensagem crua do banco volta ao chamador | R3 | C5 |
 | LB-34 | informativa | Produção responde `Access-Control-Allow-Origin: *`, que não pode ir para página com sessão | R3 | C5 |
-| LB-35 | informativa | O Node 22 do `.nvmrc` sai de suporte em 30/04/2027 | 30/04/2027 | C3 |
+| LB-35 | informativa | O Node 22 do `.nvmrc` sai de suporte em 30/04/2027 | R1 (suporte até 30/04/2027) | C3 |
 
 Contagem: bloqueante 1 · alta 3 · média 9 · baixa 10 · informativa 12 = 35. Por change: C1 7 ·
 C2 4 · C3 6 · C4 10 · C5 4 · C6 4 = 35.
@@ -979,7 +999,10 @@ prefixo pode reconstruir um valor, e a §5 não diz como recusar (I1 da passagem
 parágrafo do `.gitattributes` não está nomeada na proposta (I2 da passagem 2); quem confere cada
 linha nova da §6 contra o aceite literal não está escrito na §5 (I3 da passagem 2); o cabeçalho da
 constitution continua "Versão 3.1 · 19 de novembro" depois da emenda da Q1 (nota da passagem 2,
-documento do gestor).
+documento do gestor; já subido para 3.2). Do revisor, fora do escopo dele: escrever a regra 2 da
+dieta na §5 e na spec (C1); o `PLANO-DE-DESENVOLVIMENTO.md` não tem as 4 changes novas da tabela
+(gestor); `docs/constitution.md:3` cita "AS-01 a AS-16" no histórico da versão, o que é registro e
+não regra (gestor).
 
 ## Aceite do Gabriel — 20/11/2026 (transcrição literal)
 
@@ -993,12 +1016,9 @@ Mensagem do Gabriel nesta sessão, itens 3 e 4, literais:
 >    entregue o Portão 2 com os comandos Git.
 
 - **LB-02 a LB-35 (34 itens): aceitos em bloco**, cada um com o prazo da coluna "Release" e a
-  change da coluna "Change" da tabela acima. Motivo: o do aceite em bloco, não declarado item a
-  item. As 34 linhas entraram na §6 do `docs/SEGURANCA.md`.
-- **LB-01: ainda não aceito.** O item 3 traz o lugar do que foi visto no painel ("[cole aqui o que
-  você viu nos 3 pontos]") sem o conteúdo. O aceite depende do que o painel mostrou: com uma conta
-  desconhecida, o LB-01 é bloqueante explorável e vira correção imediata, que não se aceita (§5).
-  Continua bloqueando até o Gabriel colar o resultado.
+  change da coluna "Change" da tabela acima. Motivo, nas palavras do Gabriel (20/11/2026): "São riscos de superfícies que ainda não existem em produção ou de ferramentas de desenvolvimento; cada um tem release e change na tabela." As 34 linhas entraram na §6 do `docs/SEGURANCA.md`.
+- **LB-01: aceito**, na segunda mensagem do Gabriel, em 20/11/2026. O que ele conferiu hoje no painel de produção do Supabase, nas palavras dele: "cadastro de novos usuários DESLIGADO, login anônimo DESLIGADO, 0 contas em Authentication › Users, 0 linhas em mensagens e 0 em controle_de_origem. Não há exploração." Aceite literal: "Aceito o LB-01 como risco até a R2, resolvido na change papeis-da-diretoria-no-banco, com o cadastro público e o login anônimo desligados em produção até lá." A condição (cadastro público e login anônimo desligados) é parte do aceite: se mudar antes da R2, o LB-01 volta a bloquear.
+- **`aws-mcp`** (seção 5 da junção): a pergunta foi feita ao Gabriel, e a resposta veio com o espaço "[responda \"é meu\" ou \"não reconheço\"]" sem preencher. Continua não verificado. Não é item da lista e não bloqueia.
 
 ## Líder técnico — conferência de escopo
 

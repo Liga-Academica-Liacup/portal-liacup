@@ -153,11 +153,11 @@ produção para tudo (D3).
 
 ## 4. Aceite, revisão do diff e validação
 
-- [ ] 4.1 **(Q6)** Transcrever o aceite do Gabriel, conforme a D10. O aceite literal, com data, vai
+- [x] 4.1 **(Q6)** Transcrever o aceite do Gabriel, conforme a D10. O aceite literal, com data, vai
       para o `relatorio.md`, e a linha de cada achado aceito vai para a §6. **Como se verifica:**
       toda linha nova da §6 aponta um aceite literal no `relatorio.md`, com código, achado, prazo e
       change. Achado não aceito aparece como "não aceito, continua bloqueando", e não na §6
-- [ ] 4.2 **Não feita: o Gabriel decidiu em 20/11 fechar a change sem nova passagem do revisor e do guardião.** Chamar o `revisor` e depois o guardião, no modo diff, sobre o diff desta change, cada um
+- [ ] 4.2 **Feita em parte, por decisão do Gabriel em 20/11:** o `revisor` rodou uma vez, só sobre `docs/SEGURANCA.md`, `CLAUDE.md`, `.claude/agents/guardiao-appsec.md` e `openspec/config.yaml`, com uma rodada de correção e sem passagem depois dela; o guardião não auditou o diff final. Chamar o `revisor` e depois o guardião, no modo diff, sobre o diff desta change, cada um
       numa invocação nova. Pedir também a busca de segredo no `relatorio.md` (§5). **Como se
       verifica:**
       - o veredito do guardião não é BLOQUEADO;

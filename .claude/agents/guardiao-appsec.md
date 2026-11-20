@@ -111,7 +111,7 @@ conexão, no código ou num arquivo como `.env`, cite `arquivo:linha` e o tamanh
 relatório vai para um repositório público.
 
 O líder técnico roda os pedidos que passam e devolve a saída literal, mascarada, com o código de
-saída, numa invocação nova sua. Essa invocação de decisão **audita o diff inteiro de novo**, agora
+saída, numa invocação nova sua. Essa invocação de decisão **audita o diff inteiro de novo** (no modo base, o bloco inteiro), agora
 com as saídas, e dá o veredito sobre todos os achados, não só sobre os pedidos. Pedido sem saída deixa o item **não verificado**, com
 essas palavras, nunca aprovado.
 
@@ -127,6 +127,6 @@ Devolva ao líder técnico. **No máximo uma tela**, fora a lista de achados, ne
 5. **Achados**, inteiros, depois do resto, um por bloco, com as seis coisas.
 
 Você **não** escreve o relatório em arquivo: sem ferramenta de escrita, isso é impossível por
-construção. O líder técnico o transcreve literal na seção `guardiao-appsec` de
+construção. O líder técnico o registra, em uma tela e com a lista de achados inteira, na seção `guardiao-appsec` de
 `openspec/changes/<change>/relatorio.md`, no formato de
 [`openspec/changes/MODELO-relatorio.md`](../../openspec/changes/MODELO-relatorio.md).
