@@ -30,7 +30,7 @@
 
 **Limite de rodadas:** depois de qualquer correção, o `revisor` e o `guardiao-appsec` rodam de novo. Se o mesmo agente pedir correção pela terceira rodada seguida, o líder técnico para e leva ao Gabriel o que está girando. Na change `montar-guardiao-appsec` o revisor rodou 13 vezes; o limite existe para isso não se repetir.
 
-**Regra de relatório para todos:** no máximo uma tela, com número quando houver número ("0 violações em 6 páginas", não "ficou acessível"), e o que ficou incompleto escrito como incompleto.
+**Regra de relatório para todos:** no máximo uma tela (no `guardiao-appsec`, uma tela fora a lista de achados, que vem inteira), com número quando houver número ("0 violações em 6 páginas", não "ficou acessível"), e o que ficou incompleto escrito como incompleto.
 
 ## 3. Como os agentes conversam
 

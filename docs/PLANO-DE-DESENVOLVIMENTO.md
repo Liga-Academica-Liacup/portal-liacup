@@ -165,7 +165,7 @@ Uma change está pronta quando:
 4. todo texto vem do `conteudo-institucional.md`, e nada foi inventado;
 5. alvos de toque têm pelo menos 44 px, campos usam fonte de 16 px, os pares de cor seguem o ADR-0003 e cada controle mostra os estados interativos do ADR-0006;
 6. o subagente revisor aprovou;
-7. o guardião de segurança não deu BLOQUEADO, ou o Gabriel aceitou por escrito cada risco que sobrou, com motivo e prazo. Achado bloqueante confirmado que já seja explorável em produção não se aceita: vira change de correção imediata.
+7. o guardião de segurança não deu BLOQUEADO, ou o Gabriel aceitou por escrito cada risco que sobrou, com motivo, prazo e a change que vai resolver. Achado bloqueante confirmado que já seja explorável em produção não se aceita: vira change de correção imediata.
 
 ## 11. Pendências que dependem da liga ou do Gabriel
 

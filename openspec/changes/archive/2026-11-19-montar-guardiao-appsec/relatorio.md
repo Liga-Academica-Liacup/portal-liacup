@@ -73,7 +73,7 @@ Não entrou: a change não tem página nem teste de ponta a ponta.
 
 **4. O que não consegui conferir:** o `git diff` (comparei só o conteúdo atual); `openspec list`, `openspec validate` e `git status --porcelain` antes e depois desta passagem; as tarefas 3.x e 4.x, que ainda não existem; se o modelo `opus` está disponível.
 
-**O que o líder técnico fez com cada achado:** corrigidos nos arquivos do líder técnico: 2, 3 (leitura estrita, a confirmar pelo Gabriel), 4, 5, 6, 7 (no `CLAUDE.md`), 8, 10, 11 (comentário do `config.yaml`), 12 (na entrega). Ficam para o gestor, que é dono do arquivo: 1, 7 (no `PLANO:150`), 9, 11 (cabeçalho da constitution).
+**O que o líder técnico fez com cada achado:** corrigidos nos arquivos do líder técnico: 2, 3 (leitura estrita, a confirmar pelo Gabriel), 4, 5, 6, 7 (no `CLAUDE.md`), 8, 10, 11 (comentário do `config.yaml`), 12 (na entrega). 1, 7 (no `PLANO:150`) e 9: resolvidos pelo gestor em 19/11, commit 20b30d5. 11 (cabeçalho da constitution): resolvido pelo gestor em 19/11.
 
 ### Passagem 2 — 19/11/2026, invocação nova depois das correções (texto do revisor; só as sublistas foram juntadas numa linha)
 
@@ -95,7 +95,7 @@ Não entrou: a change não tem página nem teste de ponta a ponta.
 
 **4. O que não consegui conferir:** o texto literal do briefing para AS-01 a AS-16 (não está no repositório); o diff em si; `openspec list` e `openspec validate`; `.openspec.yaml` e a seção `guardiao-appsec` do `relatorio.md` (não abri, por instrução); as tarefas 3.1 a 4.3.
 
-**O que o líder técnico fez:** corrigidos 1 (cinco condições, com destino de rede, `git -c`, `npx`, `-o`, `-K` e endereço informado pelo líder técnico), 2 (a regra virou "o que governa exige o checklist inteiro", sem lista fechada, e "na dúvida, checklist inteiro"), 6 (uma seção por release), 7, 9; 3 vai como Q9 no Portão 2; 10 é atendido na demonstração: a lista vai ao guardião gerada por `git status --porcelain --untracked-files=all`, o mesmo comando de uma change de verdade, sem apontar o arquivo plantado. 4, 5 e 8 ficam para o gestor.
+**O que o líder técnico fez:** corrigidos 1 (cinco condições, com destino de rede, `git -c`, `npx`, `-o`, `-K` e endereço informado pelo líder técnico), 2 (a regra virou "o que governa exige o checklist inteiro", sem lista fechada, e "na dúvida, checklist inteiro"), 6 (uma seção por release), 7, 9; 3 vai como Q9 no Portão 2; 10 é atendido na demonstração: a lista vai ao guardião gerada por `git status --porcelain --untracked-files=all`, o mesmo comando de uma change de verdade, sem apontar o arquivo plantado. 4 e 5: resolvidos pelo gestor em 19/11, commit 20b30d5. 8: resolvido pelo gestor em 19/11.
 
 ### Passagem 3 — 19/11/2026, invocação nova depois das correções (texto do revisor; só as sublistas foram juntadas numa linha)
 
@@ -116,7 +116,7 @@ Não entrou: a change não tem página nem teste de ponta a ponta.
 
 **4. O que não consegui conferir:** o `git diff` contra `03a81e9`; `openspec list` e `openspec validate`; os casos de git, npm e curl vêm das opções documentadas e não foram executados nesta máquina; não abri o `.env` nem as seções `revisor` e `guardiao-appsec` do `relatorio.md`.
 
-**O que o líder técnico fez:** a §5 virou uma lista fechada de nove formas (`git log -S`, `git log -n`, `git grep -e`, `git diff --stat`, `git diff -- <caminho>`, `git ls-files`, `npm ls`, `npm audit`, `curl -q -sS -I --proto =https`), com lacunas de padrão fixo, endereço do `curl` montado pelo líder técnico e conferência do registro antes do `npm audit`. Entrou a regra de mascarar segredo, na saída de comando e no relatório do guardião. `CLAUDE.md` passou a citar a lista fechada e a contar os sete agentes. A spec delta das changes entrou no que governa. Os três achados (gestor) ficam para o gestor.
+**O que o líder técnico fez:** a §5 virou uma lista fechada de nove formas (`git log -S`, `git log -n`, `git grep -e`, `git diff --stat`, `git diff -- <caminho>`, `git ls-files`, `npm ls`, `npm audit`, `curl -q -sS -I --proto =https`), com lacunas de padrão fixo, endereço do `curl` montado pelo líder técnico e conferência do registro antes do `npm audit`. Entrou a regra de mascarar segredo, na saída de comando e no relatório do guardião. `CLAUDE.md` passou a citar a lista fechada e a contar os sete agentes. A spec delta das changes entrou no que governa. Os três achados (gestor): resolvidos pelo gestor em 19/11, commit 20b30d5.
 
 ### Passagem 4 — 19/11/2026, invocação nova depois das correções (texto do revisor; só as sublistas foram juntadas numa linha)
 
@@ -170,7 +170,7 @@ Considerado sem cenário com dano: `<texto>` entre aspas simples (inclusive `!`,
 
 **4. O que não consegui conferir:** o diff linha a linha; que `.github/` e `src/` estão intocados; os achados 1 e 2 medidos, a versão do npm e do curl, e se o curl do Git Bash procura `curl-ca-bundle.crt` no diretório corrente; o `.openspec.yaml`; a formatação do Prettier, coberta pela 4.1.
 
-**O que o líder técnico fez:** 1, a conferência de `.npmrc` vem antes de qualquer forma de `npm`, e antes do `npm config`; 2, as formas rodam com `MSYS_NO_PATHCONV=1` no ambiente; 3, o agente deixou de copiar a lista e aponta só para a §5. O 4 fica para o gestor.
+**O que o líder técnico fez:** 1, a conferência de `.npmrc` vem antes de qualquer forma de `npm`, e antes do `npm config`; 2, as formas rodam com `MSYS_NO_PATHCONV=1` no ambiente; 3, o agente deixou de copiar a lista e aponta só para a §5. O 4: resolvido pelo gestor em 19/11, commit 20b30d5.
 
 ### Passagem 7 — 19/11/2026, invocação nova depois das correções (texto do revisor; só as sublistas foram juntadas numa linha)
 
@@ -187,7 +187,7 @@ Considerado sem cenário com dano: `<texto>` entre aspas simples (inclusive `!`,
 
 **4. O que não consegui conferir:** `openspec list` e `git diff --stat`; o diff real contra `03a81e9`; se o checklist é o texto do briefing; o `.openspec.yaml`, os quatro documentos do gestor inteiros e o `.env`; os casos de git, npm e curl não foram executados. **Desvio do revisor, declarado por ele:** uma busca por `guardiao-appsec|revisor` no `relatorio.md` devolveu linhas da seção `revisor`, contra a instrução; a seção `guardiao-appsec` não foi aberta.
 
-**O que o líder técnico fez:** as formas que mostram conteúdo recusam pelo nome todo caminho cujo último trecho começa com `.env` e todo caminho que o `.gitignore` da `main` ignora, e, se o diff mexe no `.gitignore`, só valem para arquivos já rastreados na `main`; AS-15 sobre o que a change muda fica "não verificado" com o motivo "a prévia ainda não existe", e o `curl` contra a prévia vai para a seção 6 da entrega. O achado (gestor) fica para o gestor.
+**O que o líder técnico fez:** as formas que mostram conteúdo recusam pelo nome todo caminho cujo último trecho começa com `.env` e todo caminho que o `.gitignore` da `main` ignora, e, se o diff mexe no `.gitignore`, só valem para arquivos já rastreados na `main`; AS-15 sobre o que a change muda fica "não verificado" com o motivo "a prévia ainda não existe", e o `curl` contra a prévia vai para a seção 6 da entrega. O achado (gestor): resolvido pelo gestor em 19/11, commit 20b30d5.
 
 ### Passagem 8 — 19/11/2026, invocação nova depois das correções, sem abrir o `relatorio.md` (texto do revisor; só as sublistas foram juntadas numa linha)
 
@@ -466,6 +466,223 @@ P8 vazio; P9 vazio (o arquivo plantado nunca entrou em commit nem em stash); P10
 
 A coluna "vale aqui?" é inferência do líder técnico sobre o texto do aviso, não medição. A versão que fecha os seis é **16.4.1 ou acima**; o `npm audit` propõe `next@16.4.6`.
 
+O bloqueio da passagem 3 abriu a change de correção imediata `atualizar-next` (PR #16, merge
+`b1ce09d`, `next` 16.4.6). O Gabriel trouxe a `main` para esta branch com `git merge` (`f9bde49`).
+As passagens abaixo substituem a passagem 3 como veredito desta change.
+
+### Retomada — 19/11/2026, depois do merge da `main` com o `next` 16.4.6
+
+Medido pelo líder técnico antes de chamar o guardião: `npm ci`, **código 0**, resumo
+`34 vulnerabilities (2 low, 12 moderate, 20 high)`; `npm ls next sharp`, **código 0**, `next@16.4.6`
+com `sharp@0.35.5` abaixo dele. Os 15 arquivos da change são idênticos entre `20b30d5` e `f9bde49`
+(`git diff --stat 20b30d5 HEAD -- <os 15>`: saída vazia, código 0).
+
+O guardião recebeu dois escopos: o diff desta change (`git diff --name-status main...HEAD`, 15
+linhas; `git status --porcelain --untracked-files=all`, vazio) e a troca da `atualizar-next`, que
+entrou na `main` sem auditoria do guardião (`git diff --name-status 03a81e9 b1ce09d`, 7 linhas).
+
+### Passagem RP-12 · 4 — invocação nova, levantamento (condensado pelo líder técnico; superado pela passagem 6)
+
+**1. Veredito provisório: BLOQUEADO** · bloqueante 1 (hipótese) · alta 1 (confirmado) · média 0 ·
+baixa 0 · informativa 2 · conferência completa (o diff toca `.claude/agents/`, `CLAUDE.md`,
+`openspec/config.yaml`, os artefatos da change e o `MODELO-relatorio.md`, que governam). Os dois
+achados que bloqueiam são de AS-08 e vêm do escopo 2; os 15 arquivos do escopo 1, sozinhos, não têm
+achado acima de informativo. A §6 está vazia.
+
+**2. Conferido:** escopo 1, 14 de 15 arquivos inteiros (o `relatorio.md` fechado, por regra);
+escopo 2, `proposal.md`, `design.md`, `tasks.md`, `.openspec.yaml` e `package.json` inteiros, e o
+`package-lock.json` por busca: 835 de 835 `resolved` em `https://registry.npmjs.org/`; só três
+`hasInstallScript`, todos `dev` (`fsevents` 2 e `unrs-resolver`), nenhum mexido pela troca;
+`next` 16.4.6, `sharp` 0.35.5, `proxy-addr` 2.0.8. Contexto: `ci.yml`, `.gitattributes`,
+`.gitignore`, `next.config.ts`, `src/proxy.ts`, `tests/e2e/interruptor.spec.ts`. AS-01: não
+verificado, à espera de P1 a P5 (`prototipo/Portal-LIACUP.html:1` casa com `eyJ`, JSON em base64
+sem forma de JWT, fica para a linha de base). AS-02: sem achado no código; o e2e com o `next`
+16.4.6 não verificado. AS-03 a AS-07: não se aplica. AS-08: A1 e A2. AS-09: sem achado no diff
+(I1). AS-10 a AS-16: não se aplica. Lista fechada: 11 formas, nenhuma brecha nova.
+
+**3. Pedidos:** P1 a P5 `git log --all --oneline -S` com `eyJhbGciOi`, `sbp_`, `sb_secret_`,
+`ghp_` e `github_pat_`; P6 `npm audit --audit-level=high`; P7 `git diff 03a81e9 -- 'package-lock.json'`;
+P8 `git diff 03a81e9 -- 'package.json'`.
+
+**5. Achados:** A2 · AS-08 · bloqueante · hipótese: um dos 20 altos pode estar na árvore de
+produção, com `/_next/image` fora do interruptor (`src/proxy.ts:66`, `:90`); critério: P6 sem alto
+nem crítico a partir de `next`, `react`, `react-dom` ou `@supabase/supabase-js`. A1 · AS-08 · alta ·
+confirmado: 20 altos conhecidos e a §6 vazia; critério: cada alto some do `npm audit` ou entra na
+§6 com aceite do Gabriel. I1 · AS-09 · informativa · hipótese: `ci.yml` sem `permissions:` e ações
+por tag. I2 · AS-10 · informativa · provável: a §3 não tem seção para o que está no ar hoje (R0).
+Os dois informativos ficam para a `auditoria-de-base-appsec`.
+
+### Pedidos P1 a P8 — rodados pelo líder técnico
+
+Precondições da §5: `test -e` de `.claude/settings.json`, `.claude/settings.local.json`, `.mcp.json`
+e `.npmrc`, **código 1** nos quatro; o diff não toca `.gitattributes` nem `.gitignore`;
+`npm config get registry` → `https://registry.npmjs.org/`. Rodados com `MSYS_NO_PATHCONV=1`. Nenhum
+pedido recusado. Nenhum valor precisou de mascaramento.
+
+| Pedido | Código | Saída |
+| --- | --- | --- |
+| P1 `-S 'eyJhbGciOi'` | 0 | `20b30d5 wip: guardiao-appsec montado, auditoria bloqueada pelo next da main` |
+| P2 `-S 'sbp_'` | 0 | `20b30d5 …` e `728a608 feat: F02 — verificador de RLS a partir do login, tipos gerados e conferidos (T001, T016, T017, T019, T020)` |
+| P3 `-S 'sb_secret_'` | 0 | `20b30d5 …` |
+| P4 `-S 'ghp_'` | 0 | vazia |
+| P5 `-S 'github_pat_'` | 0 | `20b30d5 …` |
+| P6 `npm audit --audit-level=high` | 1 | 221 linhas; `34 vulnerabilities (2 low, 12 moderate, 20 high)`; nenhum `next`, `sharp` nem `proxy-addr` |
+| P7 `git diff 03a81e9 -- 'package-lock.json'` | 0 | 747 linhas, 46 blocos |
+| P8 `git diff 03a81e9 -- 'package.json'` | 0 | só `next` e `eslint-config-next`, de `"16.3.1"` para `"16.4.6"` |
+
+P6 e P7 se reproduzem com os mesmos comandos nesta árvore.
+
+### Passagem RP-12 · 5 — invocação nova, decisão (condensado pelo líder técnico; superado pela passagem 6)
+
+**1. Veredito: BLOQUEADO** · bloqueante 1 · alta 0 · média 0 · baixa 1 · informativa 4 · conferência
+completa. O único bloqueante é uma hipótese (A1), e P9 a P16 a confirmam ou descartam.
+
+**2. Conferido:** 22 arquivos nos dois escopos (15 + 7), 19 inteiros, o `package-lock.json` pelo P7
+inteiro; os dois `relatorio.md` não foram abertos (uma busca `files_with_matches` só disse que o da
+change contém os prefixos). AS-01: A1 e A4; as ocorrências de `728a608` são as regex de
+mascaramento de `scripts/verificar-rls.mjs:63` e `scripts/verificar-tipos-do-banco.mjs:31`. AS-02,
+AS-04: sem achado. AS-03, AS-05 a AS-07: não se aplica. AS-08: escopo 1 sem achado; escopo 2 A2 e
+A3; pelo P7, nenhum pacote novo, nenhum `hasInstallScript` novo, todo `resolved` no registro do npm;
+o P6 não lista `next` nem `sharp`. AS-09: A5 e A6. AS-10 a AS-16: não se aplica.
+
+**3. Pedidos:** P9 a P16 `git grep -n -I --untracked -e` com `eyJhbGciOi`, `eyJ0eXAiOi`,
+`sb_secret_`, `github_pat_`, `sbp_`, `ghp_`, `postgresql://` e `postgres://` no `relatorio.md`
+desta change; P17 `git grep -n -I -e 'fastq' HEAD -- 'openspec/changes/archive/2026-11-19-atualizar-next/relatorio.md'`.
+
+**4. Não verificado:** AS-01 no conteúdo do `relatorio.md` (P9 a P16); a explicação do `fastq`
+(P17); se o `20b30d5` já está no remoto.
+
+**5. Achados:** A1 · AS-01 · bloqueante · hipótese: `20b30d5` mudou a contagem de quatro prefixos,
+e o único arquivo que os contém é o `relatorio.md`; critério: P9 a P16 mostram cada prefixo só em
+comando ou descrição, sem valor; se houver valor, troca da chave antes de qualquer commit e, se o
+`20b30d5` estiver no remoto, correção imediata. A2 · AS-08 · informativa · confirmado: os 34 avisos
+são da linha de base, R0 · `auditoria-de-base-appsec`, todos `dev` fora o `source-map-js`, que vem de
+`next` → `postcss` e roda só na compilação. A3 · AS-08 · baixa · provável: `fastq` 1.20.1 → 1.20.3
+no lock sem citação na proposta da `atualizar-next`. A4 · AS-01 · informativa: `git log -S` não
+examina commit de merge. A5 · AS-09 · informativa: a precondição da §5 não cobre o `.git/config`.
+A6 · AS-09 · informativa: `ci.yml` sem `permissions:`, ações por tag.
+
+### Pedidos P9 a P17 — rodados pelo líder técnico
+
+Precondições repetidas: `test -e` dos três arquivos de ambiente, **código 1**. Nenhum valor precisou
+de mascaramento: toda linha devolvida é descrição de cenário ou texto de comando, sem valor depois
+do prefixo. Fato medido à parte: `git branch -r --contains 20b30d5`, código 0,
+`origin/chore/montar-guardiao-appsec`.
+
+| Pedido | Código | Linhas do `relatorio.md` devolvidas |
+| --- | --- | --- |
+| P9 `eyJhbGciOi` | 0 | 148 (cenário do revisor, passagem 5: `eyJhbGciOi...`, prefixo público de cabeçalho JWT) e 375 (tabela de P1 a P7) |
+| P10 `eyJ0eXAiOi` | 1 | vazia |
+| P11 `sb_secret_` | 0 | 365, 377 e 413 (listas de prefixos procurados) |
+| P12 `github_pat_` | 0 | 415 (texto do pedido P8 anterior) e 429 (I3 anterior) |
+| P13 `sbp_` | 0 | 231 ("`sbp_` mais 40 hex", cenário), 363, 365, 376 e 413 (listas de prefixos) |
+| P14 `ghp_` | 1 | vazia |
+| P15 `postgresql://` | 1 | vazia |
+| P16 `postgres://` | 0 | 363 (lista de padrões procurados) |
+| P17 `fastq` no relatório arquivado da `atualizar-next` | 0 | `:198` (a lista do lock não cita `eslint-config-next` e `fastq`) e `:284` (`fastq` 1.20.1 → 1.20.3, cujo único caminho é `eslint-config-next` → `@next/eslint-plugin-next`) |
+
+### Passagem RP-12 · 6 — invocação nova, decisão (veredito desta change; texto do guardião com sublistas juntadas e frases encurtadas, sem mudar achado, severidade, confiança nem critério)
+
+**1. Veredito: APROVADO** · bloqueante 0 · alta 0 · média 0 · baixa 0 · informativa 3 · conferência
+completa. O escopo 2 (`atualizar-next`, PR #16) também foi auditado e não tem achado de severidade.
+
+**2. Conferido:** escopo 1, 15 arquivos, 14 inteiros; o `relatorio.md` só por P9 a P16. Escopo 2,
+7 arquivos: `proposal.md`, `design.md` e `tasks.md` lidos; `package.json` e `package-lock.json` por
+P7 e P8; o `relatorio.md` do arquivamento só por P17. Contexto: `ci.yml`, `lighthouserc.json`,
+`vitest.config.mts`, `.gitattributes`, as entradas do lock dos pacotes de P6 e as regex dos dois
+scripts.
+
+- **AS-01, sem achado.** Nos 14 arquivos, nenhum valor de JWT, `sbp_`, `sb_secret_`, `gh[pousr]_`,
+  `github_pat_`, `AKIA`, `re_`, `postgres(ql)://`, chave privada nem atribuição de
+  SECRET/TOKEN/KEY/SENHA. No histórico, as ocorrências de `728a608` são regex de mascaramento; as de
+  `20b30d5` são só descrição (P9:148, P11 a P13, P16). P10, P14 e P15 com código 1. Ressalva I3.
+- **AS-02, AS-03, AS-05, AS-06 e AS-07: não se aplicam.** Nada dos dois escopos vai ao ar.
+- **AS-04, sem achado.** `javascript:` só como texto (`docs/SEGURANCA.md:81`, `proposal.md:40`,
+  `design.md:221`); busca por `javascript:` e `CHAVE_SERVICO` em `src/`: 0 arquivos.
+- **AS-08, sem achado nos dois escopos.** Nenhum pacote entra ou sai; nenhum `hasInstallScript`
+  novo; todo `resolved` em `registry.npmjs.org`; toda mudança do lock coberta pela proposta da
+  `atualizar-next` (`next`, `@next/*`, `sharp`, `@img/*`, `sharp/node_modules/semver`, `fastq` via
+  `@next/eslint-plugin-next`, P17:284, e `proxy-addr`). P6 sem `next`, `sharp` nem `proxy-addr`, 0
+  críticos. O que resta é anterior aos dois escopos (I1).
+- **AS-09, sem achado no diff.** 11 formas e as lacunas conferidas; precondições cumpridas (I2).
+- **AS-10 a AS-14 e AS-16: não se aplicam.** **AS-15: não se aplica.** Seção da release: não se
+  aplica.
+
+**3. Pedidos complementares** (nenhum muda o veredito se passar): P18 · AS-01 ·
+`git diff --stat 20b30d5..f9bde49` · passa se mostrar só os 7 arquivos da `atualizar-next`; P19 ·
+AS-01 · `git grep -n -I --untracked -e 'gh[ousr]_[A-Za-z0-9]' -- 'openspec/changes/montar-guardiao-appsec/relatorio.md'`
+· passa com código 1; P20 · AS-01 ·
+`git grep -n -I -e 'postgres[a-z]*://' HEAD -- 'openspec/changes/archive/2026-11-19-atualizar-next/relatorio.md'`
+· passa com código 1 ou só menção sem credencial.
+
+**4. Não verificado:** P18 a P20, até a saída; token da Vercel no `relatorio.md`, porque não tem
+prefixo fixo e nenhuma forma da lista fechada o encontra; AS-15 contra a prévia, que ainda não
+existe.
+
+**5. Achados**
+
+**I1 · AS-08 · informativa · confirmado** · P6: 34 avisos (2 baixos, 12 moderados, 20 altos, 0
+críticos), nenhum de pacote que mudou no P7. Todos `"dev": true`, fora `source-map-js@1.2.1`
+(`package-lock.json:10094`), via `next` → `postcss@8.5.23` (`:8432`), que só roda na compilação
+sobre o CSS do projeto. Sem cenário concreto: `vite` e `@vitest/mocker` exigem servidor do vitest
+aberto (`vitest.config.mts:8` usa `jsdom`); `body-parser` e `compression` exigem `lhci server`
+(`lighthouserc.json:17-20` grava em arquivo); `extract-zip`, `tmp` e `basic-ftp` exigem arquivo ou
+endereço do atacante; os de ESLint e compilação exigem entrada do atacante. Nada explorável hoje em
+produção. Critério: a `auditoria-de-base-appsec` liga cada aviso a uma release e termina com
+`npm audit --audit-level=high` com código 0, ou com cada aviso restante aceito por escrito pelo
+Gabriel na §6. Agrupamento, todos da linha de base, superfície R1 "dependências":
+- `@lhci/cli` 0.15.1 (`test:desempenho`, roda no CI): `basic-ftp`, `get-uri`, `pac-proxy-agent`,
+  `proxy-agent`, `ip-address`, `@puppeteer/browsers`, `puppeteer-core`, `lighthouse`, `@lhci/utils`,
+  `extract-zip`, `tmp`, `external-editor`, `inquirer`, `uuid`, `chromium-bidi` e o `zod` dele; também
+  `compression` (`:1438`), e `body-parser` e `qs`, do `express` (`:5711`).
+- `vitest` 4.1.11: `@vitest/mocker`, `vite` e `vitest`.
+- `eslint`, `eslint-config-next` e `typescript-eslint`: `brace-expansion`, `js-yaml`, `minimatch`,
+  `@typescript-eslint/*` e o `zod` da raiz (`eslint-plugin-react-hooks`, `:5531`).
+- `jsdom` 30.0.1: `undici@8.10.0` (`:7357`).
+- `next` 16.4.6 (produção, só na compilação): `source-map-js`.
+
+**I2 · AS-09 · informativa · confirmado** (fora do diff, linha de base) · `.github/workflows/ci.yml:19-23`
+sem bloco `permissions:`; ações por tag (`@v4`, linhas 27, 30 e 110). Já tratado: gatilho
+`pull_request` (linha 15), não `pull_request_target`. Sem cenário concreto hoje. Critério: a
+`auditoria-de-base-appsec` registra as permissões efetivas do token e decide sobre `permissions:`
+mínimo e ação presa a sha.
+
+**I3 · AS-01 · informativa · confirmado** · o `relatorio.md` entrou em `20b30d5`, já em
+`origin/chore/montar-guardiao-appsec`, e a busca de segredo nele (P9 a P16) rodou depois do envio,
+embora a §5 a ponha "antes de entregar a change". Não houve vazamento. Cenário: uma saída transcrita
+sem máscara iria ao histórico remoto de um repositório público antes de qualquer busca. Critério: a
+busca de segredo da §5 no `relatorio.md` tem saída registrada antes de cada envio que inclua esse
+arquivo, não só antes da entrega final.
+
+### Pedidos P18 a P20 — rodados pelo líder técnico
+
+Precondições repetidas, **código 1** nos três arquivos de ambiente. Saída literal:
+
+```
+## P18
+ .../2026-11-19-atualizar-next/.openspec.yaml       |   3 +
+ .../archive/2026-11-19-atualizar-next/design.md    |  98 ++++++
+ .../archive/2026-11-19-atualizar-next/proposal.md  |  88 +++++
+ .../archive/2026-11-19-atualizar-next/relatorio.md | 317 ++++++++++++++++++
+ .../archive/2026-11-19-atualizar-next/tasks.md     |  75 +++++
+ package-lock.json                                  | 362 +++++++++++----------
+ package.json                                       |   4 +-
+ 7 files changed, 766 insertions(+), 181 deletions(-)
+exit 0
+## P19
+exit 1
+## P20
+exit 1
+```
+
+Os três passam no critério escrito pelo guardião. **Não houve nova invocação de decisão depois de
+P18 a P20**: o guardião declarou que nenhum deles muda o veredito se passar, e os três passaram.
+
+**Demonstração do RP-12 (tarefa 3.3):** BLOQUEADO com o arquivo plantado, citando AS-01 e AS-04
+(passagem 1); depois de desfazer, numa invocação nova, APROVADO, sem os achados AS-01 e AS-04 do
+arquivo plantado (passagem 6). Fica uma informativa de AS-01, a I3, que é de processo e não vem do
+arquivo plantado.
+
 ## Líder técnico — conferência de escopo
 
 Escopo de escrita é instrução, não trava: depois de cada passagem, o `git status` só pode mostrar
@@ -475,8 +692,9 @@ arquivos do escopo daquele agente. Escopos esperados — `especificador` `opensp
 
 - **Arquivos fora do escopo, por agente:** nenhum em nenhuma passagem. `especificador` (3 passagens
   de escrita e 12 de alinhamento): só `openspec/changes/montar-guardiao-appsec/`. `revisor` (13
-  passagens) e `guardiao-appsec` (4 invocações): `git status --porcelain --untracked-files=all` com
-  as mesmas 15 linhas antes e depois de cada uma. O arquivo plantado da tarefa 3.3 foi escrito e
+  passagens) e `guardiao-appsec` (7 invocações): `git status --porcelain --untracked-files=all` com
+  as mesmas 15 linhas antes e depois de cada uma das 4 primeiras, e vazio antes e depois de cada uma
+  das 3 da retomada, depois do commit `20b30d5`. O arquivo plantado da tarefa 3.3 foi escrito e
   apagado pelo líder técnico, e o `git status` voltou ao de antes (`diff` código 0).
 - **Escritos pelo líder técnico (D11):** `.claude/agents/guardiao-appsec.md`, `docs/SEGURANCA.md`,
   `CLAUDE.md`, `openspec/changes/MODELO-relatorio.md`, `openspec/config.yaml` e as transcrições

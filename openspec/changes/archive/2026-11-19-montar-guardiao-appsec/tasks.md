@@ -75,7 +75,7 @@ As tarefas que citam uma Qn seguem a opção decidida no Portão 1 de 19/11/2026
 - [x] 3.2 Demonstrar a trava: pedir ao guardião que crie um arquivo. **Como se verifica:** o
       guardião diz que não tem ferramenta para isso. As duas saídas de `git status --porcelain`,
       antes e depois, são idênticas e vão literais para o `relatorio.md`
-- [ ] 3.3 **(Q4)** Demonstrar o RP-12 no guardião, conforme o D8: plantar o arquivo, ver
+- [x] 3.3 **(Q4)** Demonstrar o RP-12 no guardião, conforme o D8: plantar o arquivo, ver
       BLOQUEADO, desfazer e ver o verde. **Como se verifica:** o primeiro relatório é BLOQUEADO e
       cita AS-01 e AS-04. O segundo, numa invocação nova, é APROVADO ou APROVADO COM RESSALVAS, sem
       AS-01 e sem AS-04. O `git status --porcelain` final é igual ao de antes de plantar. Os dois
@@ -87,11 +87,11 @@ As tarefas que citam uma Qn seguem a opção decidida no Portão 1 de 19/11/2026
 - [x] 4.1 Rodar `openspec validate --all --strict` e `npm run verificar`, os dois sem o arquivo
       plantado. **Como se verifica:** código de saída 0 nos dois, com a saída guardada para a
       seção 3 da entrega
-- [ ] 4.2 Rodar `openspec archive montar-guardiao-appsec` **antes do PR** e depois
+- [x] 4.2 Rodar `openspec archive montar-guardiao-appsec` **antes do PR** e depois
       `openspec validate --all --strict` de novo. **Como se verifica:** a spec de
       `openspec/specs/equipe-de-agentes/spec.md` traz os dois requisitos modificados e os dez novos,
       e a change está em `openspec/changes/archive/`
-- [ ] 4.3 Entregar no modelo do `CLAUDE.md`, com o veredito do guardião na seção 3, e os comandos
+- [x] 4.3 Entregar no modelo do `CLAUDE.md`, com o veredito do guardião na seção 3, e os comandos
       Git em bash para o Gabriel rodar: branch `chore/montar-guardiao-appsec` a partir da `main`,
       mensagem convencional em português, sem rodapé de coautoria, em arquivo temporário com
       `git commit -F`. **Como se verifica:** a seção 4 lista os arquivos fora do escopo esperado, e
