@@ -18,7 +18,7 @@ documento de origem, não para cá.
 | [`docs/constitution.md`](docs/constitution.md)                         | Os dez princípios e a hierarquia de decisão                                    |
 | [`docs/PADROES-DE-CODIGO.md`](docs/PADROES-DE-CODIGO.md)               | Pastas, camadas, componentes, testes e os requisitos permanentes RP-01 a RP-14 |
 | [`docs/REFERENCIA-VISUAL.md`](docs/REFERENCIA-VISUAL.md)               | O protótipo aprovado como gabarito, e o que pode ser diferente dele            |
-| [`docs/SEGURANCA.md`](docs/SEGURANCA.md)                               | O que se protege, a superfície de cada release e o checklist AS-01 a AS-16     |
+| [`docs/SEGURANCA.md`](docs/SEGURANCA.md)                               | O que se protege, a superfície de cada release e o checklist de segurança      |
 | [`docs/conteudo-institucional.md`](docs/conteudo-institucional.md)     | Todo texto que vai ao ar. Nada é reescrito nem inventado                       |
 | [`docs/PLANO-DE-DESENVOLVIMENTO.md`](docs/PLANO-DE-DESENVOLVIMENTO.md) | As releases, o ciclo de uma change e a definição de pronto                     |
 | [`docs/EQUIPE-DE-AGENTES.md`](docs/EQUIPE-DE-AGENTES.md)               | Quem faz o quê, e o protocolo de retorno                                       |
@@ -47,6 +47,21 @@ PORTÃO 2        gestor confere o PR, Gabriel olha a prévia e faz o merge
 
 **Nenhuma linha de código sem proposta aprovada pelo Gabriel.** Se a spec estiver errada, pare e
 reporte; não corrija por conta própria.
+
+**Dieta de processo** (Gabriel, 20/11/2026; o texto inteiro está em
+[`docs/EQUIPE-DE-AGENTES.md`](docs/EQUIPE-DE-AGENTES.md) §2):
+
+1. Uma sessão por change. Se não couber, a change se divide no Portão 1.
+2. Guardião proporcional ao risco: em change de tela da R1, só AS-01, AS-02, AS-04, AS-07 e AS-15,
+   com a auditoria de base na última change de cada release. **Só vale depois de escrito na §5 do
+   `docs/SEGURANCA.md` e na spec `equipe-de-agentes`**, com a condição de entrada; até lá, o
+   guardião confere o checklist inteiro.
+3. Relatório de uma tela por agente, com veredito e achados (o guardião: uma tela fora a lista de
+   achados, que vem inteira). O `relatorio.md` não transcreve literal a resposta do agente; o
+   aceite do Gabriel e a saída de comando continuam literais.
+4. Depois de qualquer correção, o `revisor` e o guardião rodam de novo. Se o mesmo agente pedir
+   correção numa terceira rodada, o líder técnico para e leva ao Gabriel. O limite nunca dispensa a
+   passagem depois de uma correção, nem leva change sem veredito ao Portão 2.
 
 **O guardião de segurança bloqueia.** As regras moram em [`docs/SEGURANCA.md`](docs/SEGURANCA.md)
 §5; em resumo:

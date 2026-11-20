@@ -1,7 +1,8 @@
 # Segurança do Portal LIACUP
 
-**Versão 1 · 19 de novembro de 2026** · change `montar-guardiao-appsec`. O Portão 1 aprovou a
-proposta e o checklist; este texto é conferido pelo gestor no Portão 2
+**Versão 2 · 20 de novembro de 2026** · change `auditoria-de-base-appsec`: AS-17, o modo
+auditoria de base, a regra do binário e o registro de origem da seção 7. A versão 1, de 19/11, veio
+da change `montar-guardiao-appsec`
 
 Nível 3 da hierarquia da constitution, ao lado dos padrões de código e da referência visual. Quem
 implementa lê antes de escrever; o `guardiao-appsec` lê antes de auditar. A primeira change de cada
@@ -67,7 +68,7 @@ release atualiza a seção da release dela, na seção 3.
 
 ## 4. O checklist
 
-Os códigos são fixos. Item novo recebe o próximo código livre (AS-17), e nenhum código muda de
+Os códigos são fixos. Item novo recebe o próximo código livre (AS-18), e nenhum código muda de
 sentido. Todo relatório do guardião cita os achados por código.
 
 ### Sempre
@@ -105,6 +106,25 @@ sentido. Todo relatório do guardião cita os achados por código.
 - **AS-16 LGPD:** dado pessoal só com finalidade, base legal e prazo de retenção, e purga no prazo.
   A finalidade, a base e o prazo de cada dado estão em [`DADOS-PESSOAIS.md`](DADOS-PESSOAIS.md), e
   não se repetem aqui.
+- **AS-17 Configuração de agente:** `CLAUDE.md`, `.claude/agents/`, `.claude/skills/`,
+  `.claude/settings*.json`, `.mcp.json` e `openspec/config.yaml`. No modo diff, vale quando o diff
+  toca um desses caminhos, inclusive com arquivo não rastreado; no modo base, vale sempre.
+  Bloqueia:
+  - agente ou skill que ganha ferramenta de escrita ou de terminal sem decisão registrada. A
+    ferramenta de skill (`allowed-tools`) conta como a de agente (`tools`);
+  - gancho, variável de ambiente ou servidor MCP novo sem decisão do Gabriel. Gancho declarado no
+    cabeçalho de agente ou de skill conta como gancho;
+  - instrução que contradiz ou afrouxa regra da constitution, dos padrões de código ou deste
+    documento;
+  - skill gerada pelo OpenSpec alterada à mão. Só o `openspec update` muda skill: diff que toca
+    `.claude/skills/` só vale se a proposta da change disser que rodou o `openspec update`, com a
+    versão antes e depois, e trouxer a saída de `openspec --version`. Sem isso, BLOQUEADO. Limite
+    conhecido: a regra não prova a origem, e uma alteração à mão feita junto com um update
+    verdadeiro passaria. Por isso o conteúdo da skill é auditado como configuração em todo caso.
+
+  Mudança nomeada numa decisão registrada não bloqueia por causa dela, em nenhum dos quatro casos.
+  **Decisão registrada** é a proposta aprovada no Portão 1 que nomeia a mudança, ou o aceite escrito
+  do Gabriel no `relatorio.md`. O relatório do guardião cita onde ela está.
 
 ## 5. Como um achado deixa de bloquear
 
@@ -137,6 +157,58 @@ commitado na branch (`git diff --name-status main...HEAD`), o que ainda não foi
 rastreado (`git status --porcelain --untracked-files=all`). É essa lista, das duas saídas juntas,
 que o guardião recebe, e é sobre ela que valem as regras desta seção.
 
+**Modo auditoria de base.** Além do diff de cada change, o guardião audita a `main` inteira:
+
+- **Quando roda:** na `auditoria-de-base-appsec`, a primeira, e na última change de cada release,
+  antes de a release ir ao ar (hoje, a `ajustar-ci-ao-novo-fluxo` na R0 e a `lancamento-r1` na R1).
+- **A lista auditada** é a saída de `git ls-tree -r --name-only main`, no sha que o líder técnico
+  anota no relatório antes do primeiro bloco. (`git ls-files main` não lê revisão e devolve vazio.)
+  O número de arquivos conferidos precisa ser igual ao número de linhas dessa saída.
+- **AS-01 também no histórico**, pela forma `git log --all --oneline -S '<texto>'`, um padrão por
+  pedido. Limite conhecido: o `-S` não examina commit de merge; o estado final é coberto pela busca
+  na `main`.
+- **Sempre o checklist inteiro** da seção 4. A conferência curta não se aplica. As precondições
+  desta seção (ambiente, `.npmrc`, registro e `MSYS_NO_PATHCONV=1`) valem iguais.
+- **O `curl` em produção vale como resultado**, porque produção é a `main`. O host é o
+  `https://www.liacup.com.br`, porque o `liacup.com.br` responde 308 para ele.
+- **Por blocos.** Cada arquivo da lista cai em exatamente um bloco, pela primeira linha que casar,
+  nesta ordem:
+
+  | Bloco | Caminhos |
+  | --- | --- |
+  | 1. Configuração de agente e governança | `CLAUDE.md`, `.claude/`, `.mcp.json`, `openspec/`, `docs/`, `README.md` |
+  | 2. Dependências | `package.json`, `package-lock.json`, `.nvmrc` |
+  | 3. Banco | `supabase/`, `tests/politicas/`, `tests/banco/`, `src/lib/supabase/` |
+  | 4. Código do site e ativos | `src/`, `public/`, `assets/`, `prototipo/`, `tests/e2e/`, `next.config.ts` |
+  | 5. CI e cadeia de entrega | `.github/`, `scripts/` e todo arquivo que não casou acima |
+
+  Cada bloco roda numa invocação nova do guardião, com levantamento, pedidos de comando e decisão;
+  bloco sem pedido dispensa a decisão. A **junção** é outra invocação nova, que recebe os relatórios
+  dos blocos colados pelo líder técnico e devolve o estado final, único, de cada código, a soma dos
+  arquivos por bloco e a lista de achados.
+- **A lista de achados** é ordenada por severidade. Cada item traz as seis coisas de todo achado, a
+  release em que deve ser resolvido (o guardião diz, pela superfície da seção 3) e a change proposta
+  para resolvê-lo (o líder técnico agrupa). Vários itens podem apontar a mesma change.
+- **A parada:** bloqueante confirmado e já explorável hoje em produção **não entra na lista**. O
+  líder técnico para os blocos seguintes e leva o achado ao Gabriel, que abre a correção imediata.
+  Depois do merge dela, o bloco afetado roda de novo e os seguintes continuam.
+- **O aceite** da lista é dado pelo Gabriel numa entrega intermediária, depois da junção e antes da
+  revisão do diff da change. O líder técnico transcreve o aceite literal e acrescenta as linhas da
+  seção 6; só então rodam o `revisor` e o guardião sobre o diff. Achado não aceito continua
+  bloqueando.
+
+**Arquivo binário.** O `git grep -I` pula binário sem avisar, e o `.gitattributes` da `main` marca
+`*.png`, `*.jpg`, `*.woff2` e `*.ico` como `binary`. Por isso:
+
+- **Todo binário do que for auditado tem origem declarada na seção 7.** Binário fora dela é achado
+  de AS-01, alto e confirmado: a falta da linha é o que está confirmado.
+- **A busca de AS-01 cobre binário** pelas duas formas de contagem da lista fechada, que devolvem só
+  `arquivo:número`, nunca o conteúdo. Medido em 20/11: com `-a`, a busca examina o arquivo marcado
+  como `binary`, que o `-I` pula; e o `git log -S` alcança texto dentro de binário.
+- **Limite conhecido:** texto comprimido dentro do binário (bloco zTXt, iTXt comprimido, o arquivo
+  woff2 inteiro) não aparece numa busca por texto. Esse arquivo fica **coberto só pela origem
+  declarada**, com essas palavras no relatório, e o AS-01 não aparece como conferido por busca nele.
+
 **Pedido de comando.** O guardião não tem terminal; o que ele não verifica sozinho volta como
 pedido. O motivo das regras abaixo é o texto auditado: um comentário plantado no código pode tentar
 levar o guardião a pedir um comando que roda código ou manda o repositório para fora. Por isso a
@@ -152,29 +224,39 @@ relatório.
 | `git grep -n -I --untracked -e '<texto>' -- '<caminho>'` | Onde um texto aparece na árvore de trabalho, inclusive em arquivo ainda não commitado, como o `relatorio.md` da change (AS-01) |
 | `git diff --stat <rev>..<rev>` | Quais arquivos mudaram entre dois pontos |
 | `git diff <rev> -- '<caminho>'` | O que mudou num arquivo rastreado |
+| `git grep -c -a -e '<texto>' <rev> -- '<caminho>'` | Quantas vezes um texto aparece em cada arquivo de um commit, binário inclusive, sem mostrar o conteúdo (AS-01) |
+| `git grep -c -a --untracked -e '<texto>' -- '<caminho>'` | O mesmo na árvore de trabalho, inclusive em arquivo ainda não commitado (AS-01) |
 | `git ls-files -- '<caminho>'` | Se um arquivo é rastreado; saída vazia quer dizer que não é |
+| `git ls-tree -r --name-only <rev>` | A lista de arquivos de um commit, só os nomes (modo base) |
 | `git check-ignore -v -- '<caminho>'` | Se um arquivo é ignorado, e por qual regra |
 | `npm ls --depth=0` | Dependências diretas instaladas |
 | `npm audit --audit-level=high` | Vulnerabilidade alta ou crítica conhecida (AS-08) |
+| `npm audit --omit=dev` | Os avisos que chegam à produção, sem as dependências de desenvolvimento (AS-08) |
+| `openspec --version` | A versão do OpenSpec que gerou as skills (AS-17) |
 | `curl -q -sS -I --max-time 20 --proto =https '<endereço>'` | Cabeçalhos que o site devolve (AS-15); o `-q`, primeiro, ignora o `.curlrc` |
 
 As lacunas:
 
 - `<rev>`: `HEAD`, `main`, `origin/main` ou um sha de 7 a 40 caracteres hexadecimais.
 - `<caminho>`: entre aspas simples, só com letras sem acento, números, `/`, `.`, `_` e `-`, sem
-  começar com `-` ou `/` e sem `..`. Nas formas que mostram conteúdo (`git grep` e `git diff`), o
-  `<caminho>` é **um arquivo, nunca uma pasta nem `.`**: ele aparece, letra por letra, numa linha de
-  `git ls-files` da `main` ou da lista de arquivos do diff que o guardião recebeu. Pasta inteira se
-  busca arquivo por arquivo. Nessas formas, o líder técnico recusa também, **pelo nome e sem
+  começar com `-` ou `/` e sem `..`. Nas formas que mostram conteúdo (`git grep -n` e `git diff`),
+  o `<caminho>` é **um arquivo, nunca uma pasta nem `.`**: ele aparece, letra por letra, numa linha
+  de `git ls-tree -r --name-only main` ou da lista de arquivos do diff que o guardião recebeu. Pasta
+  inteira se busca arquivo por arquivo. **Única exceção:** nas duas formas de contagem (`git grep
+  -c -a`), que nunca mostram conteúdo, o `<caminho>` pode ser também uma das pastas que guardam
+  binário: `assets`, `prototipo/prints` ou `public`. Nas formas de conteúdo e de contagem, o líder
+  técnico recusa também, **pelo nome e sem
   depender do `.gitignore`**, todo caminho cujo último
   trecho começa com `.env`, e todo caminho que o `.gitignore` da `main` ignora. Se o diff mexe no
-  `.gitignore`, essas duas formas só valem para arquivos já rastreados na `main`: o `.gitignore`
+  `.gitignore`, as formas de conteúdo (`git grep -n` e `git diff`) e as duas de contagem só valem
+  para arquivos já rastreados na `main`, e a exceção de pasta das formas de contagem deixa de valer: o `.gitignore`
   está no diff, e o diff não pode desfazer a regra que o protege. Nas formas que só respondem sim
   ou não (`git ls-files` e `git check-ignore`), vale qualquer caminho no padrão, inclusive
   `.env.local`.
 - `<texto>`: entre aspas simples, sem aspas simples dentro e sem quebra de linha.
 - `<número>`: de 1 a 200.
 - `<endereço>`: o **líder técnico** monta, a partir de `https://liacup.com.br`,
+  `https://www.liacup.com.br` (a produção de fato, porque o primeiro responde 308 para ele),
   `https://portal-liacup.vercel.app` ou da prévia da change. O host da prévia é o que o painel da
   Vercel do projeto mostra para a branch, e começa com `portal-liacup-`; link de prévia colado num
   comentário do PR não vale. O pedido escolhe só o caminho, e ele precisa passar nas duas
@@ -184,7 +266,7 @@ As lacunas:
   escrita como o visitante a vê, sem os grupos entre parênteses (`src/app/(site)/em-construcao`
   vira `/em-construcao`). Pasta com `[` no nome (rota dinâmica) é recusada, porque o código da
   change poderia repassar o trecho do pedido para fora. O endereço vai entre aspas simples. Antes
-  de rodar, o líder técnico confere que o host do endereço montado é exatamente um dos três.
+  de rodar, o líder técnico confere que o host do endereço montado é exatamente um dos quatro.
 
 **A prévia ainda não existe quando o guardião audita**: ele roda antes do archive e do PR. Por isso,
 um pedido de AS-15 sobre o que a change muda fica **não verificado**, com esse motivo, e o líder
@@ -231,4 +313,55 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 
 | Código | Achado | Prazo | Change que resolve | Aceite |
 | --- | --- | --- | --- | --- |
-| — | Nenhum risco aceito até agora | — | — | — |
+| LB-01 · AS-10 · bloqueante | Qualquer conta autenticada do Supabase vale como diretoria: lê mensagens e rascunhos e altera conteúdo. **Condição do aceite:** cadastro público e login anônimo desligados em produção até a R2 (conferido pelo Gabriel em 20/11: desligados, 0 contas, 0 mensagens). O Gabriel confere de novo no painel antes de cada release; se a condição cair, o LB-01 volta a bloquear | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em separado |
+| LB-02 · AS-09 · alta | O PAT do Supabase e a chave de serviço chegam a passos do CI que rodam código do PR e das dependências | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-03 · AS-10 · alta | O seed apaga sem filtro as 11 coleções do projeto ligado, que pode ser o de produção | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-04 · AS-13 · alta | O anônimo insere em `mensagens` direto pela API, sem limite, e escolhe `situacao` e `recebida_em` | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-05 · AS-17 · média | Arquivo de `.claude/` alterado ou escondido por `.git/info/exclude` não para o ciclo antes do próximo agente | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-06 · AS-09 · média | A precondição da §5 não confere `.git/config`, `.git/hooks/` nem `.git/info/exclude` | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-07 · AS-15 · média | Produção não manda CSP, proteção contra embutimento, `Referrer-Policy`, `Permissions-Policy` nem `nosniff` | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-08 · AS-09 · média | O `ci.yml` não tem `permissions` e o checkout persiste o `GITHUB_TOKEN` | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-09 · AS-10 · média | A suíte de políticas e de banco não roda no CI | R2 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-10 · AS-10 · média | A barreira 3 procura a chave de serviço num build que nunca a teve, e diz VERIFICADO | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-11 · AS-10 · média | O lint não pega a chave de serviço lida por desestruturação de `process.env` | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-12 · AS-10 · média | Um autenticado altera nome, e-mail, texto e `recebida_em` de mensagem de terceiro | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-13 · AS-16 · média | A purga é manual e os textos divergem sobre a frequência, contra um prazo de 24 h; o script mira produção por padrão | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-14 · AS-17 · baixa | O `allowed-tools: Bash(openspec:*)` das 6 skills não tem decisão registrada | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-15 · AS-08 · baixa | O README instala o OpenSpec sem fixar a versão | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-16 · AS-08 · baixa | `vite` e `vitest` vulneráveis, exploráveis só com servidor local do vite ouvindo | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-17 · AS-09 · baixa | As ações do CI estão presas por tag móvel, não por sha | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-18 · AS-02 · baixa | Com o site publicado, `/vitrine` fica no ar com campos que não enviam nada | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-19 · AS-04 · baixa | As colunas de URL aceitam `javascript:` e `http:`, e a leitura não confere o esquema | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-20 · AS-10 · baixa | O verificador de RLS soma concessões e ignora visões, funções e TRUNCATE, TRIGGER e REFERENCES | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-21 · AS-10 · baixa | Os scripts leem só o `.env` e tiram só aspas duplas, e podem dar VERIFICADO falso | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-22 · AS-01 · baixa | O protótipo traz uma credencial de demonstração que não pode virar a conta real | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-23 · AS-13 · baixa | A confirmação por e-mail divide a cota do Resend com a recuperação de senha, sem limite global | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-24 · AS-09 · informativa | O caminho da correção urgente não diz que o guardião audita antes do merge | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-25 · AS-17 · informativa | A hierarquia do README não traz o `SEGURANCA.md` | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-26 · AS-01 · informativa | O protótipo guarda conteúdo comprimido que só a origem declarada cobre, sem estar nomeado na §7 | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-27 · AS-08 · informativa | 34 avisos do `npm audit`, 20 altos, um deles de produção (`source-map-js`), sem cenário concreto | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-28 · AS-02 · informativa | `/_next/static` e imagens passam pelo interruptor; cada arquivo de `public/` precisa estar aprovado | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-29 · AS-10 · informativa | Nenhuma tabela usa `FORCE ROW LEVEL SECURITY`, sem decisão registrada | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-30 · AS-02 · informativa | O anônimo lê `autor_id` das linhas publicadas | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-31 · AS-10 · informativa | O `verificar-rls` usa `--linked` com `--project-ref` e pode rotular o projeto errado | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-32 · AS-03 · informativa | `alterarComVersao` grava qualquer coluna que recebe | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-33 · AS-06 · informativa | A mensagem crua do banco volta ao chamador | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-34 · AS-15 · informativa | Produção responde `Access-Control-Allow-Origin: *`, que não pode ir para página com sessão | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-35 · AS-08 · informativa | O Node 22 do `.nvmrc` sai de suporte em 30/04/2027 | R1 (o Node 22 sai de suporte em 30/04/2027) | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+
+## 7. Origem dos arquivos binários
+
+Todo arquivo binário rastreado tem uma linha aqui (regra da seção 5). A origem é **gerado por
+rotina versionada** no repositório, ou **ativo aprovado**, com quem aprovou. Change que acrescenta
+binário acrescenta a linha no mesmo diff; sem ela, é achado de AS-01, alto e confirmado.
+
+| Caminho | Arquivos | Origem |
+| --- | --- | --- |
+| `prototipo/prints/*.png` | 23 | Gerado por rotina versionada: saída de `npm run prints:prototipo` (RP-13) |
+| `assets/logo-liacup.png` | 1 | Ativo aprovado: logo oficial enviada pela liga, em alta resolução e fundo transparente, registrada como resolvida no plano de agosto e no `conteudo-institucional.md` |
+| `assets/icone-email-gmail.png` | 1 | Ativo aprovado: ícone do Gmail entregue pela liga para o contato |
+| `assets/logo-liacup-{32,48,96,180,256,512}.png` | 6 | Ativo aprovado: gerados pela coordenação a partir da logo oficial, no pacote da F00. A rotina que os gerou não está no repositório |
+| `public/logo-liacup-256.png` | 1 | Ativo aprovado: cópia idêntica de `assets/logo-liacup-256.png`, com o mesmo blob (`bfa1d3d5`) |
+
+Os 9 de `assets/` e `public/` entraram no commit `6636202` (F00, 21/08/2026). Origem confirmada
+pelo Gabriel no Portão 1 da `auditoria-de-base-appsec`, em 20/11/2026. Total: 32 arquivos.

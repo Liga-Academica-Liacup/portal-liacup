@@ -26,9 +26,14 @@
 | `guardiao-visual` | Toda change de tela | Tira prints do site e do protótipo nas mesmas larguras (390 e 1280 px), monta o lado a lado e lista as diferenças. **Não corrige nada**: aponta | Leitura, terminal (Playwright) |
 | `qa-acessibilidade` | Toda change | Escreve e roda os testes e2e: axe, teclado, alvos de toque, rolagem horizontal nas larguras da definição de pronto | Leitura, escrita em `tests/`, terminal |
 | `revisor` | Fim de toda change | Revisão independente do diff contra a proposta, a constitution e os padrões. Começa com contexto limpo, sem ter visto a implementação | Só leitura |
-| `guardiao-appsec` | Fim de toda change, depois do revisor | Auditor de confiança zero: confere o diff contra o checklist de segurança AS-01 a AS-16 e dá o veredito BLOQUEADO, APROVADO COM RESSALVAS ou APROVADO. Não corrige; escreve o critério da correção. BLOQUEADO impede o Portão 2, e só o Gabriel aceita risco, por escrito | Só leitura |
+| `guardiao-appsec` | Fim de toda change, depois do revisor | Auditor de confiança zero: confere o diff contra o checklist de segurança do `docs/SEGURANCA.md` e dá o veredito BLOQUEADO, APROVADO COM RESSALVAS ou APROVADO. Não corrige; escreve o critério da correção. BLOQUEADO impede o Portão 2, e só o Gabriel aceita risco, por escrito | Só leitura |
 
-**Limite de rodadas:** depois de qualquer correção, o `revisor` e o `guardiao-appsec` rodam de novo. Se o mesmo agente pedir correção pela terceira rodada seguida, o líder técnico para e leva ao Gabriel o que está girando. Na change `montar-guardiao-appsec` o revisor rodou 13 vezes; o limite existe para isso não se repetir.
+**Dieta de processo (aprovada pelo Gabriel em 20/11/2026, depois de a `auditoria-de-base-appsec` consumir uma sessão inteira sem terminar):**
+
+1. **Uma sessão por change.** Se não couber numa sessão do Claude Code, a change é grande demais e se divide no Portão 1.
+2. **Guardião proporcional ao risco.** Em change de tela da R1, que é estática, ele confere só segredos (AS-01), exposição (AS-02), saída (AS-04), terceiros (AS-07) e cabeçalhos (AS-15). A auditoria completa roda na última change de cada release.
+3. **Relatório curto:** uma tela por agente, com o veredito e os achados. Nada de transcrição literal da resposta do agente no `relatorio.md`.
+4. **No máximo duas rodadas por agente.** Depois de qualquer correção, o `revisor` e o `guardiao-appsec` rodam de novo; se o mesmo agente pedir correção numa terceira rodada, o líder técnico para e leva a pergunta ao Gabriel.
 
 **Regra de relatório para todos:** no máximo uma tela (no `guardiao-appsec`, uma tela fora a lista de achados, que vem inteira), com número quando houver número ("0 violações em 6 páginas", não "ficou acessível"), e o que ficou incompleto escrito como incompleto.
 

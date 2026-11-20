@@ -1,8 +1,9 @@
 schema: spec-driven
 
 # Contexto do projeto. O OpenSpec lê este campo em toda geração de artefato.
-# A fonte é docs/constitution.md v3, aprovada pelo Gabriel em 18/11/2026, com a
-# emenda de 19/11/2026 no nível 3 da hierarquia (docs/SEGURANCA.md); este campo
+# A fonte é docs/constitution.md v3.2: a v3 foi aprovada pelo Gabriel em 18/11/2026,
+# a 3.1 (19/11) pôs docs/SEGURANCA.md no nível 3 e a 3.2 (20/11) tirou o intervalo
+# de códigos do checklist; este campo
 # é o resumo que restringe o agente, não uma cópia do documento.
 context: |
   O Portal LIACUP é o site da Liga Acadêmica Multiprofissional de Cuidados Paliativos da
@@ -48,7 +49,7 @@ context: |
 
   Hierarquia de decisão, em que o número menor vence: (1) a constitution; (2) o documento de
   aceite assinado pela liga; (3) docs/PADROES-DE-CODIGO.md, docs/REFERENCIA-VISUAL.md e
-  docs/SEGURANCA.md, onde mora o checklist de segurança AS-01 a AS-16; (4) a proposta e as specs
+  docs/SEGURANCA.md, onde mora o checklist de segurança; (4) a proposta e as specs
   da change; (5) o design.md da change; (6) preferência de implementação.
   Conflito no mesmo nível: parar e perguntar ao Gabriel.
 
