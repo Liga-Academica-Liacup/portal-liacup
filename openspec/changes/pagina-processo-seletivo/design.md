@@ -73,7 +73,9 @@ feita por agente: o segredo de bypass já existe no `.env` do Gabriel.
 
 Do protótipo vale só a composição (`REFERENCIA-VISUAL.md` §6). O texto vem dos dados (D5).
 
-- **Faixa do topo:** o selo, o `h1` "Processo seletivo", o §5.2 e o aviso (Q1). O selo segue o do
+- **Faixa do topo:** o selo, o `h1` "Processo seletivo", o §5.2 e o aviso do §5.1 (Q1 (b)): "As
+  inscrições estão fechadas. Acompanhe a Liga no Instagram @liacup.unb para saber quando abre o
+  próximo processo seletivo.". O link é o "@liacup.unb" da frase. O selo segue o do
   protótipo (fundo verde claro, texto escuro). Se o `guardiao-visual` ou o dev acharem que o verde
   lê como "aberto", isso vira **melhoria proposta** no lado a lado, para o Gabriel aprovar no
   Portão 2; o sentido já vai no texto do selo. O aviso tem o link do Instagram em nova aba, com
@@ -87,8 +89,10 @@ Do protótipo vale só a composição (`REFERENCIA-VISUAL.md` §6). O texto vem 
   separa título e descrição.
 - **Quem pode se inscrever:** o quadro do protótipo, com o §5.3 em parágrafo e o §5.4 em lista. O
   item 1 do §5.4 diz "faculdades supracitadas", e por isso o §5.3 vem antes dele.
-- **Títulos e sobretítulos:** os da Q3. A hierarquia é `h1` na faixa e `h2` em cada seção. As
-  perguntas não são títulos (D6).
+- **Títulos e sobretítulos (Q3 (a)):** "Como funciona" com o sobretítulo "Etapas", "Quem pode se
+  inscrever" com "Requisitos", e "Perguntas que sempre chegam" com "FAQ". O líder técnico os
+  registrou na `REFERENCIA-VISUAL.md` §7 no Portão 1. A hierarquia é `h1` na faixa e `h2` em cada
+  seção. As perguntas não são títulos (D6).
 - **Botões:** nenhum na página, no estado fechado.
 - Cada componente até 150 linhas; nenhum valor visual à mão; token novo só acrescentado, com origem
   medida no protótipo (RP-02, RP-03).
@@ -96,11 +100,12 @@ Do protótipo vale só a composição (`REFERENCIA-VISUAL.md` §6). O texto vem 
 ### D5 — O arquivo de dados
 
 - `tipos.ts` declara o conteúdo com o estado como união de valores possíveis, hoje com um só,
-  `'fechado'`. Se a Q2 for (a), o estado aberto não existe no tipo. Quando entrar, ele acrescenta
-  um valor à união, e o TypeScript aponta todo lugar que precisa tratá-lo.
+  `'fechado'`. Pela Q2 (a), o estado aberto não existe no tipo. Quando entrar, numa change própria,
+  ele acrescenta um valor à união, e o TypeScript aponta todo lugar que precisa tratá-lo.
 - `conteudo.ts` traz: o selo, a apresentação, o aviso (o texto e o link), as duas etapas (nome e
   caráter), o texto de quem pode se inscrever, os três pré-requisitos e as oito perguntas, cada
-  uma com a resposta. Também os títulos e sobretítulos das seções (Q3).
+  uma com a resposta sem a nota de fonte (Q4 (a)). Também os títulos e sobretítulos das seções
+  (Q3 (a)).
 - **Teste de unidade** do conteúdo: 2 etapas, 3 pré-requisitos, 8 perguntas, nada vazio, nenhuma
   pergunta repetida. Imprime as contagens.
 - **O teste do texto contra o documento é de ponta a ponta** (D8, item 1). Ele lê o
@@ -143,8 +148,9 @@ Do protótipo vale só a composição (`REFERENCIA-VISUAL.md` §6). O texto vem 
 O `qa-acessibilidade` escreve, lendo a lista e o documento de conteúdo, sem copiar texto:
 
 1. **Spec da página do processo seletivo**, nas 7 larguras, com o site publicado:
-   - os trechos do §5.2 a §5.5 e do §6 conferidos com a página, imprimindo quantos (com a regra da
-     Q4 para as notas de fonte);
+   - o aviso do §5.1 e os trechos do §5.2 a §5.5 e do §6 conferidos com a página, imprimindo
+     quantos. Pela Q4 (a), o teste tira a nota de fonte em itálico entre parênteses do fim de cada
+     resposta antes de comparar, e confere que nenhuma nota aparece na página;
    - a ausência dos termos da spec (desempate, prova, 2026.2, datas do §5.6);
    - as 8 perguntas: Enter abre, Espaço fecha, sem a página rolar, estado anunciado, 44 px, foco
      visível, imprimindo quantas mediu;
@@ -193,7 +199,7 @@ tocados com OK.
   endereço de prévia, que a Vercel marca com `X-Robots-Tag: noindex`, e o relatório diz isso. Nesta
   change isso não acontece no CI.
 - **Por que no script, e não numa asserção do `lighthouserc.json`:** a asserção do arquivo vale para
-  os dois modos, e a Q7 recomenda o mínimo só no publicado. O limiar de desempenho e acessibilidade
+  os dois modos, e a Q7 (a) decidiu o mínimo só no publicado. O limiar de desempenho e acessibilidade
   continua no `lighthouserc.json`, sem mudança.
 
 ### D10 — `montarMetadados` e a raiz
@@ -220,27 +226,40 @@ tocados com OK.
 ### D11 — O P23
 
 - **Onde:** na prévia da branch (ambiente Preview, com `SITE_PUBLICADO=true`), nos caminhos `/` e
-  `/processo-seletivo`. O host segue o padrão da Q8.
-- **Forma nova da lista fechada** do `SEGURANCA.md` §5:
+  `/processo-seletivo`.
+- **O host (Q8 (b), Gabriel, 21/11/2026):** exatamente
+  `portal-liacup-git-<branch>-liacup1.vercel.app`, com `<branch>` igual ao nome da branch em
+  minúsculas e `/` trocado por `-`, e `liacup1` como identificador do time. Nesta change:
+  `portal-liacup-git-feat-pagina-processo-seletivo-liacup1.vercel.app`, com 55 caracteres antes de
+  `.vercel.app` (conferido pelo líder técnico com `wc -c`). A conferência compara letra por letra
+  antes de ler o segredo. Se a Vercel cortar o rótulo (acima de 63 caracteres), a conferência
+  recusa, o P23 para, e o líder técnico pede ao Gabriel o host exato daquela change.
+- **Forma nova da lista fechada** do `SEGURANCA.md` §5, a do Gabriel, em que `<host>` é o host
+  acima e o caminho é `/` ou `/processo-seletivo`:
 
   ```bash
-  sed -n -e 's/\r$//' -e 's/^VERCEL_AUTOMATION_BYPASS_SECRET=/x-vercel-protection-bypass: /p' .env | curl -q -sS -I --max-time 20 --proto =https -H @- '<endereço>'
+  { printf 'x-vercel-protection-bypass: '; sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n'; printf '\n'; } | curl -q -sS -I --max-time 20 --proto =https -H @- "https://<host>/"
   ```
 
-  - O `sed` lê só a linha do nome e não carrega o resto do `.env` no ambiente. O valor nunca é
-    argumento de comando: vai pela entrada padrão para o `curl`, que lê cabeçalhos de `@-`.
+  - O `sed` lê só a linha do nome e não carrega o resto do `.env` no ambiente. O `tr` tira o `\r`
+    do fim, porque o `.env` é do Windows, e a quebra de linha.
+  - O valor nunca é argumento de comando: vai pela entrada padrão para o `curl`, que lê o cabeçalho
+    de `@-`.
   - Sem `-L`: o `curl` não segue redirecionamento, então o cabeçalho não vai para outro host.
   - `-I` imprime os cabeçalhos da resposta, e não os do pedido. Sem `-v`.
   - A saída é mascarada pela regra da §5. Não se manda `x-vercel-set-bypass-cookie`, então a
     resposta não traz cookie de acesso.
-  - Falha fechada: valor com aspas, linha ausente ou `\r` que sobrou dão 401 ou a tela de login, e
-    nunca vazamento.
-- **Busca do valor em nada rastreado** (AS-01), duas formas novas, que só devolvem
-  `arquivo:contagem`:
+  - Falha fechada: valor errado dá 401 ou a tela de login, e nunca vazamento.
+- **Fatos medidos pelo líder técnico no Portão 1, só com contagem:** 1 linha com o nome no `.env`,
+  0 com aspas no começo do valor e 0 com `\r`.
+- **Variável ausente:** se o `.env` não tiver a linha `VERCEL_AUTOMATION_BYPASS_SECRET=`, o líder
+  técnico para e avisa o Gabriel. Não procura o segredo em outro lugar.
+- **Busca do valor em nada rastreado** (AS-01), duas formas novas, com a mesma extração do pedido,
+  que só devolvem `arquivo:contagem`:
 
   ```bash
-  sed -n -e 's/\r$//' -e 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | git grep -c -a -F -f - HEAD
-  sed -n -e 's/\r$//' -e 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | git grep -c -a -F --untracked -f -
+  sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F -f - HEAD
+  sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --untracked -f -
   ```
 
   Código 1 com saída vazia quer dizer nada achado. O `.env` é ignorado, e por isso não entra na
@@ -252,8 +271,8 @@ tocados com OK.
 - **Também:** o nome `VERCEL_AUTOMATION_BYPASS_SECRET` entra no `.env.example`, sem valor, marcado
   como segredo de uso local do líder técnico. O README ganha uma linha na seção de variáveis.
 - **O relatório** registra o P23 e a Q9 da `layout-e-hero`, que ficaram fora do relatório
-  arquivado. O texto literal da Q9 da `layout-e-hero` não está no repositório e é pedido ao Gabriel
-  no Portão 1.
+  arquivado. A Q9 da `layout-e-hero` foi decidida (a), e o texto literal está transcrito na seção
+  "Decisões do Gabriel no Portão 1" do `relatorio.md`.
 
 ### D12 — Pendências da `layout-e-hero`
 
@@ -274,7 +293,8 @@ tocados com OK.
 | `dev-frontend` | `src/app/(site)/(publicas)/processo-seletivo/`; as `page.tsx` de `(publicas)` (só os metadados); `src/features/processo-seletivo/`; `src/lib/utils/paginas-publicas.{json,ts,test.ts}` e `metadados.{ts,test.ts}`; `src/componentes/ui/Botao*` e o arquivo novo de aparência de botão; `src/componentes/layout/` (apagar os dois arquivos de aparência, cabeçalho, menu, rodapé, o hook renomeado); `src/app/(site)/(publicas)/_inicio/HeroDaInicial.tsx` (só o import); `src/app/(interno)/vitrine/` só se a vitrine quebrar; `src/estilos/tokens.css` só com linhas acrescentadas; `scripts/medir-desempenho.mjs`; `README.md` (D12 e D11) |
 | `qa-acessibilidade` | `tests/e2e/` (spec novo da página, `paginas-publicas`, `menu-por-teclado`, `pagina-inicial`). `interruptor.spec.ts` e `playwright.config.ts` não mudam |
 | `guardiao-visual` | `openspec/changes/pagina-processo-seletivo/prints/` |
-| Líder técnico | `docs/PADROES-DE-CODIGO.md` (§9, §10 e §11); `docs/SEGURANCA.md` (§5: forma nova, lacuna do host e formas de busca; §3: a superfície nova; §7: os prints da change); `.env.example` (uma linha, o nome sem valor) |
+| Líder técnico | `docs/PADROES-DE-CODIGO.md` (§9, §10 e §11); `docs/SEGURANCA.md` (§5: forma nova, lacuna do host e formas de busca; §3: a superfície nova; §7: os prints da change); `.env.example` (uma linha, o nome sem valor); `docs/REFERENCIA-VISUAL.md` §7 (os títulos da Q3 (a), já feito no Portão 1) |
+| `especificador` | Além de `openspec/changes/pagina-processo-seletivo/`, uma inserção só no `docs/conteudo-institucional.md` §5.1, o aviso da Q1 (b), feita no Portão 1 com autorização expressa do Gabriel |
 
 Não mudam: `src/proxy.ts`, `src/app/layout.tsx` (Q5 (a)), `src/app/(site)/em-construcao/`,
 `PaginaEmConstrucao*`, `Rodape*`, `LinksDeContato*`, `lighthouserc.json`, `playwright.config.ts`,
@@ -286,33 +306,50 @@ na entrega.
 | Texto | Fonte |
 | --- | --- |
 | Apresentação, quem pode se inscrever, pré-requisitos, etapas | `conteudo-institucional.md` §5.2 a §5.5 |
-| Perguntas e respostas | §6, com a regra da Q4 para as notas de fonte |
+| Perguntas e respostas | §6, sem as notas de fonte (Q4 (a)) |
 | Selo "Inscrições fechadas" | Briefing do gestor, apoiado no §5.1 ("as inscrições estão fechadas") |
-| Aviso de inscrições fechadas | Q1. Nenhuma opção está no documento: a escolhida entra no §5 por emenda do gestor, antes do apply |
-| Títulos e sobretítulos das seções | Q3 |
+| Aviso de inscrições fechadas | §5.1, inserido pelo `especificador` no Portão 1 com autorização do Gabriel (Q1 (b), "decisão do Gabriel em 21/11, Q1 da pagina-processo-seletivo") |
+| Títulos e sobretítulos das seções | Protótipo, com "Cronograma" trocado por "Etapas" (Q3 (a)); registrados na `REFERENCIA-VISUAL.md` §7 pelo líder técnico no Portão 1 |
 | Título "Processo seletivo" | §5 e protótipo, sem o semestre |
-| Títulos e descrições de SEO | Q6 |
+| Títulos e descrições de SEO | Q6 (a): os títulos do formato da regra; as descrições são a primeira frase do §2.0 e a do §5.2 |
 | Nomes acessíveis (link do aviso, marca) | Rótulos de interface, registrados no relatório pelo dev, sem texto institucional novo |
 
 ## Risks / Trade-offs
 
 | Risco | Mitigação |
 | --- | --- |
-| A auditoria `canonical` do Lighthouse reclamar de um canonical em `liacup.com.br` medido em `localhost` | O dev olha a auditoria na primeira medição. Se ela falhar por causa do host, ele para e reporta ao líder técnico, que leva ao Gabriel. Limiar não se baixa, e a auditoria não se desliga sem decisão |
+| A auditoria `canonical` do Lighthouse falhar porque mede um canonical em `liacup.com.br` com a página servida em `localhost` | O dev olha a auditoria na primeira medição. Se ela falhar por esse motivo, o dev para, e o líder técnico traz o caso ao Gabriel como Qn nova. A auditoria não se desliga e o limiar não se baixa sem decisão do Gabriel |
 | A página em construção mudar no `<head>` sem ninguém ver | Q5 (a), a raiz intacta; os metadados do `<head>` da 3001 antes e depois (D10); os prints contra os `depois-raiz-nao-publicada-*` arquivados da `layout-e-hero`, que são o estado atual da produção |
-| O segredo de bypass vazar | D11: nunca é argumento, nunca é impresso, a busca devolve só contagem, e o host é conferido antes (Q8) |
+| O segredo de bypass vazar | D11: nunca é argumento, nunca é impresso, a busca devolve só contagem, e o host é conferido letra por letra antes (Q8 (b)) |
 | `<details>` com anúncio de estado diferente entre leitores de tela | O qa mede o estado no Chromium. Leitor de tela real fica sem cobertura, e isso é declarado. A alternativa do D6 está pronta |
 | 15 tarefas sem folga | A divisão está na proposta: o item 7 inteiro sai para a `pagina-sobre-e-equipe` |
 | A descrição de 155 caracteres do Processo seletivo ficar perto do limite | O teste mede. Se o §5.2 mudar e a frase passar de 160, o teste fica vermelho e pede decisão |
-| O aviso prometer o que a liga não faz | A Q1 marca a opção que afirma onde o edital sai |
+| O aviso prometer o que a liga não faz | Q1 (b): o aviso convida a acompanhar a liga, sem afirmar onde o edital sai |
 
 ## Open Questions
 
-Todas para o Gabriel no Portão 1. Cada uma muda texto, spec ou tarefa; nenhuma foi decidida por
-mim. Toda opção de texto que não vem do `conteudo-institucional.md` está marcada **(fora do
-documento)**. Caracteres contados por mim, à mão; o teste da tarefa 2.2 confere.
+Nenhuma aberta. As oito foram decididas pelo Gabriel no Portão 1, em 21/11/2026; o texto literal
+está no `relatorio.md`, seção "Decisões do Gabriel no Portão 1", transcrito pelo líder técnico. As
+opções ficam abaixo como registro. Na origem, toda opção de texto que não vinha do
+`conteudo-institucional.md` estava marcada **(fora do documento)**. Os caracteres foram contados à
+mão pelo especificador, e o teste da tarefa 2.2 confere.
+
+| Qn | Decisão |
+| --- | --- |
+| Q1 | (b) · Gabriel, 21/11/2026, Portão 1 |
+| Q2 | (a) · Gabriel, 21/11/2026, Portão 1 |
+| Q3 | (a) · Gabriel, 21/11/2026, Portão 1 |
+| Q4 | (a) · Gabriel, 21/11/2026, Portão 1 |
+| Q5 | (a) · Gabriel, 21/11/2026, Portão 1 |
+| Q6 | (a) no título e (a) nas descrições · Gabriel, 21/11/2026, Portão 1 |
+| Q7 | (a) · Gabriel, 21/11/2026, Portão 1 |
+| Q8 | (b), time `liacup1` · Gabriel, 21/11/2026, Portão 1 |
 
 ### Q1 — O texto do aviso de inscrições fechadas
+
+**Decidida: (b) · Gabriel, 21/11/2026, Portão 1.** O texto entrou no `conteudo-institucional.md`
+§5.1, inserido pelo `especificador` com autorização do Gabriel, com a origem "decisão do Gabriel em
+21/11, Q1 da pagina-processo-seletivo".
 
 O §5.1 pede "um aviso de que as inscrições estão fechadas e um convite para acompanhar o
 Instagram", mas não traz o texto.
@@ -327,11 +364,12 @@ Instagram", mas não traz o texto.
   ainda é proposta do gestor a validar pela liga, e não afirma canal oficial.
 - **(c)** **(fora do documento)**: "As inscrições estão fechadas no momento. Acompanhe a Liga no
   Instagram @liacup.unb." Custo: é a mais curta, e não diz para que acompanhar.
-- Qualquer opção entra no `conteudo-institucional.md` §5 por emenda do gestor antes do apply, como
-  a Q1 (a) da `layout-e-hero`, e o teste lê de lá.
+- A opção escolhida entra no `conteudo-institucional.md` §5.1, e o teste lê de lá.
 - **Recomendo (b)**, porque convida sem afirmar um fato que nenhuma fonte confirma.
 
 ### Q2 — O estado "inscrições abertas", agora ou depois
+
+**Decidida: (a) · Gabriel, 21/11/2026, Portão 1.** O estado aberto fica fora de escopo.
 
 - **(a)** Não fazer. O tipo do conteúdo prevê o estado como união, hoje só com `'fechado'`. Custo:
   se um edital abrir antes da R3, é preciso uma change curta, estimada em 5 a 7 tarefas (dados do
@@ -352,6 +390,9 @@ Instagram", mas não traz o texto.
 
 ### Q3 — Os títulos de seção e os sobretítulos
 
+**Decidida: (a) · Gabriel, 21/11/2026, Portão 1.** O registro na `REFERENCIA-VISUAL.md` §7 foi
+feito pelo líder técnico no Portão 1.
+
 O protótipo tem os sobretítulos "CRONOGRAMA", "REQUISITOS" e "FAQ" e os títulos "Como funciona",
 "Quem pode se inscrever" e "Perguntas que sempre chegam". O documento tem as seções "Etapas", "Quem
 pode se inscrever", "Pré-requisitos" e "Perguntas frequentes". A `REFERENCIA-VISUAL.md` §6 diz que o
@@ -370,6 +411,8 @@ texto do protótipo desta página era exemplo, mas lista só datas, etapas e o s
 
 ### Q4 — As notas de fonte nas respostas do §6
 
+**Decidida: (a) · Gabriel, 21/11/2026, Portão 1.**
+
 Sete das oito respostas terminam com uma nota em itálico, como "_(Edital, 1.1 e 2.1)_", "_(Edital,
 2.2 — decisão D1)_" e "_(decisão D6)_".
 
@@ -383,6 +426,8 @@ Sete das oito respostas terminam com uma nota em itálico, como "_(Edital, 1.1 e
 - **Recomendo (a)**, porque a nota diz de onde veio a resposta e não faz parte dela.
 
 ### Q5 — Os metadados da raiz e a página em construção
+
+**Decidida: (a) · Gabriel, 21/11/2026, Portão 1.**
 
 A página em construção herda os metadados do layout raiz, e o critério de aceite exige que ela
 continue idêntica.
@@ -400,6 +445,8 @@ continue idêntica.
   página em construção.
 
 ### Q6 — Título e descrição da Início e do Processo seletivo
+
+**Decidida: título (a) e descrições (a) · Gabriel, 21/11/2026, Portão 1.**
 
 O Processo seletivo não tem questão no título: "Processo seletivo · LIACUP", com 26 caracteres. As
 questões são duas.
@@ -428,6 +475,8 @@ questões são duas.
 
 ### Q7 — SEO no modo não publicado
 
+**Decidida: (a) · Gabriel, 21/11/2026, Portão 1.**
+
 - **(a)** O mínimo de 95 vale só no modo publicado. O não publicado imprime a nota sem reprovar.
   Custo: a página que a produção mostra fica sem mínimo de SEO até a `lancamento-r1`, mas o número
   fica visível no CI.
@@ -437,6 +486,9 @@ questões são duas.
 - **Recomendo (a)**, porque mede sem prender a change a uma página que ela não pode mudar.
 
 ### Q8 — O host da prévia no pedido com o segredo
+
+**Decidida: (b) · Gabriel, 21/11/2026, Portão 1.** O identificador do time é `liacup1`, e o host
+desta change é `portal-liacup-git-feat-pagina-processo-seletivo-liacup1.vercel.app` (D11).
 
 Hoje a lacuna aceita o host da prévia que "começa com `portal-liacup-`", tirado do painel da Vercel.
 Com o segredo no pedido, um host parecido, como um projeto `portal-liacup-x` de outra conta,

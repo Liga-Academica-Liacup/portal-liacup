@@ -160,6 +160,10 @@ Decisões aplicadas: sem critério de desempate (D2), sem cargo específico (D5)
 
 Quando não houver processo seletivo aberto, a página não some: ela mostra os pré-requisitos e as perguntas frequentes, com um aviso de que as inscrições estão fechadas e um convite para acompanhar o Instagram. Ninguém chega numa página vazia.
 
+**Aviso de inscrições fechadas** _(decisão do Gabriel em 21/11, Q1 da pagina-processo-seletivo)_:
+
+> As inscrições estão fechadas. Acompanhe a Liga no Instagram @liacup.unb para saber quando abre o próximo processo seletivo.
+
 ### 5.2 Apresentação
 
 > A LIACUP seleciona novos ligantes por meio de processo seletivo, aberto a estudantes de graduação da Universidade de Brasília a partir do segundo semestre. Cada processo tem seu próprio edital, com o número de vagas, as áreas e o cronograma daquele semestre.

@@ -21,9 +21,12 @@ liga no Instagram, sem botão de inscrição nem link de edital.
 - **WHEN** alguém abre `/processo-seletivo` com o site publicado, em qualquer largura
 - **THEN** vê, nesta ordem, o selo "Inscrições fechadas", o título principal "Processo seletivo",
   sem semestre, a apresentação da liga sobre o processo seletivo e o aviso de inscrições fechadas
+- **AND** o aviso é, palavra por palavra, o do documento de conteúdo (seção 5.1): "As inscrições
+  estão fechadas. Acompanhe a Liga no Instagram @liacup.unb para saber quando abre o próximo
+  processo seletivo."
 - **AND** o aviso tem um link para `https://www.instagram.com/liacup.unb/`, que abre em nova aba
   sem dar à página aberta acesso à página de origem nem o endereço de origem, e cujo nome acessível
-  diz o destino
+  diz o destino e contém o texto visível do link
 - **AND** não aparecem "Fazer inscrição" nem "Baixar o edital"
 
 #### Scenario: As etapas
@@ -36,8 +39,13 @@ liga no Instagram, sem botão de inscrição nem link de edital.
 
 - **WHEN** alguém lê o quadro de quem pode se inscrever
 - **THEN** vê o texto de quem pode se inscrever e, depois dele, os três pré-requisitos, em lista
-- **AND** os títulos de seção e os sobretítulos da página são os decididos pelo Gabriel no Portão 1
-  (Q3 desta change)
+
+#### Scenario: Títulos e sobretítulos das seções
+
+- **WHEN** alguém lê os títulos das três seções abaixo da faixa
+- **THEN** vê "Como funciona", com o sobretítulo "Etapas"; "Quem pode se inscrever", com o
+  sobretítulo "Requisitos"; e "Perguntas que sempre chegam", com o sobretítulo "FAQ"
+- **AND** não aparece o sobretítulo "Cronograma"
 
 #### Scenario: A ordem dos blocos no celular e no desktop
 
@@ -50,16 +58,23 @@ liga no Instagram, sem botão de inscrição nem link de edital.
 ### Requirement: O texto da página é o do documento de conteúdo, conferido por teste
 
 Todo texto institucional da página SHALL ser, palavra por palavra, o do documento de conteúdo
-aprovado pela liga (apresentação, quem pode se inscrever, pré-requisitos, etapas e perguntas
+aprovado pela liga (aviso, apresentação, quem pode se inscrever, pré-requisitos, etapas e perguntas
 frequentes), e um teste SHALL comparar a página publicada com o documento, lendo o documento, e não
-uma cópia do texto.
+uma cópia do texto. As notas de fonte do fim das respostas não vão ao ar.
 
 #### Scenario: A página confere com o documento
 
 - **WHEN** os testes de ponta a ponta rodam com o site publicado
-- **THEN** a apresentação, o texto de quem pode se inscrever, os três pré-requisitos, as duas etapas
-  e as oito perguntas, com as respostas, são idênticos aos do documento de conteúdo
+- **THEN** o aviso, a apresentação, o texto de quem pode se inscrever, os três pré-requisitos, as
+  duas etapas e as oito perguntas, com as respostas, são idênticos aos do documento de conteúdo
 - **AND** a saída imprime quantos trechos conferiu
+
+#### Scenario: As notas de fonte das respostas
+
+- **WHEN** uma resposta do documento termina com uma nota de fonte em itálico entre parênteses, como
+  "(Edital, 2.2)" ou "(decisão D6)"
+- **THEN** a página mostra a resposta sem a nota, e o teste compara a resposta sem ela
+- **AND** nenhuma nota de fonte aparece na página
 
 #### Scenario: Página e documento divergem
 

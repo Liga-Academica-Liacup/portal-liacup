@@ -23,6 +23,14 @@ entre páginas.
   descrição entre 70 e 160 caracteres e nenhuma repetição entre páginas
 - **AND** a saída imprime quantas entradas conferiu
 
+#### Scenario: Os títulos e as descrições desta entrega
+
+- **WHEN** alguém lê os metadados da Início e do Processo seletivo
+- **THEN** o título da Início é "Liga Acadêmica Multiprofissional de Cuidados Paliativos · LIACUP" e
+  o do Processo seletivo é "Processo seletivo · LIACUP"
+- **AND** a descrição de cada uma é a primeira frase, inteira e sem mudança, da apresentação da
+  página no documento de conteúdo (seções 2.0 e 5.2)
+
 #### Scenario: Título repetido
 
 - **WHEN** duas entradas da lista têm o mesmo título
@@ -81,6 +89,11 @@ da conta, e a saída SHALL dizer isso. Uma página que se declara não indexáve
 - **WHEN** a medição de desempenho roda com o site publicado
 - **THEN** imprime a nota de SEO de cada página da lista, em cada execução
 - **AND** reprova se alguma ficar abaixo de 95
+
+#### Scenario: A raiz com o site não publicado
+
+- **WHEN** a medição de desempenho roda com o site não publicado
+- **THEN** imprime a nota de SEO da raiz em cada execução, sem reprovar por ela
 
 #### Scenario: A página se declara não indexável
 

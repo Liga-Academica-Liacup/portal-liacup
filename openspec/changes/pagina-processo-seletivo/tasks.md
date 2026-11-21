@@ -2,11 +2,12 @@
 
 15 tarefas, sem folga. Se uma correção acrescentar tarefa, o grupo 2 inteiro (SEO) e as partes de
 SEO da 3.2 e da 3.3 saem para a `pagina-sobre-e-equipe` (proposta). Comandos em sintaxe de bash
-(Git Bash). Escopos nominais no `design.md`, D13. As tarefas assumem as recomendações das Q1 a Q8;
-a decisão do Gabriel no Portão 1 entra aqui antes do apply.
+(Git Bash). Escopos nominais no `design.md`, D13. As tarefas aplicam as decisões do Gabriel no
+Portão 1, em 21/11/2026: Q1 (b), Q2 (a), Q3 (a), Q4 (a), Q5 (a), Q6 (a), Q7 (a) e Q8 (b).
 
-**Antes do apply:** o gestor emenda o `conteudo-institucional.md` §5 com o texto do aviso (Q1) e o
-líder técnico registra na `REFERENCIA-VISUAL.md` §7 os títulos de seção (Q3 (a)).
+**Já feito no Portão 1, antes do apply:** o aviso da Q1 (b) está no `conteudo-institucional.md`
+§5.1, inserido pelo `especificador` com autorização do Gabriel. Os títulos e sobretítulos da Q3 (a)
+estão na `REFERENCIA-VISUAL.md` §7, registrados pelo líder técnico.
 
 ## 1. A página e a moldura
 
@@ -21,7 +22,9 @@ líder técnico registra na `REFERENCIA-VISUAL.md` §7 os títulos de seção (Q
 - [ ] 1.3 A página `/processo-seletivo` e a entrada dela na lista (D1, D3, D4), sem as perguntas.
       Verificar, com `npm run build`, a 3000 publicada e a 3001 não publicada, por `curl -s`:
       - na 3000, `/processo-seletivo` responde 200, com 1 `<h1>` "Processo seletivo";
-      - a 3000 tem o selo, o §5.2, o aviso da Q1 e o link
+      - a 3000 tem o selo, o §5.2, o aviso do §5.1 ("As inscrições estão fechadas. Acompanhe a
+        Liga no Instagram @liacup.unb para saber quando abre o próximo processo seletivo."), os
+        títulos e sobretítulos da Q3 (a), 0 ocorrências de "Cronograma", e o link
         `https://www.instagram.com/liacup.unb/` com `target="_blank"` e
         `rel="noopener noreferrer"`;
       - `grep -c` de "Fazer inscrição", "Baixar o edital", "desempate", "2026.2" e "28/08" na
@@ -54,9 +57,11 @@ líder técnico registra na `REFERENCIA-VISUAL.md` §7 os títulos de seção (Q
       Verificar: `grep -c "^## 11. SEO" docs/PADROES-DE-CODIGO.md` dá 1, e `git diff
       docs/PADROES-DE-CODIGO.md` só tem linhas acrescentadas, fora a da §9.
 - [ ] 2.2 Título e descrição na lista, validados no `problemasDaLista`, e o `montarMetadados` com o
-      teste dele, aplicado na Início e no Processo seletivo (D3, D10, Q5 (a), Q6). Verificar:
+      teste dele, aplicado na Início e no Processo seletivo (D3, D10, Q5 (a), Q6 (a)). Verificar:
       - `npm test` com código 0, com `Entradas da lista de páginas públicas conferidas: 2` e os
-        caracteres de cada descrição impressos (129 e 155 com a Q6 (a));
+        caracteres de cada descrição impressos (129 e 155, contados à mão no Portão 1);
+      - os títulos "Liga Acadêmica Multiprofissional de Cuidados Paliativos · LIACUP" e "Processo
+        seletivo · LIACUP";
       - na 3000, o `<head>` de `/` e de `/processo-seletivo` tem o título, a descrição,
         `<link rel="canonical" href="https://liacup.com.br/...">` e `og:title` e `og:description`
         iguais;
@@ -65,14 +70,18 @@ líder técnico registra na `REFERENCIA-VISUAL.md` §7 os títulos de seção (Q
 - [ ] 2.3 O Lighthouse com SEO e o contador real (D9, Q7 (a)). Verificar: `npm run build && npm
       run test:desempenho` com código 0, e a saída tem:
       - `páginas medidas: 2` no publicado e `1` no não publicado, lidos do manifesto;
-      - desempenho, acessibilidade e SEO de cada execução, com SEO ≥ 95 nas duas páginas publicadas;
-      - a auditoria `canonical` aprovada (senão, para e reporta: `design.md`, riscos);
+      - desempenho, acessibilidade e SEO de cada execução, com SEO ≥ 95 nas duas páginas
+        publicadas, e a nota da raiz não publicada impressa sem reprovar;
+      - a auditoria `canonical` aprovada. Se ela falhar porque mede `liacup.com.br` com a página
+        em `localhost`, o dev para, e o líder técnico traz o caso ao Gabriel como Qn nova. A
+        auditoria não se desliga sem decisão;
       - `git diff --exit-code lighthouserc.json .github/` com código 0.
 
 ## 3. Verificações
 
 - [ ] 3.1 **qa:** o spec da página do processo seletivo (D8, item 1), com o texto lido do
-      `conteudo-institucional.md` e a regra da Q4. Verificar: `npx playwright test` verde nas 7
+      `conteudo-institucional.md`, o aviso do §5.1 incluído e as notas de fonte tiradas das respostas
+      (Q4 (a)). Verificar: `npx playwright test` verde nas 7
       larguras, e a saída de cada largura imprime quantos trechos conferiu, `perguntas medidas: 8`,
       os alvos medidos e `Violacoes de acessibilidade: 0`, com as perguntas fechadas e abertas.
 - [ ] 3.2 **qa:** um `h1` por página da lista (D8, item 2), mais os ajustes nos specs existentes
@@ -88,11 +97,16 @@ líder técnico registra na `REFERENCIA-VISUAL.md` §7 os títulos de seção (Q
 ## 4. P23
 
 - [ ] 4.1 **Líder técnico:** no `SEGURANCA.md`:
-      - §5: a forma nova do `curl` e as duas formas de busca do valor (D11), com a lacuna do host
-        da Q8;
+      - §5: a forma nova do `curl`, a do Gabriel (`{ printf …; sed -n … .env | tr -d '\r\n';
+        printf '\n'; } | curl … -H @- "https://<host>/"`), e as duas formas de busca do valor,
+        com a mesma extração (D11);
+      - a lacuna `<host>`: exatamente `portal-liacup-git-<branch>-liacup1.vercel.app` (Q8 (b)),
+        conferido letra por letra, com recusa se a Vercel cortar o rótulo;
+      - a regra "variável ausente no `.env`: para e avisa o Gabriel";
       - §3, R1: a superfície nova (a página, o link do aviso, o P23 com segredo).
       E no `.env.example`, o nome `VERCEL_AUTOMATION_BYPASS_SECRET` sem valor. Verificar:
       - `grep -c "x-vercel-protection-bypass" docs/SEGURANCA.md` dá pelo menos 1;
+      - `grep -c "liacup1.vercel.app" docs/SEGURANCA.md` dá pelo menos 1;
       - `grep -c "^VERCEL_AUTOMATION_BYPASS_SECRET=$" .env.example` dá 1;
       - `git check-ignore -v -- .env` com código 0.
 
@@ -125,9 +139,12 @@ líder técnico registra na `REFERENCIA-VISUAL.md` §7 os títulos de seção (Q
   `navegacao-publica`, "Uma lista única decide quais páginas públicas existem" trocado por "A lista
   única decide quais páginas públicas existem e onde aparecem".
 - Entrega ao Gabriel no modelo do `CLAUDE.md`.
-- Depois de a Vercel gerar a prévia, e antes do merge: o **P23** pela forma nova, em `/` e em
-  `/processo-seletivo`, com 200 e sem `Location`. A saída vai literal e mascarada para o
-  relatório. AS-15 da change sai de "não verificado".
+- Depois de a Vercel gerar a prévia, e antes do merge: o **P23** pela forma nova, em
+  `https://portal-liacup-git-feat-pagina-processo-seletivo-liacup1.vercel.app/` e em
+  `/processo-seletivo`, depois de conferir o host letra por letra, com 200 e sem `Location`. A
+  saída vai literal e mascarada para o relatório, e o AS-15 da change sai de "não verificado". Se
+  a Vercel tiver cortado o rótulo, ou se o `.env` não tiver a variável, o P23 para e o líder
+  técnico pede ao Gabriel o host exato ou a variável.
 - Na prévia, o **Gabriel confere o menu à mão em 390 px** (tarefa 1.5 da `layout-e-hero`), agora
   com o botão "Processo seletivo" no fim do menu.
 - Depois do merge, em produção: a raiz continua mostrando a página em construção, e
