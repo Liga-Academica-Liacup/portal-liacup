@@ -1,0 +1,97 @@
+/* Perguntas frequentes do processo seletivo. Nenhum valor escrito à mão: tudo
+   vem de src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Contraste sobre --color-surface #ebddc5 (RP-09):
+   - pergunta, --color-accent-800 #4e3260: 8,04:1; em hover,
+     --color-accent-700 #683f74: 6,15:1;
+   - resposta, --color-neutral-800 #474238: 7,45:1;
+   - o "+" é --color-accent #9b6aaf: 3,09:1, acima dos 3:1 de elemento
+     gráfico. Ele é decorativo, e o estado vem do próprio <details>;
+   - anel de foco, --color-accent-700: 6,15:1. */
+
+.secao {
+  padding: var(--espaco-secao-da-pagina) var(--space-6) var(--espaco-fim-da-secao-das-perguntas);
+  background: var(--color-surface);
+}
+
+.conteudo {
+  max-width: var(--largura-das-perguntas);
+  margin: 0 auto;
+}
+
+.pergunta {
+  border-top: var(--largura-borda) solid var(--color-divider);
+}
+
+/* A pergunta inteira é o alvo: a largura da coluna e pelo menos 44 px de
+   altura (RP-04). Sem o triângulo do navegador: o sinal é o "+" do protótipo. */
+.resumo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-da-pergunta);
+  min-height: var(--alvo-de-toque);
+  padding: var(--espaco-da-pergunta) 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-pergunta);
+  line-height: var(--line-height-titulo);
+  color: var(--color-accent-800);
+  list-style: none;
+  cursor: pointer;
+}
+
+.resumo::-webkit-details-marker {
+  display: none;
+}
+
+.textoDaPergunta {
+  min-width: 0;
+}
+
+.sinal {
+  flex: 0 0 auto;
+  font-size: var(--font-size-sinal-da-pergunta);
+  line-height: var(--line-height-sinal-da-pergunta);
+  color: var(--color-accent);
+}
+
+.sinal::before {
+  content: '+';
+}
+
+.pergunta[open] .sinal::before {
+  content: '–';
+}
+
+/* Hover só onde há hover (ADR-0006): a cor muda e a pergunta ganha o
+   sublinhado, que não depende só da cor. */
+@media (hover: hover) {
+  .resumo:hover {
+    color: var(--color-accent-700);
+  }
+
+  .resumo:hover .textoDaPergunta {
+    text-decoration: underline;
+    text-underline-offset: var(--underline-offset);
+  }
+}
+
+/* Pressionado: mouse, caneta e toque. O mesmo fundo dos outros controles. */
+.resumo:active {
+  background: var(--color-fundo-pressionado);
+}
+
+.resposta {
+  max-width: var(--largura-da-resposta);
+  margin: 0;
+  padding-bottom: calc(var(--space-2) + var(--space-3));
+  font-size: var(--font-size-resposta);
+  color: var(--color-neutral-800);
+}
+
+/* O corte do protótipo: [data-pad]. */
+@media (max-width: 768px) {
+  .secao {
+    padding-inline: var(--space-4);
+  }
+}

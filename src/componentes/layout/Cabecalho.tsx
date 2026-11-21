@@ -18,10 +18,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { paginaDeDestaque, paginasDoMenu } from '@/lib/utils/paginas-publicas'
-import { aparenciaDeBotao } from './aparencia-de-botao'
+import { aparenciaDeBotao } from '@/componentes/ui/aparencia-de-botao'
 import estilos from './Cabecalho.module.css'
 import { LinkDaNavegacao } from './LinkDaNavegacao'
 import { MenuLateral } from './MenuLateral'
+
+/** O fim do nome acessível da marca, só para leitor de tela: o nome não diz o destino. */
+const DESTINO_DA_MARCA = ', página inicial'
 
 export function Cabecalho() {
   const paginas = paginasDoMenu()
@@ -30,10 +33,17 @@ export function Cabecalho() {
   return (
     <header className={estilos.cabecalho}>
       <div className={estilos.linha}>
-        {/* O nome acessível diz o destino: no celular só "LIACUP" aparece, e ele
-            sozinho não diz que o link leva à página inicial. Começa pelo texto
-            visível, para quem fala o nome com controle por voz. */}
-        <Link href="/" className={estilos.marca} aria-label="LIACUP, página inicial">
+        {/* O nome acessível vem do texto visível, sem aria-label: "LIACUP" e,
+            acima de 1024 px, também o nome da liga, que só então aparece (o
+            display: none o tira do nome no celular). No fim, só para leitor de
+            tela, ", página inicial", porque o nome sozinho não diz o destino.
+            Assim o nome sempre começa pelo que está escrito, para quem fala o
+            nome com controle por voz (WCAG 2.5.3).
+            O ", página inicial" fica DENTRO do último texto visível, em linha:
+            fora dele, o navegador separa os blocos com um espaço, e o nome
+            saía "LIACUP , página inicial". Como o último texto visível muda no
+            ponto de troca, há um em cada, e só um aparece por largura. */}
+        <Link href="/" className={estilos.marca}>
           {/* alt vazio: o nome "LIACUP", ao lado, já diz o que a logo diz. */}
           <Image
             src="/logo-liacup-256.png"
@@ -44,9 +54,18 @@ export function Cabecalho() {
             className={estilos.logo}
           />
           <span className={estilos.nomes}>
-            <span className={estilos.sigla}>LIACUP</span>
+            <span className={estilos.sigla}>
+              LIACUP
+              <span className={`${estilos.destinoDaMarca} ${estilos.destinoNoCelular}`}>
+                {DESTINO_DA_MARCA}
+              </span>
+            </span>
+            {/* O espaço do começo separa "LIACUP" do nome no nome acessível; na
+                tela, no começo da linha, ele não aparece. */}
             <span className={estilos.nomeDaLiga}>
+              {' '}
               Liga Acadêmica Multiprofissional de Cuidados Paliativos · UnB
+              <span className={estilos.destinoDaMarca}>{DESTINO_DA_MARCA}</span>
             </span>
           </span>
         </Link>

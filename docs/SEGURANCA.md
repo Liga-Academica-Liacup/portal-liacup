@@ -43,6 +43,11 @@ release atualiza a seção da release dela, na seção 3.
   do rodapé para o Instagram, em nova aba, e o `mailto:` (AS-04); o script que roda o Lighthouse
   nos dois modos e o que sobe o `next start` num modo do interruptor posto pelo processo, que o CI
   executa (AS-09).
+  Desde a `pagina-processo-seletivo` (21/11/2026): a página `/processo-seletivo`, com texto fixo
+  vindo de um arquivo de dados versionado; o link externo fixo do aviso para o Instagram, em nova
+  aba (AS-04); título, descrição, canonical e Open Graph montados a partir da lista única (AS-02); e
+  o P23, pedido de cabeçalhos à prévia com o segredo de proteção da Vercel lido do `.env` local do
+  líder técnico, que nunca é versionado nem impresso (AS-01, AS-15).
 - **Pode dar errado:** página escondida alcançável por endereço técnico (AS-02); redirecionamento
   para fora (AS-05); link externo inseguro (AS-04); requisição a terceiro (AS-07); dependência
   vulnerável (AS-08); CI com permissão larga ou segredo no log (AS-09); cabeçalhos ausentes (AS-15).
@@ -240,6 +245,66 @@ relatório.
 | `openspec --version` | A versão do OpenSpec que gerou as skills (AS-17) |
 | `curl -q -sS -I --max-time 20 --proto =https '<endereço>'` | Cabeçalhos que o site devolve (AS-15); o `-q`, primeiro, ignora o `.curlrc` |
 
+**Três formas com o segredo de proteção da Vercel** (change `pagina-processo-seletivo`, decisões do
+Gabriel de 21/11/2026, Q8 (b) e ajuste 2 do Portão 1). Ficam fora da tabela porque têm `|`. A
+primeira mede os cabeçalhos da **prévia da branch**, que a Vercel protege com login; as outras duas
+confirmam que o valor do segredo não está em nada rastreado nem na árvore de trabalho (AS-01):
+
+```bash
+{ printf 'x-vercel-protection-bypass: '; sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n'; printf '\n'; } | curl -q -sS -I --max-time 20 --proto =https -H @- 'https://<host><caminho>'
+sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F -f - <rev>
+sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --untracked -f -
+sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --cached -f -
+```
+
+A segunda forma roda uma vez para **cada** commit de `git rev-list main..HEAD`, com `<rev>` igual
+ao sha do commit, porque o push publica também os commits intermediários da branch. A terceira
+cobre a árvore de trabalho, e a quarta, o índice. O endereço vai entre aspas simples, como nas
+outras formas da tabela.
+
+- O `sed` lê só a linha `VERCEL_AUTOMATION_BYPASS_SECRET=` do `.env`, sem carregar o resto do
+  arquivo no ambiente, e o `tr` tira o `\r` (o `.env` é do Windows) e a quebra de linha. O valor
+  nunca é argumento de comando: vai pela entrada padrão, para o `curl` (`-H @-`) ou para o `git
+  grep` (`-f -`).
+- O `curl` roda sem `-v` e sem `-L`: `-I` imprime só os cabeçalhos da **resposta**, nunca os do
+  pedido, e o cabeçalho não segue redirecionamento para outro host. Não se manda
+  `x-vercel-set-bypass-cookie`, então a resposta não traz cookie de acesso. A saída passa pelo
+  mascaramento desta seção como qualquer outra.
+- `<host>`: **exatamente** `portal-liacup-git-<branch>-liacup1.vercel.app`, em que `<branch>` é o
+  nome da branch da change em minúsculas, com `/` trocado por `-`, e `liacup1` é o identificador do
+  time na Vercel (Gabriel, Q8 (b)). A parte antes de `.vercel.app` só tem letras minúsculas sem
+  acento, números e `-`, com até 63 caracteres; fora disso, o pedido é recusado antes de qualquer
+  outra conferência. Na `pagina-processo-seletivo`:
+  `portal-liacup-git-feat-pagina-processo-seletivo-liacup1.vercel.app`. O líder técnico monta o
+  host pela regra e o compara, **letra por letra**, com o que o painel da Vercel mostra para a
+  branch, **antes** de ler o segredo. Se a parte antes de `.vercel.app` passar de 63 caracteres, a
+  Vercel corta o rótulo, a comparação recusa, o pedido para, e o líder técnico pede ao Gabriel o
+  host exato daquela change. Esta forma não vale para `liacup.com.br`, `www.liacup.com.br` nem
+  `portal-liacup.vercel.app`: lá vale a forma sem segredo da tabela.
+- `<caminho>`: o mesmo padrão e a mesma conferência de rota do `<endereço>` abaixo (`/` sozinho, ou
+  uma página estática que existe no site).
+- **Variável ausente:** se o `.env` não tiver a linha `VERCEL_AUTOMATION_BYPASS_SECRET=`, o líder
+  técnico para e avisa o Gabriel. Não procura o segredo em nenhum outro lugar.
+- **Antes de cada uso das três formas**, o líder técnico registra, só por contagem e sem ler o
+  valor, a forma da linha no `.env`: uma linha só com o nome, e nenhuma com aspas, `#`, valor
+  vazio, espaço ou tab logo depois do `=`, ou espaço ou tab no fim. O espaço do fim se conta
+  **depois** de tirar o `\r`, para um espaço antes do `\r` não escapar. O `\r` do fim é esperado e o
+  `tr` o tira. O registro diz o método usado. Linha fora dessa forma: o pedido para e o Gabriel é
+  avisado, porque a busca procuraria outro texto e daria um "nada achado" falso.
+- **Nas duas buscas,** só o código 1 com saída vazia conclui "nada achado". Qualquer outro
+  resultado é **não concluído**, inclusive o código 128 ("no pattern given", que é o que o valor
+  vazio dá) e uma saída que liste arquivos demais para ser o segredo. Qualquer `arquivo:contagem`
+  na saída é achado de AS-01, bloqueante até prova em contrário. O histórico anterior à branch não
+  é buscado, porque o `git log -S` exigiria o valor como argumento; os commits da branch, sim,
+  um por um, pela segunda forma.
+- **Nenhum código lê a variável.** O líder técnico confere, fora da lista fechada e por conta
+  própria, na árvore de trabalho inteira, inclusive o que não é rastreado, que
+  `git grep -c --untracked -e 'VERCEL_AUTOMATION_BYPASS_SECRET' -- . ':!docs' ':!openspec'
+  ':!README.md' ':!.env.example'` dá código 1, e entrega a saída ao guardião. Só esses quatro
+  caminhos podem citar o nome. A Vercel também expõe esse nome como
+  variável de sistema nos deployments, e o `next dev` local carrega o `.env` inteiro no servidor:
+  código que lesse a variável poderia imprimi-la na compilação ou no log.
+
 As lacunas:
 
 - `<rev>`: `HEAD`, `main`, `origin/main` ou um sha de 7 a 40 caracteres hexadecimais.
@@ -371,8 +436,9 @@ binário acrescenta a linha no mesmo diff; sem ela, é achado de AS-01, alto e c
 | `openspec/changes/archive/2026-11-21-layout-e-hero/prints/qn-foto-{a,b,c}-{390,1280}.png` | 6 | Ativo aprovado: esboços do espaço da foto do hero, feitos pelo líder técnico sobre o protótipo, vistos e decididos pelo Gabriel no Portão 1 da `layout-e-hero` (Q2, 20/11/2026) |
 | `openspec/changes/archive/2026-11-21-layout-e-hero/prints/{antes,depois}-raiz-nao-publicada-{390,1280}.png` | 4 | Ativo aprovado: prints da página em construção antes e depois da `layout-e-hero`, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q5 (a), 21/11/2026 |
 | `openspec/changes/archive/2026-11-21-layout-e-hero/prints/lado-a-lado-*.png` | 5 | Ativo aprovado: lado a lado do protótipo e do site, montados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q5 (a), 21/11/2026 |
+| `openspec/changes/archive/2026-11-21-pagina-processo-seletivo/prints/{lado-a-lado,raiz-nao-publicada}-*.png` | 9 | **Aprovação pendente** (Portão 2 da `pagina-processo-seletivo`): 7 lado a lado do protótipo e do site e 2 prints da página em construção, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Esta linha passa a "Ativo aprovado", com a data e o aceite do Gabriel transcrito no `relatorio.md`, antes do merge |
 
 Os 9 de `assets/` e `public/` entraram no commit `6636202` (F00, 21/08/2026). Origem confirmada
 pelo Gabriel no Portão 1 da `auditoria-de-base-appsec`, em 20/11/2026. Os 15 prints da
 `layout-e-hero` ficam na pasta da change até o `openspec archive`, que os leva para o caminho da
-tabela no mesmo diff. Total: 51 arquivos.
+tabela no mesmo diff. Os 9 prints da `pagina-processo-seletivo` seguem a mesma regra. Total: 60 arquivos.

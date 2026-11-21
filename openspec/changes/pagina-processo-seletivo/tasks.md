@@ -11,15 +11,15 @@ estão na `REFERENCIA-VISUAL.md` §7, registrados pelo líder técnico.
 
 ## 1. A página e a moldura
 
-- [ ] 1.1 Os dados do processo seletivo (D5): o tipo, com o estado `'fechado'`, e o conteúdo, com
+- [x] 1.1 Os dados do processo seletivo (D5): o tipo, com o estado `'fechado'`, e o conteúdo, com
       o teste de unidade. Verificar: `npm test` com código 0, e a saída imprime `etapas: 2 ·
       pré-requisitos: 3 · perguntas: 8`.
-- [ ] 1.2 Botão unificado, Q4 (c) da `layout-e-hero` (D7). Verificar:
+- [x] 1.2 Botão unificado, Q4 (c) da `layout-e-hero` (D7). Verificar:
       - `npm test` com código 0, com o caso novo do `Botao.test.tsx`;
       - `git ls-files src/componentes/layout | grep -ci aparencia` dá 0;
       - `npm run lint` e `npm run verificar:tokens` com código 0;
       - na 3000 publicada, `/vitrine` responde 200.
-- [ ] 1.3 A página `/processo-seletivo` e a entrada dela na lista (D1, D3, D4), sem as perguntas.
+- [x] 1.3 A página `/processo-seletivo` e a entrada dela na lista (D1, D3, D4), sem as perguntas.
       Verificar, com `npm run build`, a 3000 publicada e a 3001 não publicada, por `curl -s`:
       - na 3000, `/processo-seletivo` responde 200, com 1 `<h1>` "Processo seletivo";
       - a 3000 tem o selo, o §5.2, o aviso do §5.1 ("As inscrições estão fechadas. Acompanhe a
@@ -34,12 +34,12 @@ estão na `REFERENCIA-VISUAL.md` §7, registrados pelo líder técnico.
       - na 3001, `curl -s -o /dev/null -w '%{http_code} %{redirect_url}'` em `/processo-seletivo`
         dá `307` para `/`;
       - nenhum componente novo com mais de 150 linhas (`wc -l`).
-- [ ] 1.4 As perguntas frequentes (D6). Verificar:
+- [x] 1.4 As perguntas frequentes (D6). Verificar:
       - na 3000, a resposta de `/processo-seletivo` tem 8 `<details>`, nenhum com `open`;
       - o dev confere à mão em 390 px Enter, Espaço, toque e Tab, e registra o resultado no
         relatório;
       - `npm run verificar:tokens` com código 0.
-- [ ] 1.5 Pendências da `layout-e-hero` na moldura e no README (D12): nome acessível da marca,
+- [x] 1.5 Pendências da `layout-e-hero` na moldura e no README (D12): nome acessível da marca,
       página atual nas colunas do rodapé, hook em kebab-case, tamanho de fonte do botão de
       destaque, README ("onde a página mora", os campos novos da lista e a linha velha da tabela do
       interruptor). Verificar:
@@ -52,11 +52,11 @@ estão na `REFERENCIA-VISUAL.md` §7, registrados pelo líder técnico.
 
 ## 2. SEO
 
-- [ ] 2.1 **Líder técnico:** a seção 11 dos `PADROES-DE-CODIGO.md`, com o texto aprovado em 21/11;
+- [x] 2.1 **Líder técnico:** a seção 11 dos `PADROES-DE-CODIGO.md`, com o texto aprovado em 21/11;
       "SEO" na linha do Lighthouse CI da §9; o item de página pública no checklist da §10.
       Verificar: `grep -c "^## 11. SEO" docs/PADROES-DE-CODIGO.md` dá 1, e `git diff
       docs/PADROES-DE-CODIGO.md` só tem linhas acrescentadas, fora a da §9.
-- [ ] 2.2 Título e descrição na lista, validados no `problemasDaLista`, e o `montarMetadados` com o
+- [x] 2.2 Título e descrição na lista, validados no `problemasDaLista`, e o `montarMetadados` com o
       teste dele, aplicado na Início e no Processo seletivo (D3, D10, Q5 (a), Q6 (a)). Verificar:
       - `npm test` com código 0, com `Entradas da lista de páginas públicas conferidas: 2` e os
         caracteres de cada descrição impressos (129 e 155, contados à mão no Portão 1);
@@ -67,7 +67,7 @@ estão na `REFERENCIA-VISUAL.md` §7, registrados pelo líder técnico.
         iguais;
       - os metadados do `<head>` da raiz da 3001 iguais aos gravados antes da mudança (D10), e
         `git diff --exit-code src/app/layout.tsx src/app/\(site\)/em-construcao` com código 0.
-- [ ] 2.3 O Lighthouse com SEO e o contador real (D9, Q7 (a)). Verificar: `npm run build && npm
+- [x] 2.3 O Lighthouse com SEO e o contador real (D9, Q7 (a)). Verificar: `npm run build && npm
       run test:desempenho` com código 0, e a saída tem:
       - `páginas medidas: 2` no publicado e `1` no não publicado, lidos do manifesto;
       - desempenho, acessibilidade e SEO de cada execução, com SEO ≥ 95 nas duas páginas
@@ -79,24 +79,24 @@ estão na `REFERENCIA-VISUAL.md` §7, registrados pelo líder técnico.
 
 ## 3. Verificações
 
-- [ ] 3.1 **qa:** o spec da página do processo seletivo (D8, item 1), com o texto lido do
+- [x] 3.1 **qa:** o spec da página do processo seletivo (D8, item 1), com o texto lido do
       `conteudo-institucional.md`, o aviso do §5.1 incluído e as notas de fonte tiradas das respostas
       (Q4 (a)). Verificar: `npx playwright test` verde nas 7
       larguras, e a saída de cada largura imprime quantos trechos conferiu, `perguntas medidas: 8`,
       os alvos medidos e `Violacoes de acessibilidade: 0`, com as perguntas fechadas e abertas.
-- [ ] 3.2 **qa:** um `h1` por página da lista (D8, item 2), mais os ajustes nos specs existentes
+- [x] 3.2 **qa:** um `h1` por página da lista (D8, item 2), mais os ajustes nos specs existentes
       (D8, item 3). Verificar:
       - `npx playwright test` inteiro verde nos dois modos;
       - a saída tem `páginas verificadas: 2 de 2` e `menu lateral testado em 6 de 7 larguras`;
       - `git diff --exit-code tests/e2e/interruptor.spec.ts playwright.config.ts` com código 0.
-- [ ] 3.3 RP-12: as dez demonstrações do D8, cada uma com a saída vermelha e a verde no relatório. A
+- [x] 3.3 RP-12: as dez demonstrações do D8, cada uma com a saída vermelha e a verde no relatório. A
       primeira é o título repetido, que é critério do briefing. Verificar: depois delas, `git status
       --porcelain` igual ao de antes, `sha256sum -c` com OK nos arquivos tocados e 0 marcas
       `DEMO-RP12` (`git grep -c DEMO-RP12` com código 1).
 
 ## 4. P23
 
-- [ ] 4.1 **Líder técnico:** no `SEGURANCA.md`:
+- [x] 4.1 **Líder técnico:** no `SEGURANCA.md`:
       - §5: a forma nova do `curl`, a do Gabriel (`{ printf …; sed -n … .env | tr -d '\r\n';
         printf '\n'; } | curl … -H @- "https://<host>/"`), e as duas formas de busca do valor,
         com a mesma extração (D11);
@@ -112,7 +112,7 @@ estão na `REFERENCIA-VISUAL.md` §7, registrados pelo líder técnico.
 
 ## 5. Conferência
 
-- [ ] 5.1 **Guardião visual:** lado a lado de `/processo-seletivo` em 390 e 1280 px contra
+- [x] 5.1 **Guardião visual:** lado a lado de `/processo-seletivo` em 390 e 1280 px contra
       `processo-seletivo-{390,1280}.png`, e o cabeçalho e o hero da Início com os botões novos. Inclui
       a raiz não publicada contra os `depois-raiz-nao-publicada-*` arquivados da `layout-e-hero`.
       Depois, o líder técnico acrescenta a linha dos prints na `SEGURANCA.md` §7. Verificar:
@@ -120,7 +120,7 @@ estão na `REFERENCIA-VISUAL.md` §7, registrados pelo líder técnico.
       - cada diferença no relatório com veredito;
       - 0 pixel diferente na raiz não publicada;
       - a linha da §7 com a contagem igual a `ls prints | wc -l`.
-- [ ] 5.2 `npm run verificar` com código 0, com os contadores de cada etapa no relatório. Verificar
+- [x] 5.2 `npm run verificar` com código 0, com os contadores de cada etapa no relatório. Verificar
       também:
       - 22 dependências diretas;
       - `git diff --exit-code package.json package-lock.json src/proxy.ts` com código 0;

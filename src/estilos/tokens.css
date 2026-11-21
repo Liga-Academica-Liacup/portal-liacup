@@ -275,4 +275,82 @@
     var(--color-bg) 20%,
     transparent
   ); /* protótipo: rgba(245, 234, 216, 0.2), a linha acima do "©" */
+
+  /* ── Tokens da change pagina-processo-seletivo (R1, 21/11/2026) ────────────
+     Nenhum token existente foi alterado. "Protótipo" é prototipo/Portal-LIACUP.html
+     aberto no navegador, na página Processo seletivo: o valor é o do estilo do
+     elemento citado. ".t-h2 até N px" é a regra @media (max-width: N px) do
+     protótipo. Como na layout-e-hero, onde o protótipo usa um valor a 2 px ou
+     menos de um degrau --space-* (ou de uma soma de dois), o componente usa o
+     degrau, e não um token novo. */
+
+  /* Página e seções */
+  --largura-conteudo-da-pagina: 1000px; /* protótipo: max-width da faixa e das colunas */
+  --espaco-secao-da-pagina: 72px; /* protótipo: padding vertical das seções abaixo da faixa */
+  --espaco-fim-da-faixa: 68px; /* protótipo: padding-bottom da faixa roxa */
+  --espaco-fim-da-secao-das-perguntas: 80px; /* protótipo: padding-bottom da seção FAQ */
+  --font-size-titulo-de-secao-tablet: 25px; /* protótipo: .t-h2, até 768 px */
+  --font-size-titulo-de-secao-celular: 23px; /* protótipo: .t-h2, até 480 px */
+  --font-size-titulo-das-perguntas: 34px; /* protótipo: h2 "Perguntas que sempre chegam" */
+  --line-height-titulo-das-perguntas: 1.08; /* protótipo: h2 "Perguntas que sempre chegam" */
+
+  /* Faixa roxa do topo */
+  --font-size-titulo-da-faixa: clamp(40px, 5.2vw, 62px); /* protótipo: h1 da faixa (.t-h1) */
+  --line-height-titulo-da-faixa: 1.04; /* protótipo: h1 da faixa */
+  --font-size-apresentacao-da-faixa: 18px; /* protótipo: parágrafo da faixa */
+  --largura-texto-da-faixa: 56ch; /* protótipo: parágrafo da faixa */
+  --espaco-depois-da-apresentacao-da-faixa: 30px; /* protótipo: margin-bottom do parágrafo da faixa */
+  --tamanho-circulo-da-faixa: 300px; /* protótipo: círculo decorativo da faixa */
+  --circulo-da-faixa-esquerda: -90px; /* protótipo: círculo decorativo da faixa, left */
+  --circulo-da-faixa-baixo: -120px; /* protótipo: círculo decorativo da faixa, bottom */
+  --color-circulo-da-faixa: color-mix(
+    in srgb,
+    var(--color-accent) 35%,
+    transparent
+  ); /* protótipo: rgba(155, 106, 175, 0.35), o círculo decorativo */
+  /* O --color-fundo-pressionado (.btn-secondary:active, 14% da cor do texto),
+     com a cor clara no lugar da escura, para o link pressionado sobre o roxo. */
+  --color-fundo-pressionado-sobre-escuro: color-mix(in srgb, var(--color-bg) 14%, transparent);
+
+  /* Linha do tempo das etapas */
+  --espessura-linha-do-tempo: 2px; /* protótipo: border-left da linha do tempo */
+  --tamanho-marcador-da-etapa: 15px; /* protótipo: bolinha de cada etapa */
+  --font-size-nome-da-etapa: 17px; /* protótipo: título de cada item da linha do tempo */
+  --font-size-carater-da-etapa: 14.5px; /* protótipo: descrição de cada item da linha do tempo */
+
+  /* Quadro "Quem pode se inscrever" */
+  --coluna-do-marcador-da-lista: 22px; /* protótipo: grid-template-columns dos itens */
+  --tamanho-marcador-da-lista: 9px; /* protótipo: bolinha verde de cada item */
+
+  /* Perguntas frequentes */
+  --largura-das-perguntas: 820px; /* protótipo: max-width da seção FAQ */
+  --espaco-da-pergunta: 20px; /* protótipo: padding vertical e gap do botão da pergunta */
+  --font-size-pergunta: 19px; /* protótipo: botão da pergunta */
+  --font-size-sinal-da-pergunta: 22px; /* protótipo: o "+" da pergunta */
+  --line-height-sinal-da-pergunta: 1; /* protótipo: o "+" da pergunta */
+  --font-size-resposta: 15.5px; /* protótipo: parágrafo da resposta aberta */
+  --largura-da-resposta: 64ch; /* protótipo: max-width da resposta aberta */
+
+  /* Texto só para leitor de tela, em linha: o ", página inicial" do nome
+     acessível da marca do cabeçalho (rodada 2, observação do qa). Fica dentro
+     do texto visível, porque fora dele o nome saía "LIACUP , página inicial".
+     Em linha, largura e altura não valem: o tamanho de letra 0 o tira da tela
+     sem tirá-lo do nome acessível, e o navegador não o aumenta pelo tamanho
+     mínimo de letra de quem usa. Origem: a técnica C7 do WCAG, com a letra 0
+     no lugar da caixa de 1 px, que exige position: absolute. */
+  --font-size-so-para-leitor-de-tela: 0;
+
+  /* Rodada 2 (revisor 4): hover e pressionado das variantes fantasma e ícone
+     do Botao. O .btn-icon do protótipo não tem hover próprio; o ícone usa o do
+     fantasma, de quem herda a cor do texto. */
+  --color-fundo-hover-fantasma: color-mix(
+    in srgb,
+    var(--color-accent) 10%,
+    transparent
+  ); /* protótipo: .btn-ghost:hover */
+  --color-fundo-pressionado-fantasma: color-mix(
+    in srgb,
+    var(--color-accent) 18%,
+    transparent
+  ); /* protótipo: .btn-ghost:active */
 }

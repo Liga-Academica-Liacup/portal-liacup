@@ -1,3 +1,4 @@
+import { montarMetadados } from '@/lib/utils/metadados'
 import { HeroDaInicial } from './_inicio/HeroDaInicial'
 
 /*
@@ -11,6 +12,10 @@ import { HeroDaInicial } from './_inicio/HeroDaInicial'
  * Nesta change, só o hero. Números, eventos, notícias, conteúdo educativo,
  * faixa do processo seletivo e contato chegam na inicio-completo e na R2.
  */
+/* Título, descrição, canônico e Open Graph saem da entrada da página na lista
+   única, por uma função só (PADROES-DE-CODIGO.md, seção 11). */
+export const metadata = montarMetadados('/')
+
 export default function PaginaInicial() {
   return <HeroDaInicial />
 }

@@ -251,7 +251,10 @@ tocados com OK.
     resposta não traz cookie de acesso.
   - Falha fechada: valor errado dá 401 ou a tela de login, e nunca vazamento.
 - **Fatos medidos pelo líder técnico no Portão 1, só com contagem:** 1 linha com o nome no `.env`,
-  0 com aspas no começo do valor e 0 com `\r`.
+  0 com aspas no começo do valor e 0 com `\r`. **Correção do líder técnico no apply (21/11):** a
+  contagem do `\r` do Portão 1 estava errada. Medida de novo com um script que só conta, deu 1
+  linha com `\r`, 0 com aspas, 0 com espaço no fim, 0 com `#` e valor não vazio. O `tr -d '\r\n'`
+  da forma cobre o `\r`, que é o caso que o Gabriel previu ("o `.env` é do Windows").
 - **Variável ausente:** se o `.env` não tiver a linha `VERCEL_AUTOMATION_BYPASS_SECRET=`, o líder
   técnico para e avisa o Gabriel. Não procura o segredo em outro lugar.
 - **Busca do valor em nada rastreado** (AS-01), duas formas novas, com a mesma extração do pedido,

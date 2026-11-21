@@ -1,12 +1,41 @@
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { expect, test } from '@playwright/test'
-import type { Browser, Locator, Page } from '@playwright/test'
-import { ORIGEM_PUBLICADO } from '../../playwright.config'
+import type { Browser, Locator, Page, TestInfo } from '@playwright/test'
+import { LARGURAS, ORIGEM_PUBLICADO } from '../../playwright.config'
 import {
   PAGINAS_PUBLICAS,
   paginaDeDestaque,
   paginasDoMenu,
 } from '../../src/lib/utils/paginas-publicas'
 import { esperarAnimacoes, primeiraLinha } from './apoio'
+
+/*
+ * EM QUANTAS LARGURAS O MENU FOI TESTADO, NO TOTAL (pagina-processo-seletivo,
+ * design.md D12). Cada largura é um projeto, num processo próprio, e nenhum vê
+ * o resultado dos outros. Então cada um grava o seu numa pasta da execução, lê
+ * a pasta inteira e imprime o total que ela tem. A pasta fica dentro da saída
+ * do Playwright (test-results), que ele apaga no começo de cada execução: um
+ * total nunca soma resultado de execução anterior. Quem termina por último vê
+ * as sete larguras, e a linha dele é o total da execução.
+ */
+type ResultadoDaLargura = { largura: number; testado: boolean; falhas: number }
+
+function registrarLargura(informacoes: TestInfo, resultado: ResultadoDaLargura): string {
+  const pasta = join(informacoes.project.outputDir, 'menu-por-largura')
+  mkdirSync(pasta, { recursive: true })
+  writeFileSync(join(pasta, `${resultado.largura}.json`), JSON.stringify(resultado))
+  const todos = readdirSync(pasta)
+    .filter((arquivo) => arquivo.endsWith('.json'))
+    .map((arquivo) => JSON.parse(readFileSync(join(pasta, arquivo), 'utf8')) as ResultadoDaLargura)
+  const testadas = todos.filter((r) => r.testado).sort((a, b) => a.largura - b.largura)
+  return (
+    `[${informacoes.project.name}] menu lateral testado em ${testadas.length} de ${LARGURAS.length} larguras` +
+    ` (${testadas.map((r) => r.largura).join(', ') || 'nenhuma'})` +
+    ` · com falha em ${testadas.filter((r) => r.falhas > 0).length}` +
+    ` · larguras com resultado nesta execução até aqui: ${todos.length} de ${LARGURAS.length}`
+  )
+}
 
 /*
  * O CABEÇALHO DE CADA LARGURA E O MENU LATERAL POR TECLADO (layout-e-hero,
@@ -190,7 +219,33 @@ const COMPORTAMENTOS: Comportamento[] = [
           .toBe(false)
         await expect(page.getByRole('main')).toBeVisible()
       }
-      return `destinos escolhidos por Enter: ${destinos.length}`
+      /*
+       * O botão de destaque do fim do menu, navegando de verdade para outra
+       * página (pagina-processo-seletivo, design.md D8, item 3): da Início, o
+       * endereço muda e o título principal passa a ser o da página escolhida.
+       */
+      const destaque = paginaDeDestaque()
+      let navegou = 'sem botão de destaque na lista'
+      if (destaque) {
+        await page.goto(PAGINA_DE_PARTIDA)
+        await abrirPeloTeclado(page)
+        const botao = menu(page).locator(`a[href="${destaque.endereco}"]`)
+        await expect(botao, `o fim do menu não mostra "${destaque.rotulo}"`).toHaveCount(1)
+        await tabAte(page, botao)
+        await page.keyboard.press('Enter')
+        await expect(page).toHaveURL((url) => url.pathname === destaque.endereco)
+        await expect
+          .poll(() => menuAberto(page), {
+            message: `escolher "${destaque.rotulo}" no fim do menu não fechou o menu`,
+          })
+          .toBe(false)
+        await expect(
+          page.getByRole('heading', { level: 1 }),
+          `depois de escolher "${destaque.rotulo}", o título principal não é o da página`
+        ).toHaveText(destaque.rotulo)
+        navegou = `"${destaque.rotulo}" por Enter: de ${PAGINA_DE_PARTIDA} a ${new URL(page.url()).pathname}, h1 "${destaque.rotulo}"`
+      }
+      return `destinos do menu escolhidos por Enter: ${destinos.length} · botão de destaque ${navegou}`
     },
   },
   {
@@ -492,7 +547,8 @@ test('o cabeçalho desta largura: até 1024 px, o menu lateral nos seis comporta
       conferirDestinosEmLinha(page))
     console.log(
       `[${projeto}] cabeçalho de desktop, sem botão de menu · ${nota}` +
-        ` · menu lateral: não existe nesta largura, comportamentos do D4 a testar: 0`
+        ` · menu lateral: não existe nesta largura, comportamentos do D4 a testar: 0\n` +
+        registrarLargura(informacoes, { largura, testado: false, falhas: 0 })
     )
     return
   }
@@ -516,7 +572,12 @@ test('o cabeçalho desta largura: até 1024 px, o menu lateral nos seis comporta
     `[${projeto}] cabeçalho de celular, com botão de menu · menu lateral testado nesta largura:` +
       ` ${testados.length} de ${COMPORTAMENTOS.length} comportamentos do D4 · com falha: ${falhas.length}` +
       (testados.length > 0 ? `\n  ${testados.join('\n  ')}` : '') +
-      (falhas.length > 0 ? `\n  FALHA ${falhas.join('\n  FALHA ')}` : '')
+      (falhas.length > 0 ? `\n  FALHA ${falhas.join('\n  FALHA ')}` : '') +
+      `\n${registrarLargura(informacoes, {
+        largura,
+        testado: testados.length + falhas.length === COMPORTAMENTOS.length,
+        falhas: falhas.length,
+      })}`
   )
   expect(falhas, `[${projeto}] ${falhas.join(`\n[${projeto}] `)}`).toEqual([])
   expect(testados.length).toBe(COMPORTAMENTOS.length)

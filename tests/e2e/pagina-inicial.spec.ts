@@ -147,9 +147,31 @@ test('os botões do hero só aparecem para páginas que estão na lista', async 
       `"${botao.rotulo}" ${naLista ? 'presente' : 'ausente'} (${botao.endereco} ${naLista ? 'na' : 'fora da'} lista)`
     )
   }
+  /*
+   * O botão que aparece leva de verdade à página dele (pagina-processo-seletivo,
+   * design.md D8, item 3): clicado, o endereço muda e o título principal da
+   * página nova aparece. Nenhum endereço é escrito aqui além do da tabela acima.
+   */
+  const presentes = BOTOES_DO_HERO.filter((botao) => estaNaLista(botao.endereco))
+  const navegados: string[] = []
+  for (const botao of presentes) {
+    await abrirRaiz(page)
+    await page.getByRole('main').getByRole('link', { name: botao.rotulo, exact: true }).click()
+    await expect(page, `"${botao.rotulo}" não levou a ${botao.endereco}`).toHaveURL(
+      (url) => url.pathname === botao.endereco
+    )
+    const titulo = page.getByRole('heading', { level: 1 })
+    await expect(titulo, `${botao.endereco} sem título principal`).toHaveCount(1)
+    navegados.push(
+      `"${botao.rotulo}" → ${botao.endereco}, h1 "${(await titulo.innerText()).trim()}"`
+    )
+  }
   console.log(
-    `[${informacoes.project.name}] botões do hero conferidos: ${linhas.length} · ${linhas.join(' · ')}`
+    `[${informacoes.project.name}] botões do hero conferidos: ${linhas.length} · ${linhas.join(' · ')}` +
+      `\n[${informacoes.project.name}] botões do hero seguidos pelo clique: ${navegados.length} de ${presentes.length}` +
+      (navegados.length > 0 ? ` · ${navegados.join(' · ')}` : '')
   )
+  expect(navegados.length).toBe(presentes.length)
 })
 
 test('o quadro da foto e as borboletas são decorativos, sem texto e sem imagem inventada', async ({

@@ -11,10 +11,10 @@
  * páginas públicas pelo Cabecalho. Este componente não sabe que páginas há.
  */
 import type { PaginaPublica } from '@/lib/utils/paginas-publicas'
-import { aparenciaDeBotao } from './aparencia-de-botao'
+import { aparenciaDeBotao } from '@/componentes/ui/aparencia-de-botao'
 import { LinkDaNavegacao } from './LinkDaNavegacao'
 import estilos from './MenuLateral.module.css'
-import { usePainelDeNavegacao } from './usePainelDeNavegacao'
+import { usePainelDeNavegacao } from './use-painel-de-navegacao'
 
 const ID_DO_MENU = 'menu-lateral'
 const ID_DO_TITULO = 'menu-lateral-titulo'

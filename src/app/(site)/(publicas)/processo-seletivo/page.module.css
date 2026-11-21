@@ -1,0 +1,30 @@
+/* A composição da página do processo seletivo. Nenhum valor escrito à mão:
+   tudo vem de src/estilos/tokens.css, com a origem no protótipo. */
+
+/* As etapas e o quadro de quem pode se inscrever: lado a lado no desktop, um
+   abaixo do outro até 1024 px, como no protótipo ([data-resp]). */
+.secaoDasColunas {
+  padding: var(--espaco-secao-da-pagina) var(--space-6);
+}
+
+.colunas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espaco-secao);
+  align-items: start;
+  max-width: var(--largura-conteudo-da-pagina);
+  margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+  .colunas {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 768px) {
+  .secaoDasColunas {
+    padding-inline: var(--space-4);
+  }
+}

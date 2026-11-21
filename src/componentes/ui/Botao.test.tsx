@@ -5,6 +5,7 @@
  */
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
+import { aparenciaDeBotao } from './aparencia-de-botao'
 import { Botao } from './Botao'
 
 /*
@@ -92,6 +93,34 @@ describe('Botao', () => {
     botao.focus()
     expect(botao).not.toHaveFocus()
   })
+
+  /* Um contrato visual só (ADR-0006; Q4 (c) da layout-e-hero): o link com
+     aparência de botão usa as mesmas classes do Botao da mesma variante, e por
+     isso tem os mesmos estados de hover, pressionado, foco e página atual. */
+  it.each([
+    ['primario', 'natural'],
+    ['secundario', 'natural'],
+    ['fantasma', 'natural'],
+    ['primario', 'total'],
+  ] as const)(
+    'botao e link da variante %s, largura %s, tem as mesmas classes',
+    (variante, largura) => {
+      render(
+        <>
+          <Botao variante={variante} larguraTotal={largura === 'total'}>
+            Botão
+          </Botao>
+          <a href="/destino" className={aparenciaDeBotao(variante, largura)}>
+            Link
+          </a>
+        </>
+      )
+      const botao = screen.getByRole('button', { name: 'Botão' })
+      const link = screen.getByRole('link', { name: 'Link' })
+      expect(link.className).toBe(botao.className)
+      expect(link.className).toContain(variante)
+    }
+  )
 
   it.each(['Enter', ' '])('e ativado pela tecla %s', (tecla) => {
     const aoClicar = vi.fn()

@@ -64,6 +64,31 @@
   text-overflow: ellipsis;
 }
 
+/* O ", página inicial", que só o leitor de tela lê: fica no nome acessível
+   da marca e não aparece na tela. Em linha, e não com position: absolute (o
+   "visually hidden" da WCAG C7), porque fora da linha o navegador o trata
+   como outro bloco e põe um espaço antes da vírgula no nome acessível. Em
+   linha, largura e altura não valem: é a letra de tamanho 0 que o esconde
+   sem ocupar espaço (com 1 px, a marca e o anel de foco dela ficavam de 5 a
+   10 px mais largos, medido). O tamanho 0 também não cresce com o tamanho
+   mínimo de letra que a pessoa configura no navegador; 1 px cresceria. O
+   clip-path tira da tela o que sobrar, como na C7. Sem quebra de linha:
+   quebrado, ele abriria uma segunda linha na sigla, e a marca deixaria de
+   ficar centrada na altura. O espaçamento entre letras volta ao normal: ele
+   é herdado em px do nome da liga, e não zera com a letra. */
+.destinoDaMarca {
+  font-size: var(--font-size-so-para-leitor-de-tela);
+  letter-spacing: normal;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* O da sigla só vale até 1024 px, onde o nome da liga some; acima, vale o do
+   nome da liga, que é o último texto visível. */
+.destinoNoCelular {
+  display: none;
+}
+
 @media (hover: hover) {
   .marca:hover .sigla {
     color: var(--color-accent-700);
@@ -74,7 +99,10 @@
   color: var(--color-accent-900);
 }
 
-.destaque {
+/* Com .linha na frente: o botão da camada base também define o padding, e o
+   destaque precisa vencer sem depender da ordem dos arquivos no pacote (como
+   o .menu .destaque do MenuLateral.module.css). */
+.linha .destaque {
   flex: 0 0 auto;
 }
 
@@ -164,8 +192,14 @@
     display: none;
   }
 
-  .destaque {
+  .destinoNoCelular {
+    display: inline;
+  }
+
+  /* O tamanho da letra é o do .botao, --font-size-controle, e não o de
+     título 6, que era reaproveitado aqui (design.md da
+     pagina-processo-seletivo, D12): por isso não se repete. */
+  .linha .destaque {
     padding: var(--space-2) var(--space-3);
-    font-size: var(--font-size-h6);
   }
 }

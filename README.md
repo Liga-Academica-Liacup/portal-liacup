@@ -495,6 +495,8 @@ Cada página é um bloco assim, na ordem em que deve aparecer no menu:
 {
   "endereco": "/sobre",
   "rotulo": "Sobre",
+  "titulo": "Sobre · LIACUP",
+  "descricao": "<uma frase do conteudo-institucional.md, de 70 a 160 caracteres>",
   "noMenu": true,
   "colunaDoRodape": "Portal",
   "destaque": false
@@ -503,12 +505,26 @@ Cada página é um bloco assim, na ordem em que deve aparecer no menu:
 
 - `endereco`: o endereço da página, começando com `/`;
 - `rotulo`: o texto do link, como no protótipo;
+- `titulo`: o título da aba e do buscador, no formato `<Nome da página> · LIACUP` (a Início usa o
+  nome da liga por extenso). Não pode repetir o de outra página;
+- `descricao`: o resumo que o buscador mostra, uma frase do `docs/conteudo-institucional.md`, sem
+  mudar nada, de 70 a 160 caracteres. Não pode repetir a de outra página. Se nenhuma frase servir,
+  é pergunta para o Gabriel: texto não se inventa;
 - `noMenu`: `true` para aparecer no menu do cabeçalho e no menu do celular;
 - `colunaDoRodape`: `"Portal"`, `"Conteúdo"` ou `null` (nenhuma). Coluna sem página não aparece;
 - `destaque`: `true` só para a página do botão de destaque do cabeçalho (Processo seletivo). No
   máximo uma.
 
 Depois de mexer na lista, rode `npm test`: ele confere a lista e diz o que está errado, pelo nome.
+
+**Onde a página mora.** Cada página pública é uma pasta com o endereço dela dentro de
+`src/app/(site)/(publicas)/`, com um `page.tsx`: `/processo-seletivo` mora em
+`src/app/(site)/(publicas)/processo-seletivo/page.tsx`. A pasta `(publicas)`, com parênteses, não
+entra no endereço: é ela que põe o cabeçalho e o rodapé em volta da página. O título e a descrição
+não se escrevem na página: ela só declara `export const metadata = montarMetadados('/sobre')`, e
+a função (`src/lib/utils/metadados.ts`) monta tudo a partir da lista. O texto e os dados de uma
+página com conteúdo próprio moram em `src/features/<assunto>/`, como
+`src/features/processo-seletivo/conteudo.ts`, e a página só compõe.
 
 ## Variaveis de ambiente
 
@@ -527,11 +543,11 @@ expõe antes da hora.
 
 O que o visitante vê em cada modo:
 
-| Endereço                                         | Site não publicado                                                                  | Site publicado (`true`)                                        |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| A raiz (`/`)                                     | A página em construção, com `/` na barra                                            | A página em construção, até a página inicial nova ficar pronta |
-| `/em-construcao`                                 | A página em construção                                                              | Página não encontrada (404)                                    |
-| Qualquer outro (`/vitrine`, `/sobre`, inventado) | É levado para a raiz (redirecionamento temporário, 307) e vê a página em construção | A página que existe ali, ou página não encontrada (404)        |
+| Endereço                                         | Site não publicado                                                                  | Site publicado (`true`)                                 |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| A raiz (`/`)                                     | A página em construção, com `/` na barra                                            | A página inicial                                        |
+| `/em-construcao`                                 | A página em construção                                                              | Página não encontrada (404)                             |
+| Qualquer outro (`/vitrine`, `/sobre`, inventado) | É levado para a raiz (redirecionamento temporário, 307) e vê a página em construção | A página que existe ali, ou página não encontrada (404) |
 
 **Como fica na Vercel.** Na tela do projeto, _Settings › Environment Variables_:
 
@@ -554,6 +570,13 @@ _Redeploy_. Uma alteração nova incorporada na `main` também gera uma nova imp
 **Na sua máquina.** O `.env.example` já traz `SITE_PUBLICADO=true`: copiado para o `.env.local`,
 `npm run dev` mostra o site inteiro. Para ver o que a produção mostra hoje, apague a linha do
 `.env.local`, ou troque por `false`, e reinicie o `npm run dev`.
+
+### `VERCEL_AUTOMATION_BYPASS_SECRET`: segredo de uso local do líder técnico
+
+É a chave que deixa um comando ler os cabeçalhos da prévia da Vercel, que tem proteção de acesso
+(o pedido P23 do `docs/SEGURANCA.md`, seção 5). **É segredo:** mora só no `.env` de quem roda o
+pedido, nunca no repositório, e o pedido a lê sem imprimi-la. O site não usa esta variável, e quem
+só desenvolve não precisa dela.
 
 ## Dependencias
 
