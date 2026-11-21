@@ -245,13 +245,14 @@ relatório.
 | `openspec --version` | A versão do OpenSpec que gerou as skills (AS-17) |
 | `curl -q -sS -I --max-time 20 --proto =https '<endereço>'` | Cabeçalhos que o site devolve (AS-15); o `-q`, primeiro, ignora o `.curlrc` |
 
-**Três formas com o segredo de proteção da Vercel** (change `pagina-processo-seletivo`, decisões do
+**Quatro formas com o segredo de proteção da Vercel** (change `pagina-processo-seletivo`, decisões do
 Gabriel de 21/11/2026, Q8 (b) e ajuste 2 do Portão 1). Ficam fora da tabela porque têm `|`. A
-primeira mede os cabeçalhos da **prévia da branch**, que a Vercel protege com login; as outras duas
-confirmam que o valor do segredo não está em nada rastreado nem na árvore de trabalho (AS-01):
+primeira mede os cabeçalhos da **prévia da branch**, que a Vercel protege com login; as outras três
+confirmam que o valor do segredo não está nos commits da branch, na árvore de trabalho nem no índice
+(AS-01):
 
 ```bash
-{ printf 'x-vercel-protection-bypass: '; sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n'; printf '\n'; } | curl -q -sS -I --max-time 20 --proto =https -H @- 'https://<host><caminho>'
+{ printf 'x-vercel-protection-bypass: '; sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n'; printf '\n'; } | curl -q -sS -I --max-time 20 --proto =https -H @- 'https://<host><rota>'
 sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F -f - <rev>
 sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --untracked -f -
 sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --cached -f -
@@ -281,29 +282,34 @@ outras formas da tabela.
   Vercel corta o rótulo, a comparação recusa, o pedido para, e o líder técnico pede ao Gabriel o
   host exato daquela change. Esta forma não vale para `liacup.com.br`, `www.liacup.com.br` nem
   `portal-liacup.vercel.app`: lá vale a forma sem segredo da tabela.
-- `<caminho>`: o mesmo padrão e a mesma conferência de rota do `<endereço>` abaixo (`/` sozinho, ou
-  uma página estática que existe no site).
+- `<rota>`: lacuna própria desta forma, diferente do `<caminho>` das formas de `git`. É `/` sozinho,
+  ou `/` seguido de trechos de letras minúsculas sem acento, números e `-`, separados por `/`, e
+  precisa ser uma página estática que existe no site, com a mesma conferência de rota do
+  `<endereço>` abaixo. Ex.: `/` e `/processo-seletivo`.
 - **Variável ausente:** se o `.env` não tiver a linha `VERCEL_AUTOMATION_BYPASS_SECRET=`, o líder
   técnico para e avisa o Gabriel. Não procura o segredo em nenhum outro lugar.
-- **Antes de cada uso das três formas**, o líder técnico registra, só por contagem e sem ler o
+- **Antes de cada uso das quatro formas**, o líder técnico registra, só por contagem e sem ler o
   valor, a forma da linha no `.env`: uma linha só com o nome, e nenhuma com aspas, `#`, valor
   vazio, espaço ou tab logo depois do `=`, ou espaço ou tab no fim. O espaço do fim se conta
   **depois** de tirar o `\r`, para um espaço antes do `\r` não escapar. O `\r` do fim é esperado e o
   `tr` o tira. O registro diz o método usado. Linha fora dessa forma: o pedido para e o Gabriel é
   avisado, porque a busca procuraria outro texto e daria um "nada achado" falso.
-- **Nas duas buscas,** só o código 1 com saída vazia conclui "nada achado". Qualquer outro
+- **Nas três buscas,** só o código 1 com saída vazia conclui "nada achado". Qualquer outro
   resultado é **não concluído**, inclusive o código 128 ("no pattern given", que é o que o valor
   vazio dá) e uma saída que liste arquivos demais para ser o segredo. Qualquer `arquivo:contagem`
   na saída é achado de AS-01, bloqueante até prova em contrário. O histórico anterior à branch não
   é buscado, porque o `git log -S` exigiria o valor como argumento; os commits da branch, sim,
   um por um, pela segunda forma.
-- **Nenhum código lê a variável.** O líder técnico confere, fora da lista fechada e por conta
+- **Nenhum código lê a variável pelo nome.** O líder técnico confere, fora da lista fechada e por conta
   própria, na árvore de trabalho inteira, inclusive o que não é rastreado, que
   `git grep -c --untracked -e 'VERCEL_AUTOMATION_BYPASS_SECRET' -- . ':!docs' ':!openspec'
   ':!README.md' ':!.env.example'` dá código 1, e entrega a saída ao guardião. Só esses quatro
   caminhos podem citar o nome. A Vercel também expõe esse nome como
   variável de sistema nos deployments, e o `next dev` local carrega o `.env` inteiro no servidor:
-  código que lesse a variável poderia imprimi-la na compilação ou no log.
+  código que lesse a variável poderia imprimi-la na compilação ou no log. **Limite conhecido:** a
+  conferência pega só a leitura pelo nome. O `tests/politicas/ambiente.ts` carrega o `.env` inteiro
+  no ambiente dos testes de política, e o segredo vai junto; nenhum código lê o ambiente de forma
+  dinâmica hoje.
 
 As lacunas:
 
@@ -436,7 +442,7 @@ binário acrescenta a linha no mesmo diff; sem ela, é achado de AS-01, alto e c
 | `openspec/changes/archive/2026-11-21-layout-e-hero/prints/qn-foto-{a,b,c}-{390,1280}.png` | 6 | Ativo aprovado: esboços do espaço da foto do hero, feitos pelo líder técnico sobre o protótipo, vistos e decididos pelo Gabriel no Portão 1 da `layout-e-hero` (Q2, 20/11/2026) |
 | `openspec/changes/archive/2026-11-21-layout-e-hero/prints/{antes,depois}-raiz-nao-publicada-{390,1280}.png` | 4 | Ativo aprovado: prints da página em construção antes e depois da `layout-e-hero`, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q5 (a), 21/11/2026 |
 | `openspec/changes/archive/2026-11-21-layout-e-hero/prints/lado-a-lado-*.png` | 5 | Ativo aprovado: lado a lado do protótipo e do site, montados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q5 (a), 21/11/2026 |
-| `openspec/changes/archive/2026-11-21-pagina-processo-seletivo/prints/{lado-a-lado,raiz-nao-publicada}-*.png` | 9 | **Aprovação pendente** (Portão 2 da `pagina-processo-seletivo`): 7 lado a lado do protótipo e do site e 2 prints da página em construção, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Esta linha passa a "Ativo aprovado", com a data e o aceite do Gabriel transcrito no `relatorio.md`, antes do merge |
+| `openspec/changes/archive/2026-11-21-pagina-processo-seletivo/prints/{lado-a-lado,raiz-nao-publicada}-*.png` | 9 | Ativo aprovado: 7 lado a lado do protótipo e do site e 2 prints da página em construção, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado); os 2 lado a lado da página, refeitos pelo líder técnico com o mesmo script depois da Q19. Aprovados pelo Gabriel na Q15 (a), 21/11/2026, Portão 2. O caminho é o do `openspec archive`, feito em 21/11/2026 |
 
 Os 9 de `assets/` e `public/` entraram no commit `6636202` (F00, 21/08/2026). Origem confirmada
 pelo Gabriel no Portão 1 da `auditoria-de-base-appsec`, em 20/11/2026. Os 15 prints da

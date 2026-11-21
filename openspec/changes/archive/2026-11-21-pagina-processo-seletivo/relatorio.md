@@ -255,6 +255,38 @@ recusando um `git rm`.
 `lancamento-r1`. O P23 mede cabeçalhos com `curl -I`, não roda o Lighthouse na prévia, e por isso
 não cobre o cenário, que é sobre a nota de SEO medida num endereço com `noindex`.
 
+## Decisões do Gabriel no Portão 2 (segunda passagem, antes do archive)
+
+Registradas pelo líder técnico, com o texto literal da mensagem do Gabriel de 21/11/2026.
+
+> Decisões do Gabriel (registre literal no relatorio.md):
+> Q15 (a). Q18 (a). Q20 (a), com o role="list" como primeiro item da pagina-sobre-e-equipe.
+> Q17: nem (a), nem (b), nem (c). O AGENTS.md foi posto no .git/info/exclude pelo Gabriel: fica fora do Git sem mexer no .gitignore. A endurecer-agentes-e-git-local decide a barreira versionada e o põe na lista do AS-17. Registre como achado para ela.
+> Q19 (a), com duas mudanças:
+> - Sem quarta invocação do revisor. O guardiao-appsec confere só a §5 do SEGURANCA.md e o D11; o gestor confere o resto pelo diff.
+> - Autorizo a correção da tabela do §5.1 e do placar do §8 do conteudo-institucional.md.
+> Junto com a Q19, só texto: a linha de cada etapa começa com maiúscula, como no gabarito ("Etapa eliminatória.", "Etapa classificatória, para os convocados.", "Divulgação no Instagram da Liga.", "Encontro de boas-vindas."), no §5.5 do conteudo-institucional e no conteudo.ts. Rode npm test e npx playwright test e refaça por script os lados a lados afetados, sem nova passagem do guardiao-visual.
+> Selo "Inscrições fechadas": fica verde, como o gabarito. A pergunta sobre a cor vai para a homologacao-r1; registre como pendência.
+>
+> Depois: o P23 na prévia da branch, assim que o Gabriel confirmar o host no painel da Vercel, e o archive. Volte com o Portão 2 final e os comandos Git do archive.
+
+**Achado para a `endurecer-agentes-e-git-local`** (Q17, pedido do Gabriel): o `next dev` escreve
+um `AGENTS.md` na raiz, com instruções dirigidas a agentes de IA (mandam ler
+`node_modules/next/dist/docs/` antes de escrever código e induzem o commit), e o recria a cada
+execução. O Gabriel o pôs no `.git/info/exclude` desta máquina, que não é versionado (LB-05). A
+change decide a barreira versionada, que vale em qualquer clone, e põe o `AGENTS.md` (e arquivos de
+instrução a agentes do mesmo tipo) na lista do AS-17. Critério do guardião (F2, rodada 3):
+`git ls-files -- 'AGENTS.md'` vazio, e `git status --porcelain` sem ele depois de um `next dev`.
+
+**Pendências registradas:**
+
+- **Q20 (a), para a `pagina-sobre-e-equipe`, como primeiro item:** `role="list"` nas listas sem
+  marcador (`Etapas` e `QuemPodeSeInscrever`), para o VoiceOver anunciá-las como lista; e nomes
+  distintos para as duas constantes `NOME_DA_LIGA` (`Cabecalho.tsx` e `paginas-publicas.ts`) e para
+  o tipo e o componente `TituloDeSecao`.
+- **Para a `homologacao-r1`:** a cor do selo "Inscrições fechadas". Ele fica verde, como o selo do
+  gabarito; a pergunta é se o verde lê como "aberto" para quem chega.
+
 ## dev-frontend
 
 Tarefas 1.1 a 1.5, 2.2 e 2.3. Checkboxes do `tasks.md` não marcados (o líder técnico marca).
@@ -992,6 +1024,45 @@ um por PNG, nos 9
   correção. O líder técnico para e leva ao Gabriel (Q15, Q17 e Q19).
 - **Riscos aceitos pelo Gabriel:** nenhum.
 
+### Rodada 4 (invocação nova, escopo reduzido pela Q19 (a): só a §5 do `SEGURANCA.md` e o D11)
+
+- **Veredito:** APROVADO COM RESSALVAS · bloqueante 0 · alta 0 · média 0 · baixa 1 · informativa 3
+  · 3 arquivos do escopo e 3 de apoio lidos. As cinco correções da Q19 conferidas; as quatro formas
+  continuam seguras; nenhuma regra nova abre pedido antes recusado.
+- **Achados (nenhum corrigido nesta change, por decisão do Gabriel: sem nova passagem):**
+  - B-01 · AS-01 · baixa · hipótese · `docs/SEGURANCA.md` §5 e D11 · a busca por commit usa
+    `main..HEAD` com a `main` local; um commit local fora do `origin/main` sairia no push sem busca
+    · critério: o intervalo cobre todo commit que o push publica (`origin/main..HEAD` depois de
+    atualizar, ou `main` local igual ao `origin/main` registrada antes da busca). **Nesta change:**
+    P1 e P2 mostram `main` e `origin/main` iguais (`33077f4`), então o caso não ocorre.
+  - I-01 · AS-01 · informativa · confirmado · §5 · "nenhum código lê o ambiente de forma dinâmica"
+    é impreciso: `ambiente.ts:42` e `purgar-dado-pessoal.mjs:36` leem `process.env[nome]` com nomes
+    literais de quem chama, e `iniciar-servidor.mjs:39` repassa o ambiente inteiro ao filho, sem
+    imprimir · critério: dizer o que conta como dinâmica e citar os três pontos.
+  - I-02 · AS-15 · informativa · confirmado · D11 · a pré-condição do `curl --version` e a rota
+    restrita a `/` e `/processo-seletivo` estão só no D11, e a §5 é a fonte única · critério:
+    passar a pré-condição para a §5, ou marcar no D11 como exigência só desta change.
+  - I-03 · AS-15 · informativa · confirmado · §5, parágrafo do `<endereço>` · chama de "caminho"
+    um valor que começa com `/`, e colide em nome com a lacuna `<caminho>` · critério: usar `<rota>`
+    ou dizer que não é a lacuna.
+  - **Encaminhamento:** os quatro vão como pendência para a `endurecer-agentes-e-git-local`, que
+    mexe na §5.
+- **Pedidos de comando**, como foram digitados, com `MSYS_NO_PATHCONV=1`:
+
+```
+P1 · git log --oneline -n 5 main
+33077f4 Merge pull request #19 from Liga-Academica-Liacup/feat/layout-e-hero
+(mais 4 linhas)
+[código de saída: 0]
+
+P2 · git log --oneline -n 5 origin/main
+33077f4 Merge pull request #19 from Liga-Academica-Liacup/feat/layout-e-hero
+(mais 4 linhas, iguais às do P1)
+[código de saída: 0]
+```
+
+- **Riscos aceitos pelo Gabriel:** nenhum.
+
 ## Líder técnico — conferência de escopo
 
 Escopo de escrita é instrução, não trava: depois de cada passagem, o `git status` só pode mostrar
@@ -1020,6 +1091,17 @@ arquivos do escopo daquele agente. Escopos esperados — `especificador` `opensp
   - **Líder técnico** · `docs/PADROES-DE-CODIGO.md` (§9, §10, §11), `docs/SEGURANCA.md` (§3, §5,
     §7), `.env.example`, `docs/REFERENCIA-VISUAL.md` (§7, Q3 (a)) e os artefatos desta change
     (checkboxes e esta seção).
+- **Segunda passagem do Portão 2 (líder técnico, 21/11/2026):** com a autorização do Gabriel, o
+  líder técnico editou, além dos documentos do seu escopo, o `docs/conteudo-institucional.md` (§5.1,
+  placar do §8 e as linhas das etapas com maiúscula) e o `src/features/processo-seletivo/conteudo.ts`
+  (as mesmas linhas das etapas, só texto), e a spec e o design no mesmo ponto. Depois: `npm test`
+  código 0, 118 de 118; `npm run build` código 0; `npx playwright test` código 0, 322 de 322, com
+  `iguais: 40 de 40` e `etapas … na página: 5` nas 7 larguras. Os lados a lados afetados
+  (`lado-a-lado-processo-seletivo-{390,1280}.png`) foram refeitos pelo script do `guardiao-visual`
+  no scratchpad, sem nova passagem dele; os outros 7 PNG ficaram os aprovados (o script também
+  regerou o cabeçalho, o hero e o menu, com diferença de bytes sem mudança de conteúdo, e o líder
+  técnico os devolveu à versão aprovada). Raiz não publicada: 0 de 329.160 e 0 de 1.024.000 pixels
+  diferentes.
 - **Critério literal da 3.3:** `git grep -c DEMO-RP12` dá código 0 antes e depois das
   demonstrações, porque o nome da marca aparece no `tasks.md` desta change e no relatório
   arquivado da `layout-e-hero`. Rodado pelo líder técnico, restrito ao código: `git grep -c

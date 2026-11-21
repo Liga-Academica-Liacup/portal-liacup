@@ -34,9 +34,9 @@ liga no Instagram, sem botão de inscrição nem link de edital.
 - **WHEN** alguém lê a coluna das etapas
 - **THEN** vê as cinco etapas da seção 5.5 do documento de conteúdo, na ordem dele: "Inscrição por
   formulário", "Análise do produto", "Entrevista online via Meet", "Resultado" e "Integração"
-- **AND** cada etapa mostra o nome e, separado dele, o resto da linha do documento ("etapa
-  eliminatória.", "etapa eliminatória.", "etapa classificatória, para os convocados.", "divulgação
-  no Instagram da Liga." e "encontro de boas-vindas."), palavra por palavra
+- **AND** cada etapa mostra o nome e, separado dele, o resto da linha do documento ("Etapa
+  eliminatória.", "Etapa eliminatória.", "Etapa classificatória, para os convocados.", "Divulgação
+  no Instagram da Liga." e "Encontro de boas-vindas."), palavra por palavra
 - **AND** nenhuma data aparece na coluna
 
 #### Scenario: Quem pode se inscrever

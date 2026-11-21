@@ -151,8 +151,8 @@ Decisões aplicadas: sem critério de desempate (D2), sem cargo específico (D5)
 | Bloco                | Conteúdo                                            | Observação                      |
 | -------------------- | --------------------------------------------------- | ------------------------------- |
 | Apresentação         | O que é entrar para a liga                          | Texto abaixo                    |
-| Pré-requisitos       | Três itens do Edital, item 2                        | Fixo — muda pouco entre editais |
-| Etapas               | Formulário e entrevista                             | Fixo                            |
+| Pré-requisitos       | Quatro itens, no §5.3 "Texto da página"             | Fixo — muda pouco entre editais |
+| Etapas               | As cinco do §5.5                                    | Fixo                            |
 | Cronograma           | Datas do edital vigente                             | **Editável pelo painel**        |
 | Edital vigente       | Link para o PDF                                     | **Editável pelo painel**        |
 | Botão de inscrição   | "Fazer inscrição" → formulário da liga, em nova aba | **Editável pelo painel**        |
@@ -195,11 +195,11 @@ _Na página, os pré-requisitos estão na lista do §5.3, "Texto da página". Es
 
 ### 5.5 Etapas _(decisão do Gabriel, 21/11/2026)_
 
-1. Inscrição por formulário · etapa eliminatória.
-2. Análise do produto · etapa eliminatória.
-3. Entrevista online via Meet · etapa classificatória, para os convocados.
-4. Resultado · divulgação no Instagram da Liga.
-5. Integração · encontro de boas-vindas.
+1. Inscrição por formulário · Etapa eliminatória.
+2. Análise do produto · Etapa eliminatória.
+3. Entrevista online via Meet · Etapa classificatória, para os convocados.
+4. Resultado · Divulgação no Instagram da Liga.
+5. Integração · Encontro de boas-vindas.
 
 ### 5.6 Cronograma — Edital 02/2026
 
@@ -283,7 +283,7 @@ Não. Nenhum serviço prestado na liga é remunerado. _(Estatuto, Art. 20º)_
 | Notícias — quadros 2 e 3 idênticos     | Pendente — provável erro de digitação                                                            |
 | Etapas do processo seletivo (§5.5)     | Pendente — a liga descreve o "produto" da etapa 2 em uma linha · na R3, quando o painel publicar resultados, a etapa 4 passa a citar "no portal" _(decisão do Gabriel, 21/11/2026, Portão 2 da pagina-processo-seletivo)_ |
 
-**Placar: de 14 itens, 9 resolvidos.** Restam 5, e três deles são fotos.
+**Placar: de 15 itens, 9 resolvidos.** Restam 6, e três deles são fotos.
 
 ---
 

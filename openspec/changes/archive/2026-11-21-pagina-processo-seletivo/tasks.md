@@ -121,8 +121,10 @@ entram nas tarefas 1.1, 1.3, 3.1 e 5.1, nas linhas marcadas "rodada do Portão 2
 
 - [x] 4.1 **Líder técnico:** no `SEGURANCA.md`:
       - §5: a forma nova do `curl`, a do Gabriel (`{ printf …; sed -n … .env | tr -d '\r\n';
-        printf '\n'; } | curl … -H @- "https://<host>/"`), e as duas formas de busca do valor,
-        com a mesma extração (D11);
+        printf '\n'; } | curl … -H @- 'https://<host><rota>'`), e as três formas de busca do
+        valor (por commit de `main..HEAD`, árvore e índice), com a mesma extração (D11; a busca
+        por commit, a do índice, as aspas simples e a lacuna `<rota>` vieram das rodadas do
+        `guardiao-appsec` e do `revisor`, Q19 (a));
       - a lacuna `<host>`: exatamente `portal-liacup-git-<branch>-liacup1.vercel.app` (Q8 (b)),
         conferido letra por letra, com recusa se a Vercel cortar o rótulo;
       - a regra "variável ausente no `.env`: para e avisa o Gabriel";
@@ -153,7 +155,7 @@ entram nas tarefas 1.1, 1.3, 3.1 e 5.1, nas linhas marcadas "rodada do Portão 2
       - `git diff --exit-code package.json package-lock.json src/proxy.ts` com código 0;
       - `git status --porcelain` só com arquivos do D13, conferido pelo líder técnico na seção
         "Líder técnico — conferência de escopo".
-- [ ] 5.3 `revisor` sobre o diff e `guardiao-appsec` com o checklist inteiro (a regra 2 da dieta
+- [x] 5.3 `revisor` sobre o diff e `guardiao-appsec` com o checklist inteiro (a regra 2 da dieta
       ainda não vale), com as duas buscas do valor do segredo (D11). Verificar: o veredito de cada
       um no relatório, nenhum BLOQUEADO aberto, e `git status` igual antes e depois das duas
       passagens.

@@ -54,11 +54,11 @@ export const CONTEUDO_DO_PROCESSO_SELETIVO: ConteudoDoProcessoSeletivo = {
     perguntas: { sobretitulo: 'FAQ', titulo: 'Perguntas que sempre chegam' },
   },
   etapas: [
-    { nome: 'Inscrição por formulário', carater: 'etapa eliminatória.' },
-    { nome: 'Análise do produto', carater: 'etapa eliminatória.' },
-    { nome: 'Entrevista online via Meet', carater: 'etapa classificatória, para os convocados.' },
-    { nome: 'Resultado', carater: 'divulgação no Instagram da Liga.' },
-    { nome: 'Integração', carater: 'encontro de boas-vindas.' },
+    { nome: 'Inscrição por formulário', carater: 'Etapa eliminatória.' },
+    { nome: 'Análise do produto', carater: 'Etapa eliminatória.' },
+    { nome: 'Entrevista online via Meet', carater: 'Etapa classificatória, para os convocados.' },
+    { nome: 'Resultado', carater: 'Divulgação no Instagram da Liga.' },
+    { nome: 'Integração', carater: 'Encontro de boas-vindas.' },
   ],
   quemPodeSeInscrever: [
     'Estar matriculado em curso de graduação da UnB, a partir do 2º semestre.',

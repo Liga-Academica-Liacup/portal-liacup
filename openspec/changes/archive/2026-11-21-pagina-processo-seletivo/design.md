@@ -85,7 +85,7 @@ Do protótipo vale só a composição (`REFERENCIA-VISUAL.md` §6). O texto vem 
 - **Etapas (emenda do Portão 2):** a linha do tempo do protótipo, com **cinco** marcadores, como o
   gabarito, e sem datas. As cinco são as do §5.5, decididas pelo Gabriel em 21/11/2026: "Inscrição
   por formulário", "Análise do produto", "Entrevista online via Meet", "Resultado" e "Integração".
-  O nome da etapa em negrito e, abaixo, o resto da linha do §5.5 ("etapa eliminatória."), sem o
+  O nome da etapa em negrito e, abaixo, o resto da linha do §5.5 ("Etapa eliminatória.", com maiúscula, como no gabarito, Q19), sem o
   " · ", que vira a quebra de linha. As palavras são as do documento. Antes da emenda eram dois
   marcadores, as duas etapas do edital (item 4.2).
   **Alternativa:** a linha inteira numa linha só, com o " · ". Fica pior no 390, e o protótipo
@@ -253,11 +253,14 @@ tocados com OK.
   `.vercel.app` (conferido pelo líder técnico com `wc -c`). A conferência compara letra por letra
   antes de ler o segredo. Se a Vercel cortar o rótulo (acima de 63 caracteres), a conferência
   recusa, o P23 para, e o líder técnico pede ao Gabriel o host exato daquela change.
-- **Forma nova da lista fechada** do `SEGURANCA.md` §5, a do Gabriel, em que `<host>` é o host
-  acima e o caminho é `/` ou `/processo-seletivo`:
+- **A fonte única das formas é a `SEGURANCA.md` §5** ("Quatro formas com o segredo de proteção da
+  Vercel"). O que segue é cópia dela, para leitura; havendo diferença, vale a §5. Origem das
+  mudanças sobre a forma do Gabriel: aspas simples no endereço e padrão do `<host>` (F-04 do
+  `guardiao-appsec`, rodada 2); busca por commit de `main..HEAD` e no índice (F-02, rodada 2); a
+  lacuna `<rota>`, `/` ou `/processo-seletivo` (achado 2 do `revisor`, rodada 3, Q19 (a)).
 
   ```bash
-  { printf 'x-vercel-protection-bypass: '; sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n'; printf '\n'; } | curl -q -sS -I --max-time 20 --proto =https -H @- "https://<host>/"
+  { printf 'x-vercel-protection-bypass: '; sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n'; printf '\n'; } | curl -q -sS -I --max-time 20 --proto =https -H @- 'https://<host><rota>'
   ```
 
   - O `sed` lê só a linha do nome e não carrega o resto do `.env` no ambiente. O `tr` tira o `\r`
@@ -276,18 +279,20 @@ tocados com OK.
   da forma cobre o `\r`, que é o caso que o Gabriel previu ("o `.env` é do Windows").
 - **Variável ausente:** se o `.env` não tiver a linha `VERCEL_AUTOMATION_BYPASS_SECRET=`, o líder
   técnico para e avisa o Gabriel. Não procura o segredo em outro lugar.
-- **Busca do valor em nada rastreado** (AS-01), duas formas novas, com a mesma extração do pedido,
-  que só devolvem `arquivo:contagem`:
+- **Busca do valor** (AS-01), três formas, com a mesma extração do pedido, que só devolvem
+  `arquivo:contagem`: a primeira uma vez para cada commit de `git rev-list main..HEAD`, a segunda
+  na árvore de trabalho e a terceira no índice:
 
   ```bash
-  sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F -f - HEAD
+  sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F -f - <rev>
   sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --untracked -f -
+  sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --cached -f -
   ```
 
-  Código 1 com saída vazia quer dizer nada achado. O `.env` é ignorado, e por isso não entra na
-  busca `--untracked`. Valor vazio casa com tudo: se a saída listar todo arquivo, o líder técnico
-  registra "valor vazio" e não conclui. O histórico não é buscado, porque o `git log -S` exigiria
-  o valor como argumento.
+  Só o código 1 com saída vazia conclui "nada achado"; qualquer outro resultado é não concluído,
+  inclusive o código 128 do valor vazio (§5). O `.env` é ignorado, e por isso não entra na busca
+  `--untracked`. O histórico anterior à branch não é buscado, porque o `git log -S` exigiria o
+  valor como argumento.
 - **Antes da primeira execução**, o líder técnico confere `curl --version` (o `@-` em `-H` existe
   desde a 7.55) e `MSYS_NO_PATHCONV=1`, como as outras formas.
 - **Também:** o nome `VERCEL_AUTOMATION_BYPASS_SECRET` entra no `.env.example`, sem valor, marcado

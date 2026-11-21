@@ -576,7 +576,8 @@ _Redeploy_. Uma alteração nova incorporada na `main` também gera uma nova imp
 É a chave que deixa um comando ler os cabeçalhos da prévia da Vercel, que tem proteção de acesso
 (o pedido P23 do `docs/SEGURANCA.md`, seção 5). **É segredo:** mora só no `.env` de quem roda o
 pedido, nunca no repositório, e o pedido a lê sem imprimi-la. O site não usa esta variável, e quem
-só desenvolve não precisa dela.
+só desenvolve não precisa dela. Nenhum código a lê pelo nome; o `tests/politicas/ambiente.ts`
+carrega o `.env` inteiro no ambiente dos testes de política, e ela vai junto.
 
 ## Dependencias
 
