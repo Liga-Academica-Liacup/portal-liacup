@@ -159,7 +159,8 @@ briefing desta change.
 - **Nesta change:** o P23 passa a rodar na prévia da branch, com o cabeçalho de bypass, no host
   `portal-liacup-git-feat-pagina-processo-seletivo-liacup1.vercel.app` (`design.md`, D11, e Q8
   (b)). A saída vai para a seção do `guardiao-appsec` desta change, depois de a Vercel gerar a
-  prévia.
+  prévia. **Rodado em 21/11/2026, depois do archive:** 200 e sem `Location` em `/` e em
+  `/processo-seletivo`; AS-15 desta change verificado (seção "P23 na prévia da branch").
 
 ## Decisões do Gabriel no Portão 1
 
@@ -1062,6 +1063,87 @@ P2 · git log --oneline -n 5 origin/main
 ```
 
 - **Riscos aceitos pelo Gabriel:** nenhum.
+
+### P23 na prévia da branch (AS-15), depois do archive
+
+Rodado pelo líder técnico em 21/11/2026, pela primeira forma da §5 ("Quatro formas com o segredo de
+proteção da Vercel"), com `MSYS_NO_PATHCONV=1`, depois de:
+
+- **Host confirmado pelo Gabriel no painel da Vercel, literal:** "Host confirmado pelo Gabriel no
+  painel da Vercel: portal-liacup-git-feat-pagina-processo-seletivo-liacup1.vercel.app." Montado
+  pela regra (`portal-liacup-git-` + branch `feat/pagina-processo-seletivo` em minúsculas, com `/`
+  trocado por `-`, + `-liacup1.vercel.app`) e comparado com o confirmado: iguais, letra por letra.
+  Rótulo de 55 caracteres, só `[a-z0-9-]`.
+- **A prévia serve o commit do archive:** HEAD local `ea40b64` igual ao `git ls-remote origin
+  feat/pagina-processo-seletivo`; o status do commit no GitHub é `success`, contexto `Vercel`,
+  "Deployment has completed", com o deployment no time `liacup1` (`gh api
+  repos/Liga-Academica-Liacup/portal-liacup/commits/ea40b64…/status`). Nenhum push depois dele.
+- **Forma da linha no `.env`**, só por contagem, com o espaço do fim contado depois de tirar o
+  `\r`: 1 linha com o nome, 0 com aspas, 1 com `\r`, 0 com espaço ou tab no fim, 0 com `#`, 0 com
+  espaço ou tab depois do `=`, valor não vazio.
+- **Precondições:** `test -e` deu 1 para `.claude/settings.json`, `.claude/settings.local.json` e
+  `.mcp.json`; as duas rotas existem em `src/app/(site)/(publicas)/`; `curl 8.7.1`.
+
+Saída literal: os cabeçalhos da **resposta** (o `-I` não imprime os do pedido). Nenhum valor
+parecido com segredo, nenhum `Set-Cookie`; nada precisou de máscara. O valor do segredo foi
+procurado nas duas saídas, pela entrada padrão (`grep -c -F -f -`): 0 nas duas, código 1.
+
+```
+P23a · { printf 'x-vercel-protection-bypass: '; sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n'; printf '\n'; } | curl -q -sS -I --max-time 20 --proto =https -H @- 'https://portal-liacup-git-feat-pagina-processo-seletivo-liacup1.vercel.app/'
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Access-Control-Allow-Origin: *
+Age: 13
+Cache-Control: public, max-age=0, must-revalidate
+Content-Disposition: inline
+Content-Length: 30382
+Content-Type: text/html; charset=utf-8
+Date: Sat, 21 Nov 2026 23:37:14 GMT
+Etag: "37ef6f21231b2e3d205db4d817ee362e"
+Server: Vercel
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+Vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+X-Matched-Path: /
+X-Nextjs-Prerender: 1
+X-Nextjs-Stale-Time: 300
+X-Robots-Tag: noindex
+X-Vercel-Cache: HIT
+X-Vercel-Id: gru1::mt6sc-1795304233968-0cd3752ce809
+[código de saída: 0]
+
+P23b · a mesma forma, com a rota '/processo-seletivo'
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Access-Control-Allow-Origin: *
+Age: 0
+Cache-Control: public, max-age=0, must-revalidate
+Content-Disposition: inline
+Content-Length: 38681
+Content-Type: text/html; charset=utf-8
+Date: Sat, 21 Nov 2026 23:37:14 GMT
+Etag: "8f619d8dc617e359ba31714ffb12915a"
+Server: Vercel
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+Vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+X-Matched-Path: /processo-seletivo
+X-Nextjs-Prerender: 1
+X-Nextjs-Stale-Time: 300
+X-Robots-Tag: noindex
+X-Vercel-Cache: PRERENDER
+X-Vercel-Id: gru1::wzxmg-1795304234332-19e816d609c6
+[código de saída: 0]
+```
+
+- **Resultado, pelo critério do Gabriel:** 200 e sem `Location` nas duas rotas. **Passou.**
+- **AS-15 desta change: verificado.** Presentes: `Strict-Transport-Security` com `preload` e o
+  `X-Robots-Tag: noindex` da prévia. Ausentes: `Content-Security-Policy`, `X-Frame-Options` (ou
+  `frame-ancestors`), `Referrer-Policy` e `Permissions-Policy` — cobertos pelo risco aceito LB-07,
+  com prazo na `lancamento-r1`, que a change não altera. Observação, sem achado: o
+  `Access-Control-Allow-Origin: *` é o padrão da Vercel para resposta estática; a página não tem
+  dado privado.
+- **Leitura do registro pelo líder técnico:** o líder técnico rodou e registrou; o
+  `guardiao-appsec` não passou de novo sobre esta saída, pela decisão do Gabriel de não fazer nova
+  passagem.
 
 ## Líder técnico — conferência de escopo
 
