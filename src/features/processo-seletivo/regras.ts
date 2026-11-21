@@ -8,15 +8,25 @@
  */
 import type { ConteudoDoProcessoSeletivo } from './tipos'
 
-/** O edital tem duas etapas: formulário e entrevista (seção 5.5). */
-export const NUMERO_DE_ETAPAS = 2
+/**
+ * A seção 5.5 tem cinco etapas: formulário, análise do produto, entrevista,
+ * resultado e integração (decisão do Gabriel, 21/11/2026).
+ */
+export const NUMERO_DE_ETAPAS = 5
+
+/**
+ * O quadro "Quem pode se inscrever" tem quatro itens, como o gabarito (seção
+ * 5.3, "Texto da página"; correção do Gabriel, 21/11/2026).
+ */
+export const NUMERO_DE_ITENS_DE_QUEM_PODE_SE_INSCREVER = 4
 
 /*
- * A nota de fonte em itálico do fim das respostas do documento, como
- * "(Edital, 2.2)" ou "(decisão D6)", não vai ao ar (Q4 (a)). Uma resposta que
- * termina entre parênteses é sinal de que a nota foi copiada junto.
+ * A nota de fonte em itálico do fim das respostas e dos itens do documento,
+ * como "(Edital, 2.2)" ou "(decisão D6)", não vai ao ar (Q4 (a)). Um texto que
+ * termina entre parênteses, com ou sem o sublinhado do itálico, é sinal de que
+ * a nota foi copiada junto.
  */
-const NOTA_DE_FONTE_NO_FIM = /\([^()]*\)\s*$/
+const NOTA_DE_FONTE_NO_FIM = /\([^()]*\)_?\s*$/
 
 const vazio = (texto: string) => texto.trim() === ''
 
@@ -29,7 +39,6 @@ export function problemasDoConteudo(conteudo: ConteudoDoProcessoSeletivo): strin
 
   if (vazio(conteudo.titulo)) problemas.push('título vazio')
   if (vazio(conteudo.apresentacao)) problemas.push('apresentação vazia')
-  if (vazio(conteudo.quemPodeSeInscrever)) problemas.push('"quem pode se inscrever" vazio')
 
   const { selo, aviso } = conteudo.inscricoes
   if (vazio(selo)) problemas.push('selo vazio')
@@ -47,16 +56,25 @@ export function problemasDoConteudo(conteudo: ConteudoDoProcessoSeletivo): strin
   }
 
   if (conteudo.etapas.length !== NUMERO_DE_ETAPAS) {
-    problemas.push(`${conteudo.etapas.length} etapas; o edital tem ${NUMERO_DE_ETAPAS}`)
+    problemas.push(`${conteudo.etapas.length} etapas; a seção 5.5 tem ${NUMERO_DE_ETAPAS}`)
   }
   conteudo.etapas.forEach((etapa, indice) => {
     if (vazio(etapa.nome)) problemas.push(`etapa ${indice + 1} sem nome`)
     if (vazio(etapa.carater)) problemas.push(`etapa "${etapa.nome}" sem o caráter`)
   })
 
-  if (conteudo.preRequisitos.length === 0) problemas.push('nenhum pré-requisito')
-  conteudo.preRequisitos.forEach((requisito, indice) => {
-    if (vazio(requisito)) problemas.push(`pré-requisito ${indice + 1} vazio`)
+  const itens = conteudo.quemPodeSeInscrever
+  if (itens.length !== NUMERO_DE_ITENS_DE_QUEM_PODE_SE_INSCREVER) {
+    problemas.push(
+      `${itens.length} itens em "quem pode se inscrever"; a seção 5.3 tem ` +
+        `${NUMERO_DE_ITENS_DE_QUEM_PODE_SE_INSCREVER}`
+    )
+  }
+  itens.forEach((item, indice) => {
+    if (vazio(item)) problemas.push(`item ${indice + 1} de "quem pode se inscrever" vazio`)
+    if (NOTA_DE_FONTE_NO_FIM.test(item)) {
+      problemas.push(`item ${indice + 1} de "quem pode se inscrever" com nota de fonte no fim`)
+    }
   })
 
   if (conteudo.perguntas.length === 0) problemas.push('nenhuma pergunta')

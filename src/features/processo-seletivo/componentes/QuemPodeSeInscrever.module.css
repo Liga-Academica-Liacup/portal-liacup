@@ -3,20 +3,14 @@
 
    Texto --color-neutral-800 #474238 sobre --color-surface #ebddc5: 7,45:1. */
 
+/* O quadro é a própria lista: sem parágrafo antes dela (correção do Gabriel,
+   21/11/2026). */
 .quadro {
+  margin: 0;
   padding: var(--space-6) calc(var(--space-3) + var(--space-4));
   border-radius: var(--radius-xl);
   background: var(--color-surface);
   color: var(--color-neutral-800);
-}
-
-.texto {
-  margin: 0 0 var(--space-2);
-}
-
-.lista {
-  margin: 0;
-  padding: 0;
   list-style: none;
 }
 
@@ -26,7 +20,7 @@
   grid-template-columns: var(--coluna-do-marcador-da-lista) minmax(0, 1fr);
   gap: var(--space-3);
   align-items: start;
-  padding-block: calc(var(--space-2) + var(--space-1) / 2);
+  padding-block: var(--espaco-vertical-do-item-da-lista);
 }
 
 /* A bolinha verde, centrada na primeira linha do texto. Decorativa. */

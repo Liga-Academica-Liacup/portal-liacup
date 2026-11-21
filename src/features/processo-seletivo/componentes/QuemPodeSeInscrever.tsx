@@ -1,10 +1,14 @@
 /*
- * "Quem pode se inscrever": o quadro do protótipo, com o texto de quem pode se
- * inscrever em parágrafo e, depois dele, os pré-requisitos em lista
- * (conteudo-institucional.md, seções 5.3 e 5.4). O texto vem antes porque o
- * primeiro pré-requisito fala das "faculdades supracitadas" (design.md, D4).
+ * "Quem pode se inscrever": o quadro do protótipo, com os quatro itens em
+ * lista e nenhum parágrafo (conteudo-institucional.md, seção 5.3, subseção
+ * "Texto da página", que vale também pela 5.4; correção do Gabriel,
+ * 21/11/2026).
  *
  * As bolinhas verdes da lista são decorativas e não são anunciadas.
+ *
+ * Carregando, erro e vazio: o vazio é impossível hoje, porque o dado é
+ * estático e o teste de unidade do conteúdo exige os quatro itens. Os três
+ * estados chegam na R3, com o banco (Q12 (a) do Gabriel, 21/11/2026).
  */
 import type { TituloDeSecao as Titulo } from '../tipos'
 import estilos from './QuemPodeSeInscrever.module.css'
@@ -12,26 +16,20 @@ import { TituloDeSecao } from './TituloDeSecao'
 
 type PropsDeQuemPodeSeInscrever = {
   titulo: Titulo
-  texto: string
-  preRequisitos: readonly string[]
+  itens: readonly string[]
 }
 
-export function QuemPodeSeInscrever({ titulo, texto, preRequisitos }: PropsDeQuemPodeSeInscrever) {
+export function QuemPodeSeInscrever({ titulo, itens }: PropsDeQuemPodeSeInscrever) {
   return (
     <section aria-labelledby="titulo-dos-requisitos">
       <TituloDeSecao titulo={titulo} id="titulo-dos-requisitos" />
-      <div className={estilos.quadro}>
-        <p className={estilos.texto}>{texto}</p>
-        {preRequisitos.length > 0 ? (
-          <ul className={estilos.lista}>
-            {preRequisitos.map((requisito) => (
-              <li key={requisito} className={estilos.item}>
-                {requisito}
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
+      <ul className={estilos.quadro}>
+        {itens.map((item) => (
+          <li key={item} className={estilos.item}>
+            {item}
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }

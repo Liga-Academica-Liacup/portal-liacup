@@ -2,9 +2,10 @@
  * Os tipos do conteúdo da página do processo seletivo.
  *
  * O conteúdo mora em `conteudo.ts`, separado da composição, para que trocar uma
- * pergunta, um pré-requisito ou o aviso não mexa em nenhum componente. Na R3,
- * o painel assume esse lugar (`conteudo-institucional.md`, seção 5.1), e o
- * `dados.ts` desta pasta passa a ler do banco com estes mesmos tipos.
+ * pergunta, um item de quem pode se inscrever ou o aviso não mexa em nenhum
+ * componente. Na R3, o painel assume esse lugar (`conteudo-institucional.md`,
+ * seção 5.1), e o `dados.ts` desta pasta passa a ler do banco com estes mesmos
+ * tipos.
  *
  * O estado das inscrições é uma união de valores. Hoje só existe `'fechado'`
  * (decisão do Gabriel, Q2 (a) da change pagina-processo-seletivo). Quando o
@@ -63,7 +64,7 @@ export type ConteudoDoProcessoSeletivo = {
     readonly perguntas: TituloDeSecao
   }
   readonly etapas: readonly Etapa[]
-  readonly quemPodeSeInscrever: string
-  readonly preRequisitos: readonly string[]
+  /** Os itens do quadro "Quem pode se inscrever", sem a nota de fonte (Q4 (a)). */
+  readonly quemPodeSeInscrever: readonly string[]
   readonly perguntas: readonly PerguntaFrequente[]
 }

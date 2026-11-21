@@ -4,8 +4,8 @@
 
 Que quem procura a liga num buscador a encontre: cada página pública declara título e descrição
 próprios, com texto da liga, e todos os metadados saem de um lugar só, conferidos a cada alteração.
-Nasceu na change `pagina-processo-seletivo` (R1); sitemap, robots e dados estruturados são da
-`lancamento-r1`.
+Nasceu na change `pagina-processo-seletivo` (R1); sitemap, robots, dados estruturados e a medição
+num endereço de prévia que a hospedagem marca como não indexável são da `lancamento-r1`.
 
 ## ADDED Requirements
 
@@ -80,9 +80,8 @@ sem pular nenhum.
 ### Requirement: A nota de SEO é medida e tem mínimo
 
 A medição de desempenho SHALL medir a categoria SEO de cada página da lista, com o site publicado,
-contra a versão compilada, e SHALL reprovar abaixo de 95. Só quando a medição for feita num
-endereço de prévia, que a hospedagem marca como não indexável, a conferência de indexação SHALL sair
-da conta, e a saída SHALL dizer isso. Uma página que se declara não indexável SHALL reprovar.
+contra a versão compilada, e SHALL reprovar abaixo de 95. Uma página que se declara não indexável
+SHALL reprovar.
 
 #### Scenario: As páginas da lista
 
@@ -99,12 +98,6 @@ da conta, e a saída SHALL dizer isso. Uma página que se declara não indexáve
 
 - **WHEN** uma página da lista passa a dizer ao buscador que não deve ser indexada
 - **THEN** a nota de SEO dela cai abaixo de 95 e a medição reprova, nomeando a página
-
-#### Scenario: Endereço de prévia marcado pela hospedagem
-
-- **WHEN** a medição é feita num endereço de prévia que a hospedagem marca como não indexável
-- **THEN** só a conferência de indexação sai da conta, e a saída diz que saiu e por quê
-- **AND** a medição do CI, que roda na versão compilada local, não tira nenhuma conferência
 
 ### Requirement: A página provisória não muda nos metadados
 

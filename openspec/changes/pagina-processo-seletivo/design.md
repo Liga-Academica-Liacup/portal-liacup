@@ -82,13 +82,22 @@ Do protótipo vale só a composição (`REFERENCIA-VISUAL.md` §6). O texto vem 
   `rel="noopener noreferrer"`, e nome acessível que diz o destino e contém o texto visível. Na frase
   corrida o @ continua (`REFERENCIA-VISUAL.md` §7). Os pares de cor sobre o roxo da faixa são
   medidos e nomeados (RP-09).
-- **Etapas:** a linha do tempo do protótipo, com dois marcadores e sem datas. O nome da etapa em
-  negrito ("Inscrição por formulário") e, abaixo, o resto da linha do §5.5 ("etapa eliminatória."),
-  sem o travessão, que vira a quebra de linha. As palavras são as do documento.
-  **Alternativa:** a linha inteira numa linha só, com o travessão. Fica pior no 390, e o protótipo
+- **Etapas (emenda do Portão 2):** a linha do tempo do protótipo, com **cinco** marcadores, como o
+  gabarito, e sem datas. As cinco são as do §5.5, decididas pelo Gabriel em 21/11/2026: "Inscrição
+  por formulário", "Análise do produto", "Entrevista online via Meet", "Resultado" e "Integração".
+  O nome da etapa em negrito e, abaixo, o resto da linha do §5.5 ("etapa eliminatória."), sem o
+  " · ", que vira a quebra de linha. As palavras são as do documento. Antes da emenda eram dois
+  marcadores, as duas etapas do edital (item 4.2).
+  **Alternativa:** a linha inteira numa linha só, com o " · ". Fica pior no 390, e o protótipo
   separa título e descrição.
-- **Quem pode se inscrever:** o quadro do protótipo, com o §5.3 em parágrafo e o §5.4 em lista. O
-  item 1 do §5.4 diz "faculdades supracitadas", e por isso o §5.3 vem antes dele.
+- **Quem pode se inscrever (emenda do Portão 2, com a correção do Gabriel no item 2):** o quadro
+  do protótipo, com **quatro itens em lista, como o gabarito, e nenhum parágrafo**. Os quatro são
+  os da subseção "Texto da página" do §5.3, a única do §5.3 e do §5.4; o §5.4 só remete a ela. O
+  texto do edital, que fica abaixo, como fonte, não vai ao ar. O item 3 ("Faltas não justificadas
+  acima de 50% levam ao desligamento da Liga.") vem do **Edital, item 2.2**, e não da linha
+  "frequência mínima para certificação" do protótipo, que não tem fonte. A nota de fonte do item 3
+  não vai ao ar, pela mesma regra das respostas (Q4 (a)). Antes da correção, o quadro tinha um
+  parágrafo e três itens. O `guardiao-visual` diz se o quadro ficou na medida do gabarito.
 - **Títulos e sobretítulos (Q3 (a)):** "Como funciona" com o sobretítulo "Etapas", "Quem pode se
   inscrever" com "Requisitos", e "Perguntas que sempre chegam" com "FAQ". O líder técnico os
   registrou na `REFERENCIA-VISUAL.md` §7 no Portão 1. A hierarquia é `h1` na faixa e `h2` em cada
@@ -102,12 +111,14 @@ Do protótipo vale só a composição (`REFERENCIA-VISUAL.md` §6). O texto vem 
 - `tipos.ts` declara o conteúdo com o estado como união de valores possíveis, hoje com um só,
   `'fechado'`. Pela Q2 (a), o estado aberto não existe no tipo. Quando entrar, numa change própria,
   ele acrescenta um valor à união, e o TypeScript aponta todo lugar que precisa tratá-lo.
-- `conteudo.ts` traz: o selo, a apresentação, o aviso (o texto e o link), as duas etapas (nome e
-  caráter), o texto de quem pode se inscrever, os três pré-requisitos e as oito perguntas, cada
-  uma com a resposta sem a nota de fonte (Q4 (a)). Também os títulos e sobretítulos das seções
-  (Q3 (a)).
-- **Teste de unidade** do conteúdo: 2 etapas, 3 pré-requisitos, 8 perguntas, nada vazio, nenhuma
-  pergunta repetida. Imprime as contagens.
+- `conteudo.ts` traz: o selo, a apresentação, o aviso (o texto e o link), as cinco etapas (nome e
+  caráter, emenda do Portão 2), os **quatro itens** de quem pode se inscrever, os da "Texto da
+  página" do §5.3, sem a nota de fonte do item 3 e **sem campo de parágrafo** (correção do Gabriel
+  no item 2), e as oito perguntas, cada uma com a resposta sem a nota de fonte (Q4 (a)). Também os
+  títulos e sobretítulos das seções (Q3 (a)).
+- **Teste de unidade** do conteúdo: 5 etapas (eram 2 antes da emenda do Portão 2), 4 itens de quem
+  pode se inscrever (eram um parágrafo e 3 pré-requisitos antes da correção), 8 perguntas, nada
+  vazio, nenhuma pergunta repetida. Imprime as contagens.
 - **O teste do texto contra o documento é de ponta a ponta** (D8, item 1). Ele lê o
   `conteudo-institucional.md`, como o `pagina-inicial.spec.ts` já faz com o §2.0, e compara com a
   página publicada, não com o arquivo de dados. Assim pega também texto que a composição escreva por
@@ -149,8 +160,12 @@ O `qa-acessibilidade` escreve, lendo a lista e o documento de conteúdo, sem cop
 
 1. **Spec da página do processo seletivo**, nas 7 larguras, com o site publicado:
    - o aviso do §5.1 e os trechos do §5.2 a §5.5 e do §6 conferidos com a página, imprimindo
-     quantos. Pela Q4 (a), o teste tira a nota de fonte em itálico entre parênteses do fim de cada
-     resposta antes de comparar, e confere que nenhuma nota aparece na página;
+     quantos. No §5.3, o teste lê só os quatro itens da lista da subseção "Texto da página", e não
+     a nota em itálico acima dela nem o texto do edital abaixo; o §5.4 não tem texto próprio na
+     página. O teste exige 4 itens no quadro e nenhum parágrafo nele, e imprime quantos itens leu
+     (correção do Gabriel no item 2). No §5.5, lê as cinco etapas e imprime quantas leu (emenda do
+     Portão 2). Pela Q4 (a), o teste tira a nota de fonte em itálico entre parênteses do fim de
+     cada resposta e de cada item antes de comparar, e confere que nenhuma nota aparece na página;
    - a ausência dos termos da spec (desempate, prova, 2026.2, datas do §5.6);
    - as 8 perguntas: Enter abre, Espaço fecha, sem a página rolar, estado anunciado, 44 px, foco
      visível, imprimindo quantas mediu;
@@ -198,6 +213,10 @@ tocados com OK.
   Nada sai da conta. A regra de tirar só o `is-crawlable` vale quando a medição for feita num
   endereço de prévia, que a Vercel marca com `X-Robots-Tag: noindex`, e o relatório diz isso. Nesta
   change isso não acontece no CI.
+- **Emenda do Portão 2:** o cenário "Endereço de prévia marcado pela hospedagem" saiu da spec `seo`
+  desta change e vai para a `lancamento-r1`, com a frase do requisito que o sustentava. Nesta change
+  nenhum código nem procedimento o exercitava (achado 5 do `revisor`, rodada 2), e o P23 mede
+  cabeçalhos com `curl -I`, sem rodar o Lighthouse na prévia, então não o cobre.
 - **Por que no script, e não numa asserção do `lighthouserc.json`:** a asserção do arquivo vale para
   os dois modos, e a Q7 (a) decidiu o mínimo só no publicado. O limiar de desempenho e acessibilidade
   continua no `lighthouserc.json`, sem mudança.
@@ -297,7 +316,7 @@ tocados com OK.
 | `qa-acessibilidade` | `tests/e2e/` (spec novo da página, `paginas-publicas`, `menu-por-teclado`, `pagina-inicial`). `interruptor.spec.ts` e `playwright.config.ts` não mudam |
 | `guardiao-visual` | `openspec/changes/pagina-processo-seletivo/prints/` |
 | Líder técnico | `docs/PADROES-DE-CODIGO.md` (§9, §10 e §11); `docs/SEGURANCA.md` (§5: forma nova, lacuna do host e formas de busca; §3: a superfície nova; §7: os prints da change); `.env.example` (uma linha, o nome sem valor); `docs/REFERENCIA-VISUAL.md` §7 (os títulos da Q3 (a), já feito no Portão 1) |
-| `especificador` | Além de `openspec/changes/pagina-processo-seletivo/`, uma inserção só no `docs/conteudo-institucional.md` §5.1, o aviso da Q1 (b), feita no Portão 1 com autorização expressa do Gabriel |
+| `especificador` | Além de `openspec/changes/pagina-processo-seletivo/`, no `docs/conteudo-institucional.md`, sempre com autorização expressa do Gabriel: no Portão 1, uma inserção no §5.1, o aviso da Q1 (b); no Portão 2, a troca do §5.5 pelas cinco etapas, a subseção "Texto da página" no §5.3 e no §5.4, acima do texto do edital, e uma linha no §8; na correção do item 2, a "Texto da página" do §5.3 com a lista de quatro itens, e a do §5.4 trocada por uma remissão a ela |
 
 Não mudam: `src/proxy.ts`, `src/app/layout.tsx` (Q5 (a)), `src/app/(site)/em-construcao/`,
 `PaginaEmConstrucao*`, `Rodape*`, `LinksDeContato*`, `lighthouserc.json`, `playwright.config.ts`,
@@ -308,7 +327,9 @@ na entrega.
 
 | Texto | Fonte |
 | --- | --- |
-| Apresentação, quem pode se inscrever, pré-requisitos, etapas | `conteudo-institucional.md` §5.2 a §5.5 |
+| Apresentação | `conteudo-institucional.md` §5.2 |
+| Quem pode se inscrever (os quatro itens) | §5.3, subseção "Texto da página" (decisão do Gabriel, 21/11/2026, Portão 2, com a correção do item 2); o §5.4 remete a ela. O item 3 vem do Edital, item 2.2, e não do protótipo. O texto do edital fica abaixo, como fonte, e não vai ao ar |
+| Etapas | §5.5, cinco itens (decisão do Gabriel, 21/11/2026, Portão 2), no lugar das duas do edital, item 4.2 |
 | Perguntas e respostas | §6, sem as notas de fonte (Q4 (a)) |
 | Selo "Inscrições fechadas" | Briefing do gestor, apoiado no §5.1 ("as inscrições estão fechadas") |
 | Aviso de inscrições fechadas | §5.1, inserido pelo `especificador` no Portão 1 com autorização do Gabriel (Q1 (b), "decisão do Gabriel em 21/11, Q1 da pagina-processo-seletivo") |
@@ -331,9 +352,10 @@ na entrega.
 
 ## Open Questions
 
-Nenhuma aberta. As oito foram decididas pelo Gabriel no Portão 1, em 21/11/2026; o texto literal
-está no `relatorio.md`, seção "Decisões do Gabriel no Portão 1", transcrito pelo líder técnico. As
-opções ficam abaixo como registro. Na origem, toda opção de texto que não vinha do
+Uma aberta: a Q15, adiada pelo Gabriel no Portão 2. As oito do Portão 1 foram decididas pelo
+Gabriel em 21/11/2026; o texto literal está no `relatorio.md`, seção "Decisões do Gabriel no Portão
+1", transcrito pelo líder técnico. As opções ficam abaixo como registro. As do Portão 2 estão em
+"Q10 a Q16", logo depois da tabela. Na origem, toda opção de texto que não vinha do
 `conteudo-institucional.md` estava marcada **(fora do documento)**. Os caracteres foram contados à
 mão pelo especificador, e o teste da tarefa 2.2 confere.
 
@@ -347,6 +369,31 @@ mão pelo especificador, e o teste da tarefa 2.2 confere.
 | Q6 | (a) no título e (a) nas descrições · Gabriel, 21/11/2026, Portão 1 |
 | Q7 | (a) · Gabriel, 21/11/2026, Portão 1 |
 | Q8 | (b), time `liacup1` · Gabriel, 21/11/2026, Portão 1 |
+
+### Q10 a Q16 — Portão 2, primeira passagem
+
+Decididas pelo Gabriel em 21/11/2026, no Portão 2, antes do archive, menos a Q15, **adiada**. O
+texto literal está no `relatorio.md`, seção "Decisões do Gabriel no Portão 2 (primeira passagem,
+antes do archive)". As opções escolhidas, como o líder técnico as levou na entrega do Portão 2,
+estão na terceira coluna; as não escolhidas eram: Q10 (b) manter a letra 0 e declarar não
+verificado fora do Chromium; Q11 (b) aceitar os meios degraus; Q12 (b) unificar o comportamento
+agora; Q13 (a) desvio para a próxima change que mexer na vitrine; Q14 (b) pôr o selo no
+`conteudo-institucional.md` §5.1; Q16 (a) nenhuma melhoria agora e (c) o botão de 12,5 px e um
+destaque próprio para o aviso.
+
+| Qn | Assunto | Decisão e opção escolhida |
+| --- | --- | --- |
+| Q10 | Achado 3 do `revisor`, rodada 2: o trecho ", página inicial" escondido com letra de tamanho 0 | (a) · voltar à caixa de 1 px (técnica C7), sem o espaço antes da vírgula · Gabriel, 21/11/2026, Portão 2 |
+| Q11 | Achado 4 do `revisor`, rodada 2: meios degraus da escala nos CSS das etapas e do quadro (RP-02) | (a) · trocar por degrau, soma de degraus ou token novo com origem · Gabriel, 21/11/2026, Portão 2 |
+| Q12 | Achado 6 do `revisor`, rodada 2: lista vazia, que some a seção em duas composições e a mantém numa | (a) · declarar: o vazio é impossível hoje (dado estático, o teste de unidade exige as contagens); carregando, erro e vazio chegam na R3, com o banco · sem código · Gabriel, 21/11/2026, Portão 2 |
+| Q13 | Achado 1 do `revisor`, rodada 2: a vitrine sem o link com aparência de botão (D7 contra D13) | (b) · acrescentar o link à vitrine na rodada da Q10 · Gabriel, 21/11/2026, Portão 2 |
+| Q14 | Achado 2 do `revisor`, rodada 2: o selo "Inscrições fechadas" sem registro | (a) · registrar na `REFERENCIA-VISUAL.md` §7 como rótulo de interface · Gabriel, 21/11/2026, Portão 2; feito pelo líder técnico |
+| Q15 | F-05 do `guardiao-appsec`, rodada 2: a linha dos prints na `SEGURANCA.md` §7 | **Adiada** · Gabriel, 21/11/2026: os prints mudam com o conteúdo novo, e a questão volta ao Portão 2 depois da rodada |
+| Q16 | Melhorias propostas pelo `dev-frontend` na rodada 1 | (b) · só o botão de destaque com 12,5 px até 480 px, como o `.hdr-cta` do gabarito, com token novo · Gabriel, 21/11/2026, Portão 2 |
+
+A Q10, a Q11 e a Q12 pedem código e entram na terceira rodada do `dev-frontend`, autorizada pelo
+Gabriel "só com o que está aqui". Se sobrar diferença depois dela, vira Qn nova, sem quarta
+rodada.
 
 ### Q1 — O texto do aviso de inscrições fechadas
 

@@ -64,28 +64,24 @@
   text-overflow: ellipsis;
 }
 
-/* O ", página inicial", que só o leitor de tela lê: fica no nome acessível
-   da marca e não aparece na tela. Em linha, e não com position: absolute (o
-   "visually hidden" da WCAG C7), porque fora da linha o navegador o trata
-   como outro bloco e põe um espaço antes da vírgula no nome acessível. Em
-   linha, largura e altura não valem: é a letra de tamanho 0 que o esconde
-   sem ocupar espaço (com 1 px, a marca e o anel de foco dela ficavam de 5 a
-   10 px mais largos, medido). O tamanho 0 também não cresce com o tamanho
-   mínimo de letra que a pessoa configura no navegador; 1 px cresceria. O
-   clip-path tira da tela o que sobrar, como na C7. Sem quebra de linha:
-   quebrado, ele abriria uma segunda linha na sigla, e a marca deixaria de
-   ficar centrada na altura. O espaçamento entre letras volta ao normal: ele
-   é herdado em px do nome da liga, e não zera com a letra. */
-.destinoDaMarca {
-  font-size: var(--font-size-so-para-leitor-de-tela);
-  letter-spacing: normal;
-  white-space: nowrap;
+/* O nome acessível da marca, que só o leitor de tela lê: a caixa de 1 px da
+   técnica C7 do WCAG, fora do fluxo e recortada, que tira o texto da tela sem
+   tirá-lo do nome acessível. A margem negativa devolve o 1 px, e a marca e o
+   anel de foco ficam com a mesma medida de antes (medido na rodada 3). */
+.soParaLeitorDeTela {
+  position: absolute;
+  width: var(--tamanho-so-para-leitor-de-tela);
+  height: var(--tamanho-so-para-leitor-de-tela);
+  margin: calc(var(--tamanho-so-para-leitor-de-tela) * -1);
+  padding: 0;
+  overflow: hidden;
   clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
-/* O da sigla só vale até 1024 px, onde o nome da liga some; acima, vale o do
-   nome da liga, que é o último texto visível. */
-.destinoNoCelular {
+/* Até 1024 px o nome da liga some da tela, e some também do nome acessível. */
+.nomeAteOPontoDeTroca {
   display: none;
 }
 
@@ -192,14 +188,26 @@
     display: none;
   }
 
-  .destinoNoCelular {
-    display: inline;
+  .nomeAteOPontoDeTroca {
+    display: block;
   }
 
-  /* O tamanho da letra é o do .botao, --font-size-controle, e não o de
-     título 6, que era reaproveitado aqui (design.md da
-     pagina-processo-seletivo, D12): por isso não se repete. */
+  .nomeAcimaDoPontoDeTroca {
+    display: none;
+  }
+
+  /* De 481 a 1024 px a letra é a do .botao, --font-size-controle, e não a de
+     título 6, que era reaproveitada aqui (design.md da
+     pagina-processo-seletivo, D12): por isso não se repete. Até 480 px, vale
+     a regra seguinte. */
   .linha .destaque {
     padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* ── Até 480 px: o botão de destaque com a letra do .hdr-cta do protótipo ──── */
+@media (max-width: 480px) {
+  .linha .destaque {
+    font-size: var(--font-size-controle-celular);
   }
 }

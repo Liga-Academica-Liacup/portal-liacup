@@ -23,9 +23,11 @@ na prévia.
      Acompanhe a Liga no Instagram @liacup.unb para saber quando abre o próximo processo
      seletivo.", com o link para o Instagram. Ficam fora os botões "Fazer inscrição" e "Baixar o
      edital";
-   - **coluna "Como funciona"**, sobretítulo "Etapas": as duas etapas do §5.5, sem datas;
-   - **quadro "Quem pode se inscrever"**, sobretítulo "Requisitos": o texto do §5.3 e os três
-     pré-requisitos do §5.4;
+   - **coluna "Como funciona"**, sobretítulo "Etapas": as cinco etapas do §5.5, sem datas
+     (emenda do Portão 2; eram duas);
+   - **quadro "Quem pode se inscrever"**, sobretítulo "Requisitos": os quatro itens do "Texto da
+     página" do §5.3, como o gabarito, sem parágrafo (emenda do Portão 2, com a correção do
+     Gabriel no item 2);
    - **"Perguntas que sempre chegam"**, sobretítulo "FAQ": as 8 perguntas do §6, abertas e fechadas
      pelo teclado e pelo toque, com o estado lido pelo leitor de tela, e sem as notas de fonte em
      itálico do fim das respostas (Q4 (a)). A pergunta "O que cai na prova" do protótipo não existe.
@@ -83,7 +85,8 @@ na prévia.
 - e2e verde nas 7 larguras, nos dois modos do interruptor, com axe 0 e nenhuma rolagem horizontal.
   Lighthouse ≥ 90 em desempenho e ≥ 95 em acessibilidade na página nova, publicada.
 - Lighthouse SEO ≥ 95 na Início e no Processo seletivo. Se o endereço medido tiver `noindex`, só a
-  auditoria `is-crawlable` sai da conta, e o relatório diz isso.
+  auditoria `is-crawlable` sai da conta, e o relatório diz isso. A parte do `noindex` saiu desta
+  change para a `lancamento-r1` na emenda do Portão 2.
 - O teste da lista acusa título repetido: uma repetição plantada fica vermelha e, desfeita, volta ao
   verde.
 - Com o site não publicado, `/processo-seletivo` responde 307 para `/`, e a página em construção de
@@ -111,11 +114,32 @@ transcrito pelo líder técnico. As opções e os custos ficam no `design.md`, "
 | Q8 (b) | Host de branch exato, time `liacup1` | Item 6; D11; spec `equipe-de-agentes` |
 | Q9 da `layout-e-hero` | (a) | Relatório, seção do líder técnico |
 
+## Emenda do Portão 2 (21/11/2026)
+
+Decisões do Gabriel, com o texto literal no `relatorio.md`, seção "Decisões do Gabriel no Portão 2
+(primeira passagem, antes do archive)". Continuam 15 tarefas, sem tarefa nova.
+
+- **Conteúdo**, no `conteudo-institucional.md`, escrito pelo `especificador` com autorização do
+  Gabriel: o §5.5 passa a cinco etapas (inscrição por formulário, análise do produto, entrevista
+  online, resultado, integração), com a fonte "decisão do Gabriel, 21/11/2026"; o §5.3 e o §5.4
+  ganham a subseção "Texto da página", que é o que vai ao ar e o que o teste confere, acima do texto
+  do edital, que fica como fonte; o §8 ganha a pendência do "produto" e do "no portal" (R3). Pela
+  correção do Gabriel no item 2, a "Texto da página" do §5.3 é a lista dos quatro itens do cartão,
+  sem parágrafo, com o item dos 50% vindo do Edital, item 2.2; a do §5.4 virou remissão a ela.
+- **Saiu da spec `seo`** o cenário "Endereço de prévia marcado pela hospedagem", com a frase do
+  requisito que o sustentava. Vai para a `lancamento-r1`: o P23 mede cabeçalhos, e não a nota de
+  SEO num endereço com `noindex`.
+- **Edital como arquivo** fica fora desta change. Vai para a R3, na linha que o líder técnico pôs
+  no `PLANO-DE-DESENVOLVIMENTO.md`, no escopo da `seguranca-do-painel`.
+- **Q10 a Q16:** a decisão de cada uma está no `design.md`, "Q10 a Q16". A Q15 foi adiada.
+
 ## Fora de escopo
 
 - O estado "inscrições abertas" (selo, cronograma, "Fazer inscrição", link do edital), pela Q2 (a).
 - Formulário próprio de inscrição, painel, edição de conteúdo e qualquer outra página.
-- Sitemap, `robots.txt`, JSON-LD e imagem de Open Graph, que são da `lancamento-r1`.
+- Sitemap, `robots.txt`, JSON-LD e imagem de Open Graph, que são da `lancamento-r1`, e a medição
+  de SEO num endereço de prévia marcado como não indexável (emenda do Portão 2).
+- O edital como arquivo para baixar (emenda do Portão 2): vai para a R3.
 - Mudar a página em construção, o interruptor, a spec `publicacao-do-site` ou a `pagina-inicial`.
   Os cenários delas continuam verdadeiros com a página nova (`design.md`, D2).
 - Baixar limiar, tirar verificação ou mexer em `.github/`.
@@ -172,6 +196,7 @@ transcrito pelo líder técnico. As opções e os custos ficam no `design.md`, "
 | `tests/e2e/` | Spec da página nova; `paginas-publicas`, `menu-por-teclado` e `pagina-inicial` ajustados | `qa-acessibilidade` |
 | `docs/PADROES-DE-CODIGO.md` §9, §10 e §11; `docs/SEGURANCA.md` §3, §5 e §7; `.env.example`; `README.md` | Regra de SEO; forma nova do P23; origem dos prints; nome da variável | líder técnico (docs) e `dev-frontend` (README) |
 | `docs/conteudo-institucional.md` §5.1 e `docs/REFERENCIA-VISUAL.md` §7 | O aviso da Q1 (b), escrito pelo `especificador` com autorização do Gabriel; os títulos da Q3 (a), pelo líder técnico. Os dois no Portão 1, antes do apply | `especificador` e líder técnico |
+| `docs/conteudo-institucional.md` §5.3, §5.4, §5.5 e §8 | Emenda do Portão 2, com autorização do Gabriel, antes da terceira rodada | `especificador` |
 | `src/proxy.ts`, página em construção, `.github/`, dependências | Nada muda | — |
 | Produção | Nada muda | — |
 | Prévias | Botão "Processo seletivo", "Quero participar" e a página nova | — |

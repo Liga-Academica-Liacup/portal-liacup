@@ -38,8 +38,7 @@ export default function PaginaDoProcessoSeletivo() {
           <Etapas titulo={conteudo.secoes.etapas} etapas={conteudo.etapas} />
           <QuemPodeSeInscrever
             titulo={conteudo.secoes.requisitos}
-            texto={conteudo.quemPodeSeInscrever}
-            preRequisitos={conteudo.preRequisitos}
+            itens={conteudo.quemPodeSeInscrever}
           />
         </div>
       </div>

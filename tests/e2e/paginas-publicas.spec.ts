@@ -1673,13 +1673,15 @@ test('a página atual é marcada nas colunas do rodapé, e o botão de destaque 
 /*
  * O NOME ACESSÍVEL DA MARCA (spec navegacao-publica; pagina-processo-seletivo,
  * design.md D12; WCAG 2.5.3). Começa pelo texto que a marca mostra NESTA
- * largura, lido da tela, e diz que leva à página inicial. Acima de 1024 px,
- * onde o nome da liga aparece, o nome acessível o contém. Até 1024 px o nome
- * da liga não aparece, como no protótipo.
+ * largura, lido da tela, e termina em ", página inicial", sem espaço antes da
+ * vírgula (Q10 (a) do Gabriel, 21/11/2026). Acima de 1024 px, onde o nome da
+ * liga aparece, o nome acessível o contém. Até 1024 px o nome da liga não
+ * aparece, como no protótipo.
  */
 const PONTO_DE_TROCA_DO_CABECALHO = 1024
+const FIM_DO_NOME_DA_MARCA = ', página inicial'
 
-test('o nome acessível da marca começa pelo que ela mostra e diz que leva à página inicial', async ({
+test('o nome acessível da marca começa pelo que ela mostra e termina em ", página inicial", sem espaço antes da vírgula', async ({
   page,
 }, informacoes) => {
   const largura = page.viewportSize()?.width ?? 0
@@ -1692,9 +1694,15 @@ test('o nome acessível da marca começa pelo que ela mostra e diz que leva à p
     await page.goto(endereco)
     const marca = page.getByRole('banner').locator('a[href="/"]').first()
     /*
-     * O que está NA TELA: o innerText traria também o trecho só para leitor de
-     * tela (", página inicial"), que tem 1 px. Texto dentro de elemento de até
-     * 1 px, ou que não se vê, não conta.
+     * O que está NA TELA, lido dos pixels e não da árvore de acessibilidade.
+     * Desde a rodada 3 do dev-frontend (Q10 (a)), a marca tem o nome inteiro
+     * ("LIACUP…, página inicial") num trecho só para leitor de tela, na caixa
+     * de 1 px recortada da técnica C7 do WCAG, um trecho por lado do ponto de
+     * troca, com o outro em display: none; e o texto desenhado na tela fica
+     * com aria-hidden. O innerText traria os dois. Então conta só o texto que
+     * se vê, mesmo com aria-hidden: o de elemento visível e maior que 1 px. O
+     * nome acessível, abaixo, vem da árvore; o WCAG 2.5.3 é que um contenha o
+     * outro.
      */
     const visivel = await marca.evaluate((link) => {
       const partes: string[] = []
@@ -1716,8 +1724,10 @@ test('o nome acessível da marca começa pelo que ela mostra e diz que leva à p
     if (!visivel || !nome.startsWith(visivel)) {
       falhas.push(`${onde}: o nome não começa pelo texto visível`)
     }
-    if (!/página inicial/.test(nome))
-      falhas.push(`${onde}: o nome não diz que leva à página inicial`)
+    if (!nome.endsWith(FIM_DO_NOME_DA_MARCA))
+      falhas.push(`${onde}: o nome não termina em "${FIM_DO_NOME_DA_MARCA}"`)
+    /* O espaço antes da vírgula ("LIACUP , página inicial") é o defeito da rodada 1. */
+    if (/\s,/.test(nome)) falhas.push(`${onde}: o nome tem espaço antes da vírgula`)
     if (acimaDoPonto) {
       if (!visivel.includes(NOME_DA_LIGA)) {
         falhas.push(

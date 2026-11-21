@@ -14,8 +14,12 @@
  *   - título, apresentação: seção 5 e 5.2;
  *   - selo "Inscrições fechadas": briefing da change, apoiado na seção 5.1;
  *   - aviso de inscrições fechadas: seção 5.1 (decisão do Gabriel, Q1 (b));
- *   - etapas: seção 5.5. O travessão vira a quebra entre o nome e o caráter;
- *   - quem pode se inscrever e pré-requisitos: seções 5.3 e 5.4;
+ *   - etapas: seção 5.5, as cinco (decisão do Gabriel, 21/11/2026). O " · "
+ *     vira a quebra entre o nome e o caráter;
+ *   - quem pode se inscrever: os quatro itens da subseção "Texto da página"
+ *     da seção 5.3, que vale também pela 5.4, sem a nota de fonte em itálico
+ *     do item 3 (Q4 (a)). O texto do edital, abaixo dela no documento, é a
+ *     fonte e não vai ao ar;
  *   - perguntas e respostas: seção 6, sem a nota de fonte em itálico do fim
  *     de cada resposta (decisão do Gabriel, Q4 (a));
  *   - títulos e sobretítulos das seções: rótulos do protótipo, com
@@ -23,7 +27,8 @@
  *   - nome acessível do link: o mesmo rótulo do link do Instagram no rodapé.
  *
  * Quem confere este arquivo é o `conteudo.test.ts`: pergunta sem resposta,
- * pré-requisito vazio ou número de etapas diferente de dois deixam `npm test`
+ * item vazio, número de itens diferente de quatro ou de etapas diferente de
+ * cinco deixam `npm test`
  * vermelho, nomeando o item.
  */
 import type { ConteudoDoProcessoSeletivo } from './tipos'
@@ -50,14 +55,16 @@ export const CONTEUDO_DO_PROCESSO_SELETIVO: ConteudoDoProcessoSeletivo = {
   },
   etapas: [
     { nome: 'Inscrição por formulário', carater: 'etapa eliminatória.' },
+    { nome: 'Análise do produto', carater: 'etapa eliminatória.' },
     { nome: 'Entrevista online via Meet', carater: 'etapa classificatória, para os convocados.' },
+    { nome: 'Resultado', carater: 'divulgação no Instagram da Liga.' },
+    { nome: 'Integração', carater: 'encontro de boas-vindas.' },
   ],
-  quemPodeSeInscrever:
-    'Estudantes regularmente matriculados na UnB, a partir do segundo semestre, dos cursos de graduação da Faculdade de Ciências e Tecnologias em Saúde (FCTS), Faculdade de Saúde (FS), Faculdade de Medicina (FM), Faculdade de Direito, Departamento de Psicologia e Serviço Social. Outros cursos poderão ser considerados mediante análise pela coordenação da LIACUP.',
-  preRequisitos: [
-    'Estar regularmente matriculado(a) na Universidade de Brasília, em uma das faculdades supracitadas.',
-    'Possuir disponibilidade de 10 horas semanais para participar das atividades propostas pela liga, sabendo que participações não justificadas, ao se acumularem em mais de 50%, irão culminar no desligamento do ligante do projeto.',
-    'Possuir afinidade e interesse pela temática dos Cuidados Paliativos.',
+  quemPodeSeInscrever: [
+    'Estar matriculado em curso de graduação da UnB, a partir do 2º semestre.',
+    'Disponibilidade média de 10 horas semanais para as atividades da Liga.',
+    'Faltas não justificadas acima de 50% levam ao desligamento da Liga.',
+    'Afinidade e interesse pela temática dos cuidados paliativos.',
   ],
   perguntas: [
     {

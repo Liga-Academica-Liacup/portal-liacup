@@ -14,7 +14,9 @@
  * O "+" do protótipo, que vira "–" com a resposta aberta, é decorativo e não
  * é anunciado: o estado já vem do próprio <details>.
  *
- * Lista vazia não desenha nada. O teste de unidade do conteúdo garante as oito.
+ * Carregando, erro e vazio: o vazio é impossível hoje, porque o dado é
+ * estático e o teste de unidade do conteúdo exige as oito perguntas. Os três
+ * estados chegam na R3, com o banco (Q12 (a) do Gabriel, 21/11/2026).
  */
 import type { PerguntaFrequente, TituloDeSecao as Titulo } from '../tipos'
 import estilos from './PerguntasFrequentes.module.css'

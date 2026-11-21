@@ -108,6 +108,44 @@ Aplica as decisões do Gabriel: Q1 (b), Q2 (a) a Q7 (a), Q8 (b) com o time `liac
   - o P23 do follow-up traz o host desta change.
 - **Incompleto da emenda:** nada novo. Os itens acima continuam valendo.
 
+### Emenda do Portão 2 (21/11/2026)
+
+Aplica as mudanças de conteúdo do Gabriel e a saída do cenário de prévia. **Continuam 15 tarefas**,
+sem tarefa nova. Requisitos: 13 ADDED, 4 MODIFIED, 1 REMOVED, sem mudança. Cenários: **60** (eram
+61): `pagina-processo-seletivo` 17, `seo` 12 (eram 13), `navegacao-publica` 26, `equipe-de-agentes` 5.
+
+- **`docs/conteudo-institucional.md`**, com autorização expressa do Gabriel: §5.5 trocado pelos 5
+  itens literais, no formato `<nome> · <caráter>`, com a fonte "decisão do Gabriel, 21/11/2026"; no
+  §5.3 e no §5.4, acima do texto do edital, `#### Texto da página` com os textos literais e a
+  origem; **inserido também** `#### Texto do edital, mantido como fonte` antes do texto do edital,
+  para ele não cair dentro da subseção nova; §8, uma linha com o "produto" e o "no portal" (R3).
+  Os títulos `###` do §5.3 e do §5.4 ficaram como estavam, com a nota do edital.
+- **Specs:** `pagina-processo-seletivo` com 5 etapas nos cenários "As etapas", "A página confere
+  com o documento" e "O lugar dos dados é conferido"; "Quem pode se inscrever" e o requisito do
+  texto citam a "Texto da página". `seo` sem o cenário de prévia, sem a frase do requisito que o
+  sustentava, e com a `lancamento-r1` no Purpose.
+- **`design.md`:** D4, D5, D8 e D9, as fontes do texto, o D13 e "Q10 a Q16" com decisão e data.
+- **`tasks.md`:** 1.1 (`etapas: 5`), 1.3, 3.1 e 5.1 com a linha "rodada do Portão 2".
+- **`proposal.md`:** item 1, o critério do `noindex`, "Emenda do Portão 2", fora de escopo e Impact.
+- **Correção do Gabriel no item 2:** o `conteudo-institucional.md` §5.3 "Texto da página" passou a
+  ser a lista dos 4 itens literais (o item 3 com a nota "_(Edital, item 2.2)_"), e a do §5.4 virou
+  remissão a ela; na spec, 4 cenários e o texto de 1 requisito (mesmas contagens; "As notas de
+  fonte" passou a cobrir também os itens); D4, D5, D8, D13 e fontes; as tarefas 1.1
+  (`quem pode se inscrever: 4`), 1.3 e 3.1; o item 1 e a emenda da proposta. Ainda 15 tarefas.
+- **Desvios:** a Q10, a Q11 e a Q12 foram postas na 1.3, junto da rodada do dev, embora a Q10 mexa
+  na marca, da 1.5. Os checkboxes de 1.1, 1.3, 3.1 e 5.1 continuam marcados: desmarcar é do líder
+  técnico.
+- **Achados para o líder técnico, sem mudar nada:**
+  - o `conteudo-institucional.md` §5.1 diz "Etapas · Formulário e entrevista" e "Pré-requisitos ·
+    Três itens do Edital, item 2", e o placar do §8 diz "de 14 itens", agora 15. Não mudei, porque
+    "nenhuma outra linha muda";
+  - a `REFERENCIA-VISUAL.md` §6 ainda diz "O edital tem duas etapas (formulário e entrevista
+    online)", e "Integração" vira etapa enquanto "Aula de integração" segue proibida na spec.
+- **Incompleto:**
+  - as opções e os custos da Q10 a Q16 **não estão no repositório**: registrei a letra, a data e o
+    assunto pelo encaminhamento do relatório. O assunto da **Q16 não consegui identificar**;
+  - não rodei `openspec validate`, porque não rodo comando.
+
 ## P23 e Q9 da `layout-e-hero` (pedido do briefing)
 
 Registro do que ficou fora do relatório arquivado da `layout-e-hero`, com o que se sabe pelo
@@ -159,6 +197,63 @@ relatorio.md com o texto literal."
 - Conferido: o `git grep -c -a -F -f - HEAD` lê o padrão da entrada padrão no Git Bash (git
   2.45.1): padrão inexistente deu código 1 com saída vazia; `Secretaria` deu
   `HEAD:docs/conteudo-institucional.md:5`, código 0. O `curl` é o 8.7.1, que aceita `-H @-`.
+
+## Decisões do Gabriel no Portão 2 (primeira passagem, antes do archive)
+
+Registradas pelo líder técnico, com o texto literal da mensagem do Gabriel de 21/11/2026. A
+numeração continua a da change (Q10 a Q16).
+
+> Decisões do Gabriel no Portão 2 (registre literal no relatorio.md):
+> Q10 (a). Q11 (a). Q12 (a). Q13 (b). Q14 (a). Q16 (b).
+> Q15: adiada. Os prints mudam com o conteúdo abaixo; traga de novo depois da rodada.
+> Autorizo a terceira rodada do dev-frontend, só com o que está aqui. Se ainda sobrar diferença depois dela, vira Qn, sem quarta rodada.
+>
+> Mudanças de conteúdo, decididas pelo Gabriel em 21/11. O especificador emenda primeiro o conteudo-institucional, as specs e o tasks.md, sem tarefa nova; se a emenda passar de 15 tarefas ou pedir algo além disto, pare e mostre antes do código.
+>
+> 1. §5.5 Etapas, com a fonte "decisão do Gabriel, 21/11/2026" no lugar de "(Edital, item 4.2)", em 5 itens:
+>    1. Inscrição por formulário · etapa eliminatória.
+>    2. Análise do produto · etapa eliminatória.
+>    3. Entrevista online via Meet · etapa classificatória, para os convocados.
+>    4. Resultado · divulgação no Instagram da Liga.
+>    5. Integração · encontro de boas-vindas.
+>    Anote no §8 (pendências) que falta a liga descrever o "produto" em uma linha, e que "no portal" entra no item 4 quando o painel publicar resultados (R3). O teste passa a exigir 5 etapas.
+> 2. §5.3 e §5.4: o texto do edital fica no documento como fonte. Acima dele, uma subseção "Texto da página", que é o que vai ao ar e o que o teste palavra por palavra confere:
+>    - Quem pode se inscrever: "Estudantes de graduação da UnB a partir do segundo semestre, dos cursos da FCTS, da Faculdade de Saúde, da Faculdade de Medicina, de Direito, Psicologia e Serviço Social. Outros cursos passam por análise da coordenação."
+>    - Pré-requisitos: "Matrícula ativa na UnB, em um dos cursos aceitos." · "10 horas por semana para as atividades da Liga." · "Afinidade e interesse por cuidados paliativos."
+>    O guardiao-visual compara com o processo-seletivo-390.png e o -1280.png e diz se o quadro ficou na medida do gabarito.
+> 3. Edital como arquivo: fora desta change. Acrescente na R3 do docs/PLANO-DE-DESENVOLVIMENTO.md uma linha: upload do PDF do edital pelo painel, com "Baixar o edital" baixando esse arquivo; só PDF conferido pelo conteúdo, limite de tamanho, escrita só para a diretoria, download como anexo com nome gerado pelo sistema; entra no escopo da seguranca-do-painel.
+>
+> Outros pontos:
+> - Agente não roda comando de escrita no Git, nem git rm nem git restore --staged. Repita a regra a cada subagente nesta sessão e registre o caso da rodada 1 no relatório como achado para a endurecer-agentes-e-git-local.
+> - O cenário "Endereço de prévia marcado pela hospedagem" da spec seo: ou o P23 na prévia o cobre, com evidência, ou ele sai desta change para a lancamento-r1. Diga qual.
+> - O caminho dos prints na §7 só é fixado no archive, com a data real.
+> - Depois da rodada: revisor e guardiao-appsec em invocação nova, o guardião com o checklist inteiro, e o P23 na prévia da branch. Volte com o Portão 2 de novo, com a Q15 e os prints novos.
+
+**Correção do Gabriel no item 2, literal** (mesma data, durante a terceira rodada; o líder técnico
+parou o `revisor` e o `guardiao-appsec`, que estavam rodando sobre o cartão antigo, para rodarem de
+novo depois desta correção):
+
+> Correção do Gabriel no item 2 do bloco anterior, dentro da mesma terceira rodada (vale também se o dev já tiver feito o cartão):
+>
+> O cartão "Quem pode se inscrever" passa a ter 4 itens, como o gabarito, sem parágrafo antes. Substitua a subseção "Texto da página" do conteudo-institucional e o dado da página por:
+> - Estar matriculado em curso de graduação da UnB, a partir do 2º semestre.
+> - Disponibilidade média de 10 horas semanais para as atividades da Liga.
+> - Faltas não justificadas acima de 50% levam ao desligamento da Liga.
+> - Afinidade e interesse pela temática dos cuidados paliativos.
+>
+> O item dos 50% vem do Edital, item 2.2, e não da linha "frequência mínima para certificação" do protótipo, que não tem fonte. O teste passa a exigir 4 itens no cartão e nenhum parágrafo. O resto do bloco anterior fica como está.
+
+**Achado para a `endurecer-agentes-e-git-local`** (pedido do Gabriel): na rodada 1 desta change,
+o `dev-frontend` rodou `git rm` nos dois arquivos de aparência de botão e desfez com `git restore
+--staged` nesses dois caminhos. O índice voltou ao de antes (`git diff --cached --name-only` vazio,
+conferido pelo líder técnico), mas agente não roda comando de escrita no Git. Hoje a regra é só
+instrução: a lista de `tools` do `dev-frontend` dá terminal sem restringir o `git`. Critério para a
+change: uma barreira que recuse `git` de escrita a subagente (permissão negada ou gancho), vista
+recusando um `git rm`.
+
+**Cenário "Endereço de prévia marcado pela hospedagem" (spec `seo`):** sai desta change para a
+`lancamento-r1`. O P23 mede cabeçalhos com `curl -I`, não roda o Lighthouse na prévia, e por isso
+não cobre o cenário, que é sobre a nota de SEO medida num endereço com `noindex`.
 
 ## dev-frontend
 
@@ -282,6 +377,89 @@ Tarefas 1.1 a 1.5, 2.2 e 2.3. Checkboxes do `tasks.md` não marcados (o líder t
 - **Incompleto:** leitor de tela real não testado; o nome foi lido no Chromium (CDP) e no
   Playwright. Letra de tamanho 0 no Safari com VoiceOver **não medida** (só há Chromium instalado).
 
+### Rodada 3 (Portão 2)
+
+Só os itens autorizados (Q10 (a), Q11 (a), Q12 (a), Q13 (b), Q16 (b) e o conteúdo emendado). Nenhum
+Git de escrita. `tests/e2e/`, `docs/` e README não tocados.
+
+- **Arquivos (só M):** `conteudo.ts`, `conteudo.test.ts`, `regras.ts`, `Etapas.{tsx,module.css}`,
+  `QuemPodeSeInscrever.{tsx,module.css}`, `PerguntasFrequentes.tsx`, `Cabecalho.{tsx,module.css}`,
+  `vitrine/BotaoDemo.tsx`, `tokens.css` (`git diff --numstat main`: 88 acrescentadas, 0 removidas).
+- **Por item:**
+  1. **Conteúdo:** as 5 etapas do §5.5 (nome · caráter, palavra por palavra), o "Texto da página"
+     do §5.3 e os 3 do §5.4. `NUMERO_DE_ETAPAS = 5`. Lidos na página (390, 360, 1280): 5
+     marcadores, os 5 textos, o parágrafo e os 3 itens iguais ao documento; rolagem 0.
+  2. **Q10:** a caixa de 1 px com `position: absolute` só no ", página inicial" **põe o espaço**
+     (medido: "LIACUP , página inicial"); `inline-block` de 1 px também, e ainda quebra a sigla em 360
+     (19,55 para 39,09 px de altura). O que dá as duas coisas: o **nome inteiro** na caixa de 1 px
+     (C7), um trecho por lado do ponto de troca, e o texto da tela com `aria-hidden`, desenhado
+     pelas mesmas constantes. Chromium (CDP): "LIACUP, página inicial" de 360 a 1024 e "LIACUP Liga
+     Acadêmica Multiprofissional de Cuidados Paliativos · UnB, página inicial" em 1025 e 1280, nas
+     duas páginas. Marca e anel de foco iguais aos da rodada 2: 121,13 × 44 (até 1024) e 391,17 × 46
+     (acima). Token `--font-size-so-para-leitor-de-tela` (só da branch) trocado por
+     `--tamanho-so-para-leitor-de-tela: 1px`, origem "WCAG C7, a caixa de 1 px".
+  3. **Q11:** `--espaco-abaixo-do-nome-da-etapa: 2px` (protótipo: `margin: 0 0 2px` do título do
+     item) e `--espaco-vertical-do-item-da-lista: 11px` (protótipo: `padding: 11px 0` do item);
+     nenhum degrau nem soma de dois a 2 px. Outros meios degraus nos CSS da change: nenhum (os
+     `/ 2` restantes centram bolinha ou alvo, não são degrau).
+  4. **Q13:** vitrine com o link com aparência de botão em 3 variantes, em repouso e página atual;
+     comentário diz o que está parado e o que só aparece com a mão. Medido em 390: 6 links, 44 px
+     de altura; hover, pressionado e sublinhado com `aria-current` iguais aos do botão.
+  5. **Q16:** `--font-size-controle-celular: 12.5px` (protótipo: `.hdr-cta` até 480 px); padding nos
+     degraus. **Antes → depois**, 360: 148,45 × 44 → 135,58 × 44 (a sigla deixa de ser apertada,
+     61,58 → 67,94 px); 390: 148,45 × 44 → 135,58 × 44 (gabarito 133 × 44). Cabeçalho 61,59 px,
+     rolagem 0. De 481 px para cima, igual (148,45 e 153,73).
+  6. **Q12:** comentário em `Etapas.tsx` e `PerguntasFrequentes.tsx`.
+- **Verificações:** `npm test` 0 · 13 arquivos, 116 de 116 · `etapas: 5 · pré-requisitos: 3 ·
+  perguntas: 8` — `npm run verificar` 0 · 392 rastreados, 0 artefatos; tokens 97 arquivos, 0
+  problemas; chave 526 arquivos, 0 ocorrências — `npm run build && npm run test:desempenho` 0 ·
+  publicado `2 de 2`, 100/100/SEO 100 nas 6; não publicado `1 de 1`, 100/100, SEO 92 só impresso —
+  `npx playwright test` **1**, nenhum teste rodou: `processo-seletivo.spec.ts` falha ao carregar,
+  `Error: §5.4 com 6 itens, e não 3` (linha 134; o §5.4 tem agora o texto da página e o do edital),
+  e a linha 135 espera 2 etapas no formato antigo. É o texto novo, que o qa ajusta. Sem esse arquivo
+  (os outros 5 specs): código 0, **280 passaram, 0 falharam**. Servidores derrubados.
+- **Desvio:** a Q10 não ficou como "o trecho ', página inicial'" na caixa: a caixa leva o nome
+  inteiro, e o texto da tela sai da árvore de acessibilidade. O D12 diz "o nome vem do texto
+  visível"; agora vem de uma cópia dele, feita das mesmas constantes. Se o Gabriel não aceitar,
+  vira Qn: (a) esta; (b) a letra 0 da rodada 2; (c) a caixa só no trecho, com o espaço.
+- **Fora do escopo:** o `next dev` que subi para medir criou `AGENTS.md` na raiz (não rastreado,
+  19:21:42). Tentei apagar e a permissão foi negada; fica para o líder técnico.
+- **Incompleto:** leitor de tela real não testado (nome lido no Chromium, por CDP). Os e2e do
+  `processo-seletivo.spec.ts` não rodaram.
+
+### Rodada 3, correção do cartão
+
+- **O que mudou:** o dado `quemPodeSeInscrever` passou a ser a lista dos 4 itens do §5.3 "Texto da
+  página", literais, sem a nota "_(Edital, item 2.2)_" do item 3. O parágrafo e o campo
+  `preRequisitos` saíram. A regra acusa número de itens diferente de 4
+  (`NUMERO_DE_ITENS_DE_QUEM_PODE_SE_INSCREVER`), item vazio e item com nota de fonte no fim (a
+  expressão aceita agora o `_` do itálico). O `QuemPodeSeInscrever` ficou só com a lista: o `<ul>`
+  é o próprio quadro; saíram `.texto` e `.lista`, sem token novo.
+- **Arquivos (M):** `tipos.ts`, `conteudo.ts`, `regras.ts`, `conteudo.test.ts`,
+  `QuemPodeSeInscrever.{tsx,module.css}`, `processo-seletivo/page.tsx` (só as props).
+- **Medida do quadro (produção, `next start`; o gabarito medido no protótipo aberto no Chromium):**
+
+  | Largura | Gabarito | Gabarito com os 4 textos novos | Portal |
+  | --- | --- | --- | --- |
+  | 1280 | x 668 · 472 × 336 | 472 × 336 | x 668 · 472 × 326,8 |
+  | 390 | 354 × 384 | 354 × 360 | 354,8 × 350,0 |
+
+  As quebras de linha são as mesmas do gabarito com os textos novos (em 390: 3, 2, 2 e 2 linhas). A
+  bolinha está a 30 px da borda e o texto a 66 px, como no gabarito; a bolinha começa 18,1 px abaixo
+  do topo do item, contra 19. A diferença de altura (9,2 px em 1280 e 10 px em 390) vem de duas
+  medidas que já existiam: o padding vertical de 26,4 px (`--space-6`) contra 28, e a linha de
+  23,25 px (`--line-height-body` 1,55) contra 24. Não mexi nelas.
+- **Verificações:** `npm test` 0 · 13 arquivos, 118 de 118 · `etapas: 5 · quem pode se
+  inscrever: 4 · perguntas: 8` — `npm run verificar` 0 · 392 rastreados, 0 artefatos; tokens 97
+  arquivos, 0 problemas; chave 526 arquivos, 0 ocorrências — `npm run build && npm run
+  test:desempenho` 0 · publicado `2 de 2`, 100/100/SEO 100 nas 6; não publicado `1 de 1`, 100/100,
+  SEO 92 só impresso — `npx playwright test` **1**, nenhum teste rodou: o `processo-seletivo.spec.ts`
+  (já alterado pelo qa) falha ao carregar, `Error: §5.4 sem a seção "#### Texto da página"`
+  (linha 72). O §5.4 agora só remete ao §5.3, e o qa ajusta o spec. Os outros 5 specs: código 0,
+  **280 passaram, 0 falharam**. Servidores derrubados. Não rodei `next dev`.
+- **Incompleto:** os e2e do `processo-seletivo.spec.ts` não rodaram. O `AGENTS.md` da raiz continua
+  lá, o da primeira passagem: não foi recriado.
+
 ## dev-dados
 
 Não entra: a change não tem banco nem tabela.
@@ -338,6 +516,84 @@ scratchpad, fora do repositório.
   sentido vai no texto, a 9,61:1. Não proponho troca; fica a observação para o Gabriel
 - **Não comparado:** nada. Incompleto: as perguntas abertas não foram comparadas (o gabarito só tem
   fechadas); a medida de contraste sobre o círculo usa a cor lida no print, não a declarada no CSS
+
+### Rodada 2 (Portão 2)
+
+Mesmo método da rodada 1: `npm run build` código 0, `iniciar-servidor.mjs` publicado 3000 e não
+publicado 3001 (derrubados, portas livres), Chromium escala 1, página inteira; medidas por script
+no scratchpad, no protótipo aberto no Chromium e no site. Os **9 PNG** em `prints/` foram refeitos
+com os mesmos nomes. `git status`: só os 7 `lado-a-lado-*` mudaram; os 2 `raiz-*` saíram iguais.
+
+- **Raiz não publicada:** **0 de 329.160** (390) e **0 de 1.024.000** (1280) pixels diferentes
+- **1. Quadro "Quem pode se inscrever"** (site contra gabarito): **na medida.** Em 1280, x 668 e
+  largura 472, iguais; altura **290,3 contra 336** (−45,7), com 7 linhas (parágrafo de 4 e 3 itens
+  de 1) contra 8; bolinha em x 698,8 contra 698 e texto em x **734 contra 734**; passo dos itens
+  45,3 (uma linha) contra 70 (duas). A coluna mede 384,3 ao lado de 480 do "Como funciona" (sobra
+  95,7 abaixo do quadro); no gabarito, 424,4 ao lado de 484,3 (sobra 59,9). Em 390, largura 354,8
+  contra 354; altura **406,6 contra 384** (+22,6), 12 linhas (parágrafo de 6 e 3 itens de 2) contra
+  10; texto em x 83,6 contra 84; passo 68,5 contra 70. O "Perguntas" fica em y 1841 contra 1840,9.
+  Do fim do `h2` ao quadro: 26,4 contra 22,0, nas duas larguras; vem da rodada 1 (o CSS do quadro
+  só mudou no `padding` dos itens, agora 11 px como o gabarito) e não conto como diferença à parte
+- **2. Linha do tempo:** 5 marcadores de 15 px, `#9b6aaf`, nos dois. Em 1280, passo **77,2 contra
+  78,4**; do 1º ao 5º, 308,8 contra 313,5; coluna 480 contra 484,3. Em 390, passo 77,2 contra 101,6
+  nos 4 primeiros e 78,4 no último, porque o gabarito tem data e descrição de 2 linhas; do 1º ao 5º,
+  308,8 contra 383,1; coluna 469,9 contra 543,9 (−74). Marcador em x 140 contra 141 (17,6 contra 19)
+- **3. Botão de destaque em 390:** **135,6 × 44**, 12,5 px, `padding` 8,8 × 13,2, x 184,0 a 319,6;
+  gabarito 133,2 × 44, 12,5 px, `padding` 10 × 12, x 184,8 a 318,0. Sobra **+2,4 px** de largura,
+  do `padding` nos degraus da escala (13,2, e não 12). Rodada 1: 148,5 × 44. Em 1280, igual (153,7)
+- **4. Marca:** sem mudança. 390: 121,13 × 44 em (17,59; 8,8), e o cabeçalho de x 0 a 169 tem **0 de
+  10.370** pixels diferentes da rodada 1, nas duas páginas; o que mudou no cabeçalho está só em x 171
+  a 305 (o botão). 1280: 391,17 × 46 em (66,39; 13,19), cabeçalho inteiro **0 de 160.000**. A caixa
+  de 1 px não aparece em nenhum print
+- **Sem mudança contra a rodada 1:** faixa do topo, pixel a pixel (0 diferentes); hero (diferença
+  máxima de 1 nível de cor no canto da borboleta decorativa); menu aberto, menos o botão do cabeçalho
+  atrás do painel; rodapé, só deslocado (390: y 2539 → 2537,8; 1280: 2068,1 → 1954,6)
+- **Tabela da rodada 1, atualizada: 23 diferenças** — 4 adaptação aprovada · 19 decisão · 0 melhoria
+  a aprovar · **0 defeito**. Sumiu: nenhuma. Nova: nenhuma. Mudaram 3:
+  - 6\. destaque 390 · 12,5 px, 135,6 × 44 contra 133,2 × 44 · **decisão**, Q16 (b) (Portão 2,
+    21/11). Era melhoria proposta. Os 2,4 px que sobram não são defeito pelo meu critério; se o
+    Gabriel quiser os 133 exatos, é Qn (a regra dele: sem quarta rodada)
+  - 12\. linha do tempo · 5 marcadores sem data, nome e caráter, contra 5 com data e descrição ·
+    **decisão** (§6, linha das cinco etapas do §5.5)
+  - 13\. quadro · parágrafo do "Texto da página" do §5.3 e 3 pré-requisitos curtos do §5.4, contra 4
+    itens · **decisão** (Portão 2, mudança de conteúdo 2)
+  - as outras 20 seguem iguais, com o mesmo veredito. Efeito da 12 e da 13 em 1280: a página caiu de
+    2413 para 2299 px (gabarito 2122), e o "Perguntas" subiu de y 1421 para 1307,5 (gabarito 1257,3)
+- **Não comparado:** nada. Incompleto: as perguntas abertas, como na rodada 1
+
+### Rodada 3 (correção do cartão)
+
+Mesmo método da rodada 2: `npm run build` código 0, servidores 3000 e 3001 de produção,
+derrubados no fim, portas livres. Os **9 PNG** foram refeitos com os mesmos nomes; o `git status`
+ficou igual ao de antes da passagem.
+
+- **Raiz não publicada:** **0 de 329.160** (390) e **0 de 1.024.000** (1280) pixels diferentes
+- **Só o cartão mudou:** contra os prints da rodada 2, o cabeçalho, a faixa, o hero e o menu têm 0
+  pixels diferentes; em 1280, a página inteira só muda em x 668 a 1139, y 777 a 1071 (o cartão)
+- **Cartão: na medida do gabarito.**
+  - Largura e posição: 472 em x 668, igual (1280); 354,8 em x 17,6, contra 354 em x 18 (390)
+  - Altura: **326,8 contra 336** (1280) e **350 contra 384** (390). O gabarito impresso tem outro
+    texto no 3º e no 4º item; com os 4 textos novos postos no protótipo, ele mede 336 e **360**
+  - Texto a 66 px da borda nos dois; bolinha a 30,8 contra 30, centrada na 1ª linha (no gabarito,
+    0,5 px abaixo do meio)
+  - Quebras: iguais às do gabarito com os textos novos. 1280: 2, 2, 2 e 2 linhas, com as mesmas
+    palavras no fim de cada linha. 390: 3, 2, 2 e 2. O 1º e o 2º item quebram como no gabarito
+    impresso
+  - Colunas em 1280: "Como funciona" 480 contra 484,3; "Quem pode se inscrever" **420,8 contra
+    424,4**. Do fim do cartão ao fim da linha do tempo: 59,2 contra 59,9
+  - Em 390, o "Perguntas" sobe para y 1784,4 (gabarito 1840,9) e a página tem 3055 px (era 3112)
+- **A explicação do dev se confirma.** Pus no navegador, sem tocar no código, o `padding` vertical
+  de 28 e a linha de 24 no cartão do site: ele mediu **336** (1280) e **360** (390), o mesmo que o
+  gabarito com os textos novos, com os 4 itens nas mesmas posições (42, 112, 182 e 252 px do topo
+  em 1280). Só o `padding`: 330 e 353,3. Só a linha: 332,8 e 356,8
+- **Tabela de diferenças: 23**, com 4 adaptação aprovada, 19 decisão, 0 melhoria a aprovar e
+  **0 defeito**. Muda a 13:
+  - 13\. cartão · 4 itens sem parágrafo, como o gabarito; o 3º e o 4º com o texto da correção, e a
+    altura 9,2 px (1280) e 10 px (390) menor, do `padding` de 26,4 e da linha de 23,25 que já
+    existiam · **decisão** (correção do Gabriel no item 2, literal no relatório)
+  - A diferença de 26,4 contra 22,0 do fim do `h2` ao cartão continua, da rodada 1, e não conto à
+    parte. Nada no cartão é defeito pelo meu critério; se o Gabriel quiser os 336 e os 360 exatos,
+    é Qn
 
 ## qa-acessibilidade
 
@@ -437,6 +693,66 @@ Tarefas 3.1, 3.2 e 3.3. Checkboxes não marcados.
   spec não); a impressão SHA-256 não pega mudança só de aspas ou de quebra de linha no arquivo que
   não mude o texto, o que é o desejado; outros navegadores além do Chromium.
 
+### Ajuste do Portão 2
+
+- **Arquivos (só M):** `tests/e2e/processo-seletivo.spec.ts` (+99 −24) e `paginas-publicas.spec.ts`
+  (+19 −9). As linhas removidas são o leitor antigo do §5.3 a §5.5, a exigência de 2 etapas, o
+  `/página inicial/` (trocado por uma regra mais dura) e comentários. Nenhuma outra asserção saiu.
+  Nenhum Git de escrita, `.env` não aberto, nenhum `next dev`, nenhum checkbox marcado.
+- **`processo-seletivo.spec.ts`:** o §5.3 e o §5.4 são lidos **só da subseção "Texto da página"**
+  (o §5.3 exige uma citação só); o §5.5 no formato `N. Nome · caráter.`, com `ETAPAS_EXIGIDAS = 5`
+  (o carregamento para se o documento tiver outro número), e o nome e o caráter conferidos
+  separados na página, como antes. O texto do edital (1 parágrafo do §5.3 e 3 itens do §5.4, lidos
+  do documento) e 7 marcas dele (`supracitad`, `regularmente matriculad`, …; cada uma precisa estar
+  no texto do edital, senão o spec para) entram na busca do que **não** pode aparecer, com todas as
+  perguntas abertas.
+- **Marca (`paginas-publicas.spec.ts`):** continua medindo o certo. O "visível" vem dos pixels
+  (texto de elemento visível e maior que 1 px, mesmo com `aria-hidden`) e o nome da árvore; então,
+  se a cópia para leitor de tela se separar do texto da tela, o teste fica vermelho. Exige agora o
+  nome começando pelo visível (WCAG 2.5.3), **terminando em ", página inicial"** e **sem espaço antes
+  da vírgula**. O comentário de "1 px" foi reescrito para a técnica da rodada 3.
+- **Por largura (360, 390, 430, 480, 768, 1024, 1280):** `trechos … conferidos: 33` (§5 1 · §5.1 1 ·
+  §5.2 1 · §5.3 1 · §5.4 3 · §5.5 10 · §6 16) e 7 rótulos, **40 de 40** iguais · `etapas lidas do
+  documento: 5 · na página: 5` · texto fora do documento: 0 caracteres · notas de fonte na página: 0
+  · **30 termos proibidos** (9 da spec · 10 datas do §5.6 · 11 do edital), **0 achados** ·
+  `perguntas medidas: 8` · marca conferida em 2 de 2 páginas.
+- **Somado nas 7 larguras:** `Violacoes de acessibilidade: 0` em 21 medições · rolagem horizontal 0
+  em 7 de 7 · alvos **190 medidos / 0 abaixo de 44 px**; perguntas **56 / 0** (a menor: 324,81 × 62
+  em 360) · foco **154 controles por Tab / 0 sem foco visível**.
+- **RP-12** (violações marcadas `DEMO-RP12`, desfeitas com `cp -p` da cópia):
+
+| # | Violação temporária | Vermelho | Verde |
+| --- | --- | --- | --- |
+| a | etapa "Integração" tirada do `conteudo.ts` | código 1, 7 de 7: `a página tem 4 etapas, e o documento 5`, `… e não 5`, `etapas … na página: 4`, etapa 5 `recebido: "(ausente)"` | 322 de 322 |
+| b | "paliativos" trocado por "intensivos" no pré-requisito 3 (`conteudo.ts`) | 7 de 7: `esperado: "Afinidade e interesse por cuidados paliativos." recebido: "… intensivos."` · `iguais: 36 de 40` (com a, c) | 322 de 322 |
+| c | o parágrafo do edital no lugar do "Texto da página" do §5.3 (`conteudo.ts`) | 7 de 7, nos dois testes: o trecho do §5.3 difere, e `achados: 4` (o parágrafo inteiro, `regularmente matriculad`, `Faculdade de Ciências e Tecnologias em Saúde`, `poderão ser considerados`) | 322 de 322 |
+| d | `DESTINO_DA_MARCA = ' , página inicial'` (`Cabecalho.tsx`) | 7 de 7, nas 2 páginas: `nome acessível "LIACUP , página inicial": o nome tem espaço antes da vírgula` (e "… · UnB , página inicial" em 1280) · `marca conferida em 0 de 2` | 322 de 322 |
+| e | `ETAPAS_EXIGIDAS = 4` no spec, documento com 5 | código 1 ao carregar: `Error: §5.5 com 5 etapas, e não 4` | `sha256sum -c` OK, 322 de 322 |
+
+  a, b, c e d numa compilação só: `21 failed` (3 testes × 7), cada defeito com a sua mensagem.
+- **Restauração:** `sha256sum -c` OK em `conteudo.ts`, `Cabecalho.tsx`, `conteudo-institucional.md`
+  e no spec da (e); `grep -rn DEMO-RP12 src tests docs`: 0; `git status --porcelain` igual ao de
+  antes (22 linhas) mais os 2 specs; índice vazio. A suíte final recompilou (portas livres antes e
+  depois).
+- **Verificações:** `npx playwright test` **código 0, 322 passaram, 0 falharam** · `npx prettier
+  --check tests/e2e` 0 · `npx eslint tests/e2e` 0 · `npx tsc --noEmit` 0.
+- **Defeitos em `src/`:** nenhum.
+- **Sem cobertura:** leitor de tela real (o nome é lido na árvore do Chromium); a caixa de 1 px com
+  `clip-path` no Safari com VoiceOver, **não medida** (só há Chromium); toque em aparelho real; o
+  arranjo lado a lado em 1280 (só a ordem no DOM, fica com o `guardiao-visual`); contraste não
+  medido por mim.
+- **Correção do cartão (item 2), vale no lugar do §5.3 e §5.4 de cima:** o cartão é lido só da
+  lista do §5.3 "Texto da página" (4 itens, a nota do item 3 tirada e conferida fora da página); o
+  §5.4 só pelo edital; exigidos **4 itens e 0 parágrafos** no quadro; a linha sem fonte do protótipo
+  entra na busca. Por largura (7): `trechos … conferidos: 33` (§5.3 4), 40 de 40 · `quem pode se
+  inscrever: 4 (na página: 4 itens, 0 parágrafos)` · notas de fonte 8, na página 0 · **33 termos
+  proibidos** (9 · 10 datas · 11 do edital · 3 da linha sem fonte), 0 achados. **RP-12:** item 4
+  tirado do `conteudo.ts`, 7 de 7 vermelhos (`tem 3 itens, e não 4`); um `<p>` antes da lista no
+  `QuemPodeSeInscrever.tsx`, 7 de 7 (`tem 1 parágrafos, e não 0`); `sha256sum -c` 3 de 3 OK,
+  `git status --porcelain` igual (`diff` 0, 33 linhas). `npx playwright test` **0, 322 de 322** ·
+  axe 0 em 21 · rolagem 0 em 7 · alvos 190 / 0 e perguntas 56 / 0 · Tab 154 / 0 · `prettier` 0 ·
+  `eslint` 0. Spec: +152 −41 no total da passagem.
+
 ## revisor
 
 ### Rodada 1 (registrada pelo líder técnico; o revisor não escreve)
@@ -475,6 +791,25 @@ Tarefas 3.1, 3.2 e 3.3. Checkboxes não marcados.
   entrega (o 7 se resolve no archive, conferido com `verificar:artefatos`).
 - **Não conseguiu conferir:** linhas de token da `main`; as saídas e as demonstrações do RP-12; a
   medida do botão em 390 px; leitor de tela real; o P23.
+
+### Rodada 3 (invocação nova, depois da rodada do Portão 2 e da correção do cartão)
+
+Uma invocação anterior, lançada antes da correção do cartão, foi parada pelo líder técnico sem
+relatório.
+
+- **Veredito:** aprovado com ressalva · 58 de 68 arquivos · 8 critérios e 61 cenários · 26 regras.
+  Nenhuma verificação afrouxada.
+- **Achados:** (1) média · `Cabecalho.tsx:64-75` · o nome acessível da marca é uma cópia inteira na
+  caixa de 1 px, com o texto visível em `aria-hidden`: cumpre a spec e o WCAG 2.5.3, mas contraria a
+  letra do D12 e vai além da Q10 (a); (2) média · `docs/SEGURANCA.md` §5 · o título diz "Três
+  formas" e são quatro; "as duas buscas" são três; a lacuna `<caminho>` tem duas regras que não
+  convivem (começa ou não com "/"); o D11 e a 4.1 não registram a busca por commit e a do índice;
+  (3) baixa · `conteudo-institucional.md` §5.1 e placar do §8 desatualizados; (4) baixa · `Etapas` e
+  `QuemPodeSeInscrever` com `list-style: none` sem `role="list"` (Safari e VoiceOver deixam de
+  anunciar a lista); (5) baixa · duas constantes `NOME_DA_LIGA` com valores diferentes, e o tipo e o
+  componente `TituloDeSecao` com o mesmo nome.
+- **Encaminhamento (regra 4 da dieta):** é a terceira rodada do `revisor` com pedido de correção. O
+  líder técnico para e leva ao Gabriel (Q18 a Q20).
 
 ## guardiao-appsec
 
@@ -584,6 +919,77 @@ valor, pela segunda forma, em 30479fb e 41e129b (git rev-list main..HEAD): saíd
 valor, pela quarta forma (índice): saída vazia, código 1
 ```
 
+- **Riscos aceitos pelo Gabriel:** nenhum.
+
+### Rodada 3 (invocação nova, depois da rodada do Portão 2 e da correção do cartão)
+
+Uma invocação anterior, lançada antes da correção do cartão, foi parada pelo líder técnico sem
+relatório.
+
+- **Veredito:** APROVADO COM RESSALVAS (depois dos pedidos abaixo) · bloqueante 0 · alta 0 · média
+  2 · baixa 1 · informativa 1 · conferência completa · 68 arquivos e o `AGENTS.md`.
+- **Estado por código:** AS-01 F1 e F4 · AS-17 F2 · AS-02, AS-04 a AS-09 sem achado · AS-03, AS-10
+  a AS-14 e AS-16 não se aplicam · AS-15 **não verificado** (a prévia tem o `bff7ee8`).
+- **Achados:**
+  - F1 · AS-01 · média · confirmado · `docs/SEGURANCA.md` §7 · os 9 PNG com "Aprovação pendente",
+    que não é origem aceita · critério: "Ativo aprovado" com o aceite do Gabriel e o caminho do
+    archive com a data real · **depende da Q15**. Chegar ao merge pendente vira alta e BLOQUEADO.
+  - F2 · AS-17 · média · confirmado · `AGENTS.md` na raiz, não rastreado e não ignorado, escrito
+    pelo `next dev`, com instruções a agentes de IA que mandam ler `node_modules/next/dist/docs/` e
+    induzem o commit · critério: não entra em commit sem decisão do Gabriel; se ficar, entra no
+    AS-17 auditado; se não, um mecanismo versionado impede que reapareça ou seja rastreado (não vale
+    o `.git/info/exclude`) · **Q17**.
+  - F3 · AS-01 e AS-09 · baixa · confirmado · `docs/SEGURANCA.md` §5 e `design.md` D11 · o mesmo
+    achado 2 do `revisor` (contagem das formas; D11 com aspas duplas e só duas buscas) · **Q19**.
+  - F4 · AS-01 · informativa · confirmado · `.env.example` e `README.md` dizem que nenhum arquivo
+    lê a variável, mas `tests/politicas/ambiente.ts` (fora do diff) carrega o `.env` inteiro no
+    ambiente · critério: dizer "pelo nome" e declarar o `ambiente.ts` · **Q19**.
+- **Pedidos de comando**, como foram digitados, com `MSYS_NO_PATHCONV=1`. A forma da linha do
+  `.env` foi registrada antes (igual à rodada 2).
+
+```
+P1 · git log --oneline -n 10 HEAD
+bff7ee8 wip: implementa a pagina-processo-seletivo antes das decisões do Portão 2
+30479fb docs: emenda a proposta da pagina-processo-seletivo com o Portão 1
+41e129b docs: propõe a change pagina-processo-seletivo
+33077f4 Merge pull request #19 from Liga-Academica-Liacup/feat/layout-e-hero
+(mais 6 linhas da história da main)
+[código de saída: 0] · main..HEAD: bff7ee8 30479fb 41e129b
+
+P2 a P4 · sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F -f - <rev>
+com 41e129b, 30479fb e bff7ee8
+[saída vazia · código de saída: 1, nos três]
+
+P5 · sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --untracked -f -
+[saída vazia · código de saída: 1]
+
+P6 · sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -c -a -F --cached -f -
+[saída vazia · código de saída: 1]
+
+C1 · git grep -c --untracked -e 'VERCEL_AUTOMATION_BYPASS_SECRET' -- . ':!docs' ':!openspec' ':!README.md' ':!.env.example'
+[saída vazia · código de saída: 1]
+
+P7 · git diff main -- 'package.json' · e · git diff main -- 'package-lock.json'
+[saída vazia · código de saída: 0, nos dois]
+
+P8 · git check-ignore -v -- '.env'
+.gitignore:10:.env	.env
+[código de saída: 0]
+
+P9 · git ls-files -- 'AGENTS.md'
+[saída vazia · código de saída: 0]
+
+P10 · git check-ignore -v -- 'AGENTS.md'
+[saída vazia · código de saída: 1]
+
+P11 a P19 · git grep -c -a --untracked -e 'TXt' -- 'openspec/changes/pagina-processo-seletivo/prints/<png>'
+um por PNG, nos 9
+[saída vazia · código de saída: 1, nos nove]
+```
+
+- **P20 e P21 (P23, AS-15):** ficam para depois do próximo push, com o host conferido.
+- **Encaminhamento (regra 4 da dieta):** é a terceira rodada do `guardiao-appsec` com pedido de
+  correção. O líder técnico para e leva ao Gabriel (Q15, Q17 e Q19).
 - **Riscos aceitos pelo Gabriel:** nenhum.
 
 ## Líder técnico — conferência de escopo

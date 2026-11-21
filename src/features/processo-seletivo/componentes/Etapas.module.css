@@ -36,7 +36,7 @@
 
 /* --color-accent-800 #4e3260 sobre --color-bg #f5ead8: 9,06:1. */
 .nome {
-  margin: 0 0 calc(var(--space-1) / 2);
+  margin: 0 0 var(--espaco-abaixo-do-nome-da-etapa);
   font-family: var(--font-heading);
   font-size: var(--font-size-nome-da-etapa);
   color: var(--color-accent-800);

@@ -32,13 +32,24 @@ liga no Instagram, sem botão de inscrição nem link de edital.
 #### Scenario: As etapas
 
 - **WHEN** alguém lê a coluna das etapas
-- **THEN** vê as duas etapas da seleção, a inscrição por formulário e a entrevista online, cada uma
-  com o caráter dela (eliminatória ou classificatória), e nenhuma data
+- **THEN** vê as cinco etapas da seção 5.5 do documento de conteúdo, na ordem dele: "Inscrição por
+  formulário", "Análise do produto", "Entrevista online via Meet", "Resultado" e "Integração"
+- **AND** cada etapa mostra o nome e, separado dele, o resto da linha do documento ("etapa
+  eliminatória.", "etapa eliminatória.", "etapa classificatória, para os convocados.", "divulgação
+  no Instagram da Liga." e "encontro de boas-vindas."), palavra por palavra
+- **AND** nenhuma data aparece na coluna
 
 #### Scenario: Quem pode se inscrever
 
 - **WHEN** alguém lê o quadro de quem pode se inscrever
-- **THEN** vê o texto de quem pode se inscrever e, depois dele, os três pré-requisitos, em lista
+- **THEN** vê uma lista de quatro itens, e nenhum parágrafo no quadro, nem antes da lista nem
+  depois dela
+- **AND** os quatro itens são, na ordem e palavra por palavra, os da subseção "Texto da página" da
+  seção 5.3 do documento de conteúdo, que vale também para a 5.4: "Estar matriculado em curso de
+  graduação da UnB, a partir do 2º semestre.", "Disponibilidade média de 10 horas semanais para as
+  atividades da Liga.", "Faltas não justificadas acima de 50% levam ao desligamento da Liga." e
+  "Afinidade e interesse pela temática dos cuidados paliativos."
+- **AND** não aparece o texto do edital que fica abaixo da subseção, como fonte
 
 #### Scenario: Títulos e sobretítulos das seções
 
@@ -58,22 +69,26 @@ liga no Instagram, sem botão de inscrição nem link de edital.
 ### Requirement: O texto da página é o do documento de conteúdo, conferido por teste
 
 Todo texto institucional da página SHALL ser, palavra por palavra, o do documento de conteúdo
-aprovado pela liga (aviso, apresentação, quem pode se inscrever, pré-requisitos, etapas e perguntas
-frequentes), e um teste SHALL comparar a página publicada com o documento, lendo o documento, e não
-uma cópia do texto. As notas de fonte do fim das respostas não vão ao ar.
+aprovado pela liga, e um teste SHALL comparar a página publicada com o documento, lendo o
+documento, e não uma cópia do texto. Onde o documento traz uma subseção "Texto da página", é ela
+que vai ao ar e que o teste confere.
 
 #### Scenario: A página confere com o documento
 
 - **WHEN** os testes de ponta a ponta rodam com o site publicado
-- **THEN** o aviso, a apresentação, o texto de quem pode se inscrever, os três pré-requisitos, as
-  duas etapas e as oito perguntas, com as respostas, são idênticos aos do documento de conteúdo
-- **AND** a saída imprime quantos trechos conferiu
+- **THEN** o aviso, a apresentação, os quatro itens de quem pode se inscrever (os da subseção
+  "Texto da página" da seção 5.3), as cinco etapas e as oito perguntas, com as respostas, são
+  idênticos aos do documento de conteúdo
+- **AND** o teste exige quatro itens no quadro de quem pode se inscrever e nenhum parágrafo nele, e
+  fica vermelho com outro número de itens ou com um parágrafo no quadro
+- **AND** a saída imprime quantos trechos conferiu, quantas etapas leu do documento, cinco, e
+  quantos itens de quem pode se inscrever leu, quatro
 
-#### Scenario: As notas de fonte das respostas
+#### Scenario: As notas de fonte das respostas e dos itens
 
-- **WHEN** uma resposta do documento termina com uma nota de fonte em itálico entre parênteses, como
-  "(Edital, 2.2)" ou "(decisão D6)"
-- **THEN** a página mostra a resposta sem a nota, e o teste compara a resposta sem ela
+- **WHEN** uma resposta do documento, ou um item de quem pode se inscrever, termina com uma nota de
+  fonte em itálico entre parênteses, como "(Edital, 2.2)", "(Edital, item 2.2)" ou "(decisão D6)"
+- **THEN** a página mostra a resposta ou o item sem a nota, e o teste compara sem ela
 - **AND** nenhuma nota de fonte aparece na página
 
 #### Scenario: Página e documento divergem
@@ -126,7 +141,7 @@ ao leitor de tela se está aberta ou fechada, ter alvo de pelo menos 44 × 44 px
 ### Requirement: O conteúdo da página muda sem mexer na composição
 
 O texto e os dados da página SHALL ficar num lugar só, separado da composição, para que trocar uma
-pergunta, um pré-requisito ou o aviso não exija mudar a composição da página, e para que o painel
+pergunta, um item de quem pode se inscrever ou o aviso não exija mudar a composição da página, e para que o painel
 da R3 possa assumir esse lugar.
 
 #### Scenario: Trocar uma pergunta
@@ -136,8 +151,8 @@ da R3 possa assumir esse lugar.
 
 #### Scenario: O lugar dos dados é conferido
 
-- **WHEN** o lugar dos dados tem uma pergunta sem resposta, um pré-requisito vazio ou um número de
-  etapas diferente de dois
+- **WHEN** o lugar dos dados tem uma pergunta sem resposta, um item de quem pode se inscrever vazio,
+  um número desses itens diferente de quatro ou um número de etapas diferente de cinco
 - **THEN** a verificação de unidade fica vermelha, nomeando o item
 
 ### Requirement: A página segue o interruptor

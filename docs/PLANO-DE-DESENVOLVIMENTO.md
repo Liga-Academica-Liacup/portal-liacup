@@ -133,6 +133,8 @@ Ficam para depois, na página inicial: próximos eventos e notícias (R2) e cont
 
 Começa pela `seguranca-do-painel` (4 achados da auditoria). Login com recuperação de senha (Supabase Auth com Resend), painel com listar, criar, editar e excluir notícias e eventos, exclusão com confirmação. **Teste de aceite da release:** uma pessoa da liga publica uma notícia sozinha.
 
+- **Edital como arquivo** (Gabriel, 21/11/2026, Portão 2 da `pagina-processo-seletivo`): upload do PDF do edital pelo painel, com "Baixar o edital" baixando esse arquivo; só PDF conferido pelo conteúdo, limite de tamanho, escrita só para a diretoria, download como anexo com nome gerado pelo sistema. Entra no escopo da `seguranca-do-painel`.
+
 ### R4 · Fale com a Liga
 
 Começa pela `seguranca-do-formulario` (4 achados da auditoria). Formulário de contato, caixa de mensagens no painel, aviso por e-mail, aviso de privacidade no formulário, retenção e purga.

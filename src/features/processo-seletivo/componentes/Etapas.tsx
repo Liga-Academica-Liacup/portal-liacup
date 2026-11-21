@@ -1,15 +1,16 @@
 /*
- * "Como funciona": a linha do tempo do protótipo, com as duas etapas da
+ * "Como funciona": a linha do tempo do protótipo, com as cinco etapas da
  * seleção e sem datas (conteudo-institucional.md, seção 5.5; o cronograma do
  * edital encerrado não vai ao ar).
  *
  * Cada etapa mostra o nome, com a letra dos títulos, e abaixo o caráter dela.
- * O travessão do documento vira essa quebra de linha (design.md da change,
- * D4). É uma lista numerada, porque a ordem importa; as bolinhas da linha do
- * tempo são decorativas e não são anunciadas.
+ * O " · " do documento vira essa quebra de linha (design.md da change, D4). É
+ * uma lista numerada, porque a ordem importa; as bolinhas da linha do tempo
+ * são decorativas e não são anunciadas.
  *
- * Lista vazia não desenha nada: a seção não aparece sem etapa. O teste de
- * unidade do conteúdo garante as duas.
+ * Carregando, erro e vazio: o vazio é impossível hoje, porque o dado é
+ * estático e o teste de unidade do conteúdo exige as cinco etapas. Os três
+ * estados chegam na R3, com o banco (Q12 (a) do Gabriel, 21/11/2026).
  */
 import type { Etapa, TituloDeSecao as Titulo } from '../tipos'
 import estilos from './Etapas.module.css'

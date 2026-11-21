@@ -170,18 +170,36 @@ Quando não houver processo seletivo aberto, a página não some: ela mostra os 
 
 ### 5.3 Quem pode se inscrever _(Edital, itens 1.1 e 2.1)_
 
+#### Texto da página _(decisão do Gabriel, 21/11/2026, Portão 2 da pagina-processo-seletivo)_
+
+_O cartão "Quem pode se inscrever" é a lista abaixo, de quatro itens, sem parágrafo antes. Ela vale também para o §5.4._
+
+1. Estar matriculado em curso de graduação da UnB, a partir do 2º semestre.
+2. Disponibilidade média de 10 horas semanais para as atividades da Liga.
+3. Faltas não justificadas acima de 50% levam ao desligamento da Liga. _(Edital, item 2.2)_
+4. Afinidade e interesse pela temática dos cuidados paliativos.
+
+#### Texto do edital, mantido como fonte
+
 Estudantes regularmente matriculados na UnB, a partir do segundo semestre, dos cursos de graduação da Faculdade de Ciências e Tecnologias em Saúde (FCTS), Faculdade de Saúde (FS), Faculdade de Medicina (FM), Faculdade de Direito, Departamento de Psicologia e Serviço Social. Outros cursos poderão ser considerados mediante análise pela coordenação da LIACUP.
 
 ### 5.4 Pré-requisitos _(Edital, item 2)_
+
+_Na página, os pré-requisitos estão na lista do §5.3, "Texto da página". Esta seção não tem texto próprio na página (decisão do Gabriel, 21/11/2026, Portão 2 da pagina-processo-seletivo)._
+
+#### Texto do edital, mantido como fonte
 
 1. Estar regularmente matriculado(a) na Universidade de Brasília, em uma das faculdades supracitadas.
 2. Possuir disponibilidade de 10 horas semanais para participar das atividades propostas pela liga, sabendo que participações não justificadas, ao se acumularem em mais de 50%, irão culminar no desligamento do ligante do projeto.
 3. Possuir afinidade e interesse pela temática dos Cuidados Paliativos.
 
-### 5.5 Etapas _(Edital, item 4.2)_
+### 5.5 Etapas _(decisão do Gabriel, 21/11/2026)_
 
-1. **Inscrição por formulário** — etapa eliminatória.
-2. **Entrevista online via Meet** — etapa classificatória, para os convocados.
+1. Inscrição por formulário · etapa eliminatória.
+2. Análise do produto · etapa eliminatória.
+3. Entrevista online via Meet · etapa classificatória, para os convocados.
+4. Resultado · divulgação no Instagram da Liga.
+5. Integração · encontro de boas-vindas.
 
 ### 5.6 Cronograma — Edital 02/2026
 
@@ -263,6 +281,7 @@ Não. Nenhum serviço prestado na liga é remunerado. _(Estatuto, Art. 20º)_
 | Fotos dos ligantes                     | Pendente                                                                                         |
 | Definição da seção Materiais           | Pendente                                                                                         |
 | Notícias — quadros 2 e 3 idênticos     | Pendente — provável erro de digitação                                                            |
+| Etapas do processo seletivo (§5.5)     | Pendente — a liga descreve o "produto" da etapa 2 em uma linha · na R3, quando o painel publicar resultados, a etapa 4 passa a citar "no portal" _(decisão do Gabriel, 21/11/2026, Portão 2 da pagina-processo-seletivo)_ |
 
 **Placar: de 14 itens, 9 resolvidos.** Restam 5, e três deles são fotos.
 

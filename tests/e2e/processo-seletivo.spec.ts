@@ -12,7 +12,9 @@ import { ALVO_MINIMO, TAGS_DO_AXE, primeiraLinha } from './apoio'
  * Roda com o site publicado (a 3000, `baseURL`), em cada uma das sete larguras.
  *
  * O texto NÃO está escrito aqui. Ele é lido do docs/conteudo-institucional.md
- * (§1 o Instagram, §5 o título, §5.1 o aviso, §5.2 a §5.5 e §6), e os títulos
+ * (§1 o Instagram, §5 o título, §5.1 o aviso, §5.2, o cartão de quem pode se
+ * inscrever só da subseção "Texto da página" do §5.3, que vale pelo §5.4,
+ * §5.5 com as cinco etapas, e §6), e os títulos
  * e sobretítulos das seções do docs/REFERENCIA-VISUAL.md §7, onde o Gabriel os
  * registrou (Q3 (a)). Se a página divergir do documento, este spec fica
  * vermelho, dizendo o trecho, o esperado e o recebido; se o documento mudar, o
@@ -20,7 +22,8 @@ import { ALVO_MINIMO, TAGS_DO_AXE, primeiraLinha } from './apoio'
  *
  * As respostas do §6 terminam, quase todas, com uma nota de fonte em itálico
  * entre parênteses, como "_(Edital, 2.2)_". Pela Q4 (a) ela não vai ao ar: o
- * teste a tira antes de comparar, e confere que nenhuma aparece na página.
+ * teste a tira antes de comparar, e confere que nenhuma aparece na página. O
+ * mesmo vale para o item do cartão que termina com "_(Edital, item 2.2)_".
  *
  * Cada medida diz quanto mediu (RP-12): "nada falhou" e "nada foi medido" não
  * podem dar a mesma saída verde.
@@ -48,6 +51,20 @@ const PROIBIDOS = [
   'Cronograma',
 ]
 
+/*
+ * A linha do quadro do protótipo que não tem fonte (correção do Gabriel no
+ * item 2, 21/11/2026: o item dos 50% vem do Edital, item 2.2, e não dela).
+ * Ela inteira e as duas partes dela que a denunciariam reescrita.
+ */
+const LINHA_SEM_FONTE = [
+  'Frequência mínima de 50% para certificação de horas complementares',
+  'Frequência mínima',
+  'certificação de horas complementares',
+]
+
+/* O cartão "Quem pode se inscrever" tem quatro itens e nenhum parágrafo (mesma correção). */
+const ITENS_EXIGIDOS_DE_QUEM_PODE = 4
+
 /* ------------------------------------------------------------------------ */
 /* O documento                                                               */
 /* ------------------------------------------------------------------------ */
@@ -58,15 +75,51 @@ const REFERENCIA = readFileSync(join(raiz, 'docs', 'REFERENCIA-VISUAL.md'), 'utf
 
 const normalizar = (texto: string) => texto.replace(/\s+/g, ' ').trim()
 
-/* O trecho do documento do cabeçalho `inicio` até o próximo cabeçalho de nível igual ou maior. */
-function secaoDoDocumento(inicio: string): string {
-  const comeco = DOCUMENTO.indexOf(`\n${inicio}`)
-  if (comeco === -1) throw new Error(`conteudo-institucional.md sem a seção "${inicio}"`)
+/*
+ * O trecho de `fonte` (o documento inteiro, ou uma seção dele) do cabeçalho
+ * `inicio` até o próximo cabeçalho de nível igual ou maior.
+ */
+function secaoDoDocumento(
+  inicio: string,
+  fonte = DOCUMENTO,
+  onde = 'conteudo-institucional.md'
+): string {
+  const comeco = fonte.indexOf(`\n${inicio}`)
+  if (comeco === -1) throw new Error(`${onde} sem a seção "${inicio}"`)
   const nivel = /^#+/.exec(inicio)?.[0] ?? '###'
-  const resto = DOCUMENTO.slice(comeco + 1)
+  const resto = fonte.slice(comeco + 1)
   const proximo = resto.slice(inicio.length).search(new RegExp(`\\n#{1,${nivel.length}} `))
   return proximo === -1 ? resto : resto.slice(0, inicio.length + proximo)
 }
+
+/*
+ * As subseções do §5.3 e do §5.4 (decisões do Gabriel no Portão 2,
+ * 21/11/2026): o "Texto da página" do §5.3 é o que vai ao ar e o que este spec
+ * confere palavra por palavra, e vale também pelo §5.4, que não tem texto
+ * próprio na página; o "Texto do edital, mantido como fonte" dos dois fica no
+ * documento e NÃO pode aparecer na página.
+ */
+const TEXTO_DA_PAGINA = '#### Texto da página'
+const TEXTO_DO_EDITAL = '#### Texto do edital'
+
+/* O §5.5 tem cinco etapas, e o teste as exige (decisão do Gabriel no Portão 2, 21/11/2026). */
+const ETAPAS_EXIGIDAS = 5
+
+/*
+ * Marcas do texto do edital do §5.3 e do §5.4 que o "Texto da página" trocou.
+ * Cada uma precisa estar no texto do edital do documento (senão o spec para),
+ * e nenhuma pode estar na página. Somam-se aos textos inteiros do edital, lidos
+ * do documento.
+ */
+const MARCAS_DO_EDITAL = [
+  'supracitad',
+  'regularmente matriculad',
+  'Estar regularmente',
+  'Possuir disponibilidade',
+  'Possuir afinidade',
+  'Faculdade de Ciências e Tecnologias em Saúde',
+  'poderão ser considerados',
+]
 
 function ler(padrao: RegExp, texto: string, nome: string): string {
   const achado = padrao.exec(texto)?.[1]
@@ -95,19 +148,39 @@ function lerDocumento() {
     'o aviso de inscrições fechadas no §5.1'
   )
   const apresentacao = ler(/^>\s*(.+)$/m, s52, 'a apresentação do §5.2')
-  /* O §5.3 é um parágrafo só, a primeira linha de texto depois do cabeçalho. */
-  const quemPode = normalizar(
-    s53
-      .split('\n')
-      .slice(1)
-      .find((linha) => linha.trim() !== '') ?? ''
-  )
-  if (!quemPode) throw new Error('não achei o texto do §5.3 no documento')
-  const preRequisitos = [...s54.matchAll(/^\d+\.\s+(.+)$/gm)].map((m) => normalizar(m[1] ?? ''))
-  const etapas = [...s55.matchAll(/^\d+\.\s+\*\*(.+?)\*\*\s+—\s+(.+)$/gm)].map((m) => ({
-    nome: normalizar(m[1] ?? ''),
-    carater: normalizar(m[2] ?? ''),
-  }))
+  const s53pagina = secaoDoDocumento(TEXTO_DA_PAGINA, s53, '§5.3')
+  const s53edital = secaoDoDocumento(TEXTO_DO_EDITAL, s53, '§5.3')
+  const s54edital = secaoDoDocumento(TEXTO_DO_EDITAL, s54, '§5.4')
+  if (s54.includes(`\n${TEXTO_DA_PAGINA}`))
+    throw new Error('§5.4 com "Texto da página" próprio: o spec lê o cartão só do §5.3')
+  const itens = (texto: string) =>
+    [...texto.matchAll(/^\d+\.\s+(.+)$/gm)].map((m) => normalizar(m[1] ?? ''))
+  /*
+   * §5.3, "Texto da página": a lista numerada do cartão. O item que termina
+   * com nota de fonte em itálico, como "_(Edital, item 2.2)_", vai ao ar sem
+   * ela, como as respostas do §6 (Q4 (a)).
+   */
+  const quemPode = itens(s53pagina).map((bruto) => {
+    const nota = /\s*_\(([^)]*)\)_\s*$/.exec(bruto)
+    return {
+      texto: nota ? normalizar(bruto.slice(0, nota.index)) : bruto,
+      nota: nota ? `(${nota[1]})` : null,
+    }
+  })
+  /* O texto do edital do §5.3 (o parágrafo) e do §5.4 (os itens), que não vai ao ar. */
+  const paragrafosDoEdital = s53edital
+    .split('\n')
+    .slice(1)
+    .map(normalizar)
+    .filter((linha) => linha !== '' && !linha.startsWith('#'))
+  const textoDoEdital = [...paragrafosDoEdital, ...itens(s54edital)]
+  /* §5.5: "N. Nome · caráter." O nome é o que vem antes do primeiro " · ". */
+  const linhasDasEtapas = [...s55.matchAll(/^\d+\.\s+(.+)$/gm)].map((m) => normalizar(m[1] ?? ''))
+  const etapas = linhasDasEtapas.map((linha) => {
+    const partes = /^(.+?) · (.+)$/.exec(linha)
+    if (!partes) throw new Error(`§5.5, etapa "${linha}" sem o " · " entre o nome e o caráter`)
+    return { nome: normalizar(partes[1] ?? ''), carater: normalizar(partes[2] ?? '') }
+  })
   /* As datas do cronograma encerrado, inteiras e sem o ano ("28/08"). */
   const datas = [...s56.matchAll(/\b(\d{2}\/\d{2})\/\d{4}\b/g)].flatMap((m) => [m[0], m[1] ?? ''])
 
@@ -131,8 +204,22 @@ function lerDocumento() {
   const titulos = aspas(ler(/Títulos do protótipo: (.+?)\. Sobretítulos/, linha, 'os títulos'))
   const sobretitulos = aspas(ler(/não tem datas: (.+?)\. São/, linha, 'os sobretítulos'))
 
-  if (preRequisitos.length !== 3) throw new Error(`§5.4 com ${preRequisitos.length} itens, e não 3`)
-  if (etapas.length !== 2) throw new Error(`§5.5 com ${etapas.length} etapas, e não 2`)
+  if (quemPode.length !== ITENS_EXIGIDOS_DE_QUEM_PODE)
+    throw new Error(
+      `§5.3, "Texto da página", com ${quemPode.length} itens, e não ${ITENS_EXIGIDOS_DE_QUEM_PODE}`
+    )
+  if (etapas.length !== ETAPAS_EXIGIDAS)
+    throw new Error(`§5.5 com ${etapas.length} etapas, e não ${ETAPAS_EXIGIDAS}`)
+  if (paragrafosDoEdital.length !== 1 || textoDoEdital.length !== 4) {
+    throw new Error(
+      `texto do edital: ${paragrafosDoEdital.length} parágrafos no §5.3 e ${textoDoEdital.length - paragrafosDoEdital.length} itens no §5.4, e não 1 e 3`
+    )
+  }
+  const marcasForaDoEdital = MARCAS_DO_EDITAL.filter(
+    (marca) => !textoDoEdital.some((trecho) => trecho.includes(marca))
+  )
+  if (marcasForaDoEdital.length > 0)
+    throw new Error(`marcas que não estão no texto do edital: ${marcasForaDoEdital.join(', ')}`)
   if (perguntas.length !== 8) throw new Error(`§6 com ${perguntas.length} perguntas, e não 8`)
   if (titulos.length !== 3 || sobretitulos.length !== 3) {
     throw new Error(
@@ -148,8 +235,8 @@ function lerDocumento() {
     aviso,
     apresentacao,
     quemPode,
-    preRequisitos,
     etapas,
+    textoDoEdital,
     perguntas,
     titulos,
     sobretitulos,
@@ -200,13 +287,16 @@ async function lerPagina(page: Page) {
       const h2 = secao?.querySelector('h2')
       return { titulo: n(h2?.textContent), sobretitulo: n(h2?.previousElementSibling?.textContent) }
     }
-    /* Os parágrafos da seção que vêm depois do h2 e não estão numa lista. */
+    /*
+     * Os parágrafos da seção que vêm depois do h2, dentro da lista ou fora
+     * dela: o quadro de quem pode se inscrever não tem nenhum (correção do
+     * Gabriel no item 2, 21/11/2026).
+     */
     const paragrafosDepoisDoTitulo = (secao: Element | undefined) => {
       const h2 = secao?.querySelector('h2')
       if (!secao || !h2) return []
       return Array.from(secao.querySelectorAll('p'))
         .filter((p) => h2.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING)
-        .filter((p) => !p.closest('li'))
         .map((p) => n(p.textContent))
     }
     const etapas = secaoCom('ol')
@@ -290,14 +380,9 @@ test('o texto da página é o do conteudo-institucional.md, sem as notas de font
     { nome: '§5, título principal', esperado: DOC.titulo, recebido: lido.h1s.join(' | ') },
     { nome: '§5.1, aviso de inscrições fechadas', esperado: DOC.aviso, recebido: lido.aviso },
     { nome: '§5.2, apresentação', esperado: DOC.apresentacao, recebido: lido.apresentacao },
-    {
-      nome: '§5.3, quem pode se inscrever',
-      esperado: DOC.quemPode,
-      recebido: lido.requisitos.paragrafos.join(' | '),
-    },
-    ...DOC.preRequisitos.map((esperado, i) => ({
-      nome: `§5.4, pré-requisito ${i + 1}`,
-      esperado,
+    ...DOC.quemPode.map((item, i) => ({
+      nome: `§5.3, quem pode se inscrever, item ${i + 1}`,
+      esperado: item.texto,
       recebido: lido.requisitos.itens[i] ?? '(ausente)',
     })),
     ...DOC.etapas.flatMap((etapa, i) => [
@@ -353,20 +438,31 @@ test('o texto da página é o do conteudo-institucional.md, sem as notas de font
   const contagem = {
     perguntasNaPagina: lido.perguntas.itens.length,
     itensDaLista: lido.requisitos.itens.length,
+    paragrafosNoQuadro: lido.requisitos.paragrafos.length,
     etapasNaPagina: lido.etapas.itens.length,
   }
   if (contagem.perguntasNaPagina !== DOC.perguntas.length)
     falhas.push(
       `a página tem ${contagem.perguntasNaPagina} perguntas, e o documento ${DOC.perguntas.length}`
     )
-  if (contagem.itensDaLista !== DOC.preRequisitos.length)
+  if (contagem.itensDaLista !== DOC.quemPode.length)
     falhas.push(
-      `a página tem ${contagem.itensDaLista} pré-requisitos, e o documento ${DOC.preRequisitos.length}`
+      `o quadro de quem pode se inscrever tem ${contagem.itensDaLista} itens, e o documento ${DOC.quemPode.length}`
+    )
+  if (contagem.itensDaLista !== ITENS_EXIGIDOS_DE_QUEM_PODE)
+    falhas.push(
+      `o quadro de quem pode se inscrever tem ${contagem.itensDaLista} itens, e não ${ITENS_EXIGIDOS_DE_QUEM_PODE}`
+    )
+  if (contagem.paragrafosNoQuadro !== 0)
+    falhas.push(
+      `o quadro de quem pode se inscrever tem ${contagem.paragrafosNoQuadro} parágrafos, e não 0: ${lido.requisitos.paragrafos.map((p) => `"${p.slice(0, 80)}"`).join(' | ')}`
     )
   if (contagem.etapasNaPagina !== DOC.etapas.length)
     falhas.push(
       `a página tem ${contagem.etapasNaPagina} etapas, e o documento ${DOC.etapas.length}`
     )
+  if (contagem.etapasNaPagina !== ETAPAS_EXIGIDAS)
+    falhas.push(`a página tem ${contagem.etapasNaPagina} etapas, e não ${ETAPAS_EXIGIDAS}`)
   if (lido.h1s.length !== 1)
     falhas.push(`a página tem ${lido.h1s.length} títulos de nível 1: ${lido.h1s.join(' | ')}`)
 
@@ -375,8 +471,13 @@ test('o texto da página é o do conteudo-institucional.md, sem as notas de font
   if (ordem !== 'faixa > etapas > requisitos > perguntas')
     falhas.push(`seções na ordem "${ordem}", e não "faixa > etapas > requisitos > perguntas"`)
 
-  /* Q4 (a): nenhuma nota de fonte na página, nem dentro de resposta fechada. */
-  const notas = DOC.perguntas.flatMap((item) => (item.nota ? [item.nota] : []))
+  /*
+   * Q4 (a): nenhuma nota de fonte na página, nem dentro de resposta fechada,
+   * nem a do fim de um item de quem pode se inscrever.
+   */
+  const notas = [...DOC.perguntas, ...DOC.quemPode].flatMap((item) =>
+    item.nota ? [item.nota] : []
+  )
   const notasNaPagina = notas.filter((nota) => lido.textoInteiro.includes(nota.slice(1, -1)))
   for (const nota of notasNaPagina) falhas.push(`a nota de fonte "${nota}" aparece na página`)
   if (/decisão D\d/.test(lido.textoInteiro)) falhas.push('"decisão Dn" aparece na página')
@@ -402,8 +503,10 @@ test('o texto da página é o do conteudo-institucional.md, sem as notas de font
     trechos.length + rotulos.length - falhas.filter((f) => f.startsWith('trecho')).length
   console.log(
     `[${informacoes.project.name}] trechos do conteudo-institucional.md conferidos: ${trechos.length}` +
-      ` (§5 título 1 · §5.1 aviso 1 · §5.2 1 · §5.3 1 · §5.4 ${DOC.preRequisitos.length}` +
+      ` (§5 título 1 · §5.1 aviso 1 · §5.2 1 · §5.3 ${DOC.quemPode.length}` +
       ` · §5.5 ${DOC.etapas.length * 2} · §6 ${DOC.perguntas.length * 2})` +
+      ` · etapas lidas do documento: ${DOC.etapas.length} · na página: ${contagem.etapasNaPagina}` +
+      ` · quem pode se inscrever: ${DOC.quemPode.length} (na página: ${contagem.itensDaLista} itens, ${contagem.paragrafosNoQuadro} parágrafos)` +
       ` · rótulos de interface conferidos: ${rotulos.length} · iguais: ${conferidos} de ${trechos.length + rotulos.length}\n` +
       `[${informacoes.project.name}] perguntas abertas para ler as respostas: ${abertas} de ${contagem.perguntasNaPagina}` +
       ` · notas de fonte tiradas do documento: ${notas.length} · na página: ${notasNaPagina.length}` +
@@ -413,7 +516,7 @@ test('o texto da página é o do conteudo-institucional.md, sem as notas de font
   expect(abertas).toBe(DOC.perguntas.length)
 })
 
-test('a página não traz o que a liga deixou de fora, com todas as perguntas abertas', async ({
+test('a página não traz o que a liga deixou de fora nem o texto do edital, com todas as perguntas abertas', async ({
   page,
 }, informacoes) => {
   await abrirPagina(page)
@@ -434,11 +537,19 @@ test('a página não traz o que a liga deixou de fora, com todas as perguntas ab
     }
     return partes.join(' ').replace(/\s+/g, ' ')
   })
-  const procurados = [...PROIBIDOS, ...DOC.datas]
+  /*
+   * O texto do edital do §5.3 e do §5.4 fica no documento como fonte e não vai
+   * ao ar: nem inteiro, nem pelas marcas que o "Texto da página" trocou.
+   */
+  const doEdital = [...DOC.textoDoEdital, ...MARCAS_DO_EDITAL]
+  const procurados = [...PROIBIDOS, ...DOC.datas, ...doEdital, ...LINHA_SEM_FONTE]
   const achados = procurados.filter((termo) => texto.includes(termo))
   console.log(
     `[${informacoes.project.name}] termos proibidos procurados: ${procurados.length}` +
-      ` (${PROIBIDOS.length} da spec · ${DOC.datas.length} datas do §5.6)` +
+      ` (${PROIBIDOS.length} da spec · ${DOC.datas.length} datas do §5.6` +
+      ` · ${doEdital.length} do texto do edital: ${DOC.textoDoEdital.length} trechos inteiros do §5.3 e do §5.4` +
+      ` e ${MARCAS_DO_EDITAL.length} marcas` +
+      ` · ${LINHA_SEM_FONTE.length} da linha sem fonte do protótipo)` +
       ` · perguntas abertas: ${abertas} · achados: ${achados.length}` +
       ` · caracteres lidos: ${texto.length}`
   )

@@ -19,7 +19,7 @@ import type { ConteudoDoProcessoSeletivo } from './tipos'
  * conferido" dão a mesma saída (RP-12).
  */
 const conteudo = CONTEUDO_DO_PROCESSO_SELETIVO
-let contagens = { etapas: 0, preRequisitos: 0, perguntas: 0 }
+let contagens = { etapas: 0, quemPodeSeInscrever: 0, perguntas: 0 }
 
 /** Uma cópia do conteúdo de verdade com uma parte trocada. */
 function com(parte: Partial<ConteudoDoProcessoSeletivo>): ConteudoDoProcessoSeletivo {
@@ -31,15 +31,15 @@ describe('conteúdo do processo seletivo', () => {
     const problemas = problemasDoConteudo(conteudo)
     contagens = {
       etapas: conteudo.etapas.length,
-      preRequisitos: conteudo.preRequisitos.length,
+      quemPodeSeInscrever: conteudo.quemPodeSeInscrever.length,
       perguntas: conteudo.perguntas.length,
     }
     expect(problemas, `Problemas no conteúdo: ${problemas.join('; ')}`).toEqual([])
   })
 
-  it('tem 2 etapas, 3 pré-requisitos e 8 perguntas, como o documento', () => {
-    expect(conteudo.etapas).toHaveLength(2)
-    expect(conteudo.preRequisitos).toHaveLength(3)
+  it('tem 5 etapas, 4 itens de quem pode se inscrever e 8 perguntas, como o documento', () => {
+    expect(conteudo.etapas).toHaveLength(5)
+    expect(conteudo.quemPodeSeInscrever).toHaveLength(4)
     expect(conteudo.perguntas).toHaveLength(8)
   })
 
@@ -72,18 +72,40 @@ describe('conteúdo do processo seletivo', () => {
     ])
   })
 
-  it('acusa pré-requisito vazio, nomeando a posição', () => {
-    const preRequisitos = [conteudo.preRequisitos[0]!, '', conteudo.preRequisitos[2]!]
-    expect(problemasDoConteudo(com({ preRequisitos }))).toEqual(['pré-requisito 2 vazio'])
+  it('acusa item de quem pode se inscrever vazio, nomeando a posição', () => {
+    const quemPodeSeInscrever = conteudo.quemPodeSeInscrever.map((item, indice) =>
+      indice === 1 ? '' : item
+    )
+    expect(problemasDoConteudo(com({ quemPodeSeInscrever }))).toEqual([
+      'item 2 de "quem pode se inscrever" vazio',
+    ])
   })
 
-  it('acusa número de etapas diferente de dois', () => {
-    const etapas = [conteudo.etapas[0]!]
-    expect(problemasDoConteudo(com({ etapas }))).toEqual(['1 etapas; o edital tem 2'])
+  it('acusa número de itens de quem pode se inscrever diferente de quatro', () => {
+    const quemPodeSeInscrever = conteudo.quemPodeSeInscrever.slice(0, 3)
+    expect(problemasDoConteudo(com({ quemPodeSeInscrever }))).toEqual([
+      '3 itens em "quem pode se inscrever"; a seção 5.3 tem 4',
+    ])
+  })
+
+  it('acusa item de quem pode se inscrever com a nota de fonte do documento no fim', () => {
+    const quemPodeSeInscrever = conteudo.quemPodeSeInscrever.map((item, indice) =>
+      indice === 2 ? `${item} _(Edital, item 2.2)_` : item
+    )
+    expect(problemasDoConteudo(com({ quemPodeSeInscrever }))).toEqual([
+      'item 3 de "quem pode se inscrever" com nota de fonte no fim',
+    ])
+  })
+
+  it('acusa número de etapas diferente de cinco', () => {
+    const etapas = conteudo.etapas.slice(0, 2)
+    expect(problemasDoConteudo(com({ etapas }))).toEqual(['2 etapas; a seção 5.5 tem 5'])
   })
 
   it('acusa etapa sem o caráter', () => {
-    const etapas = [conteudo.etapas[0]!, { ...conteudo.etapas[1]!, carater: '' }]
+    const etapas = conteudo.etapas.map((etapa, indice) =>
+      indice === 2 ? { ...etapa, carater: '' } : etapa
+    )
     expect(problemasDoConteudo(com({ etapas }))).toEqual([
       'etapa "Entrevista online via Meet" sem o caráter',
     ])
@@ -105,7 +127,7 @@ describe('conteúdo do processo seletivo', () => {
    */
   afterAll(() => {
     process.stdout.write(
-      `etapas: ${contagens.etapas} · pré-requisitos: ${contagens.preRequisitos} · ` +
+      `etapas: ${contagens.etapas} · quem pode se inscrever: ${contagens.quemPodeSeInscrever} · ` +
         `perguntas: ${contagens.perguntas}\n`
     )
   })

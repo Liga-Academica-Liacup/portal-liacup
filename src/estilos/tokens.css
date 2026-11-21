@@ -317,10 +317,17 @@
   --tamanho-marcador-da-etapa: 15px; /* protótipo: bolinha de cada etapa */
   --font-size-nome-da-etapa: 17px; /* protótipo: título de cada item da linha do tempo */
   --font-size-carater-da-etapa: 14.5px; /* protótipo: descrição de cada item da linha do tempo */
+  /* Rodada 3 (Q11 (a)): no lugar do meio degrau calc(var(--space-1) / 2). Os
+     2 px ficam a mais de 2 px de --space-1 (4,4 px), por isso o token. */
+  --espaco-abaixo-do-nome-da-etapa: 2px; /* protótipo: margin-bottom do título de cada item da linha do tempo */
 
   /* Quadro "Quem pode se inscrever" */
   --coluna-do-marcador-da-lista: 22px; /* protótipo: grid-template-columns dos itens */
   --tamanho-marcador-da-lista: 9px; /* protótipo: bolinha verde de cada item */
+  /* Rodada 3 (Q11 (a)): no lugar de calc(var(--space-2) + var(--space-1) / 2).
+     Os 11 px ficam a 2,2 px de --space-2 e de --space-3, e nenhuma soma de dois
+     degraus chega a 2 px deles, por isso o token. */
+  --espaco-vertical-do-item-da-lista: 11px; /* protótipo: padding vertical de cada item do quadro */
 
   /* Perguntas frequentes */
   --largura-das-perguntas: 820px; /* protótipo: max-width da seção FAQ */
@@ -331,14 +338,17 @@
   --font-size-resposta: 15.5px; /* protótipo: parágrafo da resposta aberta */
   --largura-da-resposta: 64ch; /* protótipo: max-width da resposta aberta */
 
-  /* Texto só para leitor de tela, em linha: o ", página inicial" do nome
-     acessível da marca do cabeçalho (rodada 2, observação do qa). Fica dentro
-     do texto visível, porque fora dele o nome saía "LIACUP , página inicial".
-     Em linha, largura e altura não valem: o tamanho de letra 0 o tira da tela
-     sem tirá-lo do nome acessível, e o navegador não o aumenta pelo tamanho
-     mínimo de letra de quem usa. Origem: a técnica C7 do WCAG, com a letra 0
-     no lugar da caixa de 1 px, que exige position: absolute. */
-  --font-size-so-para-leitor-de-tela: 0;
+  /* Texto só para leitor de tela: o nome acessível da marca do cabeçalho.
+     Origem: a técnica C7 do WCAG ("Using CSS to hide a portion of the link
+     text"), a caixa de 1 px fora do fluxo, com overflow: hidden (Q10 (a) do
+     Gabriel, 21/11/2026). Substitui a letra de tamanho 0 da rodada 2, que não
+     era a C7. */
+  --tamanho-so-para-leitor-de-tela: 1px;
+
+  /* Rodada 3 (Q16 (b) do Gabriel, 21/11/2026): o botão de destaque do
+     cabeçalho no celular. O padding do protótipo, 10 px 12 px, fica a menos de
+     2 px de --space-2 e --space-3, e o componente usa os degraus. */
+  --font-size-controle-celular: 12.5px; /* protótipo: .hdr-cta até 480 px */
 
   /* Rodada 2 (revisor 4): hover e pressionado das variantes fantasma e ícone
      do Botao. O .btn-icon do protótipo não tem hover próprio; o ícone usa o do
