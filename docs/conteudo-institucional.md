@@ -37,6 +37,23 @@ Fontes desta versão, em ordem de autoridade:
 
 ## 2. Textos aprovados por página
 
+### 2.0 Página inicial · hero e agenda
+
+*Fonte: revisão da liga de 13/08/2026, aplicada no protótipo aprovado. Entrou neste documento por decisão do Gabriel em 20/11/2026 (Q1 da change `layout-e-hero`).*
+
+- **Título:** Cuidar é o ato mais sublime da conexão humana
+- **Lema, logo abaixo do título:** Curar às vezes, confortar sempre
+- **Apresentação:**
+
+> A LIACUP reúne estudantes de diversas áreas do conhecimento em torno do ensino, da pesquisa e da extensão em cuidados paliativos. Aqui fica guardado, em um só lugar, tudo o que a Liga produz.
+
+**Agenda, bloco "Próximos eventos" (entra na R2):**
+
+- Texto de apoio, da revisão da liga: "Roda de conversa, Cine Paliativo, ações na Semana Universitária da UnB e discussões de artigos."
+- Quando não houver evento futuro, a mensagem abaixo, **proposta do gestor, a validar pela liga na homologação da R1**:
+
+> Nosso próximo encontro está sendo preparado. Enquanto isso, acompanhe a Liga no Instagram @liacup.unb.
+
 ### 2.1 Apresentação — **Sobre**
 
 > A Liga Acadêmica Multiprofissional de Cuidados Paliativos (LIACUP) é um projeto que une o ensino, pesquisa e extensão para dar enfoque a importância dos cuidados paliativos como uma abordagem cujo acesso e conhecimento deve abranger não só a comunidade acadêmica, como a população em geral.

@@ -1,0 +1,67 @@
+/* Link com aparência de botão: o botão de destaque do cabeçalho, o do fim do
+   menu lateral e os botões do hero. É <a>, porque navega. Segue o .btn
+   aprovado, mas não é o mesmo contrato do Botao da camada ui: tem os estados
+   do ADR-0006 (hover e pressionado) que o ui/Botao ainda não tem. A unificação
+   dos dois fica para a change pagina-processo-seletivo (Q4 (c) do Gabriel,
+   21/11/2026). Nenhum valor escrito à mão. */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-controle);
+  min-height: var(--alvo-de-toque);
+  min-width: var(--alvo-de-toque);
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border: var(--largura-borda) solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--font-size-controle);
+  line-height: var(--line-height-controle);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ADR-0003: fundo --color-accent-600, e não o lilás da marca. O texto
+   --color-bg sobre --color-accent-600 mede 4,84:1. */
+.primario {
+  background: var(--color-accent-600);
+  color: var(--color-bg);
+}
+
+/* ADR-0003, adendo: borda --color-neutral-600 (3,21:1), e não --color-divider. */
+.secundario {
+  border-color: var(--color-neutral-600);
+  background: transparent;
+  color: var(--color-text);
+}
+
+@media (hover: hover) {
+  .primario:hover {
+    background: var(--color-accent-700);
+    color: var(--color-bg);
+  }
+
+  .secundario:hover {
+    background: var(--color-fundo-hover);
+    color: var(--color-text);
+  }
+}
+
+.primario:active {
+  background: var(--color-accent-800);
+}
+
+.secundario:active {
+  background: var(--color-fundo-pressionado);
+}
+
+/* Página atual: também pelo sublinhado, e não só pela cor (adaptação aprovada). */
+.botao[aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: var(--underline-offset);
+}
+
+.larguraTotal {
+  width: 100%;
+}

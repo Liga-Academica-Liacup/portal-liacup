@@ -109,11 +109,12 @@ Conteúdo fixo, vindo do `conteudo-institucional.md`. Nenhum banco, nenhum formu
 | 2 | `pagina-processo-seletivo` | A conversão principal: apresentação, quem pode, pré-requisitos, etapas, FAQ, estado "inscrições fechadas". O botão do cabeçalho e o "Quero participar" aparecem |
 | 3 | `endurecer-agentes-e-git-local` | Os 7 achados de configuração de agente e Git local da auditoria, e a regra 2 da dieta escrita na §5 do `SEGURANCA.md` e na spec |
 | 4 | `pagina-sobre-e-equipe` | Apresentação, história, objetivo, finalidade, impacto, docentes, fundadores e os seis cargos |
-| 5 | `ajustar-ci-ao-novo-fluxo` | Os 4 achados de CI da auditoria, a validação do OpenSpec, os prints automáticos e a busca de segredo antes do push |
+| 5 | `ajustar-ci-ao-novo-fluxo` | Os 4 achados de CI da auditoria, a validação do OpenSpec, os prints automáticos e a busca de segredo antes do push. A cobertura do e2e e do Lighthouse pela lista de páginas já entra na change 1 |
 | 6 | `pagina-projetos` | As quatro frentes de trabalho |
 | 7 | `pagina-contato` | E-mail, Instagram e sede, sem formulário |
 | 8 | `inicio-completo` | Números, chamadas para as páginas que existem, bloco de contato e faixa do processo seletivo |
-| 9 | `lancamento-r1` | Os 6 achados da auditoria para a R1 (inclusive cabeçalhos de segurança), metadados, `sitemap.xml`, 404, nota de privacidade, auditoria completa do guardião e o interruptor ligado em produção |
+| 9 | `homologacao-r1` | O site da R1 inteiro num endereço próprio, só para a liga: valida textos e telas, dá o aceite e entrega o conteúdo que falta (foto do hero, texto da Secretaria, acréscimo do FAQ 1, números atualizados, fotos dos ligantes). O endereço não é indexado por buscadores. Decisão do Gabriel, 20/11 |
+| 10 | `lancamento-r1` | Aplica o que a liga mandou na homologação, os 6 achados da auditoria para a R1 (inclusive cabeçalhos de segurança), metadados, `sitemap.xml`, 404, nota de privacidade, auditoria completa do guardião e o interruptor ligado em produção |
 
 Ficam para depois, na página inicial: próximos eventos e notícias (R2) e conteúdo educativo (R5).
 

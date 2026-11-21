@@ -1,0 +1,9 @@
+/* O mesmo tamanho e o mesmo traço do ui/Icone. Nenhum valor escrito à mão. */
+.icone {
+  width: var(--tamanho-icone);
+  height: var(--tamanho-icone);
+  flex-shrink: 0;
+  stroke-width: var(--espessura-icone);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

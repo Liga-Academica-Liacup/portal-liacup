@@ -34,8 +34,8 @@ de alteração para uma página nova aparecer.
 ### Requirement: Toda página pública tem o cabeçalho do protótipo
 
 Toda página da lista SHALL ter o cabeçalho do protótipo aprovado, sem acesso ao painel, com a
-página atual marcada também por sublinhado e com todo controle mostrando os estados interativos que
-se aplicam a ele.
+página atual marcada também por um traço sob o rótulo, e não só pela cor, e com todo controle
+mostrando os estados interativos que se aplicam a ele.
 
 #### Scenario: Cabeçalho no celular
 
@@ -49,8 +49,34 @@ se aplicam a ele.
 - **WHEN** alguém abre uma página da lista em 1280 px
 - **THEN** o cabeçalho mostra a logo, o nome "LIACUP", o nome da liga e os destinos da lista em
   linha
-- **AND** o destino da página atual é anunciado como página atual e aparece sublinhado
+- **AND** o destino da página atual é anunciado como página atual e tem uma barra sob o rótulo
 - **AND** não há botão "Painel"
+
+#### Scenario: A barra da página atual nos destinos em linha
+
+- **WHEN** alguém abre uma página da lista em 1280 px e olha o destino da página atual
+- **THEN** a barra sob o rótulo tem a ponta redonda, como no protótipo
+- **AND** o topo da barra fica a 10 px do pé das letras, como no protótipo
+- **AND** a barra contrasta pelo menos 3:1 com o fundo do cabeçalho
+
+### Requirement: As páginas públicas mostram a logo da liga como ícone da aba
+
+Toda página da lista SHALL indicar ao navegador a logo da liga como ícone da aba e como ícone da
+tela de início do celular, a partir das variantes da logo que a liga já tem. A página provisória,
+que é o que a produção mostra enquanto o site não está publicado, SHALL continuar sem ícone
+indicado.
+
+#### Scenario: Ícone da aba numa página pública
+
+- **WHEN** alguém abre uma página da lista com o site publicado
+- **THEN** a aba do navegador mostra a logo da liga
+- **AND** a página indica a logo em 32, 48 e 96 px para a aba e em 180 px para a tela de início do
+  celular, e cada uma responde 200 como imagem
+
+#### Scenario: A página provisória não ganha ícone
+
+- **WHEN** alguém abre a raiz com o site não publicado
+- **THEN** a página não indica nenhum ícone da aba, como antes desta entrega
 
 ### Requirement: O menu lateral do celular se opera por toque e por teclado
 
@@ -95,16 +121,45 @@ enquanto aberto e devolve o foco ao botão que o abriu.
 ### Requirement: Toda página pública tem o rodapé do protótipo, com os dados certos
 
 Toda página da lista SHALL ter o rodapé do protótipo aprovado, com os dados de contato confirmados
-da liga, as colunas de destinos lidas da lista, sem coluna vazia, sem acesso ao painel e sem a linha
-de demonstração do protótipo.
+da liga, cada um com um ícone ao lado, as colunas de destinos lidas da lista, sem coluna vazia, sem
+acesso ao painel, sem a linha de demonstração do protótipo e com a última linha centralizada.
 
 #### Scenario: Os dados de contato certos
 
 - **WHEN** alguém lê o rodapé de uma página da lista
-- **THEN** vê `@liacup.unb`, com link para `https://www.instagram.com/liacup.unb/`, e
-  `liacup.unb@gmail.com`, com link de e-mail para esse endereço
-- **AND** vê a linha de endereço com "FCTS · Campus UnB Ceilândia"
+- **THEN** vê `liacup.unb`, sem o @, ao lado do ícone do Instagram, com link para
+  `https://www.instagram.com/liacup.unb/`, e `liacup.unb@gmail.com`, com link de e-mail para esse
+  endereço
+- **AND** vê a linha de endereço "FCTS · Campus UnB Ceilândia · Brasília/DF"
 - **AND** não aparecem `liacup@unb.br` nem "Darcy Ribeiro"
+
+#### Scenario: A coluna de contato
+
+- **WHEN** alguém lê a coluna de contato do rodapé, em qualquer largura
+- **THEN** o Instagram, o e-mail e o endereço têm cada um um ícone ao lado: o do Instagram, um
+  envelope e um marcador de localização
+- **AND** os ícones são decorativos e não são anunciados por leitor de tela
+- **AND** os três itens começam a 44 px um do outro, medido do topo do texto de um ao topo da
+  primeira linha do seguinte, e os alvos de toque dos dois links não se sobrepõem
+- **AND** o endereço é texto, e não link
+
+#### Scenario: A última linha do rodapé
+
+- **WHEN** alguém lê a última linha do rodapé, em qualquer largura
+- **THEN** "© <ano> LIACUP · Universidade de Brasília" aparece centralizada, com a mesma sobra de
+  cada lado
+
+#### Scenario: Os links do Instagram e do e-mail no rodapé
+
+- **WHEN** alguém toca ou clica em qualquer ponto do elemento do link do Instagram ou do link do
+  e-mail no rodapé, e não só no texto
+- **THEN** o do Instagram abre `https://www.instagram.com/liacup.unb/` em nova aba, sem dar à página
+  aberta acesso à página de origem nem o endereço de origem
+- **AND** o do e-mail abre um e-mail novo para `liacup.unb@gmail.com` no aplicativo de e-mail da
+  pessoa
+- **AND** `liacup.unb` e `liacup.unb@gmail.com` continuam escritos na tela
+- **AND** o nome acessível de cada link diz o destino em frase corrida e contém o texto escrito na
+  tela; no do Instagram, que é frase corrida, o @ continua
 
 #### Scenario: O que o rodapé do protótipo tinha e o site não tem
 
