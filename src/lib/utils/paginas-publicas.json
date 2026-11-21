@@ -1,0 +1,9 @@
+[
+  {
+    "endereco": "/",
+    "rotulo": "Início",
+    "noMenu": true,
+    "colunaDoRodape": "Portal",
+    "destaque": false
+  }
+]

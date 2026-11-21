@@ -1,0 +1,187 @@
+/* Menu lateral do celular. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+   ESTE ARQUIVO E O Cabecalho.module.css DETÊM O PONTO DE TROCA DE 1024 px. */
+
+/* ── Botão de menu e botão de fechar ─────────────────────────────────────────
+   Do .btn.btn-secondary do protótipo, com a borda do ADR-0003 (adendo):
+   --color-neutral-600, 3,21:1, no lugar de --color-divider. */
+.acionador,
+.fechar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--alvo-de-toque);
+  height: var(--alvo-de-toque);
+  padding: 0;
+  border: var(--largura-borda) solid var(--color-neutral-600);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text);
+  /* Como o .btn do protótipo: o "×" de fechar sai em Caprasimo. */
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--tamanho-icone-menu);
+  cursor: pointer;
+}
+
+/* No desktop o botão não existe: display none tira da árvore de
+   acessibilidade, e o hook usa a visibilidade dele para fechar o menu. */
+.acionador {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .acionador {
+    display: inline-flex;
+  }
+}
+
+@media (hover: hover) {
+  .acionador:hover,
+  .fechar:hover {
+    background: var(--color-fundo-hover);
+  }
+}
+
+.acionador:active,
+.fechar:active {
+  background: var(--color-fundo-pressionado);
+}
+
+.icone {
+  width: var(--tamanho-icone-menu);
+  height: var(--tamanho-icone-menu);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--espessura-icone-menu);
+  stroke-linecap: round;
+}
+
+/* ── O menu ──────────────────────────────────────────────────────────────────
+   Fechado, o <dialog> fica com o display: none do navegador. Por isso o flex
+   só entra com [open]: escrito em .menu, ele mostraria o menu fechado. */
+.menu {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--largura-menu-lateral);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: var(--space-3) var(--space-3) calc(var(--space-4) + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  border: none;
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+}
+
+.menu[open] {
+  display: flex;
+  flex-direction: column;
+  animation: entrada-da-gaveta var(--duracao-gaveta) ease;
+}
+
+.menu::backdrop {
+  background: var(--color-fundo-do-menu);
+}
+
+.menu[open]::backdrop {
+  animation: entrada-do-fundo var(--duracao-fundo-do-menu) ease;
+}
+
+@keyframes entrada-da-gaveta {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes entrada-do-fundo {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu[open],
+  .menu[open]::backdrop {
+    animation: none;
+  }
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0 var(--space-1) var(--gap-controle);
+}
+
+.titulo {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-titulo-do-menu);
+  color: var(--color-accent-800);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* --color-accent-800 sobre --color-bg #f5ead8: 9,06:1. */
+.destino {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--altura-item-do-menu);
+  padding: 0 var(--space-3);
+  border-bottom: var(--largura-borda) solid var(--color-divider);
+  border-radius: var(--radius-md);
+  color: var(--color-accent-800);
+  font-size: var(--font-size-item-do-menu);
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .destino:hover {
+    background: var(--color-fundo-hover);
+  }
+}
+
+/* Protótipo: .scp0:active, o fundo --color-accent-100 ao tocar. */
+.destino:active {
+  background: var(--color-accent-100);
+}
+
+/* Página atual: a barra do protótipo e o sublinhado, que não depende de cor. */
+.marcaAtual {
+  display: none;
+  flex: 0 0 auto;
+  width: var(--largura-marca-atual);
+  height: var(--altura-marca-atual);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+}
+
+.destino[aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: var(--underline-offset);
+}
+
+.destino[aria-current='page'] .marcaAtual {
+  display: block;
+}
+
+.destaque {
+  margin-top: var(--space-4);
+}

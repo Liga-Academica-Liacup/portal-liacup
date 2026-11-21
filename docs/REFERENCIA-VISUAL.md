@@ -97,4 +97,21 @@ Dados que eram exemplo no protótipo e estão errados. Conferido em 18/11: o arq
 | Oito cargos de diretoria | Os seis do Estatuto, Art. 11º |
 | Kerolyn Ramos | Kerolyn Ramos Garcia |
 | Credenciais de demonstração do login | Saem; o login real é da R3 |
+| Bloco de contato: as legendas "Foto de perfil do Instagram da liga", "Perfil do Instagram" e "Logo do e-mail" | Eram só instruções do protótipo dizendo qual imagem ia em cada lugar. **Não aparecem.** No Instagram vai a logo da liga; no e-mail, o ícone do Gmail; sem legenda embaixo (decisão do Gabriel, 20/11) |
 | Processo seletivo: "Inscrições abertas até 28/08", "Prova de conhecimentos", entrevista "de 15 minutos", "Aula de integração" e as datas do cronograma | Eram exemplo. O edital tem duas etapas (formulário e entrevista online), e a página nasce no estado "inscrições fechadas". Texto e etapas vêm do `conteudo-institucional.md` §5; do protótipo vale só a composição |
+
+## 7. Regras de tela decididas pelo Gabriel
+
+O protótipo é o guia do resultado mais próximo a que se quer chegar, não a palavra final. Ajustes aparecem no caminho da construção e ficam registrados aqui (Gabriel, 20/11/2026).
+
+| Tela | Regra | Release |
+|---|---|---|
+| Inicial, hero | Sem foto institucional por enquanto: o quadro do protótipo fica com uma borboleta da liga grande, em opacidade baixa, sem texto. A liga manda a foto na homologação da R1 | R1 |
+| Rodapé | Endereço "FCTS · Campus UnB Ceilândia · Brasília/DF" | R1 |
+| Inicial, "Próximos eventos" | **Nenhum evento futuro:** o bloco continua, com a mensagem do `conteudo-institucional.md` §2.0, sem parecer erro nem tela vazia. **Um evento:** o layout fica equilibrado com um cartão só, sem espaço sobrando. **Mais de três:** mostra os três próximos, do mais perto ao mais distante, e o "Ver agenda completa" leva aos outros | R2 |
+| Inicial e Contato, bloco de contato | Logo da liga no Instagram e ícone do Gmail no e-mail, sem as legendas do protótipo (§6) | R1 |
+| Inicial, Contato e rodapé, links do Instagram e do e-mail | O quadro inteiro é clicável. **Instagram:** abre `https://www.instagram.com/liacup.unb/` em outra aba; no celular com o app instalado, o próprio sistema abre o app. **E-mail:** abre um e-mail novo no aplicativo de e-mail da pessoa, com `liacup.unb@gmail.com` no "Para" (`mailto:`). O endereço e o @ continuam escritos no quadro, para quem não tem aplicativo de e-mail configurado poder copiar (Gabriel, 20/11) | R1 |
+| Inicial, lema do hero | "Curar às vezes, confortar sempre" sai em `--color-accent-600` (`#82558f`, 4,84:1 sobre `#f5ead8`, passa de 4,5:1 em toda largura) e não no lilás da marca: no celular ele tem 20 px, não conta como texto grande, e o lilás mede 3,48:1 sobre o fundo (ADR-0003). Trocado do `--color-accent-700` pelo Gabriel em 21/11 (Q7 da `layout-e-hero`) | R1 |
+| Aba do navegador | Ícone da aba com a logo da liga, nos tamanhos que os navegadores e o celular pedem, a partir das variantes que já existem em `assets/` (Gabriel, 21/11) | R1 |
+| Rodapé, coluna de contato | Instagram, e-mail e endereço com ícone ao lado de cada um (Instagram, envelope e marcador de localização) e com o espaçamento do protótipo. O alvo de toque de 44 px continua, mas sem somar espaço visual entre as linhas: os três itens com passo uniforme de 44 px; o protótipo tem 31,4 px, que não cabe com o alvo de toque (Gabriel, 21/11). Ao lado do ícone do Instagram, o texto é `liacup.unb`, sem o @ (Gabriel, 21/11). Em frase corrida, sem ícone, o @ continua, como em "acompanhe a Liga no Instagram @liacup.unb" | R1 |
+| Rodapé, última linha | "© 2026 LIACUP · Universidade de Brasília" centralizado, já que o texto da direita do protótipo saiu (Gabriel, 21/11) | R1 |

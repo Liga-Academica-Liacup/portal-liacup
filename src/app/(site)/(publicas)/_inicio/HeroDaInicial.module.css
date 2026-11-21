@@ -1,0 +1,181 @@
+/* Hero da página inicial. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+   Escrito do desktop para o celular, como o protótipo: os cortes são os dele,
+   1024, 768 e 480 px, com max-width. */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: var(--espaco-secao-topo) var(--space-6) var(--espaco-secao);
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: var(--colunas-do-hero);
+  gap: var(--espaco-secao);
+  align-items: center;
+  max-width: var(--largura-maxima-conteudo);
+  margin: 0 auto;
+}
+
+.texto {
+  position: relative;
+  z-index: var(--camada-texto-do-hero);
+}
+
+/* --color-accent-700 sobre --color-bg #f5ead8: 6,91:1. */
+.sobretitulo {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-sobretitulo);
+  letter-spacing: var(--letter-spacing-sobretitulo);
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+}
+
+.titulo {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-hero);
+  line-height: var(--line-height-hero);
+  letter-spacing: var(--letter-spacing-hero);
+  color: var(--color-accent-800);
+  text-wrap: balance;
+}
+
+/* O lema sai em --color-accent-600, e não no lilás da marca, em toda largura
+   (REFERENCIA-VISUAL.md, seção 7; Q7 do Gabriel, 21/11/2026, que trocou o
+   --color-accent-700): no celular ele tem 20 px e não conta como texto grande,
+   e o lilás --color-accent mede 3,48:1. --color-accent-600 #82558f sobre
+   --color-bg #f5ead8: 4,84:1, acima de 4,5:1. */
+.lema {
+  margin: 0 0 calc(var(--space-2) + var(--space-3));
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: var(--font-size-lema);
+  line-height: var(--line-height-lema);
+  color: var(--color-accent-600);
+}
+
+/* --color-neutral-800 #474238 sobre --color-bg #f5ead8: 8,38:1. */
+.apresentacao {
+  max-width: var(--largura-texto-do-hero);
+  margin: 0;
+  font-size: var(--font-size-apresentacao);
+  line-height: var(--line-height-apresentacao);
+  color: var(--color-neutral-800);
+}
+
+.botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: calc(var(--space-4) + var(--space-3));
+}
+
+.botao {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-size-body);
+}
+
+/* ── O quadro da foto, sem foto (Q2 (b)) ─────────────────────────────────────
+   A superfície, o raio, a sombra e o filtro do quadro do protótipo, com uma
+   borboleta da liga grande no centro, em opacidade baixa. Decorativo. */
+.quadro {
+  display: grid;
+  place-items: center;
+  height: var(--altura-quadro-do-hero);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-quadro-sem-foto);
+  box-shadow: var(--shadow-lg);
+  filter: var(--filtro-foto-esmaecida);
+}
+
+/* Na pose de repouso de toda borboleta do protótipo, inclinada a -8°, como no
+   esboço qn-foto-b aprovado na Q2 (b). Parada: não voa. */
+.borboletaDoQuadro {
+  width: var(--largura-borboleta-do-quadro);
+  opacity: var(--opacidade-borboleta-do-quadro);
+  transform: rotate(var(--voo-giro-repouso));
+}
+
+/* ── As borboletas em volta do hero ──────────────────────────────────────────
+   Decorativas, nunca por cima de texto, paradas na pose de repouso quando a
+   pessoa pede menos movimento. */
+.borboletaQueVoa {
+  position: absolute;
+  transform: rotate(var(--voo-giro-repouso));
+  animation: voo var(--duracao-voo-1) ease-in-out infinite;
+}
+
+.borboletaGrande {
+  top: var(--borboleta-1-topo);
+  right: var(--borboleta-1-direita);
+  z-index: var(--camada-borboleta-do-hero);
+  width: var(--borboleta-1-largura);
+  opacity: var(--borboleta-1-opacidade);
+}
+
+.borboletaPequena {
+  top: var(--borboleta-2-topo);
+  right: var(--borboleta-2-direita);
+  width: var(--borboleta-2-largura);
+  opacity: var(--borboleta-2-opacidade);
+  animation-duration: var(--duracao-voo-2);
+  animation-delay: var(--atraso-voo-2);
+}
+
+@keyframes voo {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--voo-giro-repouso));
+  }
+  50% {
+    transform: translateY(var(--voo-subida)) rotate(var(--voo-giro-meio));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .borboletaQueVoa {
+    animation: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .grade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  .quadro {
+    height: auto;
+    aspect-ratio: var(--proporcao-quadro-do-hero);
+  }
+
+  .borboletaGrande {
+    top: var(--borboleta-1-topo-estreito);
+    right: var(--borboleta-1-direita-estreito);
+    width: var(--borboleta-1-largura-estreito);
+    opacity: var(--borboleta-1-opacidade-estreito);
+  }
+
+  .borboletaPequena {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding-inline: var(--space-4);
+  }
+
+  .titulo {
+    font-size: var(--font-size-hero-tablet);
+    line-height: var(--line-height-hero-estreito);
+  }
+}
+
+@media (max-width: 480px) {
+  .titulo {
+    font-size: var(--font-size-hero-celular);
+  }
+}

@@ -479,6 +479,37 @@ openspec/         Propostas, specs e tarefas de cada change
 mostra onde mora o acesso a dados, onde mora a regra de negocio, e como um componente que exibe
 dado trata os tres estados obrigatorios — carregando, erro e vazio.
 
+## Como acrescentar uma página ao menu
+
+O site tem **uma lista só** das páginas que existem: `src/lib/utils/paginas-publicas.json`. O
+menu, o rodapé, o botão de destaque do cabeçalho, os botões da página inicial, os testes e o
+Lighthouse leem dela. Ninguém edita o cabeçalho nem o rodapé para uma página aparecer.
+
+**A regra:** a página entra na lista **na mesma change que cria a página, e nunca antes.** Link para
+página que ainda não existe é o que a constitution proíbe (princípio 8), e os testes ficam
+vermelhos se a lista tiver um endereço sem página.
+
+Cada página é um bloco assim, na ordem em que deve aparecer no menu:
+
+```json
+{
+  "endereco": "/sobre",
+  "rotulo": "Sobre",
+  "noMenu": true,
+  "colunaDoRodape": "Portal",
+  "destaque": false
+}
+```
+
+- `endereco`: o endereço da página, começando com `/`;
+- `rotulo`: o texto do link, como no protótipo;
+- `noMenu`: `true` para aparecer no menu do cabeçalho e no menu do celular;
+- `colunaDoRodape`: `"Portal"`, `"Conteúdo"` ou `null` (nenhuma). Coluna sem página não aparece;
+- `destaque`: `true` só para a página do botão de destaque do cabeçalho (Processo seletivo). No
+  máximo uma.
+
+Depois de mexer na lista, rode `npm test`: ele confere a lista e diz o que está errado, pelo nome.
+
 ## Variaveis de ambiente
 
 Copie `.env.example` para `.env.local` e preencha. **Nenhum segredo real entra no repositorio.**

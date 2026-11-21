@@ -1,0 +1,35 @@
+/* As cores do <symbol id="borboleta"> do protótipo, por token. */
+.borboleta {
+  display: block;
+  height: auto;
+}
+
+.asaDeTras {
+  fill: var(--color-borboleta-asa-de-tras);
+}
+
+.asaDaFrente {
+  fill: var(--color-accent);
+}
+
+.asaClara {
+  fill: var(--color-accent-300);
+  opacity: var(--opacidade-borboleta-asa-clara);
+}
+
+.asaMaisClara {
+  fill: var(--color-accent-200);
+  opacity: var(--opacidade-borboleta-asa-mais-clara);
+}
+
+.corpo {
+  fill: var(--color-accent-800);
+}
+
+/* Traço das antenas: 2,5 no protótipo, em unidades do viewBox (não é px). */
+.antenas {
+  fill: none;
+  stroke: var(--color-accent-800);
+  stroke-width: var(--espessura-antena-da-borboleta);
+  stroke-linecap: round;
+}

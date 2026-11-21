@@ -38,6 +38,11 @@ release atualiza a seção da release dela, na seção 3.
 ### R1 · site estático, sobre o que a R0 deixou
 
 - **Entra:** o interruptor `SITE_PUBLICADO`, páginas com texto fixo, o CI e as dependências.
+  Desde a `layout-e-hero` (21/11/2026): a lista única de páginas públicas, em JSON, que gera os
+  links da moldura e as URLs que os testes e o Lighthouse medem (AS-02, AS-04); o link externo fixo
+  do rodapé para o Instagram, em nova aba, e o `mailto:` (AS-04); o script que roda o Lighthouse
+  nos dois modos e o que sobe o `next start` num modo do interruptor posto pelo processo, que o CI
+  executa (AS-09).
 - **Pode dar errado:** página escondida alcançável por endereço técnico (AS-02); redirecionamento
   para fora (AS-05); link externo inseguro (AS-04); requisição a terceiro (AS-07); dependência
   vulnerável (AS-08); CI com permissão larga ou segredo no log (AS-09); cabeçalhos ausentes (AS-15).
@@ -362,6 +367,12 @@ binário acrescenta a linha no mesmo diff; sem ela, é achado de AS-01, alto e c
 | `assets/icone-email-gmail.png` | 1 | Ativo aprovado: ícone do Gmail entregue pela liga para o contato |
 | `assets/logo-liacup-{32,48,96,180,256,512}.png` | 6 | Ativo aprovado: gerados pela coordenação a partir da logo oficial, no pacote da F00. A rotina que os gerou não está no repositório |
 | `public/logo-liacup-256.png` | 1 | Ativo aprovado: cópia idêntica de `assets/logo-liacup-256.png`, com o mesmo blob (`bfa1d3d5`) |
+| `public/icone-da-aba-{32,48,96}.png` e `public/icone-da-tela-de-inicio-180.png` | 4 | Ativo aprovado: cópias idênticas de `assets/logo-liacup-{32,48,96,180}.png` (mesmo sha256 e mesmo blob), o ícone da aba pedido pelo Gabriel na `REFERENCIA-VISUAL.md` §7 em 21/11/2026 (`layout-e-hero`) |
+| `openspec/changes/archive/2026-11-21-layout-e-hero/prints/qn-foto-{a,b,c}-{390,1280}.png` | 6 | Ativo aprovado: esboços do espaço da foto do hero, feitos pelo líder técnico sobre o protótipo, vistos e decididos pelo Gabriel no Portão 1 da `layout-e-hero` (Q2, 20/11/2026) |
+| `openspec/changes/archive/2026-11-21-layout-e-hero/prints/{antes,depois}-raiz-nao-publicada-{390,1280}.png` | 4 | Ativo aprovado: prints da página em construção antes e depois da `layout-e-hero`, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q5 (a), 21/11/2026 |
+| `openspec/changes/archive/2026-11-21-layout-e-hero/prints/lado-a-lado-*.png` | 5 | Ativo aprovado: lado a lado do protótipo e do site, montados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q5 (a), 21/11/2026 |
 
 Os 9 de `assets/` e `public/` entraram no commit `6636202` (F00, 21/08/2026). Origem confirmada
-pelo Gabriel no Portão 1 da `auditoria-de-base-appsec`, em 20/11/2026. Total: 32 arquivos.
+pelo Gabriel no Portão 1 da `auditoria-de-base-appsec`, em 20/11/2026. Os 15 prints da
+`layout-e-hero` ficam na pasta da change até o `openspec archive`, que os leva para o caminho da
+tabela no mesmo diff. Total: 51 arquivos.
