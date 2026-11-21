@@ -6,7 +6,8 @@
  * até a lancamento-r1 (design.md da layout-e-hero, D1).
  *
  * As colunas "Portal" e "Conteúdo" leem a lista única de páginas públicas, e
- * coluna sem página não aparece, nem o título dela. Sem "Painel da diretoria"
+ * coluna sem página não aparece, nem o título dela. Os links das colunas usam o
+ * LinkDaNavegacao, que marca a página atual. Sem "Painel da diretoria"
  * (o painel é da R3) e sem a linha de demonstração do protótipo.
  *
  * Na coluna de contato, cada item tem um ícone decorativo ao lado, e o endereço
@@ -16,10 +17,10 @@
  * em janeiro sem ninguém perceber, e o site se compila a cada change.
  */
 import Image from 'next/image'
-import Link from 'next/link'
 import { Icone } from '@/componentes/ui/Icone'
 import { COLUNAS_DO_RODAPE, paginasDaColuna } from '@/lib/utils/paginas-publicas'
 import { IconeDeLocalizacao } from './IconeDeLocalizacao'
+import { LinkDaNavegacao } from './LinkDaNavegacao'
 import estilos from './RodapePublico.module.css'
 
 export function RodapePublico() {
@@ -56,9 +57,9 @@ export function RodapePublico() {
             <ul className={estilos.itens}>
               {coluna.paginas.map((pagina) => (
                 <li key={pagina.endereco}>
-                  <Link href={pagina.endereco} className={estilos.link}>
+                  <LinkDaNavegacao endereco={pagina.endereco} className={estilos.link}>
                     {pagina.rotulo}
-                  </Link>
+                  </LinkDaNavegacao>
                 </li>
               ))}
             </ul>

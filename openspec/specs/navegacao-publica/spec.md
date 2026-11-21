@@ -8,40 +8,12 @@ Nasceu na change `layout-e-hero` (R1).
 
 ## Requirements
 
-### Requirement: Uma lista única decide quais páginas públicas existem
-
-O portal SHALL manter uma lista única das páginas públicas, com o endereço e o rótulo de cada uma e
-o lugar onde ela aparece. O menu, o rodapé, o botão de destaque do cabeçalho e os botões que levam a
-outras páginas SHALL mostrar só páginas que estão nessa lista, e nenhum desses lugares SHALL precisar
-de alteração para uma página nova aparecer.
-
-#### Scenario: Nesta entrega, a lista tem só a Início
-
-- **WHEN** alguém abre a raiz com o site publicado
-- **THEN** o menu e o rodapé mostram "Início" e nenhum outro destino
-- **AND** o cabeçalho não mostra o botão "Processo seletivo", e a página não mostra "Quero
-  participar" nem "Conheça a Liga"
-
-#### Scenario: Uma página nova entra na lista
-
-- **WHEN** uma change cria a página de Processo seletivo e a acrescenta à lista, marcada como
-  destaque
-- **THEN** o botão "Processo seletivo" aparece no cabeçalho e no fim do menu lateral, e o "Quero
-  participar" aparece no hero
-- **AND** nenhuma linha do cabeçalho, do menu, do rodapé ou do hero foi alterada para isso
-
-#### Scenario: Nenhum link da moldura leva a página que não existe
-
-- **WHEN** os testes seguem cada link interno do cabeçalho, do menu e do rodapé, com o site
-  publicado
-- **THEN** cada um leva a um endereço da lista, que responde 200
-- **AND** a saída imprime quantos links conferiu
-
 ### Requirement: Toda página pública tem o cabeçalho do protótipo
 
 Toda página da lista SHALL ter o cabeçalho do protótipo aprovado, sem acesso ao painel, com a
-página atual marcada também por um traço sob o rótulo, e não só pela cor, e com todo controle
-mostrando os estados interativos que se aplicam a ele.
+página atual marcada também por um traço sob o rótulo, e não só pela cor, com todo controle
+mostrando os estados interativos que se aplicam a ele, e com o nome acessível de cada link contendo
+o texto que ele mostra.
 
 #### Scenario: Cabeçalho no celular
 
@@ -64,6 +36,21 @@ mostrando os estados interativos que se aplicam a ele.
 - **THEN** a barra sob o rótulo tem a ponta redonda, como no protótipo
 - **AND** o topo da barra fica a 10 px do pé das letras, como no protótipo
 - **AND** a barra contrasta pelo menos 3:1 com o fundo do cabeçalho
+
+#### Scenario: O nome acessível da marca contém o que ela mostra
+
+- **WHEN** o link da marca é lido por leitor de tela ou chamado por controle de voz, em qualquer
+  largura
+- **THEN** o nome acessível começa pelo texto visível nessa largura, "LIACUP" e, acima de 1024 px,
+  também o nome da liga, e diz que leva à página inicial
+
+#### Scenario: O botão de destaque na própria página
+
+- **WHEN** alguém abre `/processo-seletivo` com o site publicado
+- **THEN** o botão "Processo seletivo" do cabeçalho é anunciado como página atual e marcado também
+  por um traço, e não só pela cor
+- **AND** ele tem, nas outras páginas, os mesmos estados de repouso, hover, pressionado e foco do
+  botão da camada base
 
 ### Requirement: As páginas públicas mostram a logo da liga como ícone da aba
 
@@ -111,6 +98,8 @@ enquanto aberto e devolve o foco ao botão que o abriu.
 
 - **WHEN** o menu está aberto e a pessoa escolhe um destino
 - **THEN** o menu fecha e a página do destino é mostrada
+- **AND** escolhido o botão "Processo seletivo" do fim do menu, o endereço passa a
+  `/processo-seletivo` e o título principal passa a "Processo seletivo"
 
 #### Scenario: O foco fica preso no menu aberto
 
@@ -121,14 +110,16 @@ enquanto aberto e devolve o foco ao botão que o abriu.
 #### Scenario: O teste do menu diz onde testou
 
 - **WHEN** os testes de teclado do menu rodam nas sete larguras
-- **THEN** a saída imprime em quantas larguras o menu lateral foi testado
+- **THEN** a saída imprime em quantas larguras o menu lateral foi testado, e de quantas larguras no
+  total
 - **AND** nas larguras sem botão de menu, os destinos em linha estão visíveis
 
 ### Requirement: Toda página pública tem o rodapé do protótipo, com os dados certos
 
 Toda página da lista SHALL ter o rodapé do protótipo aprovado, com os dados de contato confirmados
-da liga, cada um com um ícone ao lado, as colunas de destinos lidas da lista, sem coluna vazia, sem
-acesso ao painel, sem a linha de demonstração do protótipo e com a última linha centralizada.
+da liga, cada um com um ícone ao lado, as colunas de destinos lidas da lista, sem coluna vazia, com a
+página atual marcada nas colunas, sem acesso ao painel, sem a linha de demonstração do protótipo e
+com a última linha centralizada.
 
 #### Scenario: Os dados de contato certos
 
@@ -179,14 +170,21 @@ acesso ao painel, sem a linha de demonstração do protótipo e com a última li
 - **THEN** essa coluna não aparece, nem o título dela
 - **AND** nesta entrega a coluna "Portal" mostra só "Início", e a coluna "Conteúdo" não aparece
 
+#### Scenario: A página atual nas colunas do rodapé
+
+- **WHEN** alguém abre uma página que está numa coluna do rodapé
+- **THEN** o link dela na coluna é anunciado como página atual e marcado também por um traço, e não
+  só pela cor
+- **AND** nenhum outro link das colunas é anunciado como página atual
+
 ### Requirement: Toda página da lista é medida, e a medição diz quanto mediu
 
 Os testes de ponta a ponta SHALL medir cada página da lista com o site publicado, nas larguras de
 360, 390, 430, 480, 768, 1024 e 1280 px, quanto a violações de acessibilidade, rolagem horizontal,
 alvos de toque e pedidos a domínio externo, e a medição de desempenho SHALL medir cada página da
 lista com o site publicado e a raiz com o site não publicado. Cada medição SHALL imprimir quantas
-páginas e quantos elementos mediu, e cada medição nova SHALL ter sido vista falhando e voltando ao
-verde.
+páginas e quantos elementos mediu, e cada medição nova SHALL ter sido vista falhando e
+voltando ao verde.
 
 #### Scenario: As páginas da lista nas sete larguras
 
@@ -194,7 +192,8 @@ verde.
 - **THEN** cada página da lista tem zero violações de acessibilidade, nenhuma rolagem horizontal e
   nenhum pedido a domínio externo, e todo link e botão do cabeçalho, do menu e do rodapé mede pelo
   menos 44 × 44 px
-- **AND** a saída de cada largura imprime `páginas verificadas: 1` e quantos alvos mediu
+- **AND** a saída de cada largura imprime `páginas verificadas: <n> de <n>`, com `<n>` igual ao
+  número de páginas da lista (2 nesta entrega), e quantos alvos mediu
 
 #### Scenario: A página de produção não perde cobertura
 
@@ -219,4 +218,36 @@ verde.
 - **THEN** mede cada página da lista com o site publicado e a raiz com o site não publicado, cada
   modo com o servidor iniciado no modo explícito, sem depender da configuração da máquina
 - **AND** reprova se alguma ficar abaixo de 90 em desempenho ou de 95 em acessibilidade
-- **AND** a saída diz quantas páginas mediu em cada modo
+- **AND** a saída diz quantas páginas mediu em cada modo, contadas no resultado da medição, e não
+  na lista de endereços pedidos
+
+### Requirement: A lista única decide quais páginas públicas existem e onde aparecem
+
+O portal SHALL manter uma lista única das páginas públicas, com o endereço e o rótulo de cada uma e
+o lugar onde ela aparece. O menu, o rodapé, o botão de destaque do cabeçalho e os botões que levam a
+outras páginas SHALL mostrar só páginas que estão nessa lista, e nenhum desses lugares SHALL precisar
+de alteração para uma página nova aparecer.
+
+#### Scenario: Nesta entrega, a lista tem a Início e o Processo seletivo
+
+- **WHEN** alguém abre uma página da lista com o site publicado
+- **THEN** o menu e a coluna "Portal" do rodapé mostram "Início" e nenhum outro destino
+- **AND** o cabeçalho e o fim do menu lateral mostram o botão "Processo seletivo", que leva a
+  `/processo-seletivo`
+- **AND** o hero da inicial mostra "Quero participar", que leva a `/processo-seletivo`, e não mostra
+  "Conheça a Liga"
+
+#### Scenario: Uma página nova entra na lista
+
+- **WHEN** uma change cria a página de Processo seletivo e a acrescenta à lista, marcada como
+  destaque
+- **THEN** o botão "Processo seletivo" aparece no cabeçalho e no fim do menu lateral, e o "Quero
+  participar" aparece no hero
+- **AND** nenhuma linha do cabeçalho, do menu, do rodapé ou do hero foi alterada para isso
+
+#### Scenario: Nenhum link da moldura leva a página que não existe
+
+- **WHEN** os testes seguem cada link interno do cabeçalho, do menu e do rodapé, com o site
+  publicado
+- **THEN** cada um leva a um endereço da lista, que responde 200
+- **AND** a saída imprime quantos links conferiu

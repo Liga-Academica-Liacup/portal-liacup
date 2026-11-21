@@ -1,0 +1,50 @@
+/* Linha do tempo das etapas. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo. */
+
+/* A linha vertical lilás clara. A margem à esquerda põe o centro da linha no
+   centro das bolinhas, como no protótipo. */
+.linhaDoTempo {
+  margin: 0 0 0 calc(var(--tamanho-marcador-da-etapa) / 2 - var(--espessura-linha-do-tempo) / 2);
+  padding: 0 0 0 var(--space-6);
+  border-left: var(--espessura-linha-do-tempo) solid var(--color-accent-300);
+  list-style: none;
+}
+
+.etapa {
+  position: relative;
+  padding-bottom: var(--space-6);
+}
+
+/* A bolinha de cada etapa, centrada na linha e na primeira linha do nome.
+   Decorativa: é pseudo-elemento, e não é anunciada. */
+.etapa::before {
+  content: '';
+  position: absolute;
+  top: calc(
+    (var(--line-height-body) * var(--font-size-nome-da-etapa) - var(--tamanho-marcador-da-etapa)) /
+      2
+  );
+  left: calc(
+    -1 *
+      (var(--space-6) + var(--espessura-linha-do-tempo) / 2 + var(--tamanho-marcador-da-etapa) / 2)
+  );
+  width: var(--tamanho-marcador-da-etapa);
+  height: var(--tamanho-marcador-da-etapa);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+}
+
+/* --color-accent-800 #4e3260 sobre --color-bg #f5ead8: 9,06:1. */
+.nome {
+  margin: 0 0 var(--espaco-abaixo-do-nome-da-etapa);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-nome-da-etapa);
+  color: var(--color-accent-800);
+}
+
+/* --color-neutral-700 #645c50 sobre --color-bg: 5,53:1 (ADR-0003). */
+.carater {
+  margin: 0;
+  font-size: var(--font-size-carater-da-etapa);
+  color: var(--color-neutral-700);
+}

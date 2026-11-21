@@ -364,7 +364,7 @@ Regra que depende de disciplina humana degrada. Estas são automáticas:
 | Script de artefatos no CI | Arquivo gerado versionado sem decisão registrada (RP-13) |
 | Vitest | Unidade e integração |
 | Playwright + axe | Ponta a ponta, acessibilidade, responsividade |
-| Lighthouse CI | Desempenho e acessibilidade por página |
+| Lighthouse CI | Desempenho, acessibilidade e SEO por página |
 
 Todas rodam no CI a cada pull request. Falhou, não entra.
 
@@ -388,3 +388,33 @@ Uso na validação de cada feature:
 - [ ] Nomes em português e descritivos
 - [ ] Tem teste
 - [ ] Não importa de outra feature
+- [ ] Se for página pública: título e descrição na lista única, metadados só pelo `montarMetadados`,
+      um `h1`, títulos sem pular nível e links que dizem o destino (§11)
+
+---
+
+## 11. SEO
+
+O site precisa ser encontrado por quem procura a liga no Google. Na R1 tudo é estático, então quase
+todo o SEO é regra de escrever a página, cobrada pelo revisor e pelo CI em cada change. O que é do
+site inteiro (sitemap, robots, dados estruturados) entra uma vez só, no lançamento.
+
+### 11.1 Toda página pública
+
+- Título e descrição próprios, declarados na entrada da página na lista única de páginas e
+  transformados em metadados por uma função só, `montarMetadados`. Nenhuma página escreve
+  `metadata` à mão.
+- Título no formato `<Nome da página> · LIACUP`. A Início usa o nome da liga por extenso.
+- Descrição entre 70 e 160 caracteres, tirada do `conteudo-institucional.md`. Se nenhum trecho
+  servir, vira Qn para o Gabriel. Texto não se inventa.
+- Canonical absoluto, montado a partir de `metadataBase` com `https://liacup.com.br`.
+- Open Graph com o mesmo título e a mesma descrição, herdados da mesma função.
+- Um `h1` por página. Os títulos não pulam nível: `h2` vem depois de `h1`, `h3` depois de `h2`.
+- Imagem de conteúdo com `alt` que descreve o que ela mostra. Imagem decorativa (as borboletas, por
+  exemplo) com `alt=""`.
+- Link com texto que diz o destino. "Clique aqui" ou "saiba mais" sozinhos não passam.
+- Endereço em português, minúsculo, com hífen e sem acento: `/processo-seletivo`, nunca
+  `/ProcessoSeletivo` ou `/processo_seletivo`.
+- `<html lang="pt-BR">` no layout raiz.
+
+Aprovada pelo Gabriel em 21/11/2026 e acrescentada na change `pagina-processo-seletivo`.

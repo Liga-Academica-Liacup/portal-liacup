@@ -1,0 +1,128 @@
+/* Faixa roxa do topo do processo seletivo. Nenhum valor escrito à mão: tudo
+   vem de src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Contraste sobre o roxo --color-accent-800 #4e3260 (RP-09):
+   - selo, --color-accent-2-900 #272e1b sobre --color-accent-2-300 #ccdbb2:
+     9,61:1 (o selo tem fundo próprio);
+   - título e link, --color-bg #f5ead8: 9,11:1;
+   - apresentação e aviso, --color-accent-200 #eee0f4: 8,52:1;
+   - link em hover, --color-accent-300 #dcc5e8: 6,77:1;
+   - sobre o círculo decorativo (o roxo com 35% de --color-accent por cima,
+     #69467c), o pior caso é o hover, --color-accent-300: 4,76:1. */
+
+.faixa {
+  position: relative;
+  overflow: hidden;
+  padding: var(--espaco-secao-topo) var(--space-6) var(--espaco-fim-da-faixa);
+  background: var(--color-accent-800);
+  color: var(--color-bg);
+}
+
+/* Decorativo, no canto de baixo à esquerda. Vem antes do conteúdo no HTML, e o
+   conteúdo, posicionado, é desenhado por cima dele. */
+.circulo {
+  position: absolute;
+  left: var(--circulo-da-faixa-esquerda);
+  bottom: var(--circulo-da-faixa-baixo);
+  width: var(--tamanho-circulo-da-faixa);
+  height: var(--tamanho-circulo-da-faixa);
+  border-radius: var(--radius-pill);
+  background: var(--color-circulo-da-faixa);
+}
+
+.conteudo {
+  position: relative;
+  max-width: var(--largura-conteudo-da-pagina);
+  margin: 0 auto;
+}
+
+/* O .tag do protótipo, com o fundo e o texto dele. */
+.selo {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 var(--space-4);
+  padding: var(--padding-etiqueta-y) var(--padding-etiqueta-x);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-2-300);
+  color: var(--color-accent-2-900);
+  font-size: var(--font-size-etiqueta);
+  letter-spacing: var(--letter-spacing-etiqueta);
+}
+
+.titulo {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-titulo-da-faixa);
+  line-height: var(--line-height-titulo-da-faixa);
+  color: var(--color-bg);
+}
+
+.apresentacao,
+.aviso {
+  max-width: var(--largura-texto-da-faixa);
+  font-size: var(--font-size-apresentacao-da-faixa);
+  line-height: var(--line-height-apresentacao);
+  color: var(--color-accent-200);
+}
+
+.apresentacao {
+  margin: 0 0 var(--espaco-depois-da-apresentacao-da-faixa);
+}
+
+.aviso {
+  margin: 0;
+}
+
+/* O link fica na frase, mas o alvo tem 44 px de altura em toda largura
+   (RP-04): o preenchimento de cima e de baixo completa a altura da linha até
+   o alvo, e a margem negativa do mesmo tamanho devolve a linha à altura dela,
+   sem abrir espaço entre as linhas do parágrafo. A altura mínima garante os
+   44 px mesmo quando o arredondamento de subpixel come uma fração (medido:
+   43,98 px sem ela). */
+.link {
+  display: inline-block;
+  min-height: var(--alvo-de-toque);
+  padding-block: calc((var(--alvo-de-toque) - var(--line-height-apresentacao) * 1em) / 2);
+  margin-block: calc((var(--line-height-apresentacao) * 1em - var(--alvo-de-toque)) / 2);
+  border-radius: var(--radius-sm);
+  color: var(--color-bg);
+  text-decoration: underline;
+  text-underline-offset: var(--underline-offset);
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .link:hover {
+    color: var(--color-accent-300);
+  }
+}
+
+/* Pressionado: um fundo claro sob o link. --color-bg sobre o roxo com 14% de
+   --color-bg por cima (#654c71): 6,28:1. */
+.link:active {
+  color: var(--color-bg);
+  background: var(--color-fundo-pressionado-sobre-escuro);
+}
+
+/* O anel de foco do site é --color-accent-700, que some sobre o roxo escuro.
+   Aqui ele é claro: --color-bg sobre --color-accent-800, 9,11:1. */
+.link:focus-visible {
+  outline-color: var(--color-bg);
+}
+
+/* Os cortes do protótipo: [data-pad] e .t-h1. */
+@media (max-width: 768px) {
+  .faixa {
+    padding-inline: var(--space-4);
+  }
+
+  .titulo {
+    font-size: var(--font-size-hero-tablet);
+    line-height: var(--line-height-hero-estreito);
+  }
+}
+
+@media (max-width: 480px) {
+  .titulo {
+    font-size: var(--font-size-hero-celular);
+  }
+}

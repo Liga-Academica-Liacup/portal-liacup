@@ -1,9 +1,13 @@
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { expect, test } from '@playwright/test'
 import type { APIRequestContext, Locator, Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { ORIGEM_NAO_PUBLICADO, ORIGEM_PUBLICADO } from '../../playwright.config'
 import {
   COLUNAS_DO_RODAPE,
+  NOME_DA_LIGA,
   PAGINAS_PUBLICAS,
   estaNaLista,
   paginaDeDestaque,
@@ -1323,4 +1327,428 @@ test('a raiz não publicada não tem nenhum <link> de ícone', async ({ page }, 
   )
   expect(todos, 'o teste precisa ter visto algum <link> na página').toBeGreaterThan(0)
   expect(deIcone, `a raiz não publicada tem <link> de ícone: ${deIcone.join(' ')}`).toEqual([])
+})
+
+/*
+ * OS METADADOS DO <head> (spec seo, "O que a página entrega ao buscador" e
+ * "A raiz não publicada"; design.md D10 da pagina-processo-seletivo).
+ *
+ * Publicado: cada página da lista entrega no <head> o título e a descrição da
+ * entrada dela, o endereço canônico absoluto, o Open Graph com os mesmos título,
+ * descrição e endereço, e o idioma pt-BR. Cada etiqueta tem de aparecer uma vez
+ * só: duas descrições, ou dois canônicos, são defeito mesmo que uma esteja certa.
+ *
+ * O endereço oficial está escrito aqui, e não importado de metadados.ts, de
+ * propósito: o teste confere a função, e não pode partir do mesmo valor que ela.
+ *
+ * O Next escreve o canônico da Início sem a barra final. O teste aceita
+ * "https://liacup.com.br" e "https://liacup.com.br/" para "/", e imprime qual achou.
+ */
+const ENDERECO_OFICIAL = 'https://liacup.com.br'
+
+type CabecaDoDocumento = {
+  idioma: string | null
+  titulos: string[]
+  descricoes: string[]
+  canonicos: string[]
+  ogTitulos: string[]
+  ogDescricoes: string[]
+  ogUrls: string[]
+  og: string[]
+}
+
+async function lerCabeca(page: Page): Promise<CabecaDoDocumento> {
+  return page.evaluate(() => {
+    const valores = (seletor: string, atributo: string) =>
+      Array.from(document.head.querySelectorAll(seletor)).map(
+        (elemento) => elemento.getAttribute(atributo) ?? ''
+      )
+    return {
+      idioma: document.documentElement.getAttribute('lang'),
+      titulos: Array.from(document.head.querySelectorAll('title')).map(
+        (titulo) => titulo.textContent ?? ''
+      ),
+      descricoes: valores('meta[name="description"]', 'content'),
+      canonicos: valores('link[rel="canonical"]', 'href'),
+      ogTitulos: valores('meta[property="og:title"]', 'content'),
+      ogDescricoes: valores('meta[property="og:description"]', 'content'),
+      ogUrls: valores('meta[property="og:url"]', 'content'),
+      og: Array.from(document.querySelectorAll('meta[property^="og:"]')).map(
+        (meta) => `${meta.getAttribute('property')}="${meta.getAttribute('content')}"`
+      ),
+    }
+  })
+}
+
+/* Uma etiqueta, uma vez, com o valor esperado. Devolve o problema, ou null. */
+function conferirUnica(
+  nome: string,
+  achados: string[],
+  esperados: readonly string[]
+): string | null {
+  if (achados.length !== 1) {
+    return `${nome}: ${achados.length} no <head>, e não 1 (${JSON.stringify(achados)})`
+  }
+  if (!esperados.includes(achados[0] as string)) {
+    return `${nome}: "${achados[0]}", esperado ${esperados.map((e) => `"${e}"`).join(' ou ')}`
+  }
+  return null
+}
+
+test('cada página da lista entrega no <head> o título, a descrição, o canônico e o Open Graph da entrada dela, em pt-BR', async ({
+  page,
+}, informacoes) => {
+  const falhas: string[] = []
+  const conferidas: string[] = []
+
+  for (const { endereco, titulo, descricao } of PAGINAS_PUBLICAS) {
+    const resposta = await page.goto(endereco)
+    if (resposta?.status() !== 200) {
+      falhas.push(`${endereco}: respondeu ${resposta?.status()}, e não 200`)
+      continue
+    }
+    const cabeca = await lerCabeca(page)
+    const canonicosAceitos =
+      endereco === '/'
+        ? [ENDERECO_OFICIAL, `${ENDERECO_OFICIAL}/`]
+        : [`${ENDERECO_OFICIAL}${endereco}`]
+
+    const problemas = [
+      cabeca.idioma === 'pt-BR' ? null : `<html lang>: "${cabeca.idioma}", esperado "pt-BR"`,
+      conferirUnica('<title>', cabeca.titulos, [titulo]),
+      conferirUnica('meta description', cabeca.descricoes, [descricao]),
+      conferirUnica('link canonical', cabeca.canonicos, canonicosAceitos),
+      conferirUnica('og:title', cabeca.ogTitulos, [titulo]),
+      conferirUnica('og:description', cabeca.ogDescricoes, [descricao]),
+      /* og:url igual ao canônico que a página entregou, e não a outro dos aceitos. */
+      conferirUnica(
+        'og:url',
+        cabeca.ogUrls,
+        cabeca.canonicos.length === 1 ? cabeca.canonicos : canonicosAceitos
+      ),
+    ].filter((problema): problema is string => problema !== null)
+
+    if (problemas.length > 0) {
+      falhas.push(...problemas.map((problema) => `${endereco}: ${problema}`))
+      continue
+    }
+    conferidas.push(`${endereco} · canonical e og:url "${cabeca.canonicos[0]}" · lang pt-BR`)
+  }
+
+  console.log(
+    `[${informacoes.project.name}] páginas com metadados conferidos: ${conferidas.length} de ${PAGINAS_PUBLICAS.length}\n  ` +
+      conferidas.join('\n  ')
+  )
+  expect(falhas, `metadados do <head> com defeito:\n${falhas.join('\n')}`).toEqual([])
+  expect(conferidas.length).toBe(PAGINAS_PUBLICAS.length)
+})
+
+/*
+ * A RAIZ NÃO PUBLICADA NÃO MUDA NO <head> (Q5 (a) da pagina-processo-seletivo).
+ *
+ * O título e a descrição são os do src/app/layout.tsx, lidos do arquivo, e não
+ * copiados aqui. Ler do arquivo só prova que a página entrega o que o arquivo
+ * diz; para "a descrição é a de antes", o teste guarda também a impressão
+ * SHA-256 da descrição de antes desta change (a da main em 21/11/2026, 108
+ * caracteres). Mudar a descrição da raiz deixa o teste vermelho, e a mudança só
+ * entra com decisão escrita do Gabriel, que troca a impressão junto.
+ *
+ * Nenhum link canônico e nenhum meta Open Graph: a produção até a R1 não ganha
+ * nada no <head>. O ícone tem o teste dele, logo acima.
+ */
+const TITULO_DA_RAIZ = 'Portal LIACUP'
+const IMPRESSAO_DA_DESCRICAO_DA_RAIZ =
+  '84cffcf3d47962d526341a23f92952ace78a4453b27b7dbdb258fcd608bfad97'
+
+/* Lê o título e a descrição do metadata do layout raiz, só as chaves do primeiro nível. */
+function metadadosDoLayoutRaiz(): { titulo: string | null; descricao: string | null } {
+  const arquivo = readFileSync(join(process.cwd(), 'src', 'app', 'layout.tsx'), 'utf8')
+  const bloco =
+    arquivo.match(/export const metadata: Metadata = \{\r?\n([\s\S]*?)\r?\n\}/)?.[1] ?? ''
+  const titulo = bloco.match(/^ {2}title:\s*(['"])(.*?)\1,/m)?.[2] ?? null
+  const descricao = bloco.match(/^ {2}description:\s*(['"])([\s\S]*?)\1,/m)?.[2] ?? null
+  return { titulo, descricao }
+}
+
+test('a raiz não publicada tem o título e a descrição de antes, e nenhum canônico nem Open Graph', async ({
+  page,
+}, informacoes) => {
+  const doArquivo = metadadosDoLayoutRaiz()
+  expect(
+    doArquivo.titulo,
+    'não achei o title do metadata em src/app/layout.tsx; o teste precisa ser revisto'
+  ).not.toBeNull()
+  expect(
+    doArquivo.descricao,
+    'não achei a description do metadata em src/app/layout.tsx; o teste precisa ser revisto'
+  ).not.toBeNull()
+  const impressao = createHash('sha256')
+    .update(doArquivo.descricao as string)
+    .digest('hex')
+
+  await page.goto(`${ORIGEM_NAO_PUBLICADO}/`)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Portal em construção')
+  const cabeca = await lerCabeca(page)
+
+  const problemas = [
+    doArquivo.titulo === TITULO_DA_RAIZ
+      ? null
+      : `src/app/layout.tsx: title "${doArquivo.titulo}", esperado "${TITULO_DA_RAIZ}"`,
+    impressao === IMPRESSAO_DA_DESCRICAO_DA_RAIZ
+      ? null
+      : `src/app/layout.tsx: a description mudou (SHA-256 ${impressao}, a de antes é ${IMPRESSAO_DA_DESCRICAO_DA_RAIZ})`,
+    cabeca.idioma === 'pt-BR' ? null : `<html lang>: "${cabeca.idioma}", esperado "pt-BR"`,
+    conferirUnica('<title>', cabeca.titulos, [TITULO_DA_RAIZ]),
+    conferirUnica('meta description', cabeca.descricoes, [doArquivo.descricao as string]),
+    cabeca.canonicos.length === 0
+      ? null
+      : `link canonical: ${cabeca.canonicos.length}, e não 0 (${JSON.stringify(cabeca.canonicos)})`,
+    cabeca.og.length === 0
+      ? null
+      : `meta og:*: ${cabeca.og.length}, e não 0 (${cabeca.og.join(' ')})`,
+  ].filter((problema): problema is string => problema !== null)
+
+  console.log(
+    `[${informacoes.project.name}] raiz não publicada: <title> ${cabeca.titulos.length} ("${cabeca.titulos.join('", "')}")` +
+      ` · meta description ${cabeca.descricoes.length}, igual à do layout.tsx: ${cabeca.descricoes[0] === doArquivo.descricao}` +
+      ` · SHA-256 da do layout.tsx igual à de antes: ${impressao === IMPRESSAO_DA_DESCRICAO_DA_RAIZ}` +
+      ` · link canonical: ${cabeca.canonicos.length} · meta og:*: ${cabeca.og.length}`
+  )
+  expect(problemas, `a raiz não publicada mudou no <head>:\n${problemas.join('\n')}`).toEqual([])
+})
+
+/*
+ * UM TÍTULO PRINCIPAL POR PÁGINA, E NENHUM NÍVEL PULADO (spec seo; PADROES-DE-
+ * CODIGO.md 11.1; pagina-processo-seletivo, design.md D8, item 2).
+ *
+ * Lê os títulos que a página expõe ao leitor de tela, na ordem do documento:
+ * <h1> a <h6> e [role="heading"], fora de aria-hidden e visíveis (o menu
+ * lateral fechado não entra). Cada página tem exatamente um de nível 1, ele é o
+ * primeiro, e cada título desce no máximo um nível em relação ao anterior.
+ */
+test('cada página da lista tem um título de nível 1 só, e os títulos não pulam nível', async ({
+  page,
+}, informacoes) => {
+  const falhas: string[] = []
+  const notas: string[] = []
+  let conferidas = 0
+  let titulos = 0
+
+  for (const { endereco } of PAGINAS_PUBLICAS) {
+    await page.goto(endereco)
+    const lidos = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6, [role="heading"]'))
+        .filter((h) => h.checkVisibility() && !h.closest('[aria-hidden="true"]'))
+        .map((h) => ({
+          nivel: Number(h.getAttribute('aria-level') ?? h.tagName.slice(1)) || 2,
+          texto: (h.textContent ?? '').replace(/\s+/g, ' ').trim().slice(0, 60),
+        }))
+    )
+    titulos += lidos.length
+    const antes = falhas.length
+    const principais = lidos.filter((t) => t.nivel === 1)
+    if (principais.length !== 1) {
+      falhas.push(
+        `${endereco}: ${principais.length} títulos de nível 1, e não 1: ` +
+          principais.map((t) => `"${t.texto}"`).join(' e ')
+      )
+    }
+    const primeiro = lidos[0]
+    if (primeiro && primeiro.nivel !== 1) {
+      falhas.push(
+        `${endereco}: o primeiro título é h${primeiro.nivel} "${primeiro.texto}", antes do h1`
+      )
+    }
+    for (let i = 1; i < lidos.length; i += 1) {
+      const anterior = lidos[i - 1]
+      const atual = lidos[i]
+      if (anterior && atual && atual.nivel > anterior.nivel + 1) {
+        falhas.push(
+          `${endereco}: h${atual.nivel} "${atual.texto}" depois de h${anterior.nivel}` +
+            ` "${anterior.texto}" pula o nível ${anterior.nivel + 1}`
+        )
+      }
+    }
+    notas.push(`${endereco} ${lidos.map((t) => `h${t.nivel}`).join(' ')}`)
+    if (falhas.length === antes) conferidas += 1
+  }
+
+  console.log(
+    `[${informacoes.project.name}] páginas com os títulos conferidos: ${conferidas} de ${PAGINAS_PUBLICAS.length}` +
+      ` · títulos lidos: ${titulos}\n  ${notas.join('\n  ')}`
+  )
+  expect(falhas, `títulos com defeito:\n${falhas.join('\n')}`).toEqual([])
+  expect(conferidas).toBe(PAGINAS_PUBLICAS.length)
+})
+
+/*
+ * A PÁGINA ATUAL NAS COLUNAS DO RODAPÉ E O DESTAQUE NA PRÓPRIA PÁGINA (spec
+ * navegacao-publica; pagina-processo-seletivo, design.md D12). Anunciada
+ * (aria-current="page") e marcada por um traço, e não só pela cor: o
+ * sublinhado, que os outros links não têm em repouso. Nenhum outro link é
+ * anunciado como página atual.
+ */
+async function marcasDe(links: Locator) {
+  return links.evaluateAll((elementos) =>
+    elementos.map((link) => ({
+      href: link.getAttribute('href') ?? '',
+      texto: (link.textContent ?? '').trim(),
+      ariaCurrent: link.getAttribute('aria-current'),
+      tracado: [link, ...Array.from(link.querySelectorAll('*'))].some((e) =>
+        getComputedStyle(e).textDecorationLine.includes('underline')
+      ),
+    }))
+  )
+}
+
+test('a página atual é marcada nas colunas do rodapé, e o botão de destaque é marcado na própria página', async ({
+  page,
+}, informacoes) => {
+  const falhas: string[] = []
+  const contagem = { links: 0, marcadosNoRodape: 0, destaques: 0, destaqueMarcado: 0 }
+  const destaque = paginaDeDestaque()
+
+  for (const { endereco, colunaDoRodape } of PAGINAS_PUBLICAS) {
+    await page.goto(endereco)
+    await page.mouse.move(0, 0)
+
+    const rodape = await marcasDe(
+      page.getByRole('contentinfo').getByRole('navigation').getByRole('link')
+    )
+    contagem.links += rodape.length
+    for (const link of rodape) {
+      const onde = `${endereco}: rodapé, link "${link.texto}" (href ${link.href})`
+      if (link.href === endereco) {
+        if (link.ariaCurrent !== 'page') {
+          falhas.push(`${onde} sem aria-current="page" na própria página`)
+        } else if (!link.tracado) {
+          falhas.push(`${onde} com aria-current, mas sem o sublinhado`)
+        } else contagem.marcadosNoRodape += 1
+      } else {
+        if (link.ariaCurrent !== null) {
+          falhas.push(`${onde} com aria-current="${link.ariaCurrent}" fora da página dele`)
+        }
+        if (link.tracado) falhas.push(`${onde} sublinhado em repouso fora da página dele`)
+      }
+    }
+    if (colunaDoRodape !== null && !rodape.some((link) => link.href === endereco)) {
+      falhas.push(`${endereco}: a página é da coluna "${colunaDoRodape}" e não tem link nela`)
+    }
+
+    if (destaque) {
+      const [noCabecalho] = await marcasDe(
+        page.getByRole('banner').locator(`a[href="${destaque.endereco}"]`).filter({ visible: true })
+      )
+      contagem.destaques += 1
+      const onde = `${endereco}: cabeçalho, botão "${destaque.rotulo}"`
+      if (!noCabecalho) falhas.push(`${onde} não aparece`)
+      else if (endereco === destaque.endereco) {
+        if (noCabecalho.ariaCurrent !== 'page') {
+          falhas.push(`${onde} sem aria-current="page" na própria página`)
+        } else if (!noCabecalho.tracado) {
+          falhas.push(`${onde} com aria-current, mas sem o sublinhado`)
+        } else contagem.destaqueMarcado += 1
+      } else {
+        if (noCabecalho.ariaCurrent !== null) {
+          falhas.push(`${onde} com aria-current fora da página dele`)
+        }
+        if (noCabecalho.tracado) falhas.push(`${onde} sublinhado em repouso fora da página dele`)
+      }
+    }
+  }
+
+  const esperadosNoRodape = PAGINAS_PUBLICAS.filter((p) => p.colunaDoRodape !== null).length
+  console.log(
+    `[${informacoes.project.name}] links das colunas do rodapé conferidos: ${contagem.links}` +
+      ` em ${PAGINAS_PUBLICAS.length} páginas · página atual marcada no rodapé:` +
+      ` ${contagem.marcadosNoRodape} de ${esperadosNoRodape} páginas que estão numa coluna` +
+      ` · botão de destaque conferido em ${contagem.destaques} páginas,` +
+      ` marcado na própria: ${contagem.destaqueMarcado}`
+  )
+  expect(falhas, `página atual com defeito:\n${falhas.join('\n')}`).toEqual([])
+  expect(contagem.marcadosNoRodape).toBe(esperadosNoRodape)
+  expect(contagem.destaqueMarcado).toBe(destaque ? 1 : 0)
+})
+
+/*
+ * O NOME ACESSÍVEL DA MARCA (spec navegacao-publica; pagina-processo-seletivo,
+ * design.md D12; WCAG 2.5.3). Começa pelo texto que a marca mostra NESTA
+ * largura, lido da tela, e termina em ", página inicial", sem espaço antes da
+ * vírgula (Q10 (a) do Gabriel, 21/11/2026). Acima de 1024 px, onde o nome da
+ * liga aparece, o nome acessível o contém. Até 1024 px o nome da liga não
+ * aparece, como no protótipo.
+ */
+const PONTO_DE_TROCA_DO_CABECALHO = 1024
+const FIM_DO_NOME_DA_MARCA = ', página inicial'
+
+test('o nome acessível da marca começa pelo que ela mostra e termina em ", página inicial", sem espaço antes da vírgula', async ({
+  page,
+}, informacoes) => {
+  const largura = page.viewportSize()?.width ?? 0
+  const acimaDoPonto = largura > PONTO_DE_TROCA_DO_CABECALHO
+  const falhas: string[] = []
+  const notas: string[] = []
+  let conferidas = 0
+
+  for (const { endereco } of PAGINAS_PUBLICAS) {
+    await page.goto(endereco)
+    const marca = page.getByRole('banner').locator('a[href="/"]').first()
+    /*
+     * O que está NA TELA, lido dos pixels e não da árvore de acessibilidade.
+     * Desde a rodada 3 do dev-frontend (Q10 (a)), a marca tem o nome inteiro
+     * ("LIACUP…, página inicial") num trecho só para leitor de tela, na caixa
+     * de 1 px recortada da técnica C7 do WCAG, um trecho por lado do ponto de
+     * troca, com o outro em display: none; e o texto desenhado na tela fica
+     * com aria-hidden. O innerText traria os dois. Então conta só o texto que
+     * se vê, mesmo com aria-hidden: o de elemento visível e maior que 1 px. O
+     * nome acessível, abaixo, vem da árvore; o WCAG 2.5.3 é que um contenha o
+     * outro.
+     */
+    const visivel = await marca.evaluate((link) => {
+      const partes: string[] = []
+      const caminho = document.createTreeWalker(link, NodeFilter.SHOW_TEXT)
+      for (let no = caminho.nextNode(); no; no = caminho.nextNode()) {
+        let escondido = false
+        for (let e = no.parentElement; e && link.contains(e); e = e.parentElement) {
+          const caixa = e.getBoundingClientRect()
+          if (!e.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })) escondido = true
+          if (caixa.width <= 1 || caixa.height <= 1) escondido = true
+        }
+        if (!escondido) partes.push(no.textContent ?? '')
+      }
+      return partes.join('').replace(/\s+/g, ' ').trim()
+    })
+    const nome = (await nomeAcessivel(marca)).replace(/\s+/g, ' ').trim()
+    const onde = `${endereco}, ${largura} px: texto visível "${visivel}", nome acessível "${nome}"`
+    const antes = falhas.length
+    if (!visivel || !nome.startsWith(visivel)) {
+      falhas.push(`${onde}: o nome não começa pelo texto visível`)
+    }
+    if (!nome.endsWith(FIM_DO_NOME_DA_MARCA))
+      falhas.push(`${onde}: o nome não termina em "${FIM_DO_NOME_DA_MARCA}"`)
+    /* O espaço antes da vírgula ("LIACUP , página inicial") é o defeito da rodada 1. */
+    if (/\s,/.test(nome)) falhas.push(`${onde}: o nome tem espaço antes da vírgula`)
+    if (acimaDoPonto) {
+      if (!visivel.includes(NOME_DA_LIGA)) {
+        falhas.push(
+          `${onde}: acima de ${PONTO_DE_TROCA_DO_CABECALHO} px o nome da liga devia aparecer`
+        )
+      }
+      if (!nome.includes(NOME_DA_LIGA)) {
+        falhas.push(`${onde}: o nome acessível não tem o nome da liga, que está na tela`)
+      }
+    } else if (visivel.includes(NOME_DA_LIGA)) {
+      falhas.push(`${onde}: até ${PONTO_DE_TROCA_DO_CABECALHO} px o nome da liga não aparece`)
+    }
+    if (falhas.length === antes) conferidas += 1
+    notas.push(`${endereco} visível "${visivel}" · nome "${nome}"`)
+  }
+
+  console.log(
+    `[${informacoes.project.name}] marca conferida em ${conferidas} de ${PAGINAS_PUBLICAS.length} páginas` +
+      ` · nome da liga ${acimaDoPonto ? 'exigido no nome acessível' : 'fora da tela'} nesta largura` +
+      `\n  ${notas.join('\n  ')}`
+  )
+  expect(falhas, `marca com defeito:\n${falhas.join('\n')}`).toEqual([])
+  expect(conferidas).toBe(PAGINAS_PUBLICAS.length)
 })

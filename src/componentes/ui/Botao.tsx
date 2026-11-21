@@ -19,9 +19,7 @@
  * e do fantasma vêm do adendo de contraste da ADR-0003.
  */
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import estilos from './Botao.module.css'
-
-type VarianteDoBotao = 'primario' | 'secundario' | 'fantasma' | 'icone'
+import { aparenciaDeBotao, type VarianteDoBotao } from './aparencia-de-botao'
 
 type PropsComuns = {
   /** Conteúdo do botão. Composição, não uma prop `texto`. */
@@ -45,9 +43,8 @@ export function Botao({ children, larguraTotal = false, type = 'button', ...rest
     variante?: VarianteDoBotao
   }
 
-  const classes = [estilos.botao, estilos[variante], larguraTotal ? estilos.larguraTotal : '']
-    .filter(Boolean)
-    .join(' ')
+  // A mesma função dá a aparência ao link com cara de botão: um contrato só.
+  const classes = aparenciaDeBotao(variante, larguraTotal ? 'total' : 'natural')
 
   return (
     <button type={type} className={classes} {...atributos}>

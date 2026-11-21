@@ -2,8 +2,19 @@
   {
     "endereco": "/",
     "rotulo": "Início",
+    "titulo": "Liga Acadêmica Multiprofissional de Cuidados Paliativos · LIACUP",
+    "descricao": "A LIACUP reúne estudantes de diversas áreas do conhecimento em torno do ensino, da pesquisa e da extensão em cuidados paliativos.",
     "noMenu": true,
     "colunaDoRodape": "Portal",
     "destaque": false
+  },
+  {
+    "endereco": "/processo-seletivo",
+    "rotulo": "Processo seletivo",
+    "titulo": "Processo seletivo · LIACUP",
+    "descricao": "A LIACUP seleciona novos ligantes por meio de processo seletivo, aberto a estudantes de graduação da Universidade de Brasília a partir do segundo semestre.",
+    "noMenu": false,
+    "colunaDoRodape": null,
+    "destaque": true
   }
 ]

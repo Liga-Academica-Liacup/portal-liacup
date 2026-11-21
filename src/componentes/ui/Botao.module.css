@@ -1,5 +1,10 @@
 /* Nenhum valor escrito a mao: tudo vem de src/estilos/tokens.css.
-   Fidelidade ao .btn aprovado, com os desvios registrados na ADR-0004. */
+   Fidelidade ao .btn aprovado, com os desvios registrados na ADR-0004.
+
+   Um contrato so para o <button> do Botao e para o link com aparencia de botao
+   (aparencia-de-botao.ts): os estados de hover, pressionado e pagina atual
+   vieram do AparenciaDeBotao.module.css da layout-e-hero, que saiu na
+   pagina-processo-seletivo (Q4 (c) do Gabriel, 21/11/2026; ADR-0006). */
 .botao {
   display: inline-flex;
   align-items: center;
@@ -14,6 +19,7 @@
   font-size: var(--font-size-controle);
   line-height: var(--line-height-controle);
   color: var(--color-text);
+  text-decoration: none;
 
   background: transparent;
   border-radius: var(--radius-pill);
@@ -21,6 +27,7 @@
 
   /* ADR-0004 2.1: alvo de toque, em todas as larguras, sem media query */
   min-height: var(--alvo-de-toque);
+  min-width: var(--alvo-de-toque);
 }
 
 .botao:disabled {
@@ -55,6 +62,54 @@
   min-width: var(--alvo-de-toque);
   padding: 0;
   color: var(--color-accent-700);
+}
+
+/* Hover so onde ha hover (ADR-0006): no toque, o hover gruda depois do toque.
+   O botao desabilitado nao reage. Texto --color-bg sobre --color-accent-700:
+   6,91:1. */
+@media (hover: hover) {
+  .primario:not(:disabled):hover {
+    background: var(--color-accent-700);
+    color: var(--color-bg);
+  }
+
+  .secundario:not(:disabled):hover {
+    background: var(--color-fundo-hover);
+    color: var(--color-text);
+  }
+
+  /* Protótipo: .btn-ghost:hover, 10% da cor de destaque. Texto
+     --color-accent-700 sobre o fundo misturado: 6,22:1 sobre --color-bg e
+     5,57:1 sobre --color-surface. O foco continua o anel de
+     --color-accent-700 do global.css, que o fundo do hover não imita. */
+  .fantasma:not(:disabled):hover,
+  .icone:not(:disabled):hover {
+    background: var(--color-fundo-hover-fantasma);
+  }
+}
+
+/* Pressionado: mouse, caneta e toque. Texto --color-bg sobre
+   --color-accent-800: 9,06:1. */
+.primario:not(:disabled):active {
+  background: var(--color-accent-800);
+}
+
+.secundario:not(:disabled):active {
+  background: var(--color-fundo-pressionado);
+}
+
+/* Protótipo: .btn-ghost:active, 18% da cor de destaque. Texto
+   --color-accent-700: 5,70:1 sobre --color-bg e 5,14:1 sobre --color-surface. */
+.fantasma:not(:disabled):active,
+.icone:not(:disabled):active {
+  background: var(--color-fundo-pressionado-fantasma);
+}
+
+/* Pagina atual, no link que navega: tambem pelo sublinhado, e nao so pela cor
+   (adaptacao aprovada, REFERENCIA-VISUAL.md 3). */
+.botao[aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: var(--underline-offset);
 }
 
 .larguraTotal {

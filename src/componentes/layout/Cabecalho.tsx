@@ -18,10 +18,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { paginaDeDestaque, paginasDoMenu } from '@/lib/utils/paginas-publicas'
-import { aparenciaDeBotao } from './aparencia-de-botao'
+import { aparenciaDeBotao } from '@/componentes/ui/aparencia-de-botao'
 import estilos from './Cabecalho.module.css'
 import { LinkDaNavegacao } from './LinkDaNavegacao'
 import { MenuLateral } from './MenuLateral'
+
+/* O que a marca mostra: a sigla e, acima de 1024 px, também o nome da liga. */
+const SIGLA = 'LIACUP'
+const NOME_DA_LIGA = 'Liga Acadêmica Multiprofissional de Cuidados Paliativos · UnB'
+
+/** O fim do nome acessível da marca, só para leitor de tela: o nome não diz o destino. */
+const DESTINO_DA_MARCA = ', página inicial'
 
 export function Cabecalho() {
   const paginas = paginasDoMenu()
@@ -30,10 +37,21 @@ export function Cabecalho() {
   return (
     <header className={estilos.cabecalho}>
       <div className={estilos.linha}>
-        {/* O nome acessível diz o destino: no celular só "LIACUP" aparece, e ele
-            sozinho não diz que o link leva à página inicial. Começa pelo texto
-            visível, para quem fala o nome com controle por voz. */}
-        <Link href="/" className={estilos.marca} aria-label="LIACUP, página inicial">
+        {/* O nome acessível começa pelo que a marca mostra, sem aria-label:
+            "LIACUP" e, acima de 1024 px, também o nome da liga, que só então
+            aparece. No fim, ", página inicial", porque o nome sozinho não diz
+            o destino. Assim quem fala o nome com controle por voz acha o link
+            pelo que está escrito (WCAG 2.5.3).
+            O nome inteiro mora num trecho só para leitor de tela, na caixa de
+            1 px da técnica C7 (Q10 (a) do Gabriel, 21/11/2026), e o texto da
+            tela fica fora da árvore de acessibilidade, para não ser lido duas
+            vezes. Com só o ", página inicial" na caixa e o resto vindo da
+            tela, o navegador separa a caixa com um espaço, e o nome saía
+            "LIACUP , página inicial" (medido no Chromium, rodada 3). As mesmas
+            constantes desenham a tela e o nome, para os dois não se
+            separarem. Há um trecho por lado do ponto de troca, e só um
+            aparece por largura. */}
+        <Link href="/" className={estilos.marca}>
           {/* alt vazio: o nome "LIACUP", ao lado, já diz o que a logo diz. */}
           <Image
             src="/logo-liacup-256.png"
@@ -43,11 +61,17 @@ export function Cabecalho() {
             priority
             className={estilos.logo}
           />
-          <span className={estilos.nomes}>
-            <span className={estilos.sigla}>LIACUP</span>
-            <span className={estilos.nomeDaLiga}>
-              Liga Acadêmica Multiprofissional de Cuidados Paliativos · UnB
-            </span>
+          <span className={estilos.nomes} aria-hidden="true">
+            <span className={estilos.sigla}>{SIGLA}</span>
+            {/* O espaço do começo separa "LIACUP" do nome no texto copiado da
+                tela; no começo da linha, ele não aparece. */}
+            <span className={estilos.nomeDaLiga}> {NOME_DA_LIGA}</span>
+          </span>
+          <span className={`${estilos.soParaLeitorDeTela} ${estilos.nomeAteOPontoDeTroca}`}>
+            {SIGLA + DESTINO_DA_MARCA}
+          </span>
+          <span className={`${estilos.soParaLeitorDeTela} ${estilos.nomeAcimaDoPontoDeTroca}`}>
+            {`${SIGLA} ${NOME_DA_LIGA}${DESTINO_DA_MARCA}`}
           </span>
         </Link>
 

@@ -1,0 +1,36 @@
+/* Quadro "Quem pode se inscrever". Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Texto --color-neutral-800 #474238 sobre --color-surface #ebddc5: 7,45:1. */
+
+/* O quadro é a própria lista: sem parágrafo antes dela (correção do Gabriel,
+   21/11/2026). */
+.quadro {
+  margin: 0;
+  padding: var(--space-6) calc(var(--space-3) + var(--space-4));
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  color: var(--color-neutral-800);
+  list-style: none;
+}
+
+/* Como no protótipo: uma coluna estreita para a bolinha e o texto ao lado. */
+.item {
+  display: grid;
+  grid-template-columns: var(--coluna-do-marcador-da-lista) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding-block: var(--espaco-vertical-do-item-da-lista);
+}
+
+/* A bolinha verde, centrada na primeira linha do texto. Decorativa. */
+.item::before {
+  content: '';
+  width: var(--tamanho-marcador-da-lista);
+  height: var(--tamanho-marcador-da-lista);
+  margin-top: calc(
+    (var(--line-height-body) * var(--font-size-body) - var(--tamanho-marcador-da-lista)) / 2
+  );
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-2-600);
+}
