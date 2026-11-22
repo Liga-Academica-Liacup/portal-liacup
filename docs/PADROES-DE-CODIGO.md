@@ -39,7 +39,7 @@ src/
     global.css
 ```
 
-Cinco pastas de raiz completam a árvore, acrescentadas conforme foram sendo necessárias e registradas
+Estas pastas completam a árvore, acrescentadas conforme foram sendo necessárias e registradas
 aqui em vez de aparecerem sem aviso:
 
 ```
@@ -49,6 +49,8 @@ public/                     Arquivo estatico. Convencao obrigatoria do Next
 supabase/                   Esquema, politicas e dados de exemplo, versionados (F02)
   migrations/               Arquivos numerados, rodam em ordem
 tests/politicas/            Testes de politica de acesso: permissao E recusa (F02)
+tests/barreiras/            Testes da barreira do Git e da conferencia do ambiente local
+.claude/ganchos/            Ganchos do Claude Code; so o Gabriel os altera (SEGURANCA.md §5)
 ```
 
 **Regra de dependência entre camadas** — vale mais que a estrutura em si:
@@ -223,7 +225,8 @@ para a pergunta não voltar do zero daqui a seis meses.
 proposta com `URGENTE` no título, CI verde continua obrigatório, incorporar assim que passar. Nunca
 push direto, nunca desligar a proteção, nunca `--no-verify` — se o CI impede a correção de uma
 emergência, isso é informação sobre o CI e vira tarefa, não exceção. Procedimento completo no
-ADR-0005, seção 2.4.
+ADR-0005, seção 2.4. O `revisor` e o `guardiao-appsec` passam pela correção antes do merge, como em
+toda change; o ADR-0005 é anterior ao guardião e não se edita.
 
 ---
 

@@ -1,8 +1,9 @@
 # Segurança do Portal LIACUP
 
-**Versão 2 · 20 de novembro de 2026** · change `auditoria-de-base-appsec`: AS-17, o modo
-auditoria de base, a regra do binário e o registro de origem da seção 7. A versão 1, de 19/11, veio
-da change `montar-guardiao-appsec`
+**Versão 3 · 21 de novembro de 2026** · change `endurecer-agentes-e-git-local`: a barreira do Git,
+a conferência do ambiente local, a conferência proporcional (regra 2 da dieta), a lista nova do
+AS-17 e a saída de sete riscos da seção 6. A versão 2, de 20/11, veio da change
+`auditoria-de-base-appsec`; a 1, de 19/11, da `montar-guardiao-appsec`
 
 Nível 3 da hierarquia da constitution, ao lado dos padrões de código e da referência visual. Quem
 implementa lê antes de escrever; o `guardiao-appsec` lê antes de auditar. A primeira change de cada
@@ -116,10 +117,16 @@ sentido. Todo relatório do guardião cita os achados por código.
 - **AS-16 LGPD:** dado pessoal só com finalidade, base legal e prazo de retenção, e purga no prazo.
   A finalidade, a base e o prazo de cada dado estão em [`DADOS-PESSOAIS.md`](DADOS-PESSOAIS.md), e
   não se repetem aqui.
-- **AS-17 Configuração de agente:** `CLAUDE.md`, `.claude/agents/`, `.claude/skills/`,
-  `.claude/settings*.json`, `.mcp.json` e `openspec/config.yaml`. No modo diff, vale quando o diff
-  toca um desses caminhos, inclusive com arquivo não rastreado; no modo base, vale sempre.
-  Bloqueia:
+- **AS-17 Configuração de agente:** a pasta `.claude/` inteira (agentes, skills, `settings*.json`
+  e os ganchos de `.claude/ganchos/`), `.mcp.json`, `openspec/config.yaml` e todo arquivo que uma
+  ferramenta de agente de IA lê sozinha ao abrir a pasta, como instrução ou como configuração:
+  `CLAUDE.md`, `CLAUDE.local.md` e `AGENTS.md` em qualquer pasta, `GEMINI.md`, `.cursorrules`,
+  `.cursor/`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md` e
+  `.github/instructions/`. Ferramenta nova com arquivo próprio ganha linha por change. Contam também
+  as duas opções do `next.config.*` que fazem o Next escrever instrução a agentes no `AGENTS.md`:
+  `agentRules`, que fica `false`, e `experimental.agentFeedback`, que fica desligado. No modo diff,
+  vale quando o diff toca um desses caminhos, inclusive com arquivo não rastreado; no modo base,
+  vale sempre. Bloqueia:
   - agente ou skill que ganha ferramenta de escrita ou de terminal sem decisão registrada. A
     ferramenta de skill (`allowed-tools`) conta como a de agente (`tools`);
   - gancho, variável de ambiente ou servidor MCP novo sem decisão do Gabriel. Gancho declarado no
@@ -130,9 +137,13 @@ sentido. Todo relatório do guardião cita os achados por código.
     `.claude/skills/` só vale se a proposta da change disser que rodou o `openspec update`, com a
     versão antes e depois, e trouxer a saída de `openspec --version`. Sem isso, BLOQUEADO. Limite
     conhecido: a regra não prova a origem, e uma alteração à mão feita junto com um update
-    verdadeiro passaria. Por isso o conteúdo da skill é auditado como configuração em todo caso.
+    verdadeiro passaria. Por isso o conteúdo da skill é auditado como configuração em todo caso;
+  - `agentRules` posto como verdadeiro ou tirado do `next.config.*`, ou `experimental.agentFeedback`
+    ligado;
+  - arquivo de instrução a agentes da lista acima que aparece no diff, rastreado ou não, inclusive
+    gerado por ferramenta (o `AGENTS.md` do `next dev`, por exemplo).
 
-  Mudança nomeada numa decisão registrada não bloqueia por causa dela, em nenhum dos quatro casos.
+  Mudança nomeada numa decisão registrada não bloqueia por causa dela, em nenhum dos seis casos.
   **Decisão registrada** é a proposta aprovada no Portão 1 que nomeia a mudança, ou o aceite escrito
   do Gabriel no `relatorio.md`. O relatório do guardião cita onde ela está.
 
@@ -161,6 +172,52 @@ change (`proposal.md`, `design.md`, `tasks.md` e a spec delta, em `openspec/chan
 documento de `docs/` citado na hierarquia da constitution, na tabela de leitura do `CLAUDE.md` ou
 no checklist da seção 4, como o `docs/DADOS-PESSOAIS.md` de AS-16.
 Na dúvida, checklist inteiro.
+
+**Conferência proporcional** (regra 2 da dieta, Gabriel, 20/11/2026; escrita aqui pela change
+`endurecer-agentes-e-git-local` e em vigor a partir da primeira change aprovada no Portão 1 depois
+do merge dela). Fora da auditoria de base, o guardião confere na proporção do risco, e quem decide
+é a lista de arquivos do diff, não o julgamento. A ordem é esta, e a primeira resposta "sim" vale:
+
+1. Algum arquivo do diff está na **lista do gatilho**, ou o diff acrescenta `process.env` ou
+   `NEXT_PUBLIC_`? Então o checklist inteiro.
+2. A change é só de documentação que descreve? Então a conferência curta, AS-01 e AS-09.
+3. A change é da R1, e todo arquivo do diff está na **lista de tela**? Então AS-01, AS-02, AS-04,
+   AS-07 e AS-15.
+4. Qualquer outro caso: o checklist inteiro.
+
+O diff é o do parágrafo seguinte: `git diff --name-only main...HEAD` mais `git status --porcelain
+--untracked-files=all`. A busca de conteúdo é `git diff -G 'process\.env|NEXT_PUBLIC_' --name-only
+main...HEAD` e, nos arquivos não rastreados, `git grep -c --untracked`.
+
+- **Lista do gatilho:**
+  - `.claude/`, `CLAUDE.md`, `.mcp.json`, `openspec/config.yaml`,
+    `openspec/changes/MODELO-relatorio.md` e os arquivos de instrução a agentes do AS-17;
+  - todo arquivo ou pasta cujo nome começa com `.git`, em qualquer pasta (`.gitignore`,
+    `.gitattributes`, `.github/`, o que inclui o CI), mais `.npmrc` e `.nvmrc`;
+  - `package.json` e `package-lock.json`;
+  - `supabase/`, `src/lib/supabase/`, `tests/politicas/` e `tests/banco/`;
+  - `src/proxy.ts`, `next.config.*` e `vercel.json`;
+  - `.env*` e `scripts/`;
+  - `src/app/(interno)/` e todo `route.ts`;
+  - `docs/constitution.md`, `docs/PADROES-DE-CODIGO.md`, `docs/SEGURANCA.md`,
+    `docs/DADOS-PESSOAIS.md`, `docs/EQUIPE-DE-AGENTES.md`, `docs/PLANO-DE-DESENVOLVIMENTO.md` e
+    `docs/ADR-*`;
+  - as specs `equipe-de-agentes`, `camada-de-dados`, `fundacao-e-ci` e `publicacao-do-site`.
+- **Lista de tela:**
+  - `src/app/(site)/`, fora os `route.ts`, `src/componentes/`, `src/features/`, `src/estilos/` e
+    `src/lib/utils/`;
+  - `public/`, `assets/` e `tests/e2e/`;
+  - `README.md`, `docs/conteudo-institucional.md` e `docs/REFERENCIA-VISUAL.md`;
+  - `openspec/changes/<change>/` e o caminho dela em `openspec/changes/archive/`;
+  - as specs de `openspec/specs/` que não estão no gatilho.
+
+  Na conferência curta, os artefatos da change e os documentos citados no `CLAUDE.md` governam e
+  pedem o checklist inteiro. A ordem acima decide antes: uma change da R1 só de tela que também
+  mexe neles fica no passo 3, e não no 2.
+- **Quem aplica:** o líder técnico manda ao guardião a lista do diff e a classificação, com o passo
+  que decidiu. O guardião confere a classificação pela própria lista e, se discordar, aplica o
+  checklist inteiro e diz por quê.
+- A auditoria completa roda na última change de cada release (modo auditoria de base, abaixo).
 
 **O diff da change** é tudo o que mudou entre a `main` e a árvore de trabalho: o que já foi
 commitado na branch (`git diff --name-status main...HEAD`), o que ainda não foi e o que não é
@@ -218,6 +275,11 @@ que o guardião recebe, e é sobre ela que valem as regras desta seção.
 - **Limite conhecido:** texto comprimido dentro do binário (bloco zTXt, iTXt comprimido, o arquivo
   woff2 inteiro) não aparece numa busca por texto. Esse arquivo fica **coberto só pela origem
   declarada**, com essas palavras no relatório, e o AS-01 não aparece como conferido por busca nele.
+  O mesmo vale para o `prototipo/Portal-LIACUP.html`, que é texto: a linha 220 é o conteúdo de
+  `<script type="__bundler/manifest">` (linha 219), um JSON de uma linha com 1.192.346 caracteres e
+  9 entradas em base64, 4 `text/javascript` com `compressed: true`, 4 `font/woff2` e 1 `image/png`,
+  essas duas com `compressed: false` (relido pelo líder técnico em 21/11/2026). Esse conteúdo fica
+  **coberto só pela origem declarada**, o protótipo aprovado pela liga (`REFERENCIA-VISUAL.md` §1).
 
 **Pedido de comando.** O guardião não tem terminal; o que ele não verifica sozinho volta como
 pedido. O motivo das regras abaixo é o texto auditado: um comentário plantado no código pode tentar
@@ -259,9 +321,20 @@ sed -n 's/^VERCEL_AUTOMATION_BYPASS_SECRET=//p' .env | tr -d '\r\n' | git grep -
 ```
 
 A segunda forma roda uma vez para **cada** commit de `git rev-list main..HEAD`, com `<rev>` igual
-ao sha do commit, porque o push publica também os commits intermediários da branch. A terceira
-cobre a árvore de trabalho, e a quarta, o índice. O endereço vai entre aspas simples, como nas
-outras formas da tabela.
+ao sha do commit, porque o push publica também os commits intermediários da branch. **Antes dela**,
+o líder técnico registra `git rev-parse main` e o sha de `git ls-remote origin refs/heads/main`. A
+busca commit a commit só roda se os dois forem iguais, e então cobre todo commit que o push da
+branch publica. Se forem diferentes, o líder técnico para e pede ao Gabriel o `git fetch` e a
+atualização da `main` local, porque nenhum agente roda `git fetch`. A terceira forma cobre a árvore
+de trabalho, e a quarta, o índice. O endereço vai entre aspas simples, como nas outras formas da
+tabela.
+
+- **Antes da primeira execução** das quatro formas, o líder técnico confere `curl --version`: o
+  `-H @-` existe desde a 7.55. Versão anterior: não roda, e o item fica não verificado.
+- **O commit da prévia.** Antes das quatro formas, quem confere que a prévia serve o commit certo
+  da change é o Gabriel, no painel da Vercel, junto com o host. O líder técnico pede essa
+  conferência e registra a resposta dele no `relatorio.md` antes de ler o segredo. Nenhum agente
+  consulta o commit da prévia por linha de comando: o `gh` é recusado a agente pela barreira do Git.
 
 - O `sed` lê só a linha `VERCEL_AUTOMATION_BYPASS_SECRET=` do `.env`, sem carregar o resto do
   arquivo no ambiente, e o `tr` tira o `\r` (o `.env` é do Windows) e a quebra de linha. O valor
@@ -307,9 +380,20 @@ outras formas da tabela.
   caminhos podem citar o nome. A Vercel também expõe esse nome como
   variável de sistema nos deployments, e o `next dev` local carrega o `.env` inteiro no servidor:
   código que lesse a variável poderia imprimi-la na compilação ou no log. **Limite conhecido:** a
-  conferência pega só a leitura pelo nome. O `tests/politicas/ambiente.ts` carrega o `.env` inteiro
-  no ambiente dos testes de política, e o segredo vai junto; nenhum código lê o ambiente de forma
-  dinâmica hoje.
+  conferência pega só a leitura pelo nome, e não a leitura dinâmica. **Leitura dinâmica** é ler
+  `process.env` com um nome que vem de variável ou de argumento, percorrer o ambiente, ou repassá-lo
+  inteiro. Hoje:
+  - **leitura dinâmica restrita:** `tests/politicas/ambiente.ts`, em que `exigir(nome)` e o
+    carregador leem `process.env[nome]` com nome que vem de argumento, mas recusam antes todo nome
+    fora da lista do arquivo; e `tests/barreiras/ambiente-dos-testes-de-politica.test.ts`, que
+    percorre o ambiente só para salvá-lo e restaurá-lo, sem imprimir;
+  - **leitura por nome fixo:** `scripts/purgar-dado-pessoal.mjs:36`, com o nome que o chamador passa
+    sempre como constante, `scripts/verificar-chave-de-servico.mjs:45`,
+    `scripts/verificar-tipos-do-banco.mjs:56`, e a conferência do ambiente local, que lê `PATH` e
+    `SYSTEMROOT` e só os repassa ao Git;
+  - **ambiente repassado inteiro:** `scripts/iniciar-servidor.mjs:39`, ao `next start`, sem imprimi-lo.
+
+  Linhas conferidas em 21/11/2026.
 
 As lacunas:
 
@@ -335,7 +419,7 @@ As lacunas:
   `https://www.liacup.com.br` (a produção de fato, porque o primeiro responde 308 para ele),
   `https://portal-liacup.vercel.app` ou da prévia da change. O host da prévia é o que o painel da
   Vercel do projeto mostra para a branch, e começa com `portal-liacup-`; link de prévia colado num
-  comentário do PR não vale. O pedido escolhe só o caminho, e ele precisa passar nas duas
+  comentário do PR não vale. O pedido escolhe só a rota, no padrão da lacuna `<rota>`, e ela precisa passar nas duas
   conferências: **o padrão**, que é `/` sozinho ou `/` seguido de trechos de letras minúsculas sem
   acento, números e `-`, separados por `/` (nada de espaço, `;`, `@`, `$`, aspas, `[` nem `(`); e
   **a rota**, que é uma página estática que existe no site, uma pasta com `page.tsx` em `src/app/`
@@ -350,11 +434,71 @@ técnico põe o `curl` contra a prévia na seção 6 da entrega, para rodar depo
 link e antes do merge. O `curl` em produção mede a `main`, não a change, e não serve de resultado
 dela.
 
-Antes de **qualquer** forma, o líder técnico confere que não existe no disco nenhum destes
-arquivos, que mudam o ambiente em que os comandos rodam: `.claude/settings.json`,
-`.claude/settings.local.json` e `.mcp.json` (cada `test -e` devolve código 1). Se algum existir e
-não estiver igual ao da `main`, todas as formas são recusadas até o Gabriel decidir, porque uma
-variável de ambiente ou um gancho posto ali roda código em qualquer `git` ou `npm` da lista.
+**A conferência do ambiente local.** Antes de **cada** leva de formas, antes de entregar os
+comandos Git ao Gabriel e depois de cada passagem de subagente, o líder técnico roda
+`node scripts/conferir-ambiente-local.mjs --change <change>`, com o `node` direto e sem `npm run`
+(o `npm` leria o `.npmrc` e rodaria scripts antes dela), e só segue com código 0. Ela existe porque
+um gancho, uma variável de ambiente ou uma chave do Git posta no lugar errado roda código em
+qualquer `git` ou `npm` da lista. A conferência:
+
+- **lê como texto, antes de rodar qualquer `git`,** o `.git/config` contra uma lista de chaves
+  permitidas (chave fora da lista, `include` ou `includeIf` param; ela imprime o nome da chave, nunca
+  o valor), os arquivos de `.git/hooks/` que não terminam em `.sample`, as linhas ativas de
+  `.git/info/exclude` e de `.git/info/attributes`, e o `disableAllHooks` das configurações do
+  Claude Code. Se algo parar aqui, ela sai sem rodar o Git;
+- **compara com a `main`, pelo conteúdo e sem depender do `git status`,** todo arquivo da lista do
+  AS-17 que está no disco, inclusive o que o `.gitignore` ou o exclude escondem. Arquivo diferente,
+  só no disco ou só na `main` é diferença;
+- **aceita uma diferença só se ela estiver decidida:** registrada pelo líder técnico em
+  `openspec/changes/<change>/ambiente-decidido.txt`, com o sha256 do conteúdo e a decisão citada (a
+  proposta aprovada no Portão 1 ou o aceite escrito do Gabriel). Assim o `.claude/settings.json`
+  vale igual ao da `main` ou igual ao registrado como decidido na change em curso.
+  `.claude/settings.local.json` e `.mcp.json`, que não existem na `main`, param a conferência até o
+  Gabriel decidir;
+- **diz quanto mediu:** arquivos comparados, iguais, diferentes e aceitos, regras de exclusão,
+  ganchos do Git ativos, chaves do `.git/config` e se os ganchos do Claude Code estão ligados.
+
+**A barreira do Git.** Todo comando de agente, pelas três ferramentas que rodam comando (`Bash`,
+`PowerShell` e `mcp__terminal__run_in_terminal`), passa por `.claude/ganchos/barrar-git-de-escrita.mjs`,
+registrado em `.claude/settings.json`. Ele deixa passar só a lista de leitura do `git` e recusa
+todo o resto, inclusive o `gh` e o que não conseguir analisar. As regras de negação do mesmo arquivo
+seguram as formas diretas com os ganchos desligados; a `mcp__terminal__run_in_terminal`, que digita
+no terminal do Gabriel, fica negada inteira no projeto. Por causa da barreira, um pedido de comando
+que só **cita** uma escrita no Git (um `<texto>` como `git push`) também é recusado; o líder técnico
+registra a recusa e o guardião lê o arquivo pela própria ferramenta de leitura.
+
+**A configuração que segura a barreira** (decisão do Gabriel, 21/11/2026, depois de o passo 4 da
+demonstração mostrar que um `.claude/settings.local.json` com `disableAllHooks` desliga o gancho):
+`.claude/settings.json`, `.claude/settings.local.json` e `.claude/ganchos/` têm regra de negação de
+escrita, e o gancho recusa todo comando que cite `.claude/settings` ou `.claude/ganchos` (falso
+positivo aceito). Mudar esses arquivos é passo do Gabriel: o líder técnico prepara o conteúdo e
+entrega o comando, como no Git. E o primeiro comando da lista de comandos Git de toda change é
+`node scripts/conferir-ambiente-local.mjs --change <change>`, no terminal do Gabriel; se não sair com
+código 0, o Gabriel para.
+
+**Limite conhecido** (Gabriel, Q13 (b), 22/11/2026): **a barreira é contra engano, não contra
+agente que esconde o comando.** Contra isso valem as leituras depois de cada passagem (índice,
+`HEAD`, commits alcançáveis, remoto e conferência do ambiente) e o fato de que só o Gabriel faz
+push. O gancho lê o texto do comando, e deixa passar, entre outros:
+
+- o nome que o shell monta na hora a partir de texto fixo: `${X:-git} add .`, `$'\x67it' add .`,
+  `g{i..i}t add .`, `/mingw64/bin/g?t.exe add .` e `$(printf 'g%s' it)`;
+- um script ou programa que roda o Git por dentro: `sh scripts/x.sh`, `node arquivo.mjs` ou
+  `npm run <qualquer>`, com o `git add` escrito no arquivo, e não no comando.
+
+As leituras, feitas pelo líder técnico depois de cada passagem: `git diff --cached
+--name-only` vazio (pega `add`, `rm`, `restore --staged`); `git rev-parse HEAD` e o número de linhas
+de `git rev-list --all` iguais aos de antes (pegam commit, tag e branch novos, que não mudam o
+índice); `git ls-remote origin <branch>` igual ao de antes (pega push); e a conferência do ambiente.
+Mudança que nenhuma dessas leituras mostra não é pega.
+
+**A configuração protegida e o guardião.** Como o gancho recusa todo comando que cite
+`.claude/settings` ou `.claude/ganchos`, uma forma da lista fechada com `<caminho>` nesses arquivos
+(por exemplo `git diff main -- '.claude/settings.json'`) é recusada também ao líder técnico. Nesse
+caso o guardião lê o arquivo pela própria ferramenta de leitura, e a comparação com a `main` vem da
+conferência do ambiente, que dá o sha256 do disco e o confronta com o registro da change; se o
+guardião precisar do diff linha a linha, o líder técnico pede ao Gabriel que rode a forma no
+terminal dele e devolve a saída literal.
 
 Antes de **qualquer** forma de `npm`, o líder técnico confere primeiro que **não existe `.npmrc`
 no disco**, na raiz do repositório, com `test -e .npmrc` devolvendo código 1. A conferência é no
@@ -393,8 +537,6 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 | LB-02 · AS-09 · alta | O PAT do Supabase e a chave de serviço chegam a passos do CI que rodam código do PR e das dependências | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-03 · AS-10 · alta | O seed apaga sem filtro as 11 coleções do projeto ligado, que pode ser o de produção | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-04 · AS-13 · alta | O anônimo insere em `mensagens` direto pela API, sem limite, e escolhe `situacao` e `recebida_em` | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-05 · AS-17 · média | Arquivo de `.claude/` alterado ou escondido por `.git/info/exclude` não para o ciclo antes do próximo agente | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-06 · AS-09 · média | A precondição da §5 não confere `.git/config`, `.git/hooks/` nem `.git/info/exclude` | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-07 · AS-15 · média | Produção não manda CSP, proteção contra embutimento, `Referrer-Policy`, `Permissions-Policy` nem `nosniff` | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-08 · AS-09 · média | O `ci.yml` não tem `permissions` e o checkout persiste o `GITHUB_TOKEN` | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-09 · AS-10 · média | A suíte de políticas e de banco não roda no CI | R2 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
@@ -402,8 +544,6 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 | LB-11 · AS-10 · média | O lint não pega a chave de serviço lida por desestruturação de `process.env` | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-12 · AS-10 · média | Um autenticado altera nome, e-mail, texto e `recebida_em` de mensagem de terceiro | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-13 · AS-16 · média | A purga é manual e os textos divergem sobre a frequência, contra um prazo de 24 h; o script mira produção por padrão | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-14 · AS-17 · baixa | O `allowed-tools: Bash(openspec:*)` das 6 skills não tem decisão registrada | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-15 · AS-08 · baixa | O README instala o OpenSpec sem fixar a versão | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-16 · AS-08 · baixa | `vite` e `vitest` vulneráveis, exploráveis só com servidor local do vite ouvindo | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-17 · AS-09 · baixa | As ações do CI estão presas por tag móvel, não por sha | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-18 · AS-02 · baixa | Com o site publicado, `/vitrine` fica no ar com campos que não enviam nada | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
@@ -412,9 +552,6 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 | LB-21 · AS-10 · baixa | Os scripts leem só o `.env` e tiram só aspas duplas, e podem dar VERIFICADO falso | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-22 · AS-01 · baixa | O protótipo traz uma credencial de demonstração que não pode virar a conta real | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-23 · AS-13 · baixa | A confirmação por e-mail divide a cota do Resend com a recuperação de senha, sem limite global | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-24 · AS-09 · informativa | O caminho da correção urgente não diz que o guardião audita antes do merge | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-25 · AS-17 · informativa | A hierarquia do README não traz o `SEGURANCA.md` | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-26 · AS-01 · informativa | O protótipo guarda conteúdo comprimido que só a origem declarada cobre, sem estar nomeado na §7 | R0 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-27 · AS-08 · informativa | 34 avisos do `npm audit`, 20 altos, um deles de produção (`source-map-js`), sem cenário concreto | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-28 · AS-02 · informativa | `/_next/static` e imagens passam pelo interruptor; cada arquivo de `public/` precisa estar aprovado | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-29 · AS-10 · informativa | Nenhuma tabela usa `FORCE ROW LEVEL SECURITY`, sem decisão registrada | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
@@ -424,6 +561,21 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 | LB-33 · AS-06 · informativa | A mensagem crua do banco volta ao chamador | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-34 · AS-15 · informativa | Produção responde `Access-Control-Allow-Origin: *`, que não pode ir para página com sessão | R3 | `seguranca-do-painel` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-35 · AS-08 · informativa | O Node 22 do `.nvmrc` sai de suporte em 30/04/2027 | R1 (o Node 22 sai de suporte em 30/04/2027) | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+
+### Saíram da lista
+
+Cada linha saiu depois de conferida pelo `guardiao-appsec` (decisão da auditoria da change, APROVADO
+COM RESSALVAS, 22/11/2026). A evidência está no relatório da change, na seção citada.
+
+| Código | Achado | Saiu em | Change | Evidência |
+| --- | --- | --- | --- | --- |
+| LB-05 · AS-17 · média | Arquivo de `.claude/` alterado ou escondido por `.git/info/exclude` não parava o ciclo antes do próximo agente | 22/11/2026 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-22-endurecer-agentes-e-git-local/relatorio.md`, "RP-12 do D4, literal" e tarefa 2.1: a conferência do ambiente local lê o disco e para |
+| LB-06 · AS-09 · média | A precondição da §5 não conferia `.git/config`, `.git/hooks/` nem `.git/info/exclude` | 22/11/2026 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-22-endurecer-agentes-e-git-local/relatorio.md`, "RP-12 do D4, literal" e tarefa 2.1: a conferência lê os três antes de rodar o Git |
+| LB-14 · AS-17 · baixa | O `allowed-tools: Bash(openspec:*)` das 6 skills não tinha decisão registrada | 22/11/2026 | `endurecer-agentes-e-git-local` | Por decisão: Q5 (a) do Portão 1, em `openspec/changes/archive/2026-11-22-endurecer-agentes-e-git-local/relatorio.md`, "Decisões do Gabriel no Portão 1" |
+| LB-15 · AS-08 · baixa | O README instalava o OpenSpec sem fixar a versão | 22/11/2026 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-22-endurecer-agentes-e-git-local/relatorio.md`, "Tarefa 6.2 e as verificações de texto" (tarefa 5.3): `@fission-ai/openspec@2.1.0` |
+| LB-24 · AS-09 · informativa | O caminho da correção urgente não dizia que o guardião audita antes do merge | 22/11/2026 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-22-endurecer-agentes-e-git-local/relatorio.md`, "Tarefa 6.2 e as verificações de texto" (tarefa 5.3): README e `PADROES-DE-CODIGO.md` §8; ADR-0005 intocado (Q7 (a)) |
+| LB-25 · AS-17 · informativa | A hierarquia do README não trazia o `SEGURANCA.md` | 22/11/2026 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-22-endurecer-agentes-e-git-local/relatorio.md`, "Tarefa 6.2 e as verificações de texto" (tarefa 5.3) |
+| LB-26 · AS-01 · informativa | O protótipo guardava conteúdo comprimido que só a origem declarada cobre, sem estar nomeado | 22/11/2026 | `endurecer-agentes-e-git-local` | Linha 220 relida pelo líder técnico (ajuste 4 do Portão 1); o arquivo fica nomeado no "Limite conhecido" do arquivo binário, na §5 |
 
 ## 7. Origem dos arquivos binários
 

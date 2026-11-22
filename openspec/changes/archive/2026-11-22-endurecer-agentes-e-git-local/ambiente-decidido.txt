@@ -1,0 +1,11 @@
+# Diferenças decididas da change endurecer-agentes-e-git-local, contra a main.
+# Só o líder técnico escreve este arquivo (docs/SEGURANCA.md §5, "A conferência do ambiente local").
+# Formato: arquivo <caminho> <sha256 do disco, ou "ausente">  # decisão
+#          exclude <regra do .git/info/exclude>  # decisão
+# Atualizado depois da passagem C do dev-frontend, com o diff lido pelo líder técnico.
+arquivo .claude/ganchos/barrar-git-de-escrita.mjs f8a0b2322c05561d34ea9fceb528e628e8c700f5ab403769eb90376649333665  # proposta aprovada no Portão 1, 21/11/2026, item 1 e Q1 (c); achado 2 do revisor, rodada 1
+arquivo .claude/ganchos/decisao-do-git.mjs 692eeffb48af3332e13c94a1199e781c1e4c4e185796c64a748e48ab56d099da  # proposta aprovada no Portão 1, 21/11/2026, D2; achados 1 e 2 do revisor, rodada 1; decisão do Gabriel de 21/11/2026 sobre a brecha, item 2
+arquivo .claude/settings.json b8a83050ecea1d4469766e7815e68beca31e35b3e52e4f0076be61f9071dc9d0  # Gabriel, Q14 (a), 22/11/2026: o conteúdo novo, com Edit(~/.claude/settings.json) e Edit(~/.claude/settings.local.json), copiado pelo Gabriel em 22/11/2026; contém também o item 1 do Portão 1, Q1 (c), Q3 (b), Q9 (b), o ajuste 1 e o item 1 da decisão da brecha
+arquivo CLAUDE.md ae955925410b0098c6bfa309ba7e714d657d032d916ba93e53adf8c6d47e8a6f  # proposta aprovada no Portão 1, 21/11/2026, D10; decisão do Gabriel de 21/11/2026 sobre a brecha, itens 3 e 4; achado 5 do revisor, rodada 2; Gabriel, Q13 (b), 22/11/2026
+arquivo .claude/agents/guardiao-appsec.md b054fa3fa60fab257c8ce3f4410585d6c7ca4f1628f1dc0b7d18e507330a35f7  # proposta aprovada no Portão 1, 21/11/2026, a linha da regra 2 (D8)
+exclude AGENTS.md  # Gabriel, Q17 da pagina-processo-seletivo, 21/11/2026; sai depois do merge desta change (D14)

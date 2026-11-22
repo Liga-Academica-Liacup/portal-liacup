@@ -53,9 +53,10 @@ reporte; não corrija por conta própria.
 
 1. Uma sessão por change. Se não couber, a change se divide no Portão 1.
 2. Guardião proporcional ao risco: em change de tela da R1, só AS-01, AS-02, AS-04, AS-07 e AS-15,
-   com a auditoria de base na última change de cada release. **Só vale depois de escrito na §5 do
-   `docs/SEGURANCA.md` e na spec `equipe-de-agentes`**, com a condição de entrada; até lá, o
-   guardião confere o checklist inteiro.
+   com a auditoria de base na última change de cada release. As listas e a ordem que decidem estão
+   na "Conferência proporcional" do `docs/SEGURANCA.md` §5, pelo `git diff --name-only` contra a
+   `main`. Vale a partir da primeira change aprovada no Portão 1 depois do merge da
+   `endurecer-agentes-e-git-local`.
 3. Relatório de uma tela por agente, com veredito e achados (o guardião: uma tela fora a lista de
    achados, que vem inteira). O `relatorio.md` não transcreve literal a resposta do agente; o
    aceite do Gabriel e a saída de comando continuam literais.
@@ -76,16 +77,36 @@ reporte; não corrija por conta própria.
   o pedido que usa uma forma da lista fechada da §5, recusa o resto, e devolve a saída literal, com
   o código de saída, mascarando todo valor que pareça segredo.
 
-## Escopo de escrita é instrução, não trava
+## Escopo de escrita é instrução; escrita no Git é trava
 
 São sete agentes, um arquivo cada, em `.claude/agents/`. A lista de `tools` de um subagente concede
-capacidade — ler, escrever, rodar comando — e **não restringe pasta**. Então o escopo de
+capacidade — ler, escrever, rodar comando — e **não restringe pasta**. Então o escopo de pasta de
 `especificador`, `dev-frontend`, `dev-dados`, `guardiao-visual` e `qa-acessibilidade` vale por
 instrução. Só o `revisor` e o `guardiao-appsec`, sem nenhuma ferramenta de escrita ou de terminal,
 têm trava de verdade.
 
+**A escrita no Git por comando é trava**, para todo agente, inclusive o líder técnico: o gancho
+`.claude/ganchos/barrar-git-de-escrita.mjs` e as regras de negação de `.claude/settings.json`
+recusam, nas três ferramentas que rodam comando, todo `git` fora da lista de leitura e todo `gh`.
+**A barreira é contra engano, não contra agente que esconde o comando**: o gancho lê o texto do
+comando, e deixa passar o nome montado pelo shell na hora e o script ou `npm run` que roda o Git
+por dentro. Contra isso valem as leituras da obrigação abaixo (índice, `HEAD`, commits alcançáveis,
+remoto e conferência do ambiente) e o fato de que só o Gabriel faz push (`docs/SEGURANCA.md` §5,
+"Limite conhecido").
+
+**A configuração que segura a barreira também é trava:** `.claude/settings.json`,
+`.claude/settings.local.json` e `.claude/ganchos/` têm regra de negação de escrita, e o gancho
+recusa todo comando que cite `.claude/settings` ou `.claude/ganchos` (falso positivo aceito, como na
+citação de escrita no Git). **Mudar esses arquivos é passo do Gabriel**, como o Git: o líder técnico
+prepara o conteúdo novo num arquivo fora do repositório e entrega o comando pronto, e o Gabriel
+roda no terminal dele.
+
 **Obrigação do líder técnico:** depois de chamar qualquer subagente, conferir que o `git status` só
-mostra arquivos do escopo daquele agente. Arquivo fora do escopo entra na seção 4 da entrega, pelo
+mostra arquivos do escopo daquele agente, que `git diff --cached --name-only` está vazio, que
+`git rev-parse HEAD`, o número de linhas de `git rev-list --all` e `git ls-remote origin <branch>`
+estão iguais aos de antes da passagem, e rodar
+`node scripts/conferir-ambiente-local.mjs --change <change>` (`docs/SEGURANCA.md` §5), que precisa
+sair com 0. Arquivo fora do escopo entra na seção 4 da entrega, pelo
 nome. O escopo do `revisor` e do `guardiao-appsec` é nenhum: o `git status` fica igual antes e
 depois da passagem deles.
 
@@ -97,7 +118,7 @@ Cada agente registra o que fez em `openspec/changes/<change>/relatorio.md`, copi
 Nenhuma destas é preferência. Cada uma custou pelo menos um episódio de trabalho perdido.
 
 1. **Quem escreve no Git é o Gabriel.** Os agentes preparam os arquivos e entregam os comandos
-   prontos. Mensagem no padrão convencional, em português, **sem rodapé de coautoria**.
+   prontos. A barreira do Git recusa a escrita a agente (seção acima); a recusa não se contorna. Mensagem no padrão convencional, em português, **sem rodapé de coautoria**.
 2. **Commitar e enviar ao fim de cada change ou de cada dia**, o que vier primeiro. Commit local
    não é cópia de segurança.
 3. **Fechar o GitHub Desktop antes de usar o Git pelo terminal.** Ele faz stash automático ao
@@ -151,7 +172,14 @@ A <n> · M <n> · R <n> · D <n>. Arquivos fora do escopo esperado: <lista ou "n
 
 **6. Próximo passo**
 Comandos em bash; mensagem de commit em arquivo, com git commit -F.
+O primeiro comando é sempre a conferência do ambiente, e o Gabriel para se ela não der 0:
+node scripts/conferir-ambiente-local.mjs --change <nome-da-change>
 ```
+
+O primeiro comando da seção 6 de toda entrega com comandos Git é a conferência do ambiente local
+(`docs/SEGURANCA.md` §5). Ela roda no terminal do Gabriel, antes de qualquer `git`. **Se ela não
+sair com código 0, o Gabriel para**, não roda mais nenhum comando da lista, e manda a saída ao líder
+técnico.
 
 ## O que nunca muda sem decisão escrita do Gabriel
 

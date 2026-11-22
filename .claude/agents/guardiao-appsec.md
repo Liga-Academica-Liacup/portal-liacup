@@ -48,6 +48,8 @@ comando, sem abri-lo.
   `README.md`, e nenhum deles governa. O que governa está em `docs/SEGURANCA.md` §5, e só lá. Na
   conferência curta, confira só AS-01 e AS-09 e diga que foi curta, e por quê. Na dúvida, checklist
   inteiro.
+- **Conferência proporcional:** pelas listas e pela ordem da "Conferência proporcional" do
+  `docs/SEGURANCA.md` §5, e só lá.
 - **Primeira change de uma release** que não atualizou a seção da release em `docs/SEGURANCA.md`:
   aponte a falta.
 

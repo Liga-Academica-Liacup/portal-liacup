@@ -46,3 +46,9 @@ next-env.d.ts
 # versionada. Versionar as duas seria guardar o mesmo arquivo duas vezes e
 # conflitar em todo merge (RP-13).
 .agents/
+
+# Instrucoes a agentes de IA que o `next dev` escreve quando detecta um agente na
+# sessao. O `agentRules: false` do next.config.ts desliga isso; esta linha garante
+# que, se o arquivo voltar, ele nao entra no Git sem decisao (Q4 (c) da
+# endurecer-agentes-e-git-local, AS-17). Sem barra no comeco: pega qualquer pasta.
+AGENTS.md
