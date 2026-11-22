@@ -44,8 +44,11 @@ documento não diz quem ocupa cada cargo.
 - **WHEN** alguém lê a página inteira
 - **THEN** não aparecem o bloco "Ligantes", "Foto do ligante", "(nome pendente)", "Nomes e fotos
   entram pelo painel", nenhum dos oito nomes de exemplo da diretoria do protótipo (como "Mariana
-  Castro" e "Rafael Nunes"), nem os cargos de exemplo "Diretoria científica", "Diretoria de
-  extensão", "Diretoria de comunicação", "Tesouraria", "Secretaria" e "Diretoria de eventos"
+  Castro" e "Rafael Nunes"), nem os cargos de exemplo "Presidência" e "Vice-presidência", com maiúscula,
+  "Diretoria científica", "Diretoria de extensão", "Diretoria de comunicação", "Secretaria" e
+  "Diretoria de eventos"
+- **AND** nenhum título de cargo é "Tesouraria"; a palavra só aparece na linha do Diretor(a)
+  financeiro(a), que vem da seção 4.3 do documento de conteúdo
 
 #### Scenario: A ordem dos blocos no celular e no desktop
 

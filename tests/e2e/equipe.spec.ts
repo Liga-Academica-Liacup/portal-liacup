@@ -71,13 +71,15 @@ const PROIBIDOS_NO_TEXTO = [
  * <script> tem "semestre" (a descrição do Processo seletivo), e isso não é
  * texto da página.
  */
-const CARGOS_DE_EXEMPLO = PROTOTIPO_DE_EXEMPLO.diretoria.map((d) => d.cargo)
+const CARGOS_DE_EXEMPLO = PROTOTIPO_DE_EXEMPLO.diretoria.map((diretor) => diretor.cargo)
 const COLISOES_COM_O_DOCUMENTO = CARGOS_DE_EXEMPLO.flatMap((exemplo) => {
-  const linha = DOC.cargos.find((c) => c.cargo.includes(exemplo) || c.linha.includes(exemplo))
+  const linha = DOC.cargos.find(
+    (doDocumento) => doDocumento.cargo.includes(exemplo) || doDocumento.linha.includes(exemplo)
+  )
   return linha ? [{ exemplo, motivo: `está na linha do §4.3 de "${linha.cargo}"` }] : []
 })
 const CARGOS_PROIBIDOS_NO_TEXTO = CARGOS_DE_EXEMPLO.filter(
-  (exemplo) => !COLISOES_COM_O_DOCUMENTO.some((c) => c.exemplo === exemplo)
+  (exemplo) => !COLISOES_COM_O_DOCUMENTO.some((colisao) => colisao.exemplo === exemplo)
 )
 
 async function abrirPagina(page: Page) {
@@ -98,33 +100,33 @@ test('o texto da página é o do conteudo-institucional.md, cargo por cargo, e n
   const [diretoria, fundadores, docentes] = lido.blocos
 
   const trechos: Trecho[] = [
-    ...DOC.cargos.flatMap((cargo, i) => [
+    ...DOC.cargos.flatMap((cargo, indice) => [
       {
-        nome: `§4.3, cargo ${i + 1}`,
+        nome: `§4.3, cargo ${indice + 1}`,
         esperado: cargo.cargo,
-        recebido: diretoria?.itens[i]?.titulo ?? '(ausente)',
+        recebido: diretoria?.itens[indice]?.titulo ?? '(ausente)',
       },
       {
         nome: `§4.3, linha de "${cargo.cargo}"`,
         esperado: cargo.linha,
-        recebido: diretoria?.itens[i]?.paragrafos.join(' | ') ?? '(ausente)',
+        recebido: diretoria?.itens[indice]?.paragrafos.join(' | ') ?? '(ausente)',
       },
     ]),
-    ...DOC.fundadores.map((nome, i) => ({
-      nome: `§4.2, fundador ${i + 1}`,
+    ...DOC.fundadores.map((nome, indice) => ({
+      nome: `§4.2, fundador ${indice + 1}`,
       esperado: nome,
-      recebido: fundadores?.itens[i]?.texto ?? '(ausente)',
+      recebido: fundadores?.itens[indice]?.texto ?? '(ausente)',
     })),
-    ...DOC.docentes.flatMap((docente, i) => [
+    ...DOC.docentes.flatMap((docente, indice) => [
       {
-        nome: `§4.1, docente ${i + 1}, nome`,
+        nome: `§4.1, docente ${indice + 1}, nome`,
         esperado: docente.nome,
-        recebido: docentes?.itens[i]?.titulo ?? '(ausente)',
+        recebido: docentes?.itens[indice]?.titulo ?? '(ausente)',
       },
       {
-        nome: `§4.1, docente ${i + 1}, cargo e formação`,
+        nome: `§4.1, docente ${indice + 1}, cargo e formação`,
         esperado: `${docente.cargo} | ${docente.formacao}`,
-        recebido: docentes?.itens[i]?.paragrafos.join(' | ') ?? '(ausente)',
+        recebido: docentes?.itens[indice]?.paragrafos.join(' | ') ?? '(ausente)',
       },
     ]),
   ]
@@ -135,36 +137,40 @@ test('o texto da página é o do conteudo-institucional.md, cargo por cargo, e n
       esperado: ROTULOS.equipe.sobretitulo,
       recebido: lido.sobretituloDaFaixa,
     },
-    { nome: 'título principal', esperado: ROTULOS.equipe.h1, recebido: lido.h1s.join(' | ') },
+    {
+      nome: 'título principal',
+      esperado: ROTULOS.equipe.tituloPrincipal,
+      recebido: lido.titulosPrincipais.join(' | '),
+    },
     {
       nome: 'frase da faixa (nenhuma)',
       esperado: '',
       recebido: lido.paragrafosDaFaixa.join(' | '),
     },
-    ...ROTULOS.equipe.blocos.flatMap((bloco, i) => [
+    ...ROTULOS.equipe.blocos.flatMap((bloco, indice) => [
       {
-        nome: `bloco ${i + 1}, título`,
+        nome: `bloco ${indice + 1}, título`,
         esperado: bloco.titulo,
-        recebido: lido.blocos[i]?.titulo ?? '(ausente)',
+        recebido: lido.blocos[indice]?.titulo ?? '(ausente)',
       },
       {
-        nome: `bloco ${i + 1}, sobretítulo (nenhum)`,
+        nome: `bloco ${indice + 1}, sobretítulo (nenhum)`,
         esperado: '',
-        recebido: lido.blocos[i]?.sobretitulo ?? '(ausente)',
+        recebido: lido.blocos[indice]?.sobretitulo ?? '(ausente)',
       },
     ]),
     /* O título do bloco dos fundadores é o do §4.2 (Q8 (a)). */
     {
       nome: 'título do bloco dos fundadores igual ao do §4.2',
-      esperado: DOC.tituloDo42,
+      esperado: DOC.tituloDosFundadores,
       recebido: fundadores?.titulo ?? '(ausente)',
     },
   ]
-  const iniciais = DOC.docentes.map((d) => iniciaisPelaRegraDoD6(d.nome))
-  const decorativos: Trecho[] = iniciais.map((par, i) => ({
-    nome: `iniciais do docente ${i + 1}, fora do leitor de tela`,
+  const iniciais = DOC.docentes.map((docente) => iniciaisPelaRegraDoD6(docente.nome))
+  const decorativos: Trecho[] = iniciais.map((par, indice) => ({
+    nome: `iniciais do docente ${indice + 1}, fora do leitor de tela`,
     esperado: par,
-    recebido: docentes?.itens[i]?.decorativos.join(' | ') ?? '(ausente)',
+    recebido: docentes?.itens[indice]?.decorativos.join(' | ') ?? '(ausente)',
   }))
 
   const falhas = compararTrechos([...trechos, ...rotulos, ...decorativos])
@@ -179,21 +185,23 @@ test('o texto da página é o do conteudo-institucional.md, cargo por cargo, e n
     falhas.push(`a página tem ${contagem.fundadores} fundadores, e o §4.2 ${DOC.fundadores.length}`)
   if (contagem.docentes !== DOC.docentes.length)
     falhas.push(`a página tem ${contagem.docentes} docentes, e o §4.1 ${DOC.docentes.length}`)
-  if (lido.h1s.length !== 1)
-    falhas.push(`a página tem ${lido.h1s.length} títulos de nível 1: ${lido.h1s.join(' | ')}`)
+  if (lido.titulosPrincipais.length !== 1)
+    falhas.push(
+      `a página tem ${lido.titulosPrincipais.length} títulos de nível 1: ${lido.titulosPrincipais.join(' | ')}`
+    )
   if (lido.blocos.length !== ROTULOS.equipe.blocos.length)
     falhas.push(
       `a página tem ${lido.blocos.length} blocos com h2, e não ${ROTULOS.equipe.blocos.length}`
     )
   /* Os fundadores são uma lista, sem foto, círculo nem curso: só o nome em cada item. */
-  for (const [i, item] of (fundadores?.itens ?? []).entries()) {
+  for (const [posicao, item] of (fundadores?.itens ?? []).entries()) {
     if (item.titulo !== null || item.paragrafos.length > 0 || item.decorativos.length > 0)
-      falhas.push(`fundador ${i + 1} tem mais que o nome: "${item.texto}"`)
+      falhas.push(`fundador ${posicao + 1} tem mais que o nome: "${item.texto}"`)
   }
 
   const sobra = sobraDoTexto(lido.textoDoConteudo, [
-    ...trechos.flatMap((t) => t.esperado.split(' | ')),
-    ...rotulos.map((t) => t.esperado),
+    ...trechos.flatMap((trecho) => trecho.esperado.split(' | ')),
+    ...rotulos.map((rotulo) => rotulo.esperado),
     ...iniciais,
   ])
   if (sobra !== '')
@@ -205,7 +213,7 @@ test('o texto da página é o do conteudo-institucional.md, cargo por cargo, e n
     `[${informacoes.project.name}] trechos do conteudo-institucional.md conferidos: ${trechos.length}` +
       ` (§4.3 ${DOC.cargos.length * 2} · §4.2 ${DOC.fundadores.length} · §4.1 ${DOC.docentes.length * 2})` +
       ` · rótulos de interface conferidos: ${rotulos.length}` +
-      ` · com divergência: ${falhas.filter((f) => f.startsWith('trecho')).length}\n` +
+      ` · com divergência: ${falhas.filter((falha) => falha.startsWith('trecho')).length}\n` +
       `[${informacoes.project.name}] lidos do documento: cargos: ${DOC.cargos.length} · fundadores: ${DOC.fundadores.length} · docentes: ${DOC.docentes.length}` +
       ` · na página: cargos: ${contagem.cargos} · fundadores: ${contagem.fundadores} · docentes: ${contagem.docentes}` +
       ` · texto fora do documento: ${sobra.length} caracteres`
@@ -222,18 +230,18 @@ test('a página não traz o que o protótipo tinha de exemplo nem marcador de pe
   const procurados = [
     ...PROIBIDOS_NO_TEXTO,
     ROTULOS.equipe.fraseDoPrototipo,
-    ...exemplos.map((d) => d.nome),
-    ...exemplos.map((d) => d.curso),
+    ...exemplos.map((diretor) => diretor.nome),
+    ...exemplos.map((diretor) => diretor.curso),
     ...CARGOS_PROIBIDOS_NO_TEXTO,
   ]
   const achados = procurados.filter((termo) => texto.includes(termo))
   /* Q11: a intenção do cenário, nos títulos. Todo título da página, de qualquer nível. */
   const titulos = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]')).map((h) =>
-      (h.textContent ?? '').replace(/\s+/g, ' ').trim()
+    Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]')).map(
+      (titulo) => (titulo.textContent ?? '').replace(/\s+/g, ' ').trim()
     )
   )
-  const titulosDeExemplo = titulos.filter((t) => CARGOS_DE_EXEMPLO.includes(t))
+  const titulosDeExemplo = titulos.filter((titulo) => CARGOS_DE_EXEMPLO.includes(titulo))
 
   console.log(
     `[${informacoes.project.name}] termos proibidos procurados no texto visível: ${procurados.length}` +
@@ -244,7 +252,7 @@ test('a página não traz o que o protótipo tinha de exemplo nem marcador de pe
       ` · iguais a um cargo de exemplo: ${titulosDeExemplo.length}
 ` +
       `[${informacoes.project.name}] cargos de exemplo procurados no texto visível: ${CARGOS_PROIBIDOS_NO_TEXTO.join(', ')}` +
-      ` · só nos títulos, por colidir com o §4.3: ${COLISOES_COM_O_DOCUMENTO.map((c) => `"${c.exemplo}" (${c.motivo})`).join(', ') || 'nenhum'}`
+      ` · só nos títulos, por colidir com o §4.3: ${COLISOES_COM_O_DOCUMENTO.map((colisao) => `"${colisao.exemplo}" (${colisao.motivo})`).join(', ') || 'nenhum'}`
   )
   expect(texto.length, 'o teste precisa ter lido texto').toBeGreaterThan(0)
   expect(titulos.length, 'o teste precisa ter lido títulos').toBeGreaterThan(0)
@@ -266,46 +274,52 @@ test('os seis cartões de cargo não têm círculo, borboleta nem imagem, e a gr
   const largura = page.viewportSize()?.width ?? 0
   const medida = await page.getByRole('main').evaluate((main) => {
     const lista = main.querySelectorAll('h2')[0]?.closest('section')?.querySelector('ul, ol')
-    const cartoes = Array.from(lista?.children ?? []).filter((e) => e.tagName === 'LI')
-    const porCartao = cartoes.map((li) => {
-      const elementos = [li, ...Array.from(li.querySelectorAll('*'))]
+    const cartoes = Array.from(lista?.children ?? []).filter((filho) => filho.tagName === 'LI')
+    const porCartao = cartoes.map((cartao) => {
+      const elementos = [cartao, ...Array.from(cartao.querySelectorAll('*'))]
       const achados: string[] = []
-      for (const e of elementos) {
-        const nome = `<${e.tagName.toLowerCase()}>`
-        if (e !== li && e.matches('img, svg, picture, video, canvas, [role="img"]'))
+      for (const elemento of elementos) {
+        const nome = `<${elemento.tagName.toLowerCase()}>`
+        if (
+          elemento !== cartao &&
+          elemento.matches('img, svg, picture, video, canvas, [role="img"]')
+        )
           achados.push(`${nome} imagem ou desenho`)
-        if (e !== li && e.getAttribute('aria-hidden') === 'true') achados.push(`${nome} decorativo`)
-        const estilo = getComputedStyle(e)
+        if (elemento !== cartao && elemento.getAttribute('aria-hidden') === 'true')
+          achados.push(`${nome} decorativo`)
+        const estilo = getComputedStyle(elemento)
         if (estilo.backgroundImage !== 'none') achados.push(`${nome} com imagem de fundo`)
-        const caixa = e.getBoundingClientRect()
+        const caixa = elemento.getBoundingClientRect()
         const raio = parseFloat(estilo.borderTopLeftRadius)
         if (
-          e !== li &&
+          elemento !== cartao &&
           caixa.width > 0 &&
           Math.abs(caixa.width - caixa.height) < 1 &&
           raio >= caixa.width / 2 - 0.5
         )
           achados.push(`${nome} redondo ${Math.round(caixa.width)} px`)
         for (const pseudo of ['::before', '::after']) {
-          const p = getComputedStyle(e, pseudo)
-          if (p.content !== 'none' && p.content !== 'normal')
-            achados.push(`${nome}${pseudo} com conteúdo ${p.content}`)
+          const estiloDoPseudo = getComputedStyle(elemento, pseudo)
+          if (estiloDoPseudo.content !== 'none' && estiloDoPseudo.content !== 'normal')
+            achados.push(`${nome}${pseudo} com conteúdo ${estiloDoPseudo.content}`)
         }
       }
       return {
-        cargo: (li.querySelector('h3')?.textContent ?? '').trim(),
+        cargo: (cartao.querySelector('h3')?.textContent ?? '').trim(),
         achados,
-        x: Math.round(li.getBoundingClientRect().left),
-        y: Math.round(li.getBoundingClientRect().top),
+        esquerda: Math.round(cartao.getBoundingClientRect().left),
+        topo: Math.round(cartao.getBoundingClientRect().top),
       }
     })
-    const primeiraLinha = porCartao.filter((c) => c.y === porCartao[0]?.y)
+    const primeiraLinha = porCartao.filter((medido) => medido.topo === porCartao[0]?.topo)
     return { cartoes: porCartao.length, porCartao, colunas: primeiraLinha.length }
   })
 
-  const falhas = medida.porCartao.flatMap((c) => c.achados.map((a) => `cartão "${c.cargo}": ${a}`))
+  const falhas = medida.porCartao.flatMap((medido) =>
+    medido.achados.map((achado) => `cartão "${medido.cargo}": ${achado}`)
+  )
   const acusados = falhas.length
-  const circulos = medida.porCartao.filter((c) => c.achados.length > 0).length
+  const circulos = medida.porCartao.filter((medido) => medido.achados.length > 0).length
   if (medida.cartoes !== DOC.cargos.length)
     falhas.push(`${medida.cartoes} cartões de cargo, e não ${DOC.cargos.length}`)
   /* O corte do protótipo: 4 colunas acima de 1024 px, 2 até 1024 px (design.md, D5). */
@@ -322,21 +336,63 @@ test('os seis cartões de cargo não têm círculo, borboleta nem imagem, e a gr
   expect(falhas, falhas.join('\n')).toEqual([])
 })
 
+/*
+ * Os fundadores: 5 colunas acima de 1024 px, os cinco nomes numa linha só
+ * (Gabriel, Q13 (b), 22/11/2026), e 2 colunas até 1024 px, o corte do
+ * protótipo que a grade dos ligantes tinha.
+ */
+test('os fundadores ficam numa linha de 5 colunas no desktop e em 2 colunas até 1024 px', async ({
+  page,
+}, informacoes) => {
+  await abrirPagina(page)
+  const largura = page.viewportSize()?.width ?? 0
+  const medida = await page.getByRole('main').evaluate((main) => {
+    const lista = main.querySelectorAll('h2')[1]?.closest('section')?.querySelector('ul, ol')
+    const topos = Array.from(lista?.children ?? [])
+      .filter((filho) => filho.tagName === 'LI')
+      .map((nome) => Math.round(nome.getBoundingClientRect().top))
+    const linhas = [...new Set(topos)]
+    return {
+      nomes: topos.length,
+      linhas: linhas.length,
+      naPrimeiraLinha: topos.filter((topo) => topo === linhas[0]).length,
+    }
+  })
+  const colunasEsperadas = largura > 1024 ? 5 : 2
+  const falhas: string[] = []
+  if (medida.nomes !== DOC.fundadores.length)
+    falhas.push(`${medida.nomes} fundadores na grade, e não ${DOC.fundadores.length}`)
+  if (medida.naPrimeiraLinha !== colunasEsperadas)
+    falhas.push(
+      `a grade dos fundadores tem ${medida.naPrimeiraLinha} colunas em ${largura} px, e não ${colunasEsperadas}`
+    )
+  if (largura > 1024 && medida.linhas !== 1)
+    falhas.push(`os fundadores ocupam ${medida.linhas} linhas em ${largura} px, e não 1`)
+
+  console.log(
+    `[${informacoes.project.name}] fundadores medidos: ${medida.nomes}` +
+      ` · colunas dos fundadores: ${medida.naPrimeiraLinha} (esperadas ${colunasEsperadas} em ${largura} px)` +
+      ` · linhas: ${medida.linhas}`
+  )
+  expect(medida.nomes, 'o teste precisa ter medido os nomes').toBeGreaterThan(0)
+  expect(falhas, falhas.join('\n')).toEqual([])
+})
+
 test('as iniciais dos docentes aparecem, ficam fora da árvore de acessibilidade e têm contraste medido; nenhuma imagem de pessoa', async ({
   page,
 }, informacoes) => {
   await abrirPagina(page)
-  const esperadas = DOC.docentes.map((d) => iniciaisPelaRegraDoD6(d.nome))
+  const esperadas = DOC.docentes.map((docente) => iniciaisPelaRegraDoD6(docente.nome))
   const medida = await medirIniciais(page, esperadas)
   const { imagens } = await lerPagina(page)
-  const p = informacoes.project.name
+  const projeto = informacoes.project.name
   console.log(
-    `[${p}] iniciais: ${medida.foraDaArvoreNoDom.join(', ')} (fora da árvore de acessibilidade)` +
+    `[${projeto}] iniciais: ${medida.foraDaArvoreNoDom.join(', ')} (fora da árvore de acessibilidade)` +
       ` · calculadas pela regra do D6 a partir de ${DOC.docentes.length} nomes do §4.1: ${esperadas.join(', ')}` +
       ` · visíveis: ${medida.visiveis.join(', ') || 'nenhuma'}` +
       ` · na árvore de acessibilidade: ${medida.naArvore.length}` +
       ` · imagens no conteúdo: ${imagens}\n` +
-      medida.contrastes.map((linha) => `[${p}] contraste das iniciais ${linha}`).join('\n')
+      medida.contrastes.map((linha) => `[${projeto}] contraste das iniciais ${linha}`).join('\n')
   )
   expect(
     medida.falhas,
@@ -354,17 +410,17 @@ test('o axe não acusa violação e não há rolagem horizontal', async ({ page 
   await abrirPagina(page)
   const resultado = await new AxeBuilder({ page }).withTags(TAGS_DO_AXE).analyze()
   const violacoes = resultado.violations.map(
-    (v) => `${v.id} (${v.nodes.length} elementos): ${v.help}`
+    (violacao) => `${violacao.id} (${violacao.nodes.length} elementos): ${violacao.help}`
   )
   const rolagem = await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth,
     clientWidth: document.documentElement.clientWidth,
   }))
-  const p = informacoes.project.name
+  const projeto = informacoes.project.name
   console.log(
-    `[${p}] ${ENDERECO} Violacoes de acessibilidade: ${violacoes.length}` +
+    `[${projeto}] ${ENDERECO} Violacoes de acessibilidade: ${violacoes.length}` +
       ` · regras aplicadas: ${resultado.passes.length + resultado.violations.length}\n` +
-      `[${p}] ${ENDERECO} rolagem horizontal: scrollWidth ${rolagem.scrollWidth} / clientWidth ${rolagem.clientWidth}`
+      `[${projeto}] ${ENDERECO} rolagem horizontal: scrollWidth ${rolagem.scrollWidth} / clientWidth ${rolagem.clientWidth}`
   )
   expect(violacoes, `axe em ${ENDERECO}:\n${violacoes.join('\n')}`).toEqual([])
   expect(rolagem.scrollWidth).toBeLessThanOrEqual(rolagem.clientWidth)

@@ -92,10 +92,10 @@ export type Docente = { nome: string; cargo: string; formacao: string }
  */
 function lerDocentes(): Docente[] {
   const secao = secaoDoDocumento('### 4.1')
-  return [...secao.matchAll(/^- \*\*(.+?)\*\* — (.+?)\. (.+)$/gm)].map((m) => ({
-    nome: normalizar(m[1] ?? ''),
-    cargo: normalizar(m[2] ?? ''),
-    formacao: normalizar(m[3] ?? ''),
+  return [...secao.matchAll(/^- \*\*(.+?)\*\* — (.+?)\. (.+)$/gm)].map((achado) => ({
+    nome: normalizar(achado[1] ?? ''),
+    cargo: normalizar(achado[2] ?? ''),
+    formacao: normalizar(achado[3] ?? ''),
   }))
 }
 
@@ -106,7 +106,7 @@ function lerDocentes(): Docente[] {
  * primeira palavra que sobra e a da última, em maiúsculas.
  */
 export function iniciaisPelaRegraDoD6(nome: string): string {
-  const palavras = nome.split(/\s+/).filter((p) => p !== '' && !p.endsWith('.'))
+  const palavras = nome.split(/\s+/).filter((palavra) => palavra !== '' && !palavra.endsWith('.'))
   const primeira = palavras[0] ?? ''
   const ultima = palavras.length > 1 ? (palavras[palavras.length - 1] ?? '') : ''
   return `${Array.from(primeira)[0] ?? ''}${Array.from(ultima)[0] ?? ''}`.toLocaleUpperCase('pt-BR')
@@ -114,7 +114,9 @@ export function iniciaisPelaRegraDoD6(nome: string): string {
 
 /* A linha de uma regra da REFERENCIA-VISUAL.md §7, pelo começo da célula "Tela". */
 function linhaDaReferencia(tela: string): string {
-  const linha = REFERENCIA.split('\n').find((l) => l.startsWith(`| ${tela} |`))
+  const linha = REFERENCIA.split('\n').find((linhaDaTabela) =>
+    linhaDaTabela.startsWith(`| ${tela} |`)
+  )
   if (!linha) throw new Error(`REFERENCIA-VISUAL.md §7 sem a linha "${tela}"`)
   return linha
 }
@@ -135,9 +137,9 @@ function lerReferencia() {
   const equipe = ler(/Equipe: (.+?)\. Títulos do protótipo/, titulos, 'os títulos da Equipe na §7')
   const blocosDoSobre: TituloDeBloco[] = [
     ...sobre.matchAll(/"([^"]+)" \((?:sobretítulo )?"([^"]+)"\)/g),
-  ].map((m) => ({ titulo: m[1] ?? '', sobretitulo: m[2] ?? '' }))
-  const blocosDaEquipe: TituloDeBloco[] = [...equipe.matchAll(/"([^"]+)"/g)].map((m) => ({
-    titulo: m[1] ?? '',
+  ].map((achado) => ({ titulo: achado[1] ?? '', sobretitulo: achado[2] ?? '' }))
+  const blocosDaEquipe: TituloDeBloco[] = [...equipe.matchAll(/"([^"]+)"/g)].map((achado) => ({
+    titulo: achado[1] ?? '',
     sobretitulo: '',
   }))
   if (blocosDoSobre.length !== 3 || blocosDaEquipe.length !== 3) {
@@ -147,13 +149,21 @@ function lerReferencia() {
   }
   return {
     sobre: {
-      h1: ler(/Título principal "([^"]+)"/, faixaDoSobre, 'o título principal do Sobre na §7'),
+      tituloPrincipal: ler(
+        /Título principal "([^"]+)"/,
+        faixaDoSobre,
+        'o título principal do Sobre na §7'
+      ),
       tituloDoPrototipo: ler(/O título "([^"]+)"/, faixaDoSobre, 'o título do protótipo na §7'),
       blocos: blocosDoSobre,
     },
     equipe: {
       sobretitulo: ler(/Sobretítulo "([^"]+)"/, faixaDaEquipe, 'o sobretítulo da Equipe na §7'),
-      h1: ler(/título principal "([^"]+)"/, faixaDaEquipe, 'o título principal da Equipe na §7'),
+      tituloPrincipal: ler(
+        /título principal "([^"]+)"/,
+        faixaDaEquipe,
+        'o título principal da Equipe na §7'
+      ),
       fraseDoPrototipo: ler(/sem a frase "([^"]+)"/, faixaDaEquipe, 'a frase da Equipe na §7'),
       blocos: blocosDaEquipe,
     },
@@ -164,17 +174,17 @@ export type DiretorDeExemplo = { nome: string; cargo: string; curso: string }
 
 /*
  * O que o protótipo tinha de exemplo, lido dele. O arquivo traz os dados num
- * JSON com as aspas escapadas (\") e a barra como /.
+ * JSON com as aspas escapadas com barra invertida e a barra como "u002F".
  */
 function lerPrototipo(tituloAntigo: string) {
   const diretoria: DiretorDeExemplo[] = [
     ...PROTOTIPO.matchAll(
       /tipo: \\"Diretoria\\", nome: \\"([^"\\]+)\\", cargo: \\"([^"\\]+)\\", curso: \\"([^"\\]+)\\"/g
     ),
-  ].map((m) => ({ nome: m[1] ?? '', cargo: m[2] ?? '', curso: m[3] ?? '' }))
+  ].map((achado) => ({ nome: achado[1] ?? '', cargo: achado[2] ?? '', curso: achado[3] ?? '' }))
   const blocoDosObjetivos = /objetivos: \[([\s\S]*?)\]/.exec(PROTOTIPO)?.[1] ?? ''
   const objetivos = [...blocoDosObjetivos.matchAll(/texto: \\"([^"\\]+)\\"/g)].map(
-    (m) => m[1] ?? ''
+    (achado) => achado[1] ?? ''
   )
   const titulo = tituloAntigo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const frase = new RegExp(`>${titulo}<\\\\u002Fh1>\\\\n\\s*<p[^>]*>([^<]+)<\\\\u002Fp>`).exec(
@@ -197,24 +207,24 @@ function lerDocumento() {
   if (!apresentacao || !historia || itens.length !== 4) throw new Error('§2.1 a §2.6 incompletas')
 
   const docentes = lerDocentes()
-  const s42 = secaoDoDocumento('### 4.2')
-  const tituloDo42 = ler(/^### 4\.2\s+(.+?)\s+_\(/, s42, 'o título do §4.2')
+  const secaoDosFundadores = secaoDoDocumento('### 4.2')
+  const tituloDosFundadores = ler(/^### 4\.2\s+(.+?)\s+_\(/, secaoDosFundadores, 'o título do §4.2')
   const linhaDosFundadores =
-    s42
+    secaoDosFundadores
       .split('\n')
       .slice(1)
-      .find((l) => l.trim() !== '' && !l.startsWith('#')) ?? ''
+      .find((linhaDaSecao) => linhaDaSecao.trim() !== '' && !linhaDaSecao.startsWith('#')) ?? ''
   const fundadores = linhaDosFundadores.split(' · ').map(normalizar).filter(Boolean)
   const cargos: Cargo[] = [
     ...secaoDoDocumento('### 4.3').matchAll(/^\|\s*[IVX]+\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|$/gm),
-  ].map((m) => ({ cargo: normalizar(m[1] ?? ''), linha: normalizar(m[2] ?? '') }))
+  ].map((achado) => ({ cargo: normalizar(achado[1] ?? ''), linha: normalizar(achado[2] ?? '') }))
 
   if (docentes.length !== 2 || fundadores.length !== 5 || cargos.length !== 6) {
     throw new Error(
       `§4: ${docentes.length} docentes, ${fundadores.length} fundadores e ${cargos.length} cargos lidos, e não 2, 5 e 6`
     )
   }
-  return { apresentacao, historia, itens, docentes, tituloDo42, fundadores, cargos }
+  return { apresentacao, historia, itens, docentes, tituloDosFundadores, fundadores, cargos }
 }
 
 export const DOC = lerDocumento()
@@ -248,36 +258,40 @@ export type BlocoLido = {
  */
 export async function lerPagina(page: Page) {
   return page.evaluate(() => {
-    const n = (t: string | null | undefined) => (t ?? '').replace(/\s+/g, ' ').trim()
+    const limpar = (texto: string | null | undefined) => (texto ?? '').replace(/\s+/g, ' ').trim()
     const main = document.querySelector('main')
     if (!main) throw new Error('a página não tem <main>')
-    const h1s = Array.from(main.querySelectorAll('h1'))
-    const h1 = h1s[0]
-    const faixa = h1?.closest('section') ?? null
-    const anterior = h1?.previousElementSibling
-    const blocos = Array.from(main.querySelectorAll('h2')).map((h2) => {
-      const secao = h2.closest('section') ?? h2.parentElement
-      const antes = h2.previousElementSibling
+    const titulosPrincipais = Array.from(main.querySelectorAll('h1'))
+    const tituloPrincipal = titulosPrincipais[0]
+    const faixa = tituloPrincipal?.closest('section') ?? null
+    const anterior = tituloPrincipal?.previousElementSibling
+    const blocos = Array.from(main.querySelectorAll('h2')).map((tituloDoBloco) => {
+      const secao = tituloDoBloco.closest('section') ?? tituloDoBloco.parentElement
+      const antes = tituloDoBloco.previousElementSibling
       const lista = secao?.querySelector('ul, ol') ?? null
-      const depois = (el: Element) =>
-        h2.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING
+      const vemDepois = (elemento: Element) =>
+        tituloDoBloco.compareDocumentPosition(elemento) & Node.DOCUMENT_POSITION_FOLLOWING
       return {
-        titulo: n(h2.textContent),
+        titulo: limpar(tituloDoBloco.textContent),
         nivel: 2,
-        sobretitulo: antes?.tagName === 'P' ? n(antes.textContent) : '',
+        sobretitulo: antes?.tagName === 'P' ? limpar(antes.textContent) : '',
         paragrafos: Array.from(secao?.querySelectorAll('p') ?? [])
-          .filter((p) => depois(p) && !p.closest('li'))
-          .map((p) => n(p.textContent)),
+          .filter((paragrafo) => vemDepois(paragrafo) && !paragrafo.closest('li'))
+          .map((paragrafo) => limpar(paragrafo.textContent)),
         tipoDaLista: lista ? lista.tagName.toLowerCase() : null,
         itens: Array.from(lista?.children ?? [])
-          .filter((li) => li.tagName === 'LI')
-          .map((li) => ({
-            titulo: li.querySelector('h3') ? n(li.querySelector('h3')?.textContent) : null,
-            paragrafos: Array.from(li.querySelectorAll('p')).map((p) => n(p.textContent)),
-            decorativos: Array.from(li.querySelectorAll('[aria-hidden="true"]')).map((e) =>
-              n(e.textContent)
+          .filter((filho) => filho.tagName === 'LI')
+          .map((itemDaLista) => ({
+            titulo: itemDaLista.querySelector('h3')
+              ? limpar(itemDaLista.querySelector('h3')?.textContent)
+              : null,
+            paragrafos: Array.from(itemDaLista.querySelectorAll('p')).map((paragrafo) =>
+              limpar(paragrafo.textContent)
             ),
-            texto: n(li.textContent),
+            decorativos: Array.from(itemDaLista.querySelectorAll('[aria-hidden="true"]')).map(
+              (decorativo) => limpar(decorativo.textContent)
+            ),
+            texto: limpar(itemDaLista.textContent),
           })),
       }
     })
@@ -287,15 +301,17 @@ export async function lerPagina(page: Page) {
      */
     const partes: string[] = []
     const caminho = document.createTreeWalker(main, NodeFilter.SHOW_TEXT)
-    for (let no = caminho.nextNode(); no; no = caminho.nextNode()) partes.push(no.textContent ?? '')
+    for (let noDeTexto = caminho.nextNode(); noDeTexto; noDeTexto = caminho.nextNode()) {
+      partes.push(noDeTexto.textContent ?? '')
+    }
     return {
-      h1s: h1s.map((h) => n(h.textContent)),
-      sobretituloDaFaixa: anterior?.tagName === 'P' ? n(anterior.textContent) : '',
+      titulosPrincipais: titulosPrincipais.map((titulo) => limpar(titulo.textContent)),
+      sobretituloDaFaixa: anterior?.tagName === 'P' ? limpar(anterior.textContent) : '',
       paragrafosDaFaixa: Array.from(faixa?.querySelectorAll('p') ?? [])
-        .filter((p) => p !== anterior)
-        .map((p) => n(p.textContent)),
+        .filter((paragrafo) => paragrafo !== anterior)
+        .map((paragrafo) => limpar(paragrafo.textContent)),
       blocos,
-      textoDoConteudo: n(partes.join(' ')),
+      textoDoConteudo: limpar(partes.join(' ')),
       imagens: main.querySelectorAll('img, picture, video, canvas').length,
     }
   })
@@ -311,9 +327,9 @@ export async function textoVisivelDaPagina(page: Page): Promise<string> {
   return page.evaluate(() => {
     const partes: string[] = []
     const caminho = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
-    for (let no = caminho.nextNode(); no; no = caminho.nextNode()) {
-      if (no.parentElement?.closest('script, style, noscript, template')) continue
-      partes.push(no.textContent ?? '')
+    for (let noDeTexto = caminho.nextNode(); noDeTexto; noDeTexto = caminho.nextNode()) {
+      if (noDeTexto.parentElement?.closest('script, style, noscript, template')) continue
+      partes.push(noDeTexto.textContent ?? '')
     }
     return partes.join(' ').replace(/\s+/g, ' ')
   })
@@ -323,10 +339,10 @@ export type Trecho = { nome: string; esperado: string; recebido: string }
 
 export function compararTrechos(trechos: Trecho[]): string[] {
   return trechos
-    .filter((t) => t.recebido !== t.esperado)
+    .filter((trecho) => trecho.recebido !== trecho.esperado)
     .map(
-      (t) =>
-        `trecho "${t.nome}" difere do documento:\n    esperado: "${t.esperado}"\n    recebido: "${t.recebido}"`
+      (trecho) =>
+        `trecho "${trecho.nome}" difere do documento:\n    esperado: "${trecho.esperado}"\n    recebido: "${trecho.recebido}"`
     )
 }
 
@@ -336,7 +352,9 @@ export function compararTrechos(trechos: Trecho[]): string[] {
  */
 export function sobraDoTexto(texto: string, esperados: string[]): string {
   let sobra = texto
-  for (const esperado of [...esperados].sort((a, b) => b.length - a.length)) {
+  for (const esperado of [...esperados].sort(
+    (primeiro, segundo) => segundo.length - primeiro.length
+  )) {
     if (esperado) sobra = sobra.replace(esperado, ' ')
   }
   return normalizar(sobra)
@@ -355,16 +373,18 @@ export type MedidaDasIniciais = {
 }
 
 /* Luminância relativa da WCAG 2. */
-function luminancia([r, g, b]: number[]) {
+function luminancia([vermelho, verde, azul]: number[]) {
   const canal = (valor = 0) => {
-    const c = valor / 255
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    const fracao = valor / 255
+    return fracao <= 0.03928 ? fracao / 12.92 : ((fracao + 0.055) / 1.055) ** 2.4
   }
-  return 0.2126 * canal(r) + 0.7152 * canal(g) + 0.0722 * canal(b)
+  return 0.2126 * canal(vermelho) + 0.7152 * canal(verde) + 0.0722 * canal(azul)
 }
 
-function contraste(a: number[], b: number[]): number {
-  const [clara = 0, escura = 0] = [luminancia(a), luminancia(b)].sort((x, y) => y - x)
+function contraste(corDoTexto: number[], corDoFundo: number[]): number {
+  const [clara = 0, escura = 0] = [luminancia(corDoTexto), luminancia(corDoFundo)].sort(
+    (uma, outra) => outra - uma
+  )
   return (clara + 0.05) / (escura + 0.05)
 }
 
@@ -391,10 +411,10 @@ export async function medirIniciais(page: Page, iniciais: string[]): Promise<Med
     falhas: [],
   }
   const circulos = await page.evaluate((procuradas) => {
-    const n = (t: string | null) => (t ?? '').replace(/\s+/g, ' ').trim()
+    const limpar = (texto: string | null) => (texto ?? '').replace(/\s+/g, ' ').trim()
     const cor = (texto: string) => {
-      const m = /rgba?\(([^)]+)\)/.exec(texto)
-      const partes = (m?.[1] ?? '')
+      const achado = /rgba?\(([^)]+)\)/.exec(texto)
+      const partes = (achado?.[1] ?? '')
         .split(/[\s,/]+/)
         .filter(Boolean)
         .map(Number)
@@ -403,14 +423,14 @@ export async function medirIniciais(page: Page, iniciais: string[]): Promise<Med
     const main = document.querySelector('main')
     return procuradas.map((iniciais) => {
       const achados = Array.from(main?.querySelectorAll<HTMLElement>('*') ?? []).filter(
-        (e) => n(e.textContent) === iniciais && e.children.length === 0
+        (candidato) => limpar(candidato.textContent) === iniciais && candidato.children.length === 0
       )
-      const e = achados[0]
-      if (!e) return { iniciais, achados: 0 }
-      const caixa = e.getBoundingClientRect()
+      const elemento = achados[0]
+      if (!elemento) return { iniciais, achados: 0 }
+      const caixa = elemento.getBoundingClientRect()
       /* As camadas de fundo do elemento para cima, até a primeira opaca. */
       const camadas: { cor: number[]; onde: string }[] = []
-      for (let atual: Element | null = e; atual; atual = atual.parentElement) {
+      for (let atual: Element | null = elemento; atual; atual = atual.parentElement) {
         const fundo = cor(getComputedStyle(atual).backgroundColor)
         if ((fundo[3] ?? 0) === 0) continue
         camadas.push({
@@ -419,14 +439,14 @@ export async function medirIniciais(page: Page, iniciais: string[]): Promise<Med
         })
         if ((fundo[3] ?? 0) >= 1) break
       }
-      const estilo = getComputedStyle(e)
+      const estilo = getComputedStyle(elemento)
       return {
         iniciais,
         achados: achados.length,
-        visivel: e.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }),
+        visivel: elemento.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }),
         caixa: `${Math.round(caixa.width)}x${Math.round(caixa.height)}`,
         temCaixa: caixa.width > 0 && caixa.height > 0,
-        foraDaArvore: e.closest('[aria-hidden="true"]') !== null,
+        foraDaArvore: elemento.closest('[aria-hidden="true"]') !== null,
         cor: cor(estilo.color),
         tamanho: parseFloat(estilo.fontSize),
         peso: Number(estilo.fontWeight) || 400,
@@ -435,61 +455,71 @@ export async function medirIniciais(page: Page, iniciais: string[]): Promise<Med
     })
   }, iniciais)
 
-  for (const c of circulos) {
-    if (!('cor' in c)) {
-      medida.falhas.push(`iniciais "${c.iniciais}" não aparecem em nenhum elemento do conteúdo`)
+  for (const circulo of circulos) {
+    if (!('cor' in circulo)) {
+      medida.falhas.push(
+        `iniciais "${circulo.iniciais}" não aparecem em nenhum elemento do conteúdo`
+      )
       continue
     }
-    if (c.achados !== 1)
-      medida.falhas.push(`iniciais "${c.iniciais}" em ${c.achados} elementos, e não 1`)
-    if (c.visivel && c.temCaixa) medida.visiveis.push(`${c.iniciais} (${c.caixa})`)
-    else medida.falhas.push(`iniciais "${c.iniciais}" não estão visíveis (caixa ${c.caixa})`)
-    if (c.foraDaArvore) medida.foraDaArvoreNoDom.push(c.iniciais)
-    else medida.falhas.push(`iniciais "${c.iniciais}" fora de elemento com aria-hidden="true"`)
+    if (circulo.achados !== 1)
+      medida.falhas.push(`iniciais "${circulo.iniciais}" em ${circulo.achados} elementos, e não 1`)
+    if (circulo.visivel && circulo.temCaixa)
+      medida.visiveis.push(`${circulo.iniciais} (${circulo.caixa})`)
+    else
+      medida.falhas.push(
+        `iniciais "${circulo.iniciais}" não estão visíveis (caixa ${circulo.caixa})`
+      )
+    if (circulo.foraDaArvore) medida.foraDaArvoreNoDom.push(circulo.iniciais)
+    else
+      medida.falhas.push(`iniciais "${circulo.iniciais}" fora de elemento com aria-hidden="true"`)
 
     /* Compõe do fundo opaco para cima. */
-    const camadas = [...c.camadas].reverse()
+    const camadas = [...circulo.camadas].reverse()
     const base = camadas[0]
     if (!base || (base.cor[3] ?? 0) < 1) {
-      medida.falhas.push(`iniciais "${c.iniciais}": nenhuma superfície opaca abaixo do círculo`)
+      medida.falhas.push(
+        `iniciais "${circulo.iniciais}": nenhuma superfície opaca abaixo do círculo`
+      )
       continue
     }
     let fundo = base.cor.slice(0, 3)
     for (const camada of camadas.slice(1)) {
       const alfa = camada.cor[3] ?? 1
-      fundo = fundo.map((canal, i) => alfa * (camada.cor[i] ?? 0) + (1 - alfa) * canal)
+      fundo = fundo.map((canal, indice) => alfa * (camada.cor[indice] ?? 0) + (1 - alfa) * canal)
     }
-    const razao = contraste(c.cor, fundo)
-    const grande = c.tamanho >= 24 || (c.tamanho >= 18.66 && c.peso >= 700)
+    const razao = contraste(circulo.cor, fundo)
+    const grande = circulo.tamanho >= 24 || (circulo.tamanho >= 18.66 && circulo.peso >= 700)
     const minimo = grande ? 3 : 4.5
-    const rgb = (v: number[]) => `rgb(${v.slice(0, 3).map(Math.round).join(', ')})`
+    const rgb = (valores: number[]) => `rgb(${valores.slice(0, 3).map(Math.round).join(', ')})`
     const linha =
-      `${c.iniciais}: cor ${rgb(c.cor)} a ${c.tamanho}px peso ${c.peso}` +
+      `${circulo.iniciais}: cor ${rgb(circulo.cor)} a ${circulo.tamanho}px peso ${circulo.peso}` +
       ` (${grande ? 'texto grande, mínimo 3:1' : 'texto normal, mínimo 4,5:1'})` +
       ` sobre o fundo do círculo ${camadas
         .slice(1)
-        .map((k) => `rgba(${k.cor.join(', ')}) ${k.onde}`)
+        .map((camada) => `rgba(${camada.cor.join(', ')}) ${camada.onde}`)
         .join(' + ')}` +
       ` composto na superfície ${rgb(base.cor)} ${base.onde} = ${rgb(fundo)}: ${razao.toFixed(2)}:1`
     medida.contrastes.push(linha)
     if (razao < minimo) medida.falhas.push(`contraste abaixo de ${minimo}:1 · ${linha}`)
   }
 
-  /* A árvore de acessibilidade do Chromium, inteira. */
-  const cdp = await page.context().newCDPSession(page)
+  /* A árvore de acessibilidade do Chromium, inteira, pelo protocolo do DevTools. */
+  const sessaoDoDevTools = await page.context().newCDPSession(page)
   try {
-    await cdp.send('Accessibility.enable')
-    const { nodes } = await cdp.send('Accessibility.getFullAXTree')
+    await sessaoDoDevTools.send('Accessibility.enable')
+    const { nodes: nosDaArvore } = await sessaoDoDevTools.send('Accessibility.getFullAXTree')
     for (const procurada of iniciais) {
-      const nos = nodes.filter(
-        (no) => !no.ignored && normalizar(String(no.name?.value ?? '')) === procurada
+      const nosComAsIniciais = nosDaArvore.filter(
+        (noDaArvore) =>
+          !noDaArvore.ignored && normalizar(String(noDaArvore.name?.value ?? '')) === procurada
       )
-      for (const no of nos) {
-        medida.naArvore.push(`${procurada} (papel ${String(no.role?.value ?? '?')})`)
+      for (const noDaArvore of nosComAsIniciais) {
+        medida.naArvore.push(`${procurada} (papel ${String(noDaArvore.role?.value ?? '?')})`)
       }
     }
   } finally {
-    await cdp.detach()
+    await sessaoDoDevTools.detach()
   }
   for (const achado of medida.naArvore) {
     medida.falhas.push(`iniciais na árvore de acessibilidade: ${achado}`)

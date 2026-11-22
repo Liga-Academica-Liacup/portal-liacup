@@ -77,67 +77,73 @@ test('o texto da página é o do conteudo-institucional.md, sem a nota de fonte 
       esperado: DOC.historia.paragrafos.join(' | '),
       recebido: historia?.paragrafos.join(' | ') ?? '(ausente)',
     },
-    ...DOC.itens.flatMap((item, i) => [
+    ...DOC.itens.flatMap((item, indice) => [
       {
-        nome: `§${item.numero}, nome do item ${numeroDoItem(i)}`,
+        nome: `§${item.numero}, nome do item ${numeroDoItem(indice)}`,
         esperado: item.nome,
-        recebido: objetivos?.itens[i]?.titulo ?? '(ausente)',
+        recebido: objetivos?.itens[indice]?.titulo ?? '(ausente)',
       },
-      ...item.paragrafos.map((paragrafo, j) => ({
-        nome: `§${item.numero}, parágrafo ${j + 1}`,
+      ...item.paragrafos.map((paragrafo, indiceDoParagrafo) => ({
+        nome: `§${item.numero}, parágrafo ${indiceDoParagrafo + 1}`,
         esperado: paragrafo,
-        recebido: objetivos?.itens[i]?.paragrafos[j] ?? '(ausente)',
+        recebido: objetivos?.itens[indice]?.paragrafos[indiceDoParagrafo] ?? '(ausente)',
       })),
     ]),
-    ...DOC.docentes.flatMap((docente, i) => [
+    ...DOC.docentes.flatMap((docente, indice) => [
       {
-        nome: `§4.1, docente ${i + 1}, nome`,
+        nome: `§4.1, docente ${indice + 1}, nome`,
         esperado: docente.nome,
-        recebido: docentes?.itens[i]?.titulo ?? '(ausente)',
+        recebido: docentes?.itens[indice]?.titulo ?? '(ausente)',
       },
       {
-        nome: `§4.1, docente ${i + 1}, cargo e formação`,
+        nome: `§4.1, docente ${indice + 1}, cargo e formação`,
         esperado: `${docente.cargo} | ${docente.formacao}`,
-        recebido: docentes?.itens[i]?.paragrafos.join(' | ') ?? '(ausente)',
+        recebido: docentes?.itens[indice]?.paragrafos.join(' | ') ?? '(ausente)',
       },
     ]),
   ]
   /* Rótulos de interface: REFERENCIA-VISUAL.md §7 (Q2 (b) e Q4 (a)). */
   const rotulos: Trecho[] = [
-    { nome: 'título principal', esperado: ROTULOS.sobre.h1, recebido: lido.h1s.join(' | ') },
+    {
+      nome: 'título principal',
+      esperado: ROTULOS.sobre.tituloPrincipal,
+      recebido: lido.titulosPrincipais.join(' | '),
+    },
     { nome: 'sobretítulo da faixa (nenhum)', esperado: '', recebido: lido.sobretituloDaFaixa },
-    ...ROTULOS.sobre.blocos.flatMap((bloco, i) => [
+    ...ROTULOS.sobre.blocos.flatMap((bloco, indice) => [
       {
-        nome: `bloco ${i + 1}, título`,
+        nome: `bloco ${indice + 1}, título`,
         esperado: bloco.titulo,
-        recebido: lido.blocos[i]?.titulo ?? '(ausente)',
+        recebido: lido.blocos[indice]?.titulo ?? '(ausente)',
       },
       {
-        nome: `bloco ${i + 1}, sobretítulo`,
+        nome: `bloco ${indice + 1}, sobretítulo`,
         esperado: bloco.sobretitulo,
-        recebido: lido.blocos[i]?.sobretitulo ?? '(ausente)',
+        recebido: lido.blocos[indice]?.sobretitulo ?? '(ausente)',
       },
     ]),
   ]
   /* O número de cada item é decorativo, e o par de iniciais sai do nome pela regra do D6. */
-  const numeros = DOC.itens.map((_, i) => numeroDoItem(i))
-  const iniciais = DOC.docentes.map((d) => iniciaisPelaRegraDoD6(d.nome))
+  const numeros = DOC.itens.map((_, indice) => numeroDoItem(indice))
+  const iniciais = DOC.docentes.map((docente) => iniciaisPelaRegraDoD6(docente.nome))
   const decorativos: Trecho[] = [
-    ...numeros.map((numero, i) => ({
+    ...numeros.map((numero, indice) => ({
       nome: `número do item ${numero}, fora do leitor de tela`,
       esperado: numero,
-      recebido: objetivos?.itens[i]?.decorativos.join(' | ') ?? '(ausente)',
+      recebido: objetivos?.itens[indice]?.decorativos.join(' | ') ?? '(ausente)',
     })),
-    ...iniciais.map((par, i) => ({
-      nome: `iniciais do docente ${i + 1}, fora do leitor de tela`,
+    ...iniciais.map((par, indice) => ({
+      nome: `iniciais do docente ${indice + 1}, fora do leitor de tela`,
       esperado: par,
-      recebido: docentes?.itens[i]?.decorativos.join(' | ') ?? '(ausente)',
+      recebido: docentes?.itens[indice]?.decorativos.join(' | ') ?? '(ausente)',
     })),
   ]
 
   const falhas = compararTrechos([...trechos, ...rotulos, ...decorativos])
-  if (lido.h1s.length !== 1)
-    falhas.push(`a página tem ${lido.h1s.length} títulos de nível 1: ${lido.h1s.join(' | ')}`)
+  if (lido.titulosPrincipais.length !== 1)
+    falhas.push(
+      `a página tem ${lido.titulosPrincipais.length} títulos de nível 1: ${lido.titulosPrincipais.join(' | ')}`
+    )
   if (lido.blocos.length !== ROTULOS.sobre.blocos.length)
     falhas.push(
       `a página tem ${lido.blocos.length} blocos com h2, e não ${ROTULOS.sobre.blocos.length}`
@@ -159,8 +165,8 @@ test('o texto da página é o do conteudo-institucional.md, sem a nota de fonte 
 
   /* Nada a mais: sem os trechos, os rótulos, os números e as iniciais, não sobra texto no <main>. */
   const sobra = sobraDoTexto(lido.textoDoConteudo, [
-    ...trechos.flatMap((t) => t.esperado.split(' | ')),
-    ...rotulos.map((t) => t.esperado),
+    ...trechos.flatMap((trecho) => trecho.esperado.split(' | ')),
+    ...rotulos.map((trecho) => trecho.esperado),
     ...numeros,
     ...iniciais,
   ])
@@ -169,26 +175,26 @@ test('o texto da página é o do conteudo-institucional.md, sem a nota de fonte 
       `texto no conteúdo que não está no documento nem nos rótulos: "${sobra.slice(0, 200)}"`
     )
 
-  const p = informacoes.project.name
+  const projeto = informacoes.project.name
   const paragrafosPorSecao = [DOC.apresentacao, DOC.historia, ...DOC.itens]
-    .map((s) => `§${s.numero} ${s.paragrafos.length}`)
+    .map((secao) => `§${secao.numero} ${secao.paragrafos.length}`)
     .join(' · ')
-  const notas = [DOC.apresentacao, DOC.historia, ...DOC.itens].flatMap((s) =>
-    s.notas.map((nota) => `${nota} do §${s.numero}`)
+  const notas = [DOC.apresentacao, DOC.historia, ...DOC.itens].flatMap((secao) =>
+    secao.notas.map((nota) => `${nota} do §${secao.numero}`)
   )
   console.log(
-    `[${p}] trechos do conteudo-institucional.md conferidos: ${trechos.length}` +
-      ` (§2.1 1 · §2.2 1 · §2.3 a §2.6 ${DOC.itens.reduce((n, i) => n + 1 + i.paragrafos.length, 0)} · §4.1 ${DOC.docentes.length * 2})` +
+    `[${projeto}] trechos do conteudo-institucional.md conferidos: ${trechos.length}` +
+      ` (§2.1 1 · §2.2 1 · §2.3 a §2.6 ${DOC.itens.reduce((soma, item) => soma + 1 + item.paragrafos.length, 0)} · §4.1 ${DOC.docentes.length * 2})` +
       ` · rótulos de interface conferidos: ${rotulos.length} · decorativos conferidos: ${decorativos.length}` +
-      ` · com divergência: ${falhas.filter((f) => f.startsWith('trecho')).length}\n` +
-      `[${p}] parágrafos lidos por seção: ${paragrafosPorSecao}` +
-      ` · itens: ${DOC.itens.length} · parágrafos dos itens: ${DOC.itens.reduce((n, i) => n + i.paragrafos.length, 0)}\n` +
-      `[${p}] notas de fonte tiradas da comparação: ${notas.length} (${notas.join(', ') || 'nenhuma'})` +
+      ` · com divergência: ${falhas.filter((falha) => falha.startsWith('trecho')).length}\n` +
+      `[${projeto}] parágrafos lidos por seção: ${paragrafosPorSecao}` +
+      ` · itens: ${DOC.itens.length} · parágrafos dos itens: ${DOC.itens.reduce((soma, item) => soma + item.paragrafos.length, 0)}\n` +
+      `[${projeto}] notas de fonte tiradas da comparação: ${notas.length} (${notas.join(', ') || 'nenhuma'})` +
       ` · texto fora do documento: ${sobra.length} caracteres\n` +
       DOC.docentes
         .map(
-          (d, i) =>
-            `[${p}] docente ${i + 1} do §4.1: nome "${d.nome}" · cargo "${d.cargo}" · formação "${d.formacao}"`
+          (docente, indice) =>
+            `[${projeto}] docente ${indice + 1} do §4.1: nome "${docente.nome}" · cargo "${docente.cargo}" · formação "${docente.formacao}"`
         )
         .join('\n')
   )
@@ -200,7 +206,7 @@ test('a página não traz nota de fonte, marcador de pendente nem o que o protó
 }, informacoes) => {
   await abrirPagina(page)
   const texto = await textoVisivelDaPagina(page)
-  const notas = [DOC.apresentacao, DOC.historia, ...DOC.itens].flatMap((s) => s.notas)
+  const notas = [DOC.apresentacao, DOC.historia, ...DOC.itens].flatMap((secao) => secao.notas)
   const procurados = [
     ...PROIBIDOS_DA_SPEC,
     ROTULOS.sobre.tituloDoPrototipo,
@@ -233,17 +239,17 @@ test('as iniciais dos docentes aparecem, ficam fora da árvore de acessibilidade
   page,
 }, informacoes) => {
   await abrirPagina(page)
-  const esperadas = DOC.docentes.map((d) => iniciaisPelaRegraDoD6(d.nome))
+  const esperadas = DOC.docentes.map((docente) => iniciaisPelaRegraDoD6(docente.nome))
   const medida = await medirIniciais(page, esperadas)
   const { imagens } = await lerPagina(page)
-  const p = informacoes.project.name
+  const projeto = informacoes.project.name
   console.log(
-    `[${p}] iniciais: ${medida.foraDaArvoreNoDom.join(', ')} (fora da árvore de acessibilidade)` +
+    `[${projeto}] iniciais: ${medida.foraDaArvoreNoDom.join(', ')} (fora da árvore de acessibilidade)` +
       ` · calculadas pela regra do D6 a partir de ${DOC.docentes.length} nomes do §4.1: ${esperadas.join(', ')}` +
       ` · visíveis: ${medida.visiveis.join(', ') || 'nenhuma'}` +
       ` · na árvore de acessibilidade: ${medida.naArvore.length}` +
       ` · imagens no conteúdo: ${imagens}\n` +
-      medida.contrastes.map((linha) => `[${p}] contraste das iniciais ${linha}`).join('\n')
+      medida.contrastes.map((linha) => `[${projeto}] contraste das iniciais ${linha}`).join('\n')
   )
   expect(
     medida.falhas,
@@ -260,22 +266,22 @@ test('o quadro da história e as borboletas são decorativos e não ficam por ci
   const largura = page.viewportSize()?.width ?? 0
   const medida = await page.getByRole('main').evaluate((main) => {
     const desenhos = Array.from(main.querySelectorAll('svg'))
-    const visiveis = desenhos.filter((d) =>
-      d.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+    const visiveis = desenhos.filter((desenho) =>
+      desenho.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
     )
     const historia = main.querySelectorAll('h2')[0]?.closest('section')
     const quadro = Array.from(
       historia?.querySelectorAll<HTMLElement>('[aria-hidden="true"]') ?? []
-    ).find((e) => e.tagName === 'DIV')
+    ).find((elemento) => elemento.tagName === 'DIV')
     const texto = historia?.querySelector('h2 ~ p')
     const linhas: { texto: string; caixa: DOMRect }[] = []
     const percurso = document.createTreeWalker(main, NodeFilter.SHOW_TEXT)
-    for (let no = percurso.nextNode(); no; no = percurso.nextNode()) {
-      const conteudo = no.textContent?.trim() ?? ''
-      if (!conteudo || !no.parentElement?.checkVisibility()) continue
-      if (no.parentElement.closest('[aria-hidden="true"]')) continue
+    for (let noDeTexto = percurso.nextNode(); noDeTexto; noDeTexto = percurso.nextNode()) {
+      const conteudo = noDeTexto.textContent?.trim() ?? ''
+      if (!conteudo || !noDeTexto.parentElement?.checkVisibility()) continue
+      if (noDeTexto.parentElement.closest('[aria-hidden="true"]')) continue
       const faixa = document.createRange()
-      faixa.selectNodeContents(no)
+      faixa.selectNodeContents(noDeTexto)
       for (const caixa of Array.from(faixa.getClientRects())) {
         if (caixa.width > 0 && caixa.height > 0)
           linhas.push({ texto: conteudo.slice(0, 30), caixa })
@@ -284,25 +290,28 @@ test('o quadro da história e as borboletas são decorativos e não ficam por ci
     const sobreposicoes: string[] = []
     let comparacoes = 0
     const caixas = [
-      ...visiveis.map((d) => ({
-        nome: `borboleta ${String(d.getAttribute('class'))}`,
-        caixa: d.getBoundingClientRect(),
+      ...visiveis.map((desenho) => ({
+        nome: `borboleta ${String(desenho.getAttribute('class'))}`,
+        caixa: desenho.getBoundingClientRect(),
       })),
       ...(quadro ? [{ nome: 'quadro da história', caixa: quadro.getBoundingClientRect() }] : []),
     ]
     for (const { nome, caixa } of caixas) {
       for (const linha of linhas) {
         comparacoes += 1
-        const l = Math.min(caixa.right, linha.caixa.right) - Math.max(caixa.left, linha.caixa.left)
-        const a = Math.min(caixa.bottom, linha.caixa.bottom) - Math.max(caixa.top, linha.caixa.top)
-        if (l > 0.5 && a > 0.5) sobreposicoes.push(`${nome} sobre "${linha.texto}"`)
+        const sobreposicaoNaLargura =
+          Math.min(caixa.right, linha.caixa.right) - Math.max(caixa.left, linha.caixa.left)
+        const sobreposicaoNaAltura =
+          Math.min(caixa.bottom, linha.caixa.bottom) - Math.max(caixa.top, linha.caixa.top)
+        if (sobreposicaoNaLargura > 0.5 && sobreposicaoNaAltura > 0.5)
+          sobreposicoes.push(`${nome} sobre "${linha.texto}"`)
       }
     }
-    const q = quadro?.getBoundingClientRect()
-    const t = texto?.getBoundingClientRect()
+    const caixaDoQuadro = quadro?.getBoundingClientRect()
+    const caixaDoTexto = texto?.getBoundingClientRect()
     return {
       desenhos: desenhos.length,
-      foraDoLeitor: desenhos.filter((d) => d.closest('[aria-hidden="true"]')).length,
+      foraDoLeitor: desenhos.filter((desenho) => desenho.closest('[aria-hidden="true"]')).length,
       quadro: quadro
         ? {
             texto: (quadro.textContent ?? '').trim(),
@@ -311,12 +320,14 @@ test('o quadro da história e as borboletas são decorativos e não ficam por ci
           }
         : null,
       posicao:
-        q && t
+        caixaDoQuadro && caixaDoTexto
           ? {
-              aoLado: q.left >= t.right - 1 && q.top < t.bottom,
-              abaixo: q.top >= t.bottom - 1,
-              texto: `texto x ${Math.round(t.left)}-${Math.round(t.right)} y ${Math.round(t.top)}-${Math.round(t.bottom)}`,
-              quadro: `quadro x ${Math.round(q.left)}-${Math.round(q.right)} y ${Math.round(q.top)}-${Math.round(q.bottom)}`,
+              aoLado:
+                caixaDoQuadro.left >= caixaDoTexto.right - 1 &&
+                caixaDoQuadro.top < caixaDoTexto.bottom,
+              abaixo: caixaDoQuadro.top >= caixaDoTexto.bottom - 1,
+              texto: `texto x ${Math.round(caixaDoTexto.left)}-${Math.round(caixaDoTexto.right)} y ${Math.round(caixaDoTexto.top)}-${Math.round(caixaDoTexto.bottom)}`,
+              quadro: `quadro x ${Math.round(caixaDoQuadro.left)}-${Math.round(caixaDoQuadro.right)} y ${Math.round(caixaDoQuadro.top)}-${Math.round(caixaDoQuadro.bottom)}`,
             }
           : null,
       linhas: linhas.length,
@@ -366,17 +377,17 @@ test('o axe não acusa violação e não há rolagem horizontal', async ({ page 
   await abrirPagina(page)
   const resultado = await new AxeBuilder({ page }).withTags(TAGS_DO_AXE).analyze()
   const violacoes = resultado.violations.map(
-    (v) => `${v.id} (${v.nodes.length} elementos): ${v.help}`
+    (violacao) => `${violacao.id} (${violacao.nodes.length} elementos): ${violacao.help}`
   )
   const rolagem = await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth,
     clientWidth: document.documentElement.clientWidth,
   }))
-  const p = informacoes.project.name
+  const projeto = informacoes.project.name
   console.log(
-    `[${p}] ${ENDERECO} Violacoes de acessibilidade: ${violacoes.length}` +
+    `[${projeto}] ${ENDERECO} Violacoes de acessibilidade: ${violacoes.length}` +
       ` · regras aplicadas: ${resultado.passes.length + resultado.violations.length}\n` +
-      `[${p}] ${ENDERECO} rolagem horizontal: scrollWidth ${rolagem.scrollWidth} / clientWidth ${rolagem.clientWidth}`
+      `[${projeto}] ${ENDERECO} rolagem horizontal: scrollWidth ${rolagem.scrollWidth} / clientWidth ${rolagem.clientWidth}`
   )
   expect(violacoes, `axe em ${ENDERECO}:\n${violacoes.join('\n')}`).toEqual([])
   expect(rolagem.scrollWidth).toBeLessThanOrEqual(rolagem.clientWidth)

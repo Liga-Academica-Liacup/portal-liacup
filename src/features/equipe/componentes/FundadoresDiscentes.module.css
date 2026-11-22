@@ -8,11 +8,13 @@
   margin-bottom: var(--espaco-secao);
 }
 
-/* Seis colunas, como a grade dos ligantes no protótipo. 20 px de espaço no
-   protótipo; o degrau mais perto é a soma de --space-2 e --space-3 (22 px). */
+/* Cinco colunas no desktop, uma por fundador, e não as seis da grade dos
+   ligantes do protótipo, que deixavam a sexta vazia (Gabriel, Q13 (b),
+   22/11/2026). 20 px de espaço no protótipo; o degrau mais perto é a soma de
+   --space-2 e --space-3 (22 px). */
 .grade {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: calc(var(--space-2) + var(--space-3));
   margin: 0;
   padding: 0;

@@ -370,7 +370,10 @@
      elemento citado, medido no Chromium em 1280 e 390 px. "Até N px" é a regra
      @media (max-width: N px) do protótipo. Como nas changes anteriores, onde o
      protótipo usa um valor a 2 px ou menos de um degrau --space-* (ou de uma
-     soma de dois), o componente usa o degrau, e não um token novo. */
+     soma de dois), o componente usa o degrau, e não um token novo. A regra do
+     degrau vale para preenchimento, margem e vão (padding, margin, gap).
+     Posição e dimensão medidas no protótipo ficam como token, como os
+     --borboleta-1-* da layout-e-hero (Gabriel, Q15 (a), 22/11/2026). */
 
   /* Faixas do topo e seções */
   --espaco-topo-da-secao-alta: 64px; /* protótipo: padding-top da faixa roxa do Sobre e da faixa de superfície da Equipe */

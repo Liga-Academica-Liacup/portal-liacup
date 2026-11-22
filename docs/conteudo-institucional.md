@@ -290,7 +290,7 @@ Não. Nenhum serviço prestado na liga é remunerado. _(Estatuto, Art. 20º)_
 | Etapas do processo seletivo (§5.5)     | Pendente — a liga descreve o "produto" da etapa 2 em uma linha · na R3, quando o painel publicar resultados, a etapa 4 passa a citar "no portal" _(decisão do Gabriel, 21/11/2026, Portão 2 da pagina-processo-seletivo)_ |
 | Nomes da diretoria atual               | Pendente                                                                                         |
 
-**Placar: de 16 itens, 9 resolvidos.** Restam 7, e três deles são fotos.
+**Placar: de 16 itens, 9 resolvidos.** Restam 7, e dois deles são fotos.
 
 ---
 
