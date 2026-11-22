@@ -187,7 +187,8 @@ O fluxo de trabalho, da F01 em diante:
 **Se o portal quebrar em produção**: branch `fix/` a partir da `main`, a menor correção possível,
 alteração proposta com `URGENTE` no título. O CI verde continua obrigatório — leva minutos, e é o
 que impede uma correção apressada de quebrar outra coisa. O procedimento completo está no ADR-0005,
-seção 2.4.
+seção 2.4. O `revisor` e o `guardiao-appsec` passam pela correção antes do merge, como em toda
+change; o ADR-0005 é anterior ao guardião e não se edita.
 
 > A F00 foi desenvolvida direto na `main`, como excecao de arranque: nao havia CI nem protecao a
 > respeitar ainda, e o primeiro CI precisa rodar uma vez para que as verificacoes passem a existir.
@@ -280,7 +281,9 @@ na seção 9 de [`docs/PLANO-DE-DESENVOLVIMENTO.md`](docs/PLANO-DE-DESENVOLVIMEN
 ### A versão do OpenSpec importa
 
 O CLI é global e não entra no `package.json`. **A versão em uso é a 2.1.0**, instalada com
-`npm install -g @fission-ai/openspec`. Confira com `openspec --version`.
+`npm install -g @fission-ai/openspec@2.1.0`, com a versão presa. Confira com `openspec --version`.
+Trocar de versão é uma change: a proposta traz a versão de antes e a de depois e a saída de
+`openspec --version`, porque a ferramenta nova roda em todo `/opsx:*`.
 
 Está escrito aqui por um motivo mecânico, não informativo. As seis skills de
 `.claude/skills/openspec-*` são geradas pela ferramenta e ficam versionadas, o que é uma exceção
@@ -289,6 +292,50 @@ rodando `openspec update --force` e exigindo que `git status --porcelain` não a
 delas — e esse resultado só vale contra a mesma versão do CLI. Numa versão diferente, um
 `git status` sujo diria "alguém editou à mão" quando, na verdade, a ferramenta mudou.
 
+### A barreira do Git
+
+Quem escreve no Git é o Gabriel. Para isso não depender só de instrução, todo comando que um agente
+do Claude Code roda neste repositório, pelas três ferramentas que rodam comando (`Bash`,
+`PowerShell` e `mcp__terminal__run_in_terminal`), passa antes pelo gancho
+`.claude/ganchos/barrar-git-de-escrita.mjs`, registrado em `.claude/settings.json`:
+
+- **Deixa passar** só a leitura do `git`: `status`, `diff`, `log`, `show`, `ls-files`, `ls-tree`,
+  `grep`, `check-ignore`, `rev-parse`, `ls-remote`, `rev-list`, `merge-base`, `cat-file`, `blame`,
+  `branch` só para listar e `version`.
+- **Recusa** todo o resto, inclusive disfarçado (`git -C . add`, `bash -c "git add …"`, depois de
+  `;` ou `&&`, dentro de `$(…)`), todo `gh`, o `git fetch`, o `-c` e as variáveis `GIT_*`, e o que
+  ele não conseguir analisar. Também recusa um comando que só **cita** uma escrita, como
+  `grep "git push" arquivo`, ou um texto com a palavra "git" sozinha: aí o agente usa a ferramenta
+  de leitura ou de edição.
+- **As regras de negação** do mesmo arquivo seguram as formas diretas se os ganchos forem
+  desligados (medido em 21/11/2026: com os ganchos desligados, `git add -n` foi recusado, e
+  `git -C . add -n` e `bash -c "git add -n …"` passaram), e negam por inteiro a `mcp__terminal__run_in_terminal`: nenhum agente digita no
+  terminal do Gabriel neste projeto. O que o Gabriel digita no próprio terminal não passa por nada
+  disso.
+- **Vale na hora** em que o `.claude/settings.json` é salvo, sem reabrir nada.
+- **Se a barreira não aparecer** (um `git add -n README.md` pedido a um agente não é recusado), o
+  Gabriel reabre a sessão do Claude Code e pede o teste de novo. Se continuar passando, a change
+  para.
+
+**A conferência do ambiente local** roda com o `node` direto, sem `npm run`:
+
+```bash
+node scripts/conferir-ambiente-local.mjs --change <nome-da-change>
+```
+
+Ela compara com a `main` os arquivos de configuração e de instrução dos agentes que estão no disco,
+lê o `.git/config`, os ganchos do Git e o `.git/info/exclude`, e sai com código diferente de 0 em
+toda diferença sem decisão registrada. As regras estão no `docs/SEGURANCA.md` §5.
+
+**Limite conhecido: a barreira é contra engano, não contra agente que esconde o comando.** O gancho
+lê o texto do comando, e deixa passar o nome que o shell monta na hora (`${X:-git} add .`,
+`g{i..i}t add .`, `$(printf 'g%s' it)`) e o script ou `npm run` que roda o Git por dentro
+(`sh scripts/x.sh` com `git add` escrito no arquivo). Contra isso valem as leituras depois de cada
+passagem e o fato de que só o Gabriel faz push. O que o líder técnico mede depois de cada agente: `git diff --cached --name-only` vazio, `git rev-parse
+HEAD` e o número de linhas de `git rev-list --all` iguais aos de antes, `git ls-remote origin
+<branch>` igual ao de antes, e a conferência do ambiente. Mudança que nenhuma dessas leituras
+mostra não é pega.
+
 ---
 
 ## Onde ficam as decisoes
@@ -296,14 +343,14 @@ delas — e esse resultado só vale contra a mesma versão do CLI. Numa versão 
 Nada neste projeto foi decidido por preferencia pessoal. Tudo o que e regra esta escrito em
 `docs/`, e em caso de conflito vale a ordem abaixo — numero menor vence:
 
-| #   | Documento                                                                                                           | O que decide                                          |
-| --- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| 1   | [`docs/constitution.md`](docs/constitution.md)                                                                      | Os 10 princípios inegociáveis do projeto              |
-| 2   | Documento de aceite assinado pela liga                                                                              | O que foi aprovado com a diretoria                    |
-| 3   | [`docs/PADROES-DE-CODIGO.md`](docs/PADROES-DE-CODIGO.md) e [`docs/REFERENCIA-VISUAL.md`](docs/REFERENCIA-VISUAL.md) | Estrutura de pastas, componentização, testes e visual |
-| 4   | `openspec/changes/<change>/proposal.md` e `openspec/specs/`                                                         | O comportamento daquela change e do sistema           |
-| 5   | `openspec/changes/<change>/design.md`                                                                               | A tecnologia daquela change                           |
-| 6   | Preferência de implementação                                                                                        | O resto                                               |
+| #   | Documento                                                                                                                                                     | O que decide                                                     |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 1   | [`docs/constitution.md`](docs/constitution.md)                                                                                                                | Os 10 princípios inegociáveis do projeto                         |
+| 2   | Documento de aceite assinado pela liga                                                                                                                        | O que foi aprovado com a diretoria                               |
+| 3   | [`docs/PADROES-DE-CODIGO.md`](docs/PADROES-DE-CODIGO.md), [`docs/REFERENCIA-VISUAL.md`](docs/REFERENCIA-VISUAL.md) e [`docs/SEGURANCA.md`](docs/SEGURANCA.md) | Estrutura de pastas, componentização, testes, visual e segurança |
+| 4   | `openspec/changes/<change>/proposal.md` e `openspec/specs/`                                                                                                   | O comportamento daquela change e do sistema                      |
+| 5   | `openspec/changes/<change>/design.md`                                                                                                                         | A tecnologia daquela change                                      |
+| 6   | Preferência de implementação                                                                                                                                  | O resto                                                          |
 
 Decisoes de arquitetura ficam em ADRs, que **nao se editam**: decisao nova substitui a anterior com
 um ADR novo.

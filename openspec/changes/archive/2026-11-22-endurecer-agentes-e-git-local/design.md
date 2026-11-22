@@ -8,7 +8,7 @@ e lido pelo especificador:
 | O que | Situação |
 | --- | --- |
 | Configuração do Claude Code no projeto | Não existe `.claude/settings.json`, `.claude/settings.local.json` nem `.mcp.json`. Seis skills com `allowed-tools: Bash(openspec:*)` na linha 4. `dev-frontend`, `dev-dados` e `qa-acessibilidade` têm `Bash`, e o `guardiao-visual` também |
-| Ferramentas de terminal | `Bash`, `PowerShell` e `mcp__terminal__run_in_terminal`, que digita no terminal do Gabriel. O gancho `PreToolUse` dispara também nas chamadas dos subagentes. Só o código 2 bloqueia: qualquer outro código diferente de 0 deixa passar (falha aberta). Regra de negação casa por prefixo. `disableAllHooks` desliga os ganchos, e as regras de negação continuam valendo |
+| Ferramentas de terminal | `Bash`, `PowerShell` e `mcp__terminal__run_in_terminal`, que digita no terminal do Gabriel e vem da configuração do app, não do repositório. O campo de entrada é `command` nas três (documentação do Claude Code e esquema da ferramenta nesta sessão). O gancho `PreToolUse` dispara também nas chamadas dos subagentes, com `agent_id`, `agent_type`, `tool_name` e `tool_input` na entrada. Só o código 2 bloqueia: qualquer outro código diferente de 0 é erro não bloqueante (falha aberta). `permissions` e `hooks` são recarregados quando o arquivo de configuração é salvo, com a sessão aberta; `/hooks` é só leitura. `disableAllHooks` pode ir em configuração de usuário, de projeto ou local; se as regras de negação continuam valendo com ele **não está documentado** |
 | Git local | `.git/hooks/` só com `*.sample`. `.git/info/exclude` com uma linha ativa, `AGENTS.md`, posta pelo Gabriel (Q17 da `pagina-processo-seletivo`) |
 | `AGENTS.md` | Escrito pelo `next dev` (16.4.6) quando `agentRules` não é falso e há um agente de IA na sessão. Com `agentRules: false`, o Next apaga o bloco dele e o arquivo, se ficar vazio. O `experimental.agentFeedback` escreve no mesmo arquivo e vem desligado. O texto do arquivo tem instruções a agentes, e é tratado como dado |
 | Testes de política | `tests/politicas/ambiente.ts` copia o `.env` inteiro para o `process.env`, sem sobrescrever o que já existe. Só `tests/politicas/clientes.ts` chama `exigir`, com três nomes: `SUPABASE_TESTE_URL`, `SUPABASE_TESTE_ANON_KEY` e `SUPABASE_TESTE_SERVICE_ROLE_KEY`. `npm test` exclui `tests/politicas/**` e `tests/banco/**` (`vitest.config.mts`) |
@@ -43,29 +43,55 @@ e lido pelo especificador:
   que chama o Git, ou escrever direto em `.git/`). Esse resíduo é declarado, e quem o cobre é a
   conferência do ambiente (D4) junto com o `git diff --cached --name-only` e o `git status
   --porcelain` que o líder técnico roda depois de cada passagem.
+- **As três ferramentas (ajuste 1).** A barreira cobre `Bash`, `PowerShell` e
+  `mcp__terminal__run_in_terminal`. O campo de entrada é `command` nas três, lido na documentação
+  oficial do Claude Code (permissions, hooks e settings) e, para a terceira, no esquema da
+  ferramenta nesta sessão. Com o campo certo, nenhuma fica negada por campo incerto.
 - **Camada 1, o gancho** (`.claude/ganchos/barrar-git-de-escrita.mjs`, em `node` puro, sem
-  dependência). Ele é registrado em `PreToolUse` com matcher `Bash|PowerShell|mcp__terminal__run_in_terminal`
-  e lê o texto do comando no campo de entrada de cada ferramenta. O `dev-frontend` confere o nome do
-  campo no esquema de cada uma, e campo ausente dá recusa. Permitir é sair com 0 e sem saída. Recusar
-  é sair com 2, com a mensagem no erro padrão. Todo erro é capturado e sai com 2.
+  dependência). Ele é registrado em `PreToolUse` com o matcher
+  `^(Bash|PowerShell|mcp__terminal__run_in_terminal)$`, regex JavaScript ancorada para casar o nome
+  exato. Lê `tool_input.command`; campo ausente dá recusa. Permitir é sair com 0 e sem saída. Recusar
+  é sair com 2, com a mensagem no erro padrão, que vai ao Claude. Qualquer outro código diferente de
+  0 seria erro não bloqueante, que deixa passar; por isso todo erro é capturado e sai com 2.
 - **Camada 2, as regras de negação** em `.claude/settings.json`, para quando o gancho estiver
   desligado ou o `node` não abrir:
-  - `Bash(git <op>:*)` para `add`, `commit`, `push`, `rm`, `mv`, `restore`, `reset`, `checkout`,
-    `switch`, `stash`, `merge`, `rebase`, `cherry-pick`, `tag`, `branch -d`, `branch -D`, `clean`,
-    `fetch`, `pull`, `clone`, `init`, `config`, `apply`, `am`, `revert`, `update-index` e
-    `update-ref`;
-  - `Bash(gh:*)` (Q3);
-  - as mesmas regras para `PowerShell`, se a ferramenta aceitar regra por prefixo. O dev mede, e se
-    não aceitar, o relatório diz isso;
-  - pela Q9 (b), negação de `Edit` e `Write` em `.git/**`, na sintaxe de caminho que a documentação
-    do Claude Code dá para regra de arquivo, também medida pelo dev.
+  - `Bash(git <op> *)` e `PowerShell(git <op> *)` para `add`, `commit`, `push`, `rm`, `mv`,
+    `restore`, `reset`, `checkout`, `switch`, `stash`, `merge`, `rebase`, `cherry-pick`, `tag`,
+    `branch -d`, `branch -D`, `clean`, `fetch`, `pull`, `clone`, `init`, `config`, `apply`, `am`,
+    `revert`, `update-index` e `update-ref`, mais `Bash(gh *)` e `PowerShell(gh *)` (Q3): 28 por
+    ferramenta. A forma é a com espaço nas duas: a documentação diz que a regra de `PowerShell` tem
+    "the same shape as Bash rules", e o `:*` só vale no fim e não está documentado para
+    `PowerShell`;
+  - **`mcp__terminal__run_in_terminal`, inteira.** Ferramenta MCP só aceita regra de negação pelo
+    nome inteiro; regra com parênteses é ignorada. Então, para ela, "as regras de negação incluem as
+    três" significa negar a ferramenta no projeto, com `"mcp__terminal__run_in_terminal"` em
+    `permissions.deny`. O gancho também a cobre, pelo matcher, para o caso de a negação ser tirada.
+    **Custo:** nenhum agente digita no terminal do Gabriel neste projeto; servidor de
+    desenvolvimento roda pelo `Bash`, em segundo plano;
+  - pela Q9 (b), `Edit(/.git/**)` e `Edit(**/.git/**)`. Regra de arquivo é `Edit(...)`, que vale
+    também para Write; a documentação diz que `Write(...)` com caminho não casa nada. A primeira é
+    relativa à raiz do projeto, que é o caso que importa; a segunda pega `.git/` em qualquer
+    profundidade e em caminho absoluto. O redirecionamento `>` e o `tee` no `Bash` são conferidos
+    contra as regras de `Edit`;
+  - pela decisão do Gabriel sobre a brecha da configuração (21/11/2026, `relatorio.md`),
+    `Edit(/.claude/settings.json)`, `Edit(/.claude/settings.local.json)` e
+    `Edit(/.claude/ganchos/**)`. São 5 regras de `Edit` no total: as 2 do `.git/` e as 3 da brecha.
 
-  A camada 2 não pega `git -C . add` nem `bash -c`. É limite conhecido, escrito no README.
+  A documentação diz que a regra de negação casa também subcomando encadeado (`&&`, `;`, `|`),
+  prefixo `FOO=bar` e `git -C . push`. O `bash -c` não é citado: é o limite da camada 2 que o passo 4
+  do D3 mede, e que o README registra.
+- **Recarga:** o Claude Code observa os arquivos de configuração e recarrega `permissions` e `hooks`
+  com a sessão aberta. A barreira vale na hora em que o arquivo é salvo, e a execução verde da 1.4
+  prova que carregou. Se não carregar, o Gabriel reabre a sessão, e isso vai para o relatório.
 - **Por que não só uma camada:** só regras reprova o critério do briefing; só gancho falha aberto
   quando os ganchos são desligados.
 
 ### D2 — A função de decisão do gancho
 
+- **Onde mora.** As funções de decisão moram em `.claude/ganchos/decisao-do-git.mjs`, um módulo só
+  de funções, e o teste as importa de lá. O `.claude/ganchos/barrar-git-de-escrita.mjs` é só o
+  ponto de entrada, e sempre decide: não confere se foi chamado direto, e carrega o módulo dentro do
+  tratamento de erro, então módulo ausente ou quebrado dá recusa, com código 2.
 - **Onde procurar.** O gancho procura **todo** aparecimento das palavras `git`, `git.exe` e `gh`
   como nome de comando, em qualquer ponto do texto. Conta como nome de comando a palavra que vem
   depois do começo do texto, de espaço, de `;`, `&`, `|`, `(`, `)`, `{`, `` ` ``, `'`, `"`, `$`,
@@ -102,13 +128,19 @@ e lido pelo especificador:
   campo de entrada ausente ou exceção dão recusa.
 - **Citação (Q8 (a)):** `grep -n "git push" docs/x.md` é recusado, porque a função não distingue
   citação de invocação. O líder técnico registra a recusa e lê o arquivo pela ferramenta de leitura.
+- **A configuração do Claude Code (decisão do Gabriel sobre a brecha, 21/11/2026):** todo comando
+  que tenha `.claude` e também `settings` ou `ganchos`, no literal ou numa forma normalizada, e todo
+  comando cuja pasta atual (`cwd` da entrada) esteja dentro de `.claude`, é recusado, com a
+  mensagem própria "Recusado pela barreira: o comando cita a configuração do Claude Code
+  (.claude/settings ou .claude/ganchos). Mudar esses arquivos é passo do Gabriel." Falso positivo
+  aceito.
 - **A mensagem de recusa**, em português, no erro padrão:
   `Recusado pela barreira do Git: "<trecho>" não está na lista de leitura. Quem escreve no Git é o Gabriel: prepare os arquivos e entregue o comando pronto (CLAUDE.md, "Regras de Git").`
 
 ### D3 — O teste da função e a demonstração a partir de um subagente
 
-- **Teste de tabela** em `tests/barreiras/git-de-escrita.test.mjs`, importando a função exportada
-  pelo gancho. `tests/barreiras/` não está no `exclude` do `vitest.config.mts`, então roda no
+- **Teste de tabela** em `tests/barreiras/git-de-escrita.test.mjs`, importando a função de decisão
+  de `.claude/ganchos/decisao-do-git.mjs`. `tests/barreiras/` não está no `exclude` do `vitest.config.mts`, então roda no
   `npm test`, sem mudar a configuração. A saída imprime
   `comandos conferidos: N · permitidos: P · recusados: R`. A tabela traz pelo menos:
   - **permitidos:** `git status`, `git status --porcelain`, `git diff --cached --name-only`,
@@ -129,18 +161,32 @@ e lido pelo especificador:
   que falharam, desfaz, e vê verde de novo. `sha256sum` do gancho igual antes e depois.
 - **Demonstração a partir de um subagente** (critério do briefing), feita pelo
   `qa-acessibilidade`, que tem `Bash`. Todas as formas de escrita usam `-n` (simulação), então nada
-  é escrito mesmo se a barreira falhar:
+  é escrito mesmo se a barreira falhar. **Exceção registrada (Q12 (a), Gabriel, 21/11/2026):** só
+  nesta change, e só com `-n`, um subagente roda as quatro formas do passo 1 antes de existir o
+  `.claude/settings.json`; fora dos passos 1 e 2, a regra "agente não roda comando de escrita no
+  Git" vale sem exceção.
   1. **Antes de o gancho existir**, no começo do apply: `git rm -n --cached README.md`,
-     `git add -n README.md`, `git -C . add -n README.md` e `bash -c "git add -n README.md"` rodam,
-     com código 0 e a linha `add 'README.md'` ou `rm 'README.md'`. É a execução vermelha: sem
-     barreira, as formas passam;
-  2. **Depois** de o Gabriel carregar o gancho (tarefa 1.3): as quatro são recusadas com a mensagem
-     do D2, e `git status`, `git diff --stat` e `git log --oneline -n 3` rodam. É a execução verde;
-  3. **Só a camada 2:** com os ganchos desligados por `disableAllHooks: true` num
-     `.claude/settings.local.json` criado e apagado pelo Gabriel, `git add -n README.md` é recusado
-     pela regra de negação, e `git -C . add -n README.md` passa, que é o limite do D1. Se a sessão
-     não puder recarregar as configurações de novo, o passo 3 fica **não medido**, com essas
-     palavras, e o Gabriel decide no Portão 2.
+     `git add -n README.md`, `git -C . add -n README.md` e `bash -c "git add -n README.md"` rodam
+     com código 0, e nenhuma é recusada. O `git rm -n` imprime `rm 'README.md'`; os três
+     `git add -n` não imprimem nada, que é o comportamento do Git para arquivo rastreado sem
+     mudança. É a execução vermelha: sem barreira, as formas passam;
+  2. **Depois** de o dev salvar o `.claude/settings.json` (tarefa 1.3), que vale na hora em que o
+     arquivo é salvo: as quatro são recusadas, e `git status`, `git diff --stat` e
+     `git log --oneline -n 3` rodam. É a execução verde. A recusa do gancho se distingue pelo código
+     2 e pela mensagem do D2; a da regra de negação, pela mensagem de permissão do Claude Code. Se
+     nada for recusado, o Gabriel reabre a sessão, e isso vai para o relatório;
+  3. **Pelas outras duas ferramentas (ajuste 1)**, a partir do líder técnico, porque subagente não
+     tem essas ferramentas: `git add -n README.md` pelo `PowerShell` e pela
+     `mcp__terminal__run_in_terminal`. Na segunda, a recusa esperada vem da negação da ferramenta
+     inteira (D1). O relatório diz qual camada recusou em cada caso;
+  4. **Só a camada 2:** com os ganchos desligados por `disableAllHooks: true` num
+     `.claude/settings.local.json` criado e apagado pelo Gabriel, o subagente roda
+     `git add -n README.md`, `git -C . add -n README.md` e `bash -c "git add -n README.md"`. Se as
+     regras de negação continuam valendo com `disableAllHooks` **não está documentado**: este passo
+     é a medição disso. Pela documentação, as duas primeiras são recusadas pela regra de negação; o
+     resultado da terceira fica registrado como o limite medido do D1. Se a regra de negação não
+     recusar a primeira, o cenário "Os ganchos estão desligados" da spec não se cumpre, e o líder
+     técnico para e leva ao Gabriel.
 
   Antes e depois de cada passo, o líder técnico registra `git diff --cached --name-only` (vazio) e
   `git status --porcelain`. As saídas vão literais para o relatório.
@@ -151,19 +197,34 @@ e lido pelo especificador:
   direto e **sem `npm run`**, porque o `npm` lê o `.npmrc` e roda scripts `pre`/`post` antes da
   conferência que existe para conferir o ambiente. Por isso o `package.json` não muda. É desvio da
   sugestão do briefing (`npm run`), pelo motivo acima.
+- **Onde mora:** as funções da conferência moram em `scripts/conferir-ambiente-local/funcoes.mjs`,
+  um módulo só de funções, e o teste as importa de lá. O `scripts/conferir-ambiente-local.mjs` é só
+  o ponto de entrada, e sempre roda a conferência: não confere se foi chamado direto.
 - **Ordem, falha fechada:**
   1. **Sem rodar o Git**, o script lê como texto:
-     - o `.git/config`, contra a lista de chaves permitidas (Q10 (a)): `core.repositoryformatversion`,
-       `core.filemode`, `core.bare`, `core.logallrefupdates`, `core.symlinks`, `core.ignorecase`,
-       `remote.origin.url` (igual a uma constante do script, que o Gabriel confere no Portão 2),
-       `remote.origin.fetch` (igual a `+refs/heads/*:refs/remotes/origin/*`), `branch.<nome>.remote`
-       (igual a `origin`) e `branch.<nome>.merge`. Chave fora da lista, `include`, `includeIf` ou
-       seção que o script não entende param a conferência. Ele imprime o nome da chave, nunca o
-       valor;
+     - o `.git/config`, contra a lista de chaves permitidas (Q10 (a), com a lista do Gabriel de
+       21/11/2026):
+       - `remote.origin.url`, igual à constante do script
+         `https://github.com/Liga-Academica-Liacup/portal-liacup.git`;
+       - `remote.origin.fetch`, igual a `+refs/heads/*:refs/remotes/origin/*`;
+       - os padrões `branch.<nome>.remote` (igual a `origin`), `branch.<nome>.merge` e
+         `branch.<nome>.vscode-merge-base`, que o VS Code grava sozinho;
+       - `lfs.repositoryformatversion`;
+       - as chaves `core.*` que já existem hoje no `.git/config` desta máquina, e só elas. Na 2.1,
+         o dev lê só os nomes dessas chaves, sem valor, pela própria conferência, que imprime nome e
+         nunca valor, e põe na lista exatamente as que existem. Chave `core.*` que aparecer depois
+         para a conferência;
+       - **nunca entram**, mesmo que existam: `core.fsmonitor`, `core.hooksPath`,
+         `core.sshCommand`, `core.pager`, `core.editor` e `core.askPass`. Se alguma existir hoje, é
+         achado para o Gabriel, e a conferência para.
+
+       Chave fora da lista, `include`, `includeIf` ou seção que o script não entende param a
+       conferência. Ele imprime o nome da chave, nunca o valor;
      - `.git/hooks/`: todo arquivo que não termina em `.sample` para;
      - `.git/info/exclude` e `.git/info/attributes`: toda linha que não é comentário nem vazia;
-     - `disableAllHooks` em `~/.claude/settings.json` e em `.claude/settings.local.json`: se ligado,
-       para.
+     - `disableAllHooks`, que pode ir em configuração de usuário, de projeto ou local: em
+       `~/.claude/settings.json`, `.claude/settings.json` e `.claude/settings.local.json`. Se
+       ligado, para.
 
      Se o passo 1 parar, o script sai antes de rodar qualquer `git`, porque um `core.fsmonitor` ou um
      gancho rodaria nele.
@@ -232,6 +293,10 @@ e lido pelo especificador:
 - **Acréscimos à lista de hoje:** `CLAUDE.md` e `CLAUDE.local.md` em qualquer pasta, `AGENTS.md` em
   qualquer pasta, `GEMINI.md`, `.cursorrules`, `.cursor/`, `.windsurfrules`, `.clinerules`,
   `.github/copilot-instructions.md` e `.github/instructions/`.
+- **O `next.config.*` (ajuste 3):** o texto do AS-17 passa a dizer que mudar `agentRules` para
+  verdadeiro, tirá-lo, ou ligar `experimental.agentFeedback` no `next.config.*` é mudança de
+  configuração de agente, que bloqueia sem decisão registrada. As duas opções são o que faz o Next
+  escrever instrução a agentes no `AGENTS.md` (Context).
 - Ferramenta nova com arquivo próprio ganha linha por change. A conferência do D4 vigia a mesma
   lista.
 
@@ -343,9 +408,16 @@ a ordem de decisão é esta:
   geral. O D11 arquivado não se edita.
 - **I-03.** No parágrafo do `<endereço>`, "O pedido escolhe só o caminho" passa a "O pedido escolhe
   só a rota, no padrão da lacuna `<rota>`". As duas conferências continuam iguais.
-- **LB-26.** No "Limite conhecido" do arquivo binário, uma frase nova: o
-  `prototipo/Portal-LIACUP.html` é texto, mas guarda um manifesto em base64 com conteúdo comprimido
-  (linha 220, conferida pelo líder técnico ao escrever). Esse conteúdo fica **coberto só pela
+- **O commit da prévia (ajuste 2, Q3 (b)).** Antes do P23, isto é, antes das quatro formas com o
+  segredo da Vercel, quem confere que a prévia serve o commit certo é o Gabriel, no painel da
+  Vercel, junto com o host. O líder técnico pede a conferência e registra a resposta dele antes de
+  ler o segredo. Isso substitui a consulta pelo `gh api` que o líder técnico fez na
+  `pagina-processo-seletivo`, e nenhum agente consulta o commit da prévia por linha de comando.
+- **LB-26.** No "Limite conhecido" do arquivo binário, uma frase nova, com os números relidos pelo
+  líder técnico em 21/11/2026: o `prototipo/Portal-LIACUP.html` é texto, mas a linha 220 é o
+  conteúdo de `<script type="__bundler/manifest">` (linha 219), um JSON de uma linha com 1.192.346
+  caracteres e 9 entradas em base64: 4 `text/javascript` com `compressed: true`, 4 `font/woff2` e
+  1 `image/png`, as duas últimas com `compressed: false`. Esse conteúdo fica **coberto só pela
   origem declarada**, o protótipo aprovado pela liga (`REFERENCIA-VISUAL.md`).
 
 ### D10 — README, padrões e `CLAUDE.md` (LB-14, LB-15, LB-24, LB-25)
@@ -359,13 +431,15 @@ a ordem de decisão é esta:
   do merge, como em toda change." A frase remete ao ADR-0005 §2.4, que é anterior ao guardião e
   não se edita.
 - **LB-14 (Q5 (a)):** nenhum arquivo muda. A saída na §6 cita esta proposta.
-- **README, passo manual novo** ("A barreira do Git"):
-  - o que a barreira recusa e o que deixa passar;
-  - que ela não vale no terminal do Gabriel;
-  - que o gancho só vale depois de a sessão ser reaberta (no terminal, também pelo menu `/hooks`; no app de desktop o menu não existe), sempre
-    que o `.claude/settings.json` mudar;
+- **README, seção nova** ("A barreira do Git"):
+  - o que a barreira recusa e o que deixa passar, nas três ferramentas que rodam comando;
+  - que ela não vale para o que o Gabriel digita no terminal dele, e que nenhum agente digita nesse
+    terminal, porque a `mcp__terminal__run_in_terminal` está negada no projeto;
+  - que a barreira vale na hora em que o `.claude/settings.json` é salvo;
+  - **o que fazer se a barreira não aparecer:** se um `git add -n README.md` pedido a um agente não
+    for recusado, o Gabriel reabre a sessão e pede o teste de novo;
   - o comando da conferência do ambiente;
-  - o limite do D1.
+  - o limite do D1, com o resultado medido no passo 4 do D3.
 - **`CLAUDE.md`:**
   - a seção "Escopo de escrita é instrução, não trava" passa a dizer que a escrita no Git por
     comando é trava (D1), que pasta continua sendo instrução, e que a obrigação do líder técnico
@@ -400,11 +474,16 @@ a ordem de decisão é esta:
 
 | Quem | Arquivos |
 | --- | --- |
-| `dev-frontend` | `.claude/settings.json`; `.claude/ganchos/barrar-git-de-escrita.mjs`; `scripts/conferir-ambiente-local.mjs`; `tests/barreiras/` (os três testes); `tests/politicas/ambiente.ts`; `next.config.ts`; `.gitignore`. Os arquivos de demonstração (`.claude/DEMO-RP12.txt` e o `agentRules: true`) são criados e desfeitos na mesma tarefa |
+| `dev-frontend` | `.claude/settings.json`; `.claude/ganchos/barrar-git-de-escrita.mjs` e `.claude/ganchos/decisao-do-git.mjs`; `scripts/conferir-ambiente-local.mjs` e `scripts/conferir-ambiente-local/funcoes.mjs`; `tests/barreiras/` (os três testes); `tests/politicas/ambiente.ts`; `next.config.ts`; `.gitignore`. Os arquivos de demonstração (`.claude/DEMO-RP12.txt` e o `agentRules: true`) são criados e desfeitos na mesma tarefa |
 | `qa-acessibilidade` | Nenhum arquivo versionado. A demonstração do D3 e a comparação do D11 usam scripts no diretório temporário |
 | Líder técnico | `docs/SEGURANCA.md` (§4 AS-17, §5, §6 e o limite do binário); `docs/EQUIPE-DE-AGENTES.md` §2; `docs/PADROES-DE-CODIGO.md` §8; `README.md`; `CLAUDE.md`; `.claude/agents/guardiao-appsec.md` (uma linha); `openspec/changes/endurecer-agentes-e-git-local/ambiente-decidido.txt` |
-| Gabriel | Reabrir a sessão para carregar o gancho; o `.claude/settings.local.json` do passo 3 do D3, criado e apagado por ele; depois do merge, a linha do exclude (D14) |
+| Gabriel | O `.claude/settings.local.json` do passo 4 do D3, criado e apagado por ele; a conferência do commit e do host da prévia no painel da Vercel (D9), se houver P23; depois do merge, a linha do exclude (D14). Reabrir a sessão, só se a barreira não carregar |
 | `especificador` | `openspec/changes/endurecer-agentes-e-git-local/` |
+
+Os arquivos de `.claude/` da linha do `dev-frontend` valem até a decisão do Gabriel sobre a brecha
+da configuração (21/11/2026, `relatorio.md`). Depois dela, `.claude/settings*.json` e
+`.claude/ganchos/` são escritos só pelo Gabriel: o líder técnico prepara o conteúdo novo fora do
+repositório e entrega o comando pronto, como no Git.
 
 Não mudam: `src/`, `tests/e2e/`, `playwright.config.ts`, `vitest.config.mts`,
 `vitest.banco.config.mts`, `package.json`, `package-lock.json`, `.github/`, `.claude/skills/`, os
@@ -433,7 +512,9 @@ tarefa 3.1, feita a partir da sessão do agente.
 
 | Risco | Mitigação |
 | --- | --- |
-| O gancho só vale depois de recarregado, e a dieta pede uma sessão por change | A tarefa 1.4 começa pelo Gabriel reabrindo a sessão (retomando a mesma conversa), porque no app de desktop o menu `/hooks` não existe. A demonstração prova que o gancho está ativo. O passo está no README |
+| A configuração salva não é recarregada pela sessão aberta | A documentação diz que `permissions` e `hooks` recarregam quando o arquivo é salvo. A execução verde da 1.4 prova que carregou. Se não carregar, o Gabriel reabre a sessão, e isso vai para o relatório e para o README ("o que fazer se a barreira não aparecer") |
+| As regras de negação deixam de valer com `disableAllHooks` (não documentado) | O passo 4 do D3 mede. Se a regra não recusar, o líder técnico para e leva ao Gabriel, porque um cenário da spec não se cumpre |
+| A negação da `mcp__terminal__run_in_terminal` tira de todo agente a digitação no terminal do Gabriel | É o efeito pedido pelo ajuste 1. Servidor de desenvolvimento roda pelo `Bash`, em segundo plano |
 | O gancho falha aberto se o `node` não abrir | Camada 2 (D1), e a conferência acusa ganchos desligados |
 | Agente com terminal escreve no Git por um programa próprio | Limite declarado (D1). `git diff --cached --name-only`, `git status --porcelain` e a conferência do D4 depois de cada passagem |
 | Falso positivo do gancho (Q8) recusa uma forma da §5 com texto como `git push` | A recusa vai para o relatório, e o líder técnico usa a ferramenta de leitura |
@@ -454,6 +535,7 @@ tarefa 3.1, feita a partir da sessão do agente.
 
 ## Open Questions
 
-Nenhuma que possa esperar. As onze decisões pendentes estão na proposta, Q1 a Q11, com opções,
-custo e recomendação. Este design segue as recomendações. Opção diferente muda o D1 (Q1 e Q9), o
-D2 (Q3 e Q8), o D4 (Q6 e Q10), o D5 (Q4), o D8 (Q11) ou o D9 (Q2).
+Nenhuma. As doze decisões e os quatro ajustes do Gabriel, de 21/11/2026, estão na proposta, e este
+design os segue: D1 (Q1, Q9, ajuste 1), D2 (Q3, Q8), D3 (Q12, ajuste 1), D4 (Q6, Q10), D5 e D6 (Q4,
+ajuste 3), D8 (Q11) e D9 (Q2, ajustes 2 e 4). O que fica para medir no apply, e não para decidir,
+é o passo 4 do D3.

@@ -31,7 +31,7 @@
 **Dieta de processo (aprovada pelo Gabriel em 20/11/2026, depois de a `auditoria-de-base-appsec` consumir uma sessão inteira sem terminar):**
 
 1. **Uma sessão por change.** Se não couber numa sessão do Claude Code, a change é grande demais e se divide no Portão 1.
-2. **Guardião proporcional ao risco.** Em change de tela da R1, que é estática, ele confere só segredos (AS-01), exposição (AS-02), saída (AS-04), terceiros (AS-07) e cabeçalhos (AS-15). A auditoria completa roda na última change de cada release.
+2. **Guardião proporcional ao risco.** Em change de tela da R1, que é estática, ele confere só segredos (AS-01), exposição (AS-02), saída (AS-04), terceiros (AS-07) e cabeçalhos (AS-15). A auditoria completa roda na última change de cada release. As listas e a ordem que decidem estão na "Conferência proporcional" do `docs/SEGURANCA.md` §5, e só lá; o gatilho se decide pela lista de arquivos do diff, não por julgamento. Em vigor a partir da primeira change aprovada no Portão 1 depois do merge da `endurecer-agentes-e-git-local`.
 3. **Relatório curto:** uma tela por agente, com o veredito e os achados. Nada de transcrição literal da resposta do agente no `relatorio.md`.
 4. **No máximo duas rodadas por agente.** Depois de qualquer correção, o `revisor` e o `guardiao-appsec` rodam de novo; se o mesmo agente pedir correção numa terceira rodada, o líder técnico para e leva a pergunta ao Gabriel.
 
@@ -49,7 +49,7 @@ O gestor (eu) conversa com o Claude Code através do Gabriel: eu escrevo o brief
 
 **Medido em 18/11/2026, Claude Code 2.1.212:** não existe modo de equipes para ligar. Subagentes da mesma sessão não conversam entre si: a mensagem de um subagente sai e volta pela sessão principal. Sessões diferentes conseguem trocar mensagens, mas cada agente como sessão própria foi descartado: as permissões são por sessão (uma poderia fazer o que outra teve negado), a memória compartilhada já é o repositório, e seriam seis contextos para coordenar o que um coordena. Fica a orquestração com relatório.
 
-**Escopo de escrita é instrução, não trava**, para todo agente que tem ferramenta de escrita ou de terminal (`especificador`, `dev-frontend`, `dev-dados`, `guardiao-visual`, `qa-acessibilidade`). A lista de ferramentas não restringe pasta. Por isso o líder técnico confere pelo resultado: depois de cada passagem, o `git status` só pode mostrar arquivos dentro do escopo daquele agente. Só o `revisor` e o `guardiao-appsec`, sem nenhuma ferramenta de escrita, têm trava de verdade.
+**Escopo de escrita é instrução, não trava**, para todo agente que tem ferramenta de escrita ou de terminal (`especificador`, `dev-frontend`, `dev-dados`, `guardiao-visual`, `qa-acessibilidade`). A lista de ferramentas não restringe pasta. Por isso o líder técnico confere pelo resultado: depois de cada passagem, o `git status` só pode mostrar arquivos dentro do escopo daquele agente. Só o `revisor` e o `guardiao-appsec`, sem nenhuma ferramenta de escrita, têm trava de verdade. **A escrita no Git por comando, e a escrita na configuração que segura a barreira (`.claude/settings*.json` e `.claude/ganchos/`), são trava** desde a change `endurecer-agentes-e-git-local`, para todo agente, inclusive o líder técnico; as regras estão no `CLAUDE.md` e no `docs/SEGURANCA.md` §5.
 
 ## 4. O ciclo, visto pela equipe
 
@@ -93,7 +93,7 @@ Relatório de no máximo uma tela.
 
 Cada uma custou pelo menos um episódio de trabalho perdido nesta obra.
 
-1. **Quem escreve no Git é o Gabriel.** Os agentes preparam os arquivos e entregam os comandos prontos. Mensagem no padrão convencional, em português, **sem rodapé de coautoria**.
+1. **Quem escreve no Git é o Gabriel.** Os agentes preparam os arquivos e entregam os comandos prontos. A barreira do Git recusa a escrita a agente; a recusa não se contorna. Mensagem no padrão convencional, em português, **sem rodapé de coautoria**.
 2. **Commitar e enviar ao fim de cada change ou de cada dia**, o que vier primeiro. Commit local não é cópia de segurança.
 3. **Fechar o GitHub Desktop antes de usar o Git pelo terminal.** Ele faz stash automático ao trocar de branch e deixa `index.lock` preso. Foi assim que a spec da F01 sumiu.
 4. **Apagar branch com `git branch -d`, minúsculo, pelo terminal.** O botão do GitHub Desktop equivale a `-D` e apaga mesmo com trabalho não incorporado.
@@ -117,7 +117,7 @@ O modelo literal fica no `CLAUDE.md`, que todo agente carrega sozinho. O princí
 | Evidência | Comando, código de saída e contadores. Saída literal curta, nunca resumo |
 | Mudanças | Contagem A/M/R/D e qualquer arquivo fora do escopo esperado |
 | Desvios e incompleto | O que saiu diferente do briefing, e o que não foi feito ou não foi medido, com essas palavras |
-| Próximo passo | Comandos em bash, mensagem de commit em arquivo com `git commit -F` |
+| Próximo passo | Comandos em bash, mensagem de commit em arquivo com `git commit -F`. O primeiro é sempre `node scripts/conferir-ambiente-local.mjs --change <change>`, e o Gabriel para se não der 0 |
 
 ### 7.2 Gestor para o Gabriel
 

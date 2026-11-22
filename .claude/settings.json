@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git rm *)",
+      "Bash(git mv *)",
+      "Bash(git restore *)",
+      "Bash(git reset *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git stash *)",
+      "Bash(git merge *)",
+      "Bash(git rebase *)",
+      "Bash(git cherry-pick *)",
+      "Bash(git tag *)",
+      "Bash(git branch -d *)",
+      "Bash(git branch -D *)",
+      "Bash(git clean *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(git clone *)",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(git apply *)",
+      "Bash(git am *)",
+      "Bash(git revert *)",
+      "Bash(git update-index *)",
+      "Bash(git update-ref *)",
+      "Bash(gh *)",
+      "PowerShell(git add *)",
+      "PowerShell(git commit *)",
+      "PowerShell(git push *)",
+      "PowerShell(git rm *)",
+      "PowerShell(git mv *)",
+      "PowerShell(git restore *)",
+      "PowerShell(git reset *)",
+      "PowerShell(git checkout *)",
+      "PowerShell(git switch *)",
+      "PowerShell(git stash *)",
+      "PowerShell(git merge *)",
+      "PowerShell(git rebase *)",
+      "PowerShell(git cherry-pick *)",
+      "PowerShell(git tag *)",
+      "PowerShell(git branch -d *)",
+      "PowerShell(git branch -D *)",
+      "PowerShell(git clean *)",
+      "PowerShell(git fetch *)",
+      "PowerShell(git pull *)",
+      "PowerShell(git clone *)",
+      "PowerShell(git init *)",
+      "PowerShell(git config *)",
+      "PowerShell(git apply *)",
+      "PowerShell(git am *)",
+      "PowerShell(git revert *)",
+      "PowerShell(git update-index *)",
+      "PowerShell(git update-ref *)",
+      "PowerShell(gh *)",
+      "mcp__terminal__run_in_terminal",
+      "Edit(/.git/**)",
+      "Edit(**/.git/**)",
+      "Edit(/.claude/settings.json)",
+      "Edit(/.claude/settings.local.json)",
+      "Edit(/.claude/ganchos/**)",
+      "Edit(~/.claude/settings.json)",
+      "Edit(~/.claude/settings.local.json)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^(Bash|PowerShell|mcp__terminal__run_in_terminal)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/ganchos/barrar-git-de-escrita.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -12,14 +12,17 @@ valer quando estiver escrita. Change sem tela.
 
 ## What Changes
 
-1. **Barreira versionada contra escrita no Git**, para todo agente, inclusive o líder técnico. Ela
-   recusa antes de rodar todo `git` que não esteja numa lista fechada de leitura (status, diff, log,
-   show, ls-files, ls-tree, grep, rev-parse, rev-list, ls-remote, check-ignore, cat-file, blame,
-   merge-base e `branch` só para listar), mesmo disfarçado (`git -C . add`, `bash -c "git add …"`,
-   depois de `;`, `&&`, `|` ou dentro de `$(…)`), e recusa também o que não conseguir analisar.
-   Tudo o que não é leitura fica recusado: add, commit, push, rm, mv, restore, reset, checkout,
-   switch, stash, merge, rebase, cherry-pick, tag, `branch -d/-D`, clean, fetch (Q2) e todo `gh`
-   (Q3). O terminal do Gabriel não muda: a barreira só vale para comando que passa pelo Claude Code.
+1. **Barreira versionada contra escrita no Git**, para todo agente, inclusive o líder técnico, nas
+   três ferramentas que rodam comando: `Bash`, `PowerShell` e `mcp__terminal__run_in_terminal`
+   (ajuste 1). Ela recusa antes de rodar todo `git` que não esteja numa lista fechada de leitura
+   (status, diff, log, show, ls-files, ls-tree, grep, rev-parse, rev-list, ls-remote, check-ignore,
+   cat-file, blame, merge-base e `branch` só para listar), mesmo disfarçado (`git -C . add`,
+   `bash -c "git add …"`, depois de `;`, `&&`, `|` ou dentro de `$(…)`), e recusa também o que não
+   conseguir analisar. Tudo o que não é leitura fica recusado: add, commit, push, rm, mv, restore,
+   reset, checkout, switch, stash, merge, rebase, cherry-pick, tag, `branch -d/-D`, clean, fetch
+   (Q2) e todo `gh` (Q3). A `mcp__terminal__run_in_terminal`, que digita no terminal do Gabriel,
+   fica negada inteira no projeto, porque ferramenta MCP só aceita regra de negação pelo nome
+   inteiro (`design.md`, D1). O que o Gabriel digita no terminal dele não muda.
 2. **Conferência do ambiente local**, um comando versionado que o líder técnico roda antes de cada
    leva de pedidos de comando, antes dos comandos Git da entrega e depois de cada subagente. Ela
    compara com a `main`, pelo conteúdo e sem depender do `git status`, os arquivos de configuração e
@@ -27,14 +30,17 @@ valer quando estiver escrita. Change sem tela.
    `.git/info/exclude` antes de rodar qualquer `git`. Para, com código diferente de 0, em toda
    diferença sem decisão registrada (LB-05, LB-06).
 3. **`AGENTS.md` fora do repositório em qualquer clone** (Q4), e a lista do AS-17 passa a incluir
-   os arquivos de instrução a agentes desse tipo. A entrega traz o comando para o Gabriel tirar a
-   linha do `.git/info/exclude` depois do merge.
+   os arquivos de instrução a agentes desse tipo. O AS-17 passa a conferir também o `agentRules:
+   false` e o `experimental.agentFeedback` desligado no `next.config.*` (ajuste 3). A entrega traz
+   o comando para o Gabriel tirar a linha do `.git/info/exclude` depois do merge.
 4. **Os testes de política carregam só as variáveis que usam**, por nome, de uma lista. O segredo de
    bypass da Vercel deixa de entrar no ambiente deles.
 5. **As quatro pendências do guardião na `pagina-processo-seletivo`**, escritas na §5: a busca por
    commit cobre tudo o que o push publica (B-01); o que conta como leitura dinâmica do ambiente,
    com os pontos que existem hoje (I-01); a precondição do `curl --version` (I-02); e a lacuna
-   `<rota>` no parágrafo do `<endereço>` (I-03). O `design.md` arquivado não se edita.
+   `<rota>` no parágrafo do `<endereço>` (I-03). Sem `gh` (Q3), quem confere, antes do P23, que a
+   prévia serve o commit certo, e o host, é o Gabriel, no painel da Vercel (ajuste 2). O
+   `design.md` arquivado não se edita.
 6. **A regra 2 da dieta**, escrita na §5 e na spec `equipe-de-agentes`. O guardião confere na
    proporção do risco, e quem decide é a lista de arquivos do diff, não o julgamento:
    - change só de tela estática da R1: AS-01, AS-02, AS-04, AS-07 e AS-15;
@@ -47,16 +53,19 @@ valer quando estiver escrita. Change sem tela.
    LB-24 (Q7), LB-25 (a hierarquia do README ganha o `SEGURANCA.md`) e LB-26 (o protótipo nomeado
    como "coberto só pela origem declarada").
 
-**Decisão registrada para o AS-17**, se o Gabriel aprovar esta proposta: o gancho novo em
-`.claude/ganchos/`, o `.claude/settings.json` com o gancho e as regras de negação, a linha nova do
-`guardiao-appsec.md` sobre a regra 2 e o `allowed-tools: Bash(openspec:*)` das seis skills (Q5).
-Nenhuma variável de ambiente, servidor MCP nem ferramenta de agente nova.
+**Decisão registrada para o AS-17**, pela aprovação do Gabriel de 21/11/2026: o gancho novo em
+`.claude/ganchos/`, o `.claude/settings.json` com o gancho, as regras de negação e a negação da
+`mcp__terminal__run_in_terminal` inteira, a linha nova do `guardiao-appsec.md` sobre a regra 2 e o
+`allowed-tools: Bash(openspec:*)` das seis skills (Q5). Nenhuma variável de ambiente, servidor MCP
+nem ferramenta de agente nova.
 
 **Critérios de aceite:**
 
 - A barreira, a partir de um subagente, recusa `git rm`, `git add`, `git -C . add` e
   `bash -c "git add …"`, e deixa passar `git status`, `git diff` e `git log`, com o índice intacto.
   Fica registrada em duas execuções com resultados opostos (RP-12).
+- `git add -n README.md` é recusado por cada uma das três ferramentas de comando, com a camada que
+  recusou registrada.
 - `git ls-files -- AGENTS.md` vazio, e nenhum `AGENTS.md` no disco nem no `git status --porcelain`
   depois de um `next dev`. A conferência sem a linha do exclude fica com o Gabriel, depois do merge.
 - Um teste falha se o ambiente dos testes de política ganhar variável do `.env` fora da lista.
@@ -71,85 +80,51 @@ inteiros para a `ajustar-ci-ao-novo-fluxo`.
 
 ## Decisões do Gabriel
 
-Q1 a Q7 vêm do briefing; Q8 a Q11 são ambiguidades achadas na leitura. O detalhe técnico de cada
-uma está no `design.md`.
+Decididas no Portão 1, em **21/11/2026**. A mensagem literal está no `relatorio.md`, seção
+"Decisões do Gabriel no Portão 1". As opções e o custo de cada uma, de Q1 a Q11, estão na versão
+desta proposta que foi ao Portão 1 (commit `7bcdec0`). O detalhe técnico está no `design.md`.
 
-**Q1. Forma da barreira.**
-- (a) Só regras de negação nas configurações do projeto. Custo: casam por prefixo, não pegam
-  `git -C . add` nem `bash -c`, e reprovam o critério.
-- (b) Só o gancho que lê o comando antes de rodar. Custo: se os ganchos forem desligados nas
-  configurações do usuário, ou se o `node` não abrir, nada recusa.
-- (c) As duas. Custo: dois lugares para manter.
-- Recomendo (c): o gancho é a barreira, e as regras seguram as formas diretas sem ele.
+- **Q1 · forma da barreira: (c)**, o gancho mais as regras de negação. O gancho é a barreira, e as
+  regras seguram as formas diretas sem ele (D1).
+- **Q2 · `git fetch`: (b)**, recusado a agente. Com a `main` local atrás, o líder técnico para e
+  pede o `fetch` ao Gabriel (D9).
+- **Q3 · `gh`: (b)**, todo recusado. A conferência do commit da prévia passa ao Gabriel, no painel
+  da Vercel (ajuste 2, D9).
+- **Q4 · `AGENTS.md`: (c)**, a linha no `.gitignore` e o `agentRules: false`. O
+  `experimental.agentFeedback` continua desligado, e ligá-lo é mudança do AS-17 (ajuste 3, D5, D6).
+- **Q5 · LB-14: (a)**, esta proposta aprovada é a decisão registrada. Nenhum arquivo muda.
+- **Q6 · precondição da §5: (a)**, o `.claude/settings.json` igual ao da `main` ou igual ao
+  registrado como decidido na change em curso (D4, D9).
+- **Q7 · LB-24: (a)**, o ADR-0005 intocado. O README e a `PADROES-DE-CODIGO.md` §8 remetem a ele
+  (D10).
+- **Q8 · comando que só cita escrita no Git: (a)**, recusado. O líder técnico lê o arquivo pela
+  ferramenta de leitura (D2).
+- **Q9 · escrita em `.git/` por ferramenta de arquivo: (b)**, negada por regra, mais a conferência
+  (D1).
+- **Q10 · `.git/config`: (a)**, lista de chaves permitidas, com a lista do Gabriel:
+  `remote.origin.url` igual a `https://github.com/Liga-Academica-Liacup/portal-liacup.git`,
+  `remote.origin.fetch`, os padrões `branch.<nome>.remote`, `branch.<nome>.merge` e
+  `branch.<nome>.vscode-merge-base`, `lfs.repositoryformatversion` e as chaves `core.*` que já
+  existem hoje no `.git/config` desta máquina (D4).
+- **Q11 · gatilhos que não são caminho e lista de tela: (a)**, as listas do D8 mais a busca por
+  `process.env` e `NEXT_PUBLIC_`.
+- **Q12 · a execução vermelha a partir de um subagente roda as quatro formas com `-n` antes de o
+  gancho existir.** Opções que foram ao Gabriel, na entrega do líder técnico: (a) aceitar, só nesta
+  change; (b) trocar pela execução vermelha do teste de tabela. **Escolhida: (a)**, só nesta change
+  e só com `-n`. A exceção e os quatro comandos literais estão no `relatorio.md` (D3, tarefa 1.1).
 
-**Q2. `git fetch`.**
-- (a) Liberado. Custo: escreve referências e `FETCH_HEAD`, e vai à rede.
-- (b) Recusado a agente. Custo: quando a `main` local estiver atrás, o líder técnico para e pede o
-  `fetch` ao Gabriel.
-- Recomendo (b): o B-01 se resolve com `git ls-remote`, que é leitura.
+**Ajustes do Gabriel no Portão 1**, sem tarefa nova:
 
-**Q3. `gh`.**
-- (a) Recusar só `gh pr`. Custo: `gh api -X POST`, `gh release` e `gh repo` escrevem igual.
-- (b) Recusar todo `gh`. Custo: o líder técnico deixa de consultar o status do commit pelo `gh`,
-  como fez no P23 da `pagina-processo-seletivo`, e passa a ler no GitHub ou na Vercel.
-- Recomendo (b).
+1. A barreira cobre as três ferramentas que rodam comando, e `git add -n` é mostrado recusado por
+   cada uma (D1, D3, tarefas 1.3 e 1.4).
+2. Sem `gh`, quem confere antes do P23 que a prévia serve o commit certo, e o host, é o Gabriel, no
+   painel da Vercel. Isso entra na §5 no lugar do `gh api` (D9, tarefa 5.1).
+3. O `experimental.agentFeedback` continua desligado e entra na conferência do AS-17, junto com o
+   `agentRules: false` (D6, tarefa 3.1).
+4. A linha 220 do protótipo, relida pelo líder técnico em 21/11/2026, fecha o LB-26 (D9).
 
-**Q4. `AGENTS.md`.**
-- (a) Linha no `.gitignore`. Custo: o arquivo continua no disco, com instrução a agentes.
-- (b) `agentRules: false` no `next.config.ts`. Custo: depende de a opção existir em versões
-  futuras do Next.
-- (c) As duas. Custo: duas linhas.
-- Recomendo (c): (b) tira o arquivo do disco, e (a) segura se a opção mudar. O
-  `experimental.agentFeedback`, que escreve no mesmo arquivo, fica desligado, como já é o padrão.
-  Ligá-lo exige decisão do Gabriel, e o guardião trata a mudança como AS-17.
-
-**Q5. LB-14, o `allowed-tools: Bash(openspec:*)` das seis skills.**
-- (a) Esta proposta aprovada é a decisão registrada. Custo: nenhum arquivo muda.
-- (b) Tirar das skills. Custo: o `openspec update` as regera com a linha, e mexer nelas à mão é
-  bloqueio do AS-17.
-- Recomendo (a).
-
-**Q6. A precondição da §5 sobre `.claude/settings.json`.**
-- (a) Passa a aceitar o arquivo igual ao da `main`, ou igual ao que está registrado como decidido
-  na change em curso. A aprovação desta proposta é a decisão. Custo: um registro a manter por
-  change.
-- (b) Fica "igual ao da `main`". Custo: nenhum pedido de comando roda nesta change até o merge, e
-  o guardião não confirma nada por comando.
-- Recomendo (a).
-
-**Q7. LB-24 e o ADR-0005.**
-- (a) O ADR fica intocado. O README e a `PADROES-DE-CODIGO.md` §8 passam a dizer que o guardião
-  audita a correção urgente antes do merge, e remetem ao ADR. Custo: a regra em dois lugares.
-- (b) ADR novo, que substitui a seção 2.4. Custo: um ADR para uma frase.
-- Recomendo (a).
-
-**Q8. Comando que só cita uma escrita no Git**, como `grep -n "git push" docs/x.md`, ou um
-`git log -S 'git add'`.
-- (a) É recusado. Custo: falso positivo raro, que o líder técnico contorna lendo o arquivo.
-- (b) A barreira tenta separar citação de invocação. Custo: reabre o disfarce dentro de
-  `bash -c` e de `node -e`.
-- Recomendo (a).
-
-**Q9. Escrita direta em `.git/` pelas ferramentas de arquivo** (Write e Edit), que não passam por
-comando.
-- (a) Só a conferência pega, depois. Custo: um gancho do Git plantado roda até a próxima
-  conferência.
-- (b) Regra de negação para escrita em `.git/`, mais a conferência. Custo: uma regra a mais.
-- Recomendo (b). Nenhum agente precisa escrever ali.
-
-**Q10. A leitura do `.git/config`.**
-- (a) Lista de chaves permitidas: chave fora dela para a conferência. Custo: chave inofensiva que o
-  GitHub Desktop acrescente também para, até virar decisão.
-- (b) Lista de chaves perigosas. Custo: chave que ninguém previu passa calada.
-- Recomendo (a), que é falha fechada.
-
-**Q11. Os gatilhos que não são caminho de arquivo** (variáveis de ambiente, cabeçalhos,
-autenticação, dado pessoal) **e a lista do que conta como "tela".**
-- (a) As listas de caminhos do `design.md` (D8), mais uma conferência mecânica: diff que acrescenta
-  `process.env` ou `NEXT_PUBLIC_` vai para o checklist inteiro. Custo: uma busca a mais por change.
-- (b) Só as listas de caminhos. Custo: um componente de tela que passe a ler variável de ambiente
-  fica na conferência reduzida.
-- Recomendo (a).
+Depois do merge, a entrega traz o comando para o Gabriel tirar a linha `AGENTS.md` do
+`.git/info/exclude` e conferir que o `next dev` não recria o arquivo (D14).
 
 ## Fora de escopo
 
@@ -161,6 +136,8 @@ autenticação, dado pessoal) **e a lista do que conta como "tela".**
 - As configurações globais do Git e do Claude Code fora do repositório. A única exceção é a chave
   que desliga os ganchos, que a conferência lê.
 - Mudar as skills do OpenSpec, as ferramentas de qualquer agente, o ADR-0005 ou artefato arquivado.
+  A negação da `mcp__terminal__run_in_terminal` no projeto (ajuste 1) é a única mudança de
+  ferramenta, e vale para todos, sem mexer na definição de nenhum agente.
 
 ## Capabilities
 
@@ -173,11 +150,12 @@ Nenhuma.
 - `equipe-de-agentes`:
   - MODIFIED: "Nenhum agente escreve no Git" (a lista de operações e o líder técnico), "O que o
     guardião não verifica sozinho vira pedido de comando" (só com o ambiente conferido), "A
-    configuração dos agentes é item do checklist" (arquivos de instrução gerados por ferramenta),
-    "Change só de documentação tem conferência curta" (convive com a regra proporcional) e "Os
-    cabeçalhos da prévia são conferidos sem expor o segredo de acesso" (B-01 e I-02);
-  - ADDED: a barreira, a conferência do ambiente local, a conferência proporcional e nenhum
-    arquivo de instrução a agentes gerado no repositório.
+    configuração dos agentes é item do checklist" (arquivos de instrução gerados por ferramenta, e
+    a geração de instrução pelo framework), "Change só de documentação tem conferência curta"
+    (convive com a regra proporcional) e "Os cabeçalhos da prévia são conferidos sem expor o
+    segredo de acesso" (B-01, I-02 e o commit conferido pelo Gabriel);
+  - ADDED: a barreira, nas três ferramentas que rodam comando, a conferência do ambiente local, a
+    conferência proporcional e nenhum arquivo de instrução a agentes gerado no repositório.
 - `camada-de-dados`: ADDED, os testes de política carregam só as variáveis da lista.
 
 ## Requisitos permanentes
@@ -206,4 +184,5 @@ Nenhuma.
 | `docs/SEGURANCA.md` §4, §5, §6 e §7; `docs/EQUIPE-DE-AGENTES.md` §2; `docs/PADROES-DE-CODIGO.md` §8; `README.md`; `CLAUDE.md`; `.claude/agents/guardiao-appsec.md` | Os textos | líder técnico |
 | `src/`, `tests/e2e/`, `.github/`, `package-lock.json`, `.claude/skills/`, os outros agentes | Nada muda | — |
 | Produção e prévias | Nada muda | — |
-| Sessão do Claude Code | O gancho só vale depois de o Gabriel reabrir a sessão; no app de desktop não existe o menu `/hooks` (passo manual, no README) | Gabriel |
+| Sessão do Claude Code | As regras e o gancho valem na hora em que o `.claude/settings.json` é salvo, e a execução verde da 1.4 prova que carregaram. Se não carregarem, o Gabriel reabre a sessão, e isso vai para o relatório | — |
+| `mcp__terminal__run_in_terminal` | Negada no projeto: nenhum agente digita no terminal do Gabriel. Servidor de desenvolvimento roda pelo `Bash`, em segundo plano | `dev-frontend`, na regra |

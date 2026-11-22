@@ -95,6 +95,12 @@ casos descritos nos cenários.
   documento de segurança, em qualquer pasta, sem decisão registrada
 - **THEN** o guardião devolve BLOQUEADO, citando o item de configuração dos agentes
 
+#### Scenario: O framework volta a poder escrever instrução a agentes
+
+- **WHEN** uma mudança religa a geração de instrução a agentes pelo framework, tira o desligamento
+  dela, ou liga o retorno experimental a agentes do framework, sem decisão registrada
+- **THEN** o guardião devolve BLOQUEADO, citando o item de configuração dos agentes
+
 #### Scenario: A mudança foi decidida
 
 - **WHEN** a mudança na configuração está nomeada na proposta que o Gabriel aprovou
@@ -153,6 +159,14 @@ rastreado.
   `portal-liacup-git-feat-pagina-processo-seletivo-liacup1.vercel.app`
 - **AND** a conferência compara o host letra por letra antes de ler o segredo
 
+#### Scenario: A prévia serve o commit da change
+
+- **WHEN** o pedido dos cabeçalhos com o segredo de automação vai rodar
+- **THEN** antes, o Gabriel confere no painel da hospedagem que a prévia da branch serve o commit
+  certo, e confirma o host
+- **AND** o pedido só roda depois dessa confirmação, registrada na change, sem consulta por linha
+  de comando de agente
+
 #### Scenario: Host fora do padrão ou cortado pela hospedagem
 
 - **WHEN** o host não é exatamente o esperado, inclusive quando a hospedagem corta o rótulo de mais
@@ -193,8 +207,8 @@ rastreado.
 
 ### Requirement: A recusa de escrita no Git é barreira, e não instrução
 
-O repositório SHALL trazer, versionada, uma barreira que examina todo comando de agente antes de
-ele rodar. Ela SHALL recusar todo uso do Git fora de uma lista fechada de operações de leitura,
+O repositório SHALL trazer, versionada, uma barreira que examina todo comando de agente, em toda
+ferramenta que roda comando, antes de ele rodar. Ela SHALL recusar todo uso do Git fora de uma lista fechada de operações de leitura,
 onde quer que ele apareça no comando, e todo uso da ferramenta de linha de comando da hospedagem do
 repositório. Comando que ela não consegue analisar, e erro dela mesma, SHALL dar recusa.
 
@@ -210,6 +224,19 @@ repositório. Comando que ela não consegue analisar, e erro dela mesma, SHALL d
   interpretador de comandos, depois de um separador de comandos ou dentro de uma substituição de
   comando
 - **THEN** a barreira recusa do mesmo jeito
+
+#### Scenario: A escrita vem por outra ferramenta de comando
+
+- **WHEN** um agente manda acrescentar um arquivo ao índice, em simulação, por cada uma das
+  ferramentas que rodam comando na sessão
+- **THEN** cada uma recusa
+- **AND** o registro da change diz qual camada recusou em cada caso
+
+#### Scenario: Um agente tenta digitar no terminal de quem opera
+
+- **WHEN** um agente tenta usar a ferramenta que digita comandos no terminal de quem opera os
+  agentes, com qualquer comando
+- **THEN** a ferramenta é recusada no projeto, inteira
 
 #### Scenario: O agente só lê
 
@@ -244,6 +271,46 @@ repositório. Comando que ela não consegue analisar, e erro dela mesma, SHALL d
 - **WHEN** a suíte de unidade roda
 - **THEN** ela confere uma tabela de comandos permitidos e recusados, com as formas disfarçadas
 - **AND** a saída diz quantos comandos conferiu, quantos permitiu e quantos recusou
+
+### Requirement: A configuração que segura a barreira só muda pelo Gabriel
+
+A configuração dos agentes do projeto e a pessoal, e a pasta dos ganchos, SHALL ter regra de
+negação de escrita por ferramenta de arquivo. A barreira SHALL recusar, em toda ferramenta de
+comando, todo comando que cite esses caminhos ou rode com a pasta atual dentro da configuração dos
+agentes, com falso positivo aceito. Mudá-los SHALL ser passo do Gabriel. A lista de comandos Git de
+toda change SHALL começar pela conferência do ambiente local.
+
+#### Scenario: Um subagente tenta escrever a configuração por ferramenta de arquivo
+
+- **WHEN** um subagente tenta criar ou alterar, com uma ferramenta de escrita de arquivo, a
+  configuração dos agentes do projeto, a pessoal ou um arquivo da pasta dos ganchos
+- **THEN** a escrita é recusada pela regra de negação
+- **AND** nenhum arquivo novo aparece na configuração dos agentes
+
+#### Scenario: Um comando cita a configuração
+
+- **WHEN** um comando, por qualquer das ferramentas que rodam comando, cita o caminho da
+  configuração dos agentes ou da pasta dos ganchos, mesmo só como texto
+- **THEN** a barreira recusa, e a resposta diz que mudar esses arquivos é passo do Gabriel
+- **AND** um comando que lê outro arquivo roda normalmente
+
+#### Scenario: O comando roda de dentro da configuração
+
+- **WHEN** a pasta atual de um comando está dentro da pasta de configuração dos agentes
+- **THEN** a barreira recusa, mesmo que o comando não cite o caminho
+
+#### Scenario: A configuração precisa mudar
+
+- **WHEN** uma change precisa mudar a configuração dos agentes do projeto, a pessoal ou os ganchos
+- **THEN** o líder técnico prepara o conteúdo novo fora do repositório e entrega o comando pronto
+- **AND** quem o roda é o Gabriel, no terminal dele
+
+#### Scenario: A lista de comandos Git começa pela conferência
+
+- **WHEN** uma entrega traz comandos Git para o Gabriel rodar
+- **THEN** o primeiro comando é a conferência do ambiente local, com o nome da change
+- **AND** se ela sair com código diferente de 0, o Gabriel não roda mais nenhum comando da lista e
+  manda a saída ao líder técnico
 
 ### Requirement: O ambiente local dos agentes é conferido antes de cada passagem
 
