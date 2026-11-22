@@ -50,13 +50,12 @@ const PROIBIDOS_NO_TEXTO = [
 ]
 
 /*
- * Q11 (a decidir pelo Gabriel): o cenário "O que o protótipo tinha e a página
- * não tem", da spec pagina-equipe, lido ao pé da letra, proíbe "Tesouraria" na
- * página. Mas a linha do §4.3 do Diretor(a) financeiro(a) é "Tesouraria,
- * balanços semestrais e captação de recursos", e ela vai ao ar: o cenário,
- * literal, contradiz o documento.
+ * Q11 (a), decidida pelo Gabriel em 22/11/2026: a spec pagina-equipe, corrigida
+ * pelo especificador, proíbe "Tesouraria" só como título de cargo. A linha do
+ * §4.3 do Diretor(a) financeiro(a), "Tesouraria, balanços semestrais e
+ * captação de recursos", vai ao ar e pode ter a palavra.
  *
- * Este spec confere a intenção do cenário, sem editar a spec:
+ * O que este spec confere:
  *
  *   - nenhum TÍTULO da página, de qualquer nível, é um dos oito cargos de
  *     exemplo do protótipo, lidos dele;
@@ -249,8 +248,7 @@ test('a página não traz o que o protótipo tinha de exemplo nem marcador de pe
       ` · ${exemplos.length} nomes, ${exemplos.length} cursos e ${CARGOS_PROIBIDOS_NO_TEXTO.length} cargos de exemplo do protótipo) · achados: ${achados.length}` +
       ` · caracteres lidos: ${texto.length}\n` +
       `[${informacoes.project.name}] títulos da página conferidos contra os ${CARGOS_DE_EXEMPLO.length} cargos de exemplo do protótipo (Q11): ${titulos.length}` +
-      ` · iguais a um cargo de exemplo: ${titulosDeExemplo.length}
-` +
+      ` · iguais a um cargo de exemplo: ${titulosDeExemplo.length}\n` +
       `[${informacoes.project.name}] cargos de exemplo procurados no texto visível: ${CARGOS_PROIBIDOS_NO_TEXTO.join(', ')}` +
       ` · só nos títulos, por colidir com o §4.3: ${COLISOES_COM_O_DOCUMENTO.map((colisao) => `"${colisao.exemplo}" (${colisao.motivo})`).join(', ') || 'nenhum'}`
   )

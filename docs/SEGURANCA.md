@@ -49,6 +49,9 @@ release atualiza a seção da release dela, na seção 3.
   aba (AS-04); título, descrição, canonical e Open Graph montados a partir da lista única (AS-02); e
   o P23, pedido de cabeçalhos à prévia com o segredo de proteção da Vercel lido do `.env` local do
   líder técnico, que nunca é versionado nem impresso (AS-01, AS-15).
+  Desde a `pagina-sobre-e-equipe` (22/11/2026): as páginas `/sobre` e `/equipe`, com texto fixo
+  vindo de arquivos de dados versionados, sem nenhum link externo novo (AS-02, AS-04); e o P23 nas
+  duas rotas novas (AS-15).
 - **Pode dar errado:** página escondida alcançável por endereço técnico (AS-02); redirecionamento
   para fora (AS-05); link externo inseguro (AS-04); requisição a terceiro (AS-07); dependência
   vulnerável (AS-08); CI com permissão larga ou segredo no log (AS-09); cabeçalhos ausentes (AS-15).

@@ -79,6 +79,27 @@ Registradas pelo líder técnico, com o texto literal da mensagem de 22/11/2026.
 - **Aviso da liga:** cargos, nomes da diretoria, ligantes e fotos ainda dependem da resposta da
   liga. A página Equipe muda numa change própria quando as respostas chegarem; nada a fazer nesta.
 
+## Decisões do Gabriel no Portão 2 (segunda passagem, antes do archive)
+
+Registradas pelo líder técnico, com o texto literal da mensagem de 22/11/2026.
+
+> Commit intermediário enviado.
+>
+> Decisões do Gabriel (registre literal no relatorio.md): Q20 (a). Q21 (a). Q22 (b), registrado como pendência para a próxima change que tocar esses testes. Q23 (a).
+>
+> O revisor e o guardiao-appsec rodam de novo só sobre o diff desta rodada: a linha do equipe.spec.ts, os 4 comentários e a linha da §3 do SEGURANCA.md. Não é para reler a change inteira. Se algum dos dois pedir correção de novo, pare e traga ao Gabriel.
+>
+> Depois: o archive, a conferência da §7 contra o git ls-tree, e o Portão 2 final com o --stat do A1 e os comandos Git em blocos separados, com a conferência do ambiente primeiro.
+
+- **Commit intermediário:** `95a211d`, igual ao `ls-remote`.
+- **A1 do guardião:** `git diff --stat 6070334..95a211d` lista 11 arquivos e nenhum de
+  `next.config.*`, `vercel.json`, `src/proxy.ts` ou `src/app/**/layout.tsx` (contagem 0). O P23 e o
+  P24 não precisam rodar de novo.
+- **Pendência da Q22 (b), para a próxima change que tocar esses testes:** os nomes de uma letra em
+  `src/features/equipe/conteudo.test.ts:67-68`, `src/lib/utils/paginas-publicas.test.ts:116`,
+  `tests/e2e/listas-anunciadas.spec.ts:75-76` e `tests/e2e/paginas-publicas.spec.ts:602-610`
+  (PADROES §6).
+
 ## dev-frontend
 
 Tarefas 1.1, 2.1, 2.2, 3.1 e 4.1 (22/11/2026).
@@ -433,6 +454,22 @@ Tarefas 5.1 a 5.4 (22/11/2026). Novos: `tests/e2e/sobre.spec.ts`, `equipe.spec.t
     - `npm run build` 0;
     - `npx playwright test` 0, **413 de 413**.
   - Servidores derrubados.
+- **Correção da Q20:**
+  - A afirmação acima de que a quebra de linha literal do `equipe.spec.ts` "virou `\n`" estava
+    errada: a troca não tinha entrado, e eu não conferi. Agora está corrigida.
+  - Conferência por `awk`, que conta as crases de cada linha (número ímpar é template string
+    atravessando linha): 0 linhas no `equipe.spec.ts`. Numa cópia com a quebra recolocada, o
+    mesmo `awk` acusa as linhas 251 e 252.
+- **Q21:** o comentário da Q11 no `equipe.spec.ts` passa a dizer a decisão: Q11 (a), do Gabriel, em
+  22/11/2026, com a spec corrigida pelo especificador ("Tesouraria" proibida só como título de
+  cargo). Não diz mais "a decidir" nem "sem editar a spec".
+- **Rodada das duas correções:**
+  - `npm run lint` 0;
+  - `npm run formatar:check` 0;
+  - `npx tsc --noEmit` 0;
+  - `npm run build` 0;
+  - `npx playwright test` 0, **413 de 413**.
+  - Servidores derrubados.
 
 ## revisor
 
@@ -559,6 +596,22 @@ O revisor não escreve: o líder técnico registra.
   disco.
 - **Decisão do líder técnico:** pela instrução do Gabriel ("Se algum agente pedir correção de novo
   depois dela, pare e traga ao Gabriel"), a correção não foi feita. O achado 1 vai ao Gabriel.
+
+**Sexta passagem (22/11, invocação nova, só o diff da rodada Q20, Q21 e Q23, por decisão do
+Gabriel):**
+
+- **Veredito:** aprovado. Nenhum pedido de correção.
+- **Conferiu:** 5 arquivos (+18/−16) e as 3 decisões, com o texto literal no relatório.
+  - Nenhuma template string de `equipe.spec.ts` atravessa linha.
+  - Os 4 comentários dizem a verdade: as decisões e a linha da REFERENCIA §7 existem.
+  - A linha da §3 confere com o código.
+  - Os 3 arquivos de `src/` mudam só em comentário.
+- **Achados:** dois informativos.
+  - O comentário do rodapé tirou a frase do precedente da coluna de contato; a regra da §7 já o
+    cita.
+  - O `relatorio.md` aparece no `git status` fora do patch, e é o registro do líder técnico.
+- **Não conseguiu conferir:** a saída do `equipe.spec.ts` rodado, porque não tem terminal. A
+  rodada do qa registra 413 de 413.
 
 **6.2 de novo, sobre o `src/` final:**
 
@@ -749,6 +802,29 @@ de achados inteira; a saída de comando e o aceite do Gabriel vão literais.
   - **P37 e P38** (`tEXt`, `TXt` em `lado-a-lado-equipe-1280.png`): saída vazia, código 1.
   - **P39** (`git ls-files -- '.env'`): vazio. **P40**: `.gitignore:10:.env	.env`.
   - **Conferência do nome:** saída vazia, código 1.
+
+**Quarta passagem (22/11, invocação nova, só o diff da rodada Q20, Q21 e Q23), com a decisão:**
+
+- **Veredito:** APROVADO · bloqueante 0 · alta 0 · média 0 · baixa 0 · informativa 1 · conferência
+  completa, porque `docs/SEGURANCA.md` está no gatilho. O veredito vale para os 5 arquivos da
+  rodada e para a busca de AS-01 no `relatorio.md`.
+- **Pedidos de comando**, rodados pelo líder técnico com `MSYS_NO_PATHCONV=1`:
+  - **Precondições:** conferência do ambiente 0; a linha do `.env` na forma certa (1 · 0 · 0).
+  - **P1** (terceira forma, `--untracked`): saída vazia, código 1.
+  - **P2 a P6** (`git grep -c -a --untracked -e '<texto>' -- '<relatorio.md>'`): código 0, com as
+    contagens `eyJhbGci` 5, `sbp_` 5, `ghp_` 2, `github_pat_` 5 e `postgresql://` 2.
+  - **Conferência pela forma `-n -I --untracked`:** 11 linhas (677, 678, 722, 723, 724, 732, 776,
+    777, 778, 781 e 784), todas registros de pedidos anteriores, com o nome do padrão entre crases
+    e nenhum valor. O guardião concluiu: não é achado.
+- **Achado I-1 · AS-01 · informativa · confirmado.**
+  - **Cenário:** o líder técnico rodou a forma `-n` com cinco `-e` num só comando. Pela §5, isso é
+    opção a mais, que deve ser recusada.
+  - **Registro do desvio:** antes desse comando, as cinco buscas já tinham rodado separadas, uma
+    por texto, num laço que imprimia só os números de linha. Deram as mesmas linhas: `eyJhbGci` 722,
+    732, 776, 781 e 784; `sbp_` 677, 723, 732, 776 e 778; `ghp_` 722 e 732; `github_pat_` 678,
+    724, 732, 777 e 778; `postgresql://` 722 e 732.
+  - **Daqui em diante:** um `-e` por pedido, só o que o guardião pedir.
+- **Riscos aceitos:** nenhum novo.
 
 ## Líder técnico — conferência de escopo
 

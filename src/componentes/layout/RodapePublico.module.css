@@ -63,10 +63,10 @@
 }
 
 /* Acima de 768 px, com as colunas lado a lado, os destinos ficam colados:
-   passo uniforme de 44 px, o do alvo de toque, sem vão a mais
-   (REFERENCIA-VISUAL.md, seção 3; o protótipo tem 31,4 px). É o precedente da
-   coluna de contato (seção 7). Até 768 px, em coluna única, o vão volta, e o
-   passo continua o de antes. */
+   passo uniforme de 44 px, sem vão a mais, pela regra "Rodapé, colunas de
+   links" da REFERENCIA-VISUAL.md, seção 7 (Gabriel, 22/11, Q14 (a)). O motivo
+   é o alvo de toque (seção 3): o protótipo tem 31,4 px, que não cabe com ele.
+   Até 768 px, em coluna única, o vão volta, e o passo continua o de antes. */
 .itens {
   display: flex;
   flex-direction: column;

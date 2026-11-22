@@ -2,8 +2,9 @@
  * "Fundadores discentes": os cinco nomes da seção 4.2 do documento, na ordem
  * dele, no lugar do bloco "Ligantes" do protótipo (Q8 (a) do Gabriel,
  * 22/11/2026). Os nomes têm a letra dos nomes dos ligantes do protótipo, sem
- * círculo, foto nem curso. É composição nova sobre a área do protótipo, a
- * aprovar no lado a lado (design.md da change, D5).
+ * círculo, foto nem curso. É composição nova sobre a área do protótipo,
+ * aprovada pelo Gabriel na Q13 (b), em 22/11/2026, com 5 colunas no desktop
+ * (design.md da change, D5).
  *
  * Carregando, erro e vazio: o vazio é impossível hoje, porque o dado é
  * estático e o teste de unidade do conteúdo exige os cinco nomes. Os três
