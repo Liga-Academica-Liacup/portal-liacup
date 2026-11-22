@@ -18,8 +18,8 @@
  */
 import Link from 'next/link'
 import { aparenciaDeBotao, type VarianteDoLinkBotao } from '@/componentes/ui/aparencia-de-botao'
+import { BorboletaDaLiga } from '@/componentes/ui/BorboletaDaLiga'
 import { estaNaLista } from '@/lib/utils/paginas-publicas'
-import { BorboletaDaLiga } from './BorboletaDaLiga'
 import estilos from './HeroDaInicial.module.css'
 
 type BotaoDoHero = {

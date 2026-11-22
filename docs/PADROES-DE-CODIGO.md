@@ -421,3 +421,25 @@ site inteiro (sitemap, robots, dados estruturados) entra uma vez só, no lançam
 - `<html lang="pt-BR">` no layout raiz.
 
 Aprovada pelo Gabriel em 21/11/2026 e acrescentada na change `pagina-processo-seletivo`.
+
+### 11.2 Só em produção, no lançamento
+
+- Só `liacup.com.br` com o site publicado é indexável. Homologação, prévias e qualquer
+  outro endereço respondem `noindex`.
+- `sitemap.xml` e `robots.txt` saem da mesma lista única de páginas. Página nova entra
+  neles sozinha.
+- Dados estruturados em JSON-LD do tipo `Organization`: nome, endereço do site, e-mail e
+  Instagram. O vínculo com a UnB só entra depois de a liga confirmar o uso do nome e da
+  marca.
+
+### 11.3 Como se verifica
+
+| O quê | Como |
+|---|---|
+| Nota de SEO | Lighthouse CI com a categoria SEO, nota mínima 95 por página |
+| Título e descrição | Teste que percorre a lista única: cada página tem título e descrição não vazios, a descrição no tamanho da 11.1, e nenhum dos dois se repete entre páginas |
+| Hierarquia de títulos | Teste e2e: exatamente um `h1` por página |
+| `alt` e nome de link | axe e `jsx-a11y`, que já rodam. O texto genérico de link fica com o revisor, por este checklist |
+
+Se o Lighthouse rodar num endereço com `noindex`, a auditoria `is-crawlable` falha por
+definição. Nesse endereço só ela é desligada; o resto da categoria continua valendo.

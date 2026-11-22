@@ -49,6 +49,9 @@ release atualiza a seção da release dela, na seção 3.
   aba (AS-04); título, descrição, canonical e Open Graph montados a partir da lista única (AS-02); e
   o P23, pedido de cabeçalhos à prévia com o segredo de proteção da Vercel lido do `.env` local do
   líder técnico, que nunca é versionado nem impresso (AS-01, AS-15).
+  Desde a `pagina-sobre-e-equipe` (22/11/2026): as páginas `/sobre` e `/equipe`, com texto fixo
+  vindo de arquivos de dados versionados, sem nenhum link externo novo (AS-02, AS-04); e o P23 nas
+  duas rotas novas (AS-15).
 - **Pode dar errado:** página escondida alcançável por endereço técnico (AS-02); redirecionamento
   para fora (AS-05); link externo inseguro (AS-04); requisição a terceiro (AS-07); dependência
   vulnerável (AS-08); CI com permissão larga ou segredo no log (AS-09); cabeçalhos ausentes (AS-15).
@@ -595,8 +598,12 @@ binário acrescenta a linha no mesmo diff; sem ela, é achado de AS-01, alto e c
 | `openspec/changes/archive/2026-11-21-layout-e-hero/prints/{antes,depois}-raiz-nao-publicada-{390,1280}.png` | 4 | Ativo aprovado: prints da página em construção antes e depois da `layout-e-hero`, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q5 (a), 21/11/2026 |
 | `openspec/changes/archive/2026-11-21-layout-e-hero/prints/lado-a-lado-*.png` | 5 | Ativo aprovado: lado a lado do protótipo e do site, montados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q5 (a), 21/11/2026 |
 | `openspec/changes/archive/2026-11-21-pagina-processo-seletivo/prints/{lado-a-lado,raiz-nao-publicada}-*.png` | 9 | Ativo aprovado: 7 lado a lado do protótipo e do site e 2 prints da página em construção, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado); os 2 lado a lado da página, refeitos pelo líder técnico com o mesmo script depois da Q19. Aprovados pelo Gabriel na Q15 (a), 21/11/2026, Portão 2. O caminho é o do `openspec archive`, feito em 21/11/2026 |
+| `openspec/changes/archive/2026-11-22-pagina-sobre-e-equipe/prints/q3-opcao-{a,b,c}-{390,1280}.png` | 6 | Ativo aprovado: esboços estáticos da Q3, com o texto do `conteudo-institucional.md` §2.3 a §2.6, gerados pelo líder técnico com um script Playwright temporário, fora do repositório, com o método escrito no `relatorio.md` da change. Vistos e decididos pelo Gabriel no Portão 1 da `pagina-sobre-e-equipe` (Q3 (a), 22/11/2026) |
+| `openspec/changes/archive/2026-11-22-pagina-sobre-e-equipe/prints/{lado-a-lado,raiz-nao-publicada}-*.png` | 13 | Ativo aprovado: 11 lado a lado do protótipo e do site e 2 prints da página em construção, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q16 (a), 22/11/2026, Portão 2 |
 
 Os 9 de `assets/` e `public/` entraram no commit `6636202` (F00, 21/08/2026). Origem confirmada
 pelo Gabriel no Portão 1 da `auditoria-de-base-appsec`, em 20/11/2026. Os 15 prints da
 `layout-e-hero` ficam na pasta da change até o `openspec archive`, que os leva para o caminho da
-tabela no mesmo diff. Os 9 prints da `pagina-processo-seletivo` seguem a mesma regra. Total: 60 arquivos.
+tabela no mesmo diff. Os 9 prints da `pagina-processo-seletivo` seguem a mesma regra, e os 19 da
+`pagina-sobre-e-equipe` também: se o archive cair em outra data, o caminho das duas linhas muda no
+mesmo diff. Total: 79 arquivos.

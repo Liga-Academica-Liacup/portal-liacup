@@ -17,15 +17,19 @@
  */
 import Image from 'next/image'
 import Link from 'next/link'
-import { paginaDeDestaque, paginasDoMenu } from '@/lib/utils/paginas-publicas'
+import { NOME_DA_LIGA, paginaDeDestaque, paginasDoMenu } from '@/lib/utils/paginas-publicas'
 import { aparenciaDeBotao } from '@/componentes/ui/aparencia-de-botao'
 import estilos from './Cabecalho.module.css'
 import { LinkDaNavegacao } from './LinkDaNavegacao'
 import { MenuLateral } from './MenuLateral'
 
-/* O que a marca mostra: a sigla e, acima de 1024 px, também o nome da liga. */
+/* O que a marca mostra: a sigla e, acima de 1024 px, também o nome da liga com
+   " · UnB". O nome vem de uma constante só, a da lista de páginas públicas, que
+   o título da Início também usa; o sufixo é só do cabeçalho (Q1 (b) da change
+   pagina-sobre-e-equipe). */
 const SIGLA = 'LIACUP'
-const NOME_DA_LIGA = 'Liga Acadêmica Multiprofissional de Cuidados Paliativos · UnB'
+const SUFIXO_DO_NOME = ' · UnB'
+const NOME_NO_CABECALHO = NOME_DA_LIGA + SUFIXO_DO_NOME
 
 /** O fim do nome acessível da marca, só para leitor de tela: o nome não diz o destino. */
 const DESTINO_DA_MARCA = ', página inicial'
@@ -65,13 +69,13 @@ export function Cabecalho() {
             <span className={estilos.sigla}>{SIGLA}</span>
             {/* O espaço do começo separa "LIACUP" do nome no texto copiado da
                 tela; no começo da linha, ele não aparece. */}
-            <span className={estilos.nomeDaLiga}> {NOME_DA_LIGA}</span>
+            <span className={estilos.nomeDaLiga}> {NOME_NO_CABECALHO}</span>
           </span>
           <span className={`${estilos.soParaLeitorDeTela} ${estilos.nomeAteOPontoDeTroca}`}>
             {SIGLA + DESTINO_DA_MARCA}
           </span>
           <span className={`${estilos.soParaLeitorDeTela} ${estilos.nomeAcimaDoPontoDeTroca}`}>
-            {`${SIGLA} ${NOME_DA_LIGA}${DESTINO_DA_MARCA}`}
+            {`${SIGLA} ${NOME_NO_CABECALHO}${DESTINO_DA_MARCA}`}
           </span>
         </Link>
 
@@ -88,7 +92,11 @@ export function Cabecalho() {
       </div>
 
       <nav className={estilos.navegacao} aria-label="Navegação principal">
-        <ul className={estilos.lista}>
+        {/* Papel de lista explícito: o Safari tira o papel de toda lista sem marcador,
+            e o VoiceOver deixa de dizer quantos itens há (design.md da change
+            pagina-sobre-e-equipe, D7). */}
+        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles -- WebKit, ver acima */}
+        <ul role="list" className={estilos.lista}>
           {paginas.map((pagina) => (
             <li key={pagina.endereco}>
               <LinkDaNavegacao endereco={pagina.endereco} className={estilos.destino}>

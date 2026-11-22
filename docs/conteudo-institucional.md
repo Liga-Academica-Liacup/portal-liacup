@@ -114,12 +114,18 @@ As quatro frentes vão ao ar com o texto acima, **sem marcação visível de ras
 
 ## 4. Equipe
 
+**Descrição da página Equipe para buscadores** _(decisão do Gabriel, 22/11/2026, Q9 da pagina-sobre-e-equipe)_:
+
+> Diretoria, docentes orientadoras e fundadores da Liga Acadêmica Multiprofissional de Cuidados Paliativos (LIACUP).
+
 ### 4.1 Fundadoras e orientadoras _(Estatuto, Art. 7º)_
 
 - **Profa. Dra. Mariana Sodário Cruz** — Orientadora Geral. Graduada em Fonoaudiologia e em Ciências Econômicas, mestre e doutora em Saúde Coletiva, pós-doutora em Educação.
-- **Profa. Dra. Kerolyn Ramos Garcia** — Bacharel em Saúde Coletiva, pós-graduada em Gerontologia, mestre e doutora em Ciências e Tecnologias em Saúde.
+- **Profa. Dra. Kerolyn Ramos Garcia** — Orientadora. Bacharel em Saúde Coletiva, pós-graduada em Gerontologia, mestre e doutora em Ciências e Tecnologias em Saúde.
 
 > Nome completo corrigido: o protótipo trazia "Kerolyn Ramos"; o estatuto registra **Kerolyn Ramos Garcia**.
+
+> Cargo "Orientadora" na linha da Profa. Kerolyn Ramos Garcia: decisão do Gabriel, 22/11/2026 (Q6 da pagina-sobre-e-equipe), apoiada no título desta seção.
 
 ### 4.2 Fundadores discentes _(Estatuto, Art. 7º)_
 
@@ -282,8 +288,9 @@ Não. Nenhum serviço prestado na liga é remunerado. _(Estatuto, Art. 20º)_
 | Definição da seção Materiais           | Pendente                                                                                         |
 | Notícias — quadros 2 e 3 idênticos     | Pendente — provável erro de digitação                                                            |
 | Etapas do processo seletivo (§5.5)     | Pendente — a liga descreve o "produto" da etapa 2 em uma linha · na R3, quando o painel publicar resultados, a etapa 4 passa a citar "no portal" _(decisão do Gabriel, 21/11/2026, Portão 2 da pagina-processo-seletivo)_ |
+| Nomes da diretoria atual               | Pendente                                                                                         |
 
-**Placar: de 15 itens, 9 resolvidos.** Restam 6, e três deles são fotos.
+**Placar: de 16 itens, 9 resolvidos.** Restam 7, e dois deles são fotos.
 
 ---
 

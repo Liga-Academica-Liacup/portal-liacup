@@ -32,7 +32,11 @@ export const COLUNAS_DO_RODAPE = ['Portal', 'Conteúdo'] as const
 
 export type ColunaDoRodape = (typeof COLUNAS_DO_RODAPE)[number]
 
-/** O nome da liga por extenso, que a Início usa no título (PADROES, 11.1). */
+/**
+ * O nome da liga por extenso, num lugar só: a Início o usa no título (PADROES,
+ * 11.1), e o cabeçalho o mostra com " · UnB" no fim (Q1 (b) da change
+ * pagina-sobre-e-equipe).
+ */
 export const NOME_DA_LIGA = 'Liga Acadêmica Multiprofissional de Cuidados Paliativos'
 
 /** O fim de todo título: "<Nome da página> · LIACUP". */

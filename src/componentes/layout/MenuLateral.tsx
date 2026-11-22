@@ -61,7 +61,11 @@ export function MenuLateral({ paginas, destaque = undefined }: PropsDoMenuLatera
         </div>
 
         <nav aria-label="Navegação do site">
-          <ul className={estilos.lista}>
+          {/* Papel de lista explícito: o Safari tira o papel de toda lista sem marcador,
+              e o VoiceOver deixa de dizer quantos itens há (design.md da change
+              pagina-sobre-e-equipe, D7). */}
+          {/* eslint-disable-next-line jsx-a11y/no-redundant-roles -- WebKit, ver acima */}
+          <ul role="list" className={estilos.lista}>
             {paginas.map((pagina) => (
               <li key={pagina.endereco}>
                 <LinkDaNavegacao

@@ -1,0 +1,73 @@
+/* Faixa roxa do topo do Sobre. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Contraste sobre o roxo --color-accent-800 #4e3260 (RP-09):
+   - título, --color-bg #f5ead8: 9,05:1;
+   - apresentação, --color-accent-200 #eee0f4: 8,52:1.
+   A borboleta do canto fica fora da área do texto, em toda largura. */
+
+.faixa {
+  position: relative;
+  overflow: hidden;
+  padding: var(--espaco-topo-da-secao-alta) var(--space-6) var(--espaco-secao-da-pagina);
+  background: var(--color-accent-800);
+  color: var(--color-bg);
+}
+
+/* Decorativa, no canto de cima à direita (protótipo: .bf-3). Vem antes do
+   conteúdo no HTML, e o conteúdo, posicionado, é desenhado por cima dela. */
+.borboleta {
+  position: absolute;
+  top: var(--borboleta-da-faixa-topo);
+  right: var(--borboleta-da-faixa-direita);
+  width: var(--borboleta-da-faixa-largura);
+  opacity: var(--borboleta-da-faixa-opacidade);
+}
+
+.conteudo {
+  position: relative;
+  max-width: var(--largura-maxima-conteudo);
+  margin: 0 auto;
+}
+
+.titulo {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-titulo-da-faixa-do-sobre);
+  line-height: var(--line-height-titulo-da-faixa);
+  color: var(--color-bg);
+}
+
+.apresentacao {
+  max-width: var(--largura-texto-da-faixa-do-sobre);
+  margin: 0;
+  font-size: var(--font-size-apresentacao);
+  line-height: var(--line-height-apresentacao);
+  color: var(--color-accent-200);
+}
+
+/* Os cortes do protótipo: .bf-3, [data-pad] e .t-h1. */
+@media (max-width: 1024px) {
+  .borboleta {
+    top: var(--borboleta-da-faixa-topo-estreito);
+    right: var(--borboleta-da-faixa-direita-estreito);
+    width: var(--borboleta-da-faixa-largura-estreito);
+    opacity: var(--borboleta-da-faixa-opacidade-estreito);
+  }
+}
+
+@media (max-width: 768px) {
+  .faixa {
+    padding-inline: var(--space-4);
+  }
+
+  .titulo {
+    font-size: var(--font-size-hero-tablet);
+    line-height: var(--line-height-hero-estreito);
+  }
+}
+
+@media (max-width: 480px) {
+  .titulo {
+    font-size: var(--font-size-hero-celular);
+  }
+}

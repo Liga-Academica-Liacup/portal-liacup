@@ -1,5 +1,5 @@
-/* Sobretítulo e título das seções do processo seletivo. Nenhum valor escrito
-   à mão: tudo vem de src/estilos/tokens.css, com a origem no protótipo. */
+/* Sobretítulo e título das seções. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem no protótipo. */
 
 /* O mesmo sobretítulo do hero da inicial. --color-accent-700 #683f74 sobre
    --color-bg #f5ead8: 6,91:1; sobre --color-surface #ebddc5: 6,15:1. */
@@ -14,7 +14,6 @@
 /* --color-accent-800 #4e3260 sobre --color-bg: 9,06:1; sobre --color-surface:
    8,04:1. */
 .titulo {
-  margin: 0 0 var(--space-6);
   color: var(--color-accent-800);
 }
 
@@ -22,22 +21,41 @@
   font-size: var(--font-size-h2);
 }
 
-.perguntas {
+/* 34 px no protótipo: "Perguntas que sempre chegam" e os três títulos do Sobre. */
+.grande {
   font-size: var(--font-size-titulo-das-perguntas);
   line-height: var(--line-height-titulo-das-perguntas);
 }
 
-/* No protótipo, a regra .t-h2 vence o tamanho dos dois títulos no celular. */
+/* Protótipo: margin-bottom do título de seção. 18 px (história do Sobre) e
+   30 px (docentes do Sobre) ficam nos degraus mais perto. */
+.espacoPadrao {
+  margin: 0 0 var(--space-6);
+}
+
+.espacoCurto {
+  margin: 0 0 var(--space-4);
+}
+
+.espacoLargo {
+  margin: 0 0 calc(var(--space-4) + var(--space-3));
+}
+
+.espacoNenhum {
+  margin: 0;
+}
+
+/* No protótipo, a regra .t-h2 vence o tamanho dos títulos no celular. */
 @media (max-width: 768px) {
   .padrao,
-  .perguntas {
+  .grande {
     font-size: var(--font-size-titulo-de-secao-tablet);
   }
 }
 
 @media (max-width: 480px) {
   .padrao,
-  .perguntas {
+  .grande {
     font-size: var(--font-size-titulo-de-secao-celular);
   }
 }

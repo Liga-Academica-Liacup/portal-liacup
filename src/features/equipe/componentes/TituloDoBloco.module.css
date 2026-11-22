@@ -1,0 +1,8 @@
+/* --color-accent-800 #4e3260 sobre --color-bg #f5ead8: 9,05:1; sobre
+   --color-surface #ebddc5: 8,05:1. O tamanho é o mesmo em toda largura, como
+   no protótipo (estes títulos não têm a classe .t-h2). */
+.titulo {
+  margin: 0 0 var(--space-6);
+  font-size: var(--font-size-titulo-de-secao-da-equipe);
+  color: var(--color-accent-800);
+}

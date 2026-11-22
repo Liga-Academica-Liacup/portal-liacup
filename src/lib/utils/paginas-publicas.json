@@ -9,6 +9,15 @@
     "destaque": false
   },
   {
+    "endereco": "/sobre",
+    "rotulo": "Sobre",
+    "titulo": "Sobre · LIACUP",
+    "descricao": "A LIACUP, sempre pautada em princípios éticos e humanitários, tem como objetivo o cuidado integral e o bem-estar no contexto dos Cuidados Paliativos.",
+    "noMenu": true,
+    "colunaDoRodape": "Portal",
+    "destaque": false
+  },
+  {
     "endereco": "/processo-seletivo",
     "rotulo": "Processo seletivo",
     "titulo": "Processo seletivo · LIACUP",
@@ -16,5 +25,14 @@
     "noMenu": false,
     "colunaDoRodape": null,
     "destaque": true
+  },
+  {
+    "endereco": "/equipe",
+    "rotulo": "Equipe",
+    "titulo": "Equipe · LIACUP",
+    "descricao": "Diretoria, docentes orientadoras e fundadores da Liga Acadêmica Multiprofissional de Cuidados Paliativos (LIACUP).",
+    "noMenu": true,
+    "colunaDoRodape": "Conteúdo",
+    "destaque": false
   }
 ]

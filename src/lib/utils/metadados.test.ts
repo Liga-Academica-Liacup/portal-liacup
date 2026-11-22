@@ -47,7 +47,9 @@ describe('montarMetadados', () => {
   })
 
   it('lança erro para endereço fora da lista, nomeando o endereço', () => {
-    expect(() => montarMetadados('/sobre')).toThrow('"/sobre" não está na lista')
+    expect(() => montarMetadados('/endereco-que-nao-existe')).toThrow(
+      '"/endereco-que-nao-existe" não está na lista'
+    )
     expect(() => montarMetadados('/processo')).toThrow('"/processo" não está na lista')
   })
 

@@ -62,10 +62,15 @@
   color: var(--color-accent-400);
 }
 
+/* Acima de 768 px, com as colunas lado a lado, os destinos ficam colados:
+   passo uniforme de 44 px, sem vão a mais, pela regra "Rodapé, colunas de
+   links" da REFERENCIA-VISUAL.md, seção 7 (Gabriel, 22/11, Q14 (a)). O motivo
+   é o alvo de toque (seção 3): o protótipo tem 31,4 px, que não cabe com ele.
+   Até 768 px, em coluna única, o vão volta, e o passo continua o de antes. */
 .itens {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 0;
   margin: 0;
   padding: 0;
   font-size: var(--font-size-navegacao);
@@ -181,5 +186,13 @@
 
   .colunas {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .itens {
+    gap: var(--space-2);
+  }
+
+  .itensDeContato {
+    gap: 0;
   }
 }
