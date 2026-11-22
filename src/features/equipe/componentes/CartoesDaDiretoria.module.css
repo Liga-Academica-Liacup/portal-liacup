@@ -1,0 +1,64 @@
+/* "Diretoria". Nenhum valor escrito à mão: tudo vem de src/estilos/tokens.css,
+   com a origem de cada token no protótipo.
+
+   Sobre --color-bg #f5ead8 (RP-09): cargo --color-accent-800 #4e3260,
+   9,05:1; linha --color-accent-700 #683f74, 6,91:1. */
+
+.secao {
+  padding: 0 var(--space-6) var(--espaco-fim-da-diretoria);
+}
+
+.conteudo {
+  max-width: var(--largura-maxima-conteudo);
+  margin: 0 auto;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Centralizado, como no protótipo. */
+.cartao {
+  text-align: center;
+}
+
+.cargo {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-nome-do-cargo);
+  color: var(--color-accent-800);
+}
+
+.linha {
+  margin: 0;
+  font-size: var(--font-size-cargo);
+  color: var(--color-accent-700);
+}
+
+/* Os cortes do protótipo: [data-resp4] em duas colunas até 1024 px; .g-2up
+   continua em duas colunas até 768 px, com o espaço menor; [data-pad]. */
+@media (max-width: 1024px) {
+  .grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .secao {
+    padding-inline: var(--space-4);
+  }
+
+  .grade {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .grade {
+    gap: var(--space-3);
+  }
+}

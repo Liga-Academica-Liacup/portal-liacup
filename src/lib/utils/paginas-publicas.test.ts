@@ -57,6 +57,22 @@ function primeiraFraseDaApresentacao(documento: string, numero: string): string 
   return ponto === null ? texto : texto.slice(0, ponto.index + 1)
 }
 
+/**
+ * A primeira citação (as linhas que começam com "> ") logo abaixo do título
+ * "## <numero>. ..." de uma seção de nível 2, inteira. A descrição da Equipe
+ * mora assim no §4, como decisão do Gabriel (Q9 (a) da pagina-sobre-e-equipe).
+ */
+function citacaoDaSecaoDeNivel2(documento: string, numero: string): string {
+  const linhas = documento.split(/\r?\n/)
+  const inicio = linhas.findIndex((linha) => linha.startsWith(`## ${numero}. `))
+  if (inicio === -1) throw new Error(`seção ${numero} não encontrada no conteudo-institucional.md`)
+  const fim = linhas.findIndex((linha, i) => i > inicio && /^#{1,3} /.test(linha))
+  const secao = linhas.slice(inicio + 1, fim === -1 ? undefined : fim)
+  const citacao = secao.find((linha) => linha.startsWith('> '))
+  if (citacao === undefined) throw new Error(`seção ${numero} sem citação no documento`)
+  return citacao.slice(2).trim()
+}
+
 /** Uma entrada válida, inventada aqui, com título no formato e descrição própria. */
 function entrada(
   endereco: string,
@@ -88,10 +104,19 @@ describe('lista de páginas públicas', () => {
     expect(ENTRADAS_DA_LISTA.length, 'a lista não pode estar vazia').toBeGreaterThan(0)
   })
 
-  it('os títulos desta entrega são os da decisão do Gabriel (Q6 (a))', () => {
+  it('os títulos desta entrega são os da Q6 (a) e do D3 da pagina-sobre-e-equipe', () => {
     const titulos = Object.fromEntries(PAGINAS_PUBLICAS.map((p) => [p.endereco, p.titulo]))
     expect(titulos['/']).toBe('Liga Acadêmica Multiprofissional de Cuidados Paliativos · LIACUP')
+    expect(titulos['/sobre']).toBe('Sobre · LIACUP')
     expect(titulos['/processo-seletivo']).toBe('Processo seletivo · LIACUP')
+    expect(titulos['/equipe']).toBe('Equipe · LIACUP')
+  })
+
+  it('o menu e o rodapé seguem a ordem do protótipo: Início, Sobre e Equipe', () => {
+    const rotulos = (paginas: readonly { rotulo: string }[]) => paginas.map((p) => p.rotulo)
+    expect(rotulos(paginasDoMenu())).toEqual(['Início', 'Sobre', 'Equipe'])
+    expect(rotulos(paginasDaColuna('Portal'))).toEqual(['Início', 'Sobre'])
+    expect(rotulos(paginasDaColuna('Conteúdo'))).toEqual(['Equipe'])
   })
 
   /*
@@ -115,6 +140,13 @@ describe('lista de páginas públicas', () => {
     )
     expect(descricoes['/processo-seletivo'], 'a da "/processo-seletivo" é a do §5.2').toBe(
       primeiraFraseDaApresentacao(documento, '5.2')
+    )
+    // Q9 (a) da pagina-sobre-e-equipe: a 1ª frase do §2.4 e a frase do §4.
+    expect(descricoes['/sobre'], 'a da "/sobre" é a 1ª frase do §2.4').toBe(
+      primeiraFraseDaApresentacao(documento, '2.4')
+    )
+    expect(descricoes['/equipe'], 'a da "/equipe" é a citação do §4').toBe(
+      citacaoDaSecaoDeNivel2(documento, '4')
     )
   })
 

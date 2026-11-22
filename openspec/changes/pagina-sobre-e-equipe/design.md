@@ -90,10 +90,14 @@ Do protótipo vale a composição; o texto vem dos dados (D8).
 
 - **Faixa do topo (Q2):** a faixa clara do gabarito. Com a recomendação (b): sobretítulo "Equipe" e
   `h1` "Quem faz a LIACUP", sem a frase "Gestão 2026: …".
-- **Diretoria:** a grade de círculos do gabarito, 4 colunas em 1280 e 2 em 390. Cada cartão: o
-  círculo (Q7), o cargo em `h3` no lugar do nome e a linha do §4.3 no lugar de "cargo · curso". Os
-  numerais romanos do §4.3 não vão à tela; o gabarito não os tem. A linha do §4.3 é mais longa que
-  "Medicina · 8º semestre": o `guardiao-visual` diz se a grade continua equilibrada em 390.
+- **Diretoria (Q7, decisão do Gabriel):** a grade do gabarito, 4 colunas em 1280 e 2 em 390,
+  **sem círculo**: não há pessoa para mostrar. Cada cartão: o cargo em `h3` no lugar do nome e a
+  linha do §4.3 no lugar de "cargo · curso", centralizados como no gabarito. Os numerais romanos do
+  §4.3 não vão à tela; o gabarito não os tem. A grade sem círculos e com a linha do §4.3, mais
+  longa que "Medicina · 8º semestre", é diferença decidida: o `guardiao-visual` a classifica como
+  decisão do Gabriel e diz se a grade continua equilibrada em 390. Se não estiver, propõe uma
+  coluna em 390 como melhoria a aprovar. Quando a liga mandar nomes e fotos, os círculos voltam,
+  numa change própria.
 - **Fundadores discentes (Q8):** com a recomendação (a), no lugar do bloco "Ligantes", na faixa de
   superfície, com o `h2` "Fundadores discentes" (título do §4.2) e os cinco nomes na letra dos nomes
   do gabarito, sem círculo. Composição nova sobre a área do protótipo: entra no lado a lado como
@@ -105,13 +109,29 @@ Do protótipo vale a composição; o texto vem dos dados (D8).
 - `TituloDeSecao` (sobretítulo e `h2`) passa para `src/componentes/padroes/`, usado pelas três
   features. O tipo do texto ganha nome próprio (`TextoDoTituloDeSecao`), e o componente mantém o
   nome (Q20). O `processo-seletivo` muda só os imports.
-- `BorboletaDaLiga` passa para `src/componentes/ui/`, como o comentário dela já previa. O hero muda
-  só o import, e o lado a lado da inicial confere que nada mudou além do botão novo.
-- **Círculo da foto (Q7):** com a recomendação (a), um componente de `ui/` que desenha o círculo
-  com a borboleta, decorativo, nos dois tamanhos do gabarito (o da diretoria e o do cartão de
-  docente). Quando a foto chegar, troca só o conteúdo do círculo.
-- **Cartão de docente:** em `features/equipe/componentes/`, usado nas duas rotas. Nome em `h3`,
-  cargo e formação em parágrafos.
+- `BorboletaDaLiga` passa para `src/componentes/ui/`, como o comentário dela já previa. Continua
+  necessária fora da inicial: no quadro da história e no canto da faixa do Sobre, que são de
+  `features/sobre`, e uma feature não importa de `app`. O hero muda só o import, e o lado a lado da
+  inicial confere que nada mudou além do botão novo. Ela **não** vai em círculo nenhum (Q7).
+- **Círculo com as iniciais (Q7, decisão do Gabriel):** só nos cartões de docente, no tamanho do
+  círculo do cartão do gabarito. Mora em `features/equipe/componentes/`, porque só o cartão de
+  docente o usa; não vai para `ui/`.
+  - **A regra das iniciais** é função pura em `features/equipe/regras.ts`, com teste de unidade:
+    do nome como está no §4.1, tira as palavras de tratamento que terminam em ponto ("Profa.",
+    "Dra."), e junta a primeira letra da primeira palavra que sobra e a da última, em maiúsculas.
+    "Profa. Dra. Mariana Sodário Cruz" dá **"MC"**; "Profa. Dra. Kerolyn Ramos Garcia" dá
+    **"KG"**. As iniciais não ficam escritas nos dados: saem do nome, e trocar o nome troca as
+    iniciais.
+  - **Leitor de tela:** o círculo inteiro, com as iniciais, é `aria-hidden`. O nome completo está
+    no `h3` ao lado, e as iniciais não são lidas duas vezes.
+  - **Contraste (RP-09):** o dev mede a cor das iniciais contra o fundo do círculo, nas duas
+    superfícies de cartão (no Sobre, o cartão de superfície sobre o creme; na Equipe, o cartão
+    creme sobre a superfície), e registra no relatório as duas cores e a superfície de cada uma.
+    Mínimo de 4,5:1; 3:1 só se as iniciais tiverem pelo menos 24 px (ou 18,66 px em negrito), com
+    o tamanho registrado. Só tokens: se nenhum par existente passar, token novo com origem.
+  - Quando a foto chegar, ela substitui as iniciais dentro do mesmo círculo.
+- **Cartão de docente:** em `features/equipe/componentes/`, usado nas duas rotas. Círculo com as
+  iniciais, nome em `h3`, cargo e formação em parágrafos.
 
 ### D7 — Pendências da Q20
 
@@ -146,7 +166,10 @@ Do protótipo vale a composição; o texto vem dos dados (D8).
 O `qa-acessibilidade` escreve, lendo a lista e o documento, sem copiar texto:
 
 1. Spec de `/sobre` e spec de `/equipe`, nas 7 larguras, publicado: os trechos conferidos com o
-   documento, com as contagens; a ausência dos termos das specs; um `h1`; axe 0.
+   documento, com as contagens; a ausência dos termos das specs; um `h1`; axe 0; as iniciais "MC"
+   e "KG" visíveis e fora da árvore de acessibilidade, calculadas no teste pela mesma regra a
+   partir dos nomes lidos do documento; e, na Equipe, nenhum círculo nem imagem nos seis cartões de
+   cargo.
 2. Ajustes: `páginas verificadas: 4 de 4`; o `interruptor.spec.ts` na forma nova da
    `publicacao-do-site` (`rotas verificadas: 4`); o `pagina-inicial.spec.ts` com o "Conheça a Liga"
    presente e levando a `/sobre`; o menu e o rodapé com os destinos novos; e a verificação das
@@ -162,6 +185,8 @@ Demonstrações de falha, cada uma com a saída vermelha e a verde no relatório
 | 4 | Uma lista sem `role="list"` | e2e: a página e a lista |
 | 5 | Descrição do Sobre com 161 caracteres | unidade: o endereço e "161" |
 | 6 | Um segundo `h1` em `/equipe` | e2e: a página e os dois títulos |
+| 7 | A regra das iniciais pegando a segunda palavra no lugar da última ("KR") | unidade: o nome, "KG" esperado e "KR" recebido |
+| 8 | O círculo com as iniciais sem `aria-hidden` | e2e: a página e as iniciais que apareceram na árvore de acessibilidade |
 
 Depois, `git status --porcelain` igual ao de antes e `sha256sum -c` com OK nos arquivos tocados.
 
@@ -182,11 +207,11 @@ confirma o host e o commit no painel da Vercel antes.
 
 | Quem | Arquivos |
 | --- | --- |
-| `dev-frontend` | `src/app/(site)/(publicas)/sobre/` e `equipe/`; `src/features/sobre/` e `src/features/equipe/`; `src/componentes/padroes/` (título de seção, quadro); `src/componentes/ui/` (borboleta, círculo); `src/app/(site)/(publicas)/_inicio/` (só o import da borboleta, e o arquivo antigo apagado); `src/features/processo-seletivo/` (imports, tipo renomeado, `role="list"`); `src/componentes/layout/` (`Cabecalho`, `MenuLateral`, `RodapePublico`: `role="list"` e, no cabeçalho, a Q1); `src/lib/utils/paginas-publicas.{json,ts,test.ts}`; `src/estilos/tokens.css` só com linhas acrescentadas |
+| `dev-frontend` | `src/app/(site)/(publicas)/sobre/` e `equipe/`; `src/features/sobre/` e `src/features/equipe/`; `src/componentes/padroes/` (título de seção, quadro); `src/componentes/ui/` (só a borboleta; o círculo com as iniciais e a regra delas ficam em `features/equipe`, D6); `src/app/(site)/(publicas)/_inicio/` (só o import da borboleta, e o arquivo antigo apagado); `src/features/processo-seletivo/` (imports, tipo renomeado, `role="list"`); `src/componentes/layout/` (`Cabecalho`, `MenuLateral`, `RodapePublico`: `role="list"` e, no cabeçalho, a Q1); `src/lib/utils/paginas-publicas.{json,ts,test.ts}`; `src/estilos/tokens.css` só com linhas acrescentadas |
 | `qa-acessibilidade` | `tests/e2e/` (dois specs novos; `paginas-publicas`, `interruptor`, `pagina-inicial`, `menu-por-teclado`, `processo-seletivo` se a verificação das listas morar nele). `playwright.config.ts` não muda |
 | `guardiao-visual` | `openspec/changes/pagina-sobre-e-equipe/prints/` |
 | Líder técnico | `docs/PADROES-DE-CODIGO.md` §11.2 e §11.3; `docs/REFERENCIA-VISUAL.md` §7 (Q2, Q4, Q7, no Portão 1); os prints das opções da Q3 em `openspec/changes/pagina-sobre-e-equipe/prints/`, antes do Portão 1, com o esboço fora de `src/` |
-| `especificador` | Além desta pasta, no `docs/conteudo-institucional.md`, só com autorização escrita do Gabriel: §8, a linha "Nomes da diretoria atual · Pendente" e o placar ("de 16 itens, 9 resolvidos"); e o texto que a Q2 (a), a Q6 (b) e a Q9 mandarem registrar |
+| `especificador` | Além desta pasta, no `docs/conteudo-institucional.md`, com a autorização escrita do Gabriel de 22/11/2026 (§4, §4.1 e §8), **feito no Portão 1**: no §4, a descrição da Equipe (Q9 (a)); no §4.1, "Orientadora" na linha da Kerolyn e uma nota de origem abaixo da nota do nome (Q6 (b)); no §8, a linha "Nomes da diretoria atual" e o placar ("de 16 itens, 9 resolvidos", "Restam 7"). A Q2 (b) não acrescenta texto ao documento |
 
 Não mudam: `src/proxy.ts`, `src/app/layout.tsx`, `src/app/(site)/em-construcao/`,
 `PaginaEmConstrucao*`, `lighthouserc.json`, `scripts/`, `playwright.config.ts`, `.github/`,
@@ -205,7 +230,8 @@ lista de tela (passo 3). Tirar a 11.2 e a 11.3 daqui não mudaria a classificaç
 | Faixa do Sobre | Q2: título "Sobre a LIACUP" (rótulo) e §2.1 |
 | História | §2.2 |
 | O que a Liga se propõe a fazer | §2.3 a §2.6; nomes dos itens são os títulos das seções do documento, sem "— Sobre" (Q3 (a)); nota de fonte fora (Q10) |
-| Docentes | §4.1; cargo da Mariana "Orientadora Geral", com G maiúsculo, como o documento (o protótipo tem "geral"); cargo da Kerolyn pela Q6 |
+| Docentes | §4.1; cargo da Mariana "Orientadora Geral", com G maiúsculo, como o documento (o protótipo tem "geral"); cargo da Kerolyn "Orientadora", inserido no §4.1 pela Q6 (b) |
+| Iniciais no círculo dos docentes | Não são texto novo: saem do nome do §4.1 pela regra do D6 ("MC" e "KG"), e não são anunciadas |
 | Faixa da Equipe | Q2: "Equipe" e "Quem faz a LIACUP" (rótulos) |
 | Cargos e linhas | §4.3, colunas "Cargo" e "Em uma linha" |
 | Fundadores | §4.2, na ordem do documento |
@@ -217,17 +243,35 @@ lista de tela (passo 3). Tirar a 11.2 e a 11.3 daqui não mudaria a classificaç
 | Risco | Mitigação |
 | --- | --- |
 | Texto longo do §2.3 a §2.6 (cerca de 1.850 caracteres) deixar o Sobre muito comprido em 390 | É o texto aprovado e não se corta. Os prints da Q3 mostram o tamanho de cada forma antes da decisão |
-| Seis borboletas iguais na diretoria parecerem repetitivas | O `guardiao-visual` julga no lado a lado; a alternativa (c) da Q7 fica registrada |
-| O teste de texto ler o §4.1 errado, porque a linha mistura nome, cargo e formação com "—" e "." | O qa separa pelo "—" e pelo primeiro ". " da Mariana, e imprime as três partes de cada docente; a demonstração 3 confere |
+| A grade da diretoria sem círculos ficar rala no desktop ou apertada em 390 | Diferença decidida pela Q7; o `guardiao-visual` julga o equilíbrio e, se preciso, propõe uma coluna em 390 como melhoria a aprovar |
+| Nenhum par de tokens existente dar o contraste das iniciais nas duas superfícies de cartão | Token novo, acrescentado, com origem; o par medido e nomeado no relatório (RP-09) |
+| A regra das iniciais mudar de resultado se o nome do §4.1 ganhar outro tratamento ("Prof.", "Me.") | A regra tira toda palavra que termina em ponto, não uma lista fixa; o teste de unidade cobre os dois nomes de hoje e um com outro tratamento |
+| O teste de texto ler o §4.1 errado, porque a linha mistura nome, cargo e formação com "—" e "." | Com a Q6 (b), as duas linhas têm a mesma forma: nome, "—", cargo até o primeiro ". ", formação. O qa imprime as três partes de cada docente; a demonstração 3 confere |
 | O papel de lista acusado pelo lint como redundante | D7: desliga só na linha, com motivo; a regra do projeto não muda |
 | 14 tarefas, com uma de folga | A divisão está na proposta: a `/equipe` sai inteira |
 | `openspec validate` recusar o delta | O especificador não rodou o validador (sem terminal). O líder técnico roda antes do Portão 1 |
 
 ## Open Questions
 
-Dez questões, para o Gabriel no Portão 1. Os caracteres foram contados à mão pelo especificador; o
-teste de unidade confere. Opção marcada **(fora do documento)** traz texto que não está no
-`conteudo-institucional.md`.
+**Todas decididas pelo Gabriel em 22/11/2026, no Portão 1.** O texto literal está no
+`relatorio.md`, seção "Decisões do Gabriel no Portão 1", transcrito pelo líder técnico. As opções
+ficam abaixo como registro.
+
+| Qn | Decisão |
+| --- | --- |
+| Q1 | (b) |
+| Q2 | (b) nas duas páginas |
+| Q3 | (a) |
+| Q4 | (a) |
+| Q5 | (a) |
+| Q6 | (b) |
+| Q7 | **Nenhuma das três:** docentes com as iniciais no círculo; cargos sem círculo; os círculos voltam com nomes e fotos; contraste das iniciais medido e nomeado (D5, D6) |
+| Q8 | (a) |
+| Q9 | (a) nas duas; a frase da Equipe registrada no §4 como decisão do Gabriel de 22/11/2026 |
+| Q10 | (a) |
+
+Na origem: os caracteres foram contados à mão pelo especificador, e o teste de unidade confere.
+Opção marcada **(fora do documento)** trazia texto que não estava no `conteudo-institucional.md`.
 
 ### Q1 — As duas constantes do nome da liga
 
@@ -323,6 +367,10 @@ orientadoras"; o protótipo mostra "Orientadora".
 - **Recomendo (b)**, porque o documento já a chama de orientadora e os cartões ficam iguais.
 
 ### Q7 — O círculo da foto de docentes e cargos
+
+**Decidida: nenhuma das três · Gabriel, 22/11/2026, Portão 1.** Docentes com as iniciais no
+círculo; cargos sem círculo, porque não há pessoa para mostrar. A regra das iniciais e o contraste
+estão no D6. Os prints opcionais abaixo não foram pedidos.
 
 Igual nas duas páginas. Prints opcionais, se o Gabriel quiser ver antes:
 `prints/q7-opcao-{a,b,c}-390.png`, da diretoria.

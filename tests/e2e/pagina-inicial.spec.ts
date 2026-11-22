@@ -172,6 +172,15 @@ test('os botões do hero só aparecem para páginas que estão na lista', async 
       (navegados.length > 0 ? ` · ${navegados.join(' · ')}` : '')
   )
   expect(navegados.length).toBe(presentes.length)
+  /*
+   * Nesta entrega o Sobre está na lista (pagina-sobre-e-equipe, D9, item 2):
+   * os dois botões aparecem, e o "Conheça a Liga" leva a /sobre. Sem isto,
+   * uma lista que perdesse o Sobre deixaria o teste verde, com o botão ausente.
+   */
+  expect(
+    presentes.map((botao) => botao.rotulo),
+    'nesta entrega os dois botões do hero aparecem'
+  ).toEqual(BOTOES_DO_HERO.map((botao) => botao.rotulo))
 })
 
 test('o quadro da foto e as borboletas são decorativos, sem texto e sem imagem inventada', async ({

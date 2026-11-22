@@ -363,4 +363,51 @@
     var(--color-accent) 18%,
     transparent
   ); /* protótipo: .btn-ghost:active */
+
+  /* ── Tokens da change pagina-sobre-e-equipe (R1, 22/11/2026) ───────────────
+     Nenhum token existente foi alterado. "Protótipo" é prototipo/Portal-LIACUP.html
+     aberto no navegador, nas páginas Sobre e Equipe: o valor é o do estilo do
+     elemento citado, medido no Chromium em 1280 e 390 px. "Até N px" é a regra
+     @media (max-width: N px) do protótipo. Como nas changes anteriores, onde o
+     protótipo usa um valor a 2 px ou menos de um degrau --space-* (ou de uma
+     soma de dois), o componente usa o degrau, e não um token novo. */
+
+  /* Faixas do topo e seções */
+  --espaco-topo-da-secao-alta: 64px; /* protótipo: padding-top da faixa roxa do Sobre e da faixa de superfície da Equipe */
+  --font-size-titulo-da-faixa-do-sobre: clamp(
+    40px,
+    5.2vw,
+    64px
+  ); /* protótipo: h1 da faixa do Sobre (.t-h1) */
+  --largura-texto-da-faixa-do-sobre: 62ch; /* protótipo: parágrafo da faixa do Sobre */
+  --font-size-titulo-da-equipe: clamp(38px, 4.8vw, 58px); /* protótipo: h1 da Equipe (.t-h1) */
+  --line-height-titulo-da-equipe: 1.05; /* protótipo: h1 da Equipe */
+  --espaco-fim-da-diretoria: 68px; /* protótipo: padding-bottom da seção "Diretoria" */
+  --espaco-fim-da-faixa-de-superficie: 76px; /* protótipo: padding-bottom da faixa de superfície da Equipe */
+  --font-size-titulo-de-secao-da-equipe: 26px; /* protótipo: h2 "Diretoria" e "Docentes orientadores" */
+
+  /* Borboleta do canto da faixa do Sobre (protótipo: .bf-3) */
+  --borboleta-da-faixa-direita: 5%; /* protótipo: .bf-3 */
+  --borboleta-da-faixa-topo: 30px; /* protótipo: .bf-3 */
+  --borboleta-da-faixa-largura: 120px; /* protótipo: .bf-3 */
+  --borboleta-da-faixa-opacidade: 0.25; /* protótipo: .bf-3 */
+  --borboleta-da-faixa-direita-estreito: -12px; /* protótipo: .bf-3, até 1024 px */
+  --borboleta-da-faixa-topo-estreito: 8px; /* protótipo: .bf-3, até 1024 px */
+  --borboleta-da-faixa-largura-estreito: 74px; /* protótipo: .bf-3, até 1024 px */
+  --borboleta-da-faixa-opacidade-estreito: 0.18; /* protótipo: .bf-3, até 1024 px */
+
+  /* História e objetivos do Sobre */
+  --font-size-texto-da-historia: 15.5px; /* protótipo: parágrafo do bloco "Como a Liga começou" */
+  --altura-quadro-da-historia: 380px; /* protótipo: image-slot #liacup-sobre */
+  --colunas-dos-objetivos: minmax(0, 320px) minmax(0, 1fr); /* protótipo: grade do bloco "Objetivos" */
+  --coluna-do-numero-do-objetivo: 44px; /* protótipo: 1ª coluna de cada objetivo */
+  --font-size-texto-do-objetivo: 16px; /* protótipo: texto de cada objetivo */
+
+  /* Cartões de cargo, de docente e nomes dos fundadores */
+  --font-size-nome-do-cargo: 18px; /* protótipo: h3 de cada cartão da diretoria */
+  --font-size-cargo: 13px; /* protótipo: linha do cargo nos cartões da diretoria e dos docentes */
+  --font-size-nome-do-fundador: 15.5px; /* protótipo: h3 de cada ligante, no lugar de quem ficam os fundadores (Q8 (a)) */
+  --tamanho-circulo-do-docente: 74px; /* protótipo: image-slot do cartão de docente */
+  --font-size-nome-do-docente: 19px; /* protótipo: h3 do cartão de docente */
+  --font-size-formacao-do-docente: 14px; /* protótipo: formação no cartão de docente */
 }

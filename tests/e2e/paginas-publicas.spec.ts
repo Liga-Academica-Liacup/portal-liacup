@@ -579,6 +579,76 @@ test('o cabeçalho, o menu e o rodapé mostram só os destinos da lista, sem o q
 })
 
 /*
+ * Spec navegacao-publica, cenário "Nesta entrega, a lista tem a Início, o
+ * Sobre, a Equipe e o Processo seletivo" (pagina-sobre-e-equipe, D3 e D9,
+ * item 2). Os testes acima comparam a moldura com a lista, e ficariam verdes
+ * com uma lista que tivesse perdido o Sobre. Este confere a lista desta
+ * entrega e o que a raiz mostra dela. Os rótulos são os da spec, e não texto
+ * do conteudo-institucional.md.
+ */
+const ENTREGA = {
+  enderecos: ['/', '/sobre', '/equipe', '/processo-seletivo'],
+  menu: ['Início', 'Sobre', 'Equipe'],
+  colunas: { Portal: ['Início', 'Sobre'], Conteúdo: ['Equipe'] } as Record<string, string[]>,
+  destaque: { rotulo: 'Processo seletivo', endereco: '/processo-seletivo' },
+}
+
+test('nesta entrega, a lista tem Início, Sobre, Equipe e Processo seletivo, e a moldura os mostra na ordem do protótipo', async ({
+  page,
+}, informacoes) => {
+  const falhas: string[] = []
+  const igual = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
+
+  const enderecos = [...PAGINAS_PUBLICAS.map((p) => p.endereco)].sort()
+  if (!igual(enderecos, [...ENTREGA.enderecos].sort()))
+    falhas.push(
+      `a lista tem ${JSON.stringify(enderecos)}, e não ${JSON.stringify(ENTREGA.enderecos)}`
+    )
+
+  await page.goto('/')
+  const rotulosDe = async (locator: Locator) =>
+    (await locator.getByRole('link', { includeHidden: true }).allTextContents()).map((t) =>
+      t.trim()
+    )
+  const vistos = {
+    'links em linha': await rotulosDe(
+      page.getByRole('navigation', { name: 'Navegação principal', includeHidden: true })
+    ),
+    'menu lateral': await rotulosDe(
+      page.locator('dialog').getByRole('navigation', { includeHidden: true })
+    ),
+  }
+  for (const [lugar, achados] of Object.entries(vistos)) {
+    if (!igual(achados, ENTREGA.menu))
+      falhas.push(`${lugar}: ${JSON.stringify(achados)}, e não ${JSON.stringify(ENTREGA.menu)}`)
+  }
+  const rodape = page.getByRole('contentinfo')
+  const colunasVistas: string[] = []
+  for (const [coluna, esperados] of Object.entries(ENTREGA.colunas)) {
+    const achados = await rotulosDe(rodape.getByRole('navigation', { name: coluna }))
+    colunasVistas.push(`${coluna} ${JSON.stringify(achados)}`)
+    if (!igual(achados, esperados))
+      falhas.push(
+        `rodapé, coluna "${coluna}": ${JSON.stringify(achados)}, e não ${JSON.stringify(esperados)}`
+      )
+  }
+  const destaque = page
+    .getByRole('banner')
+    .getByRole('link', { name: ENTREGA.destaque.rotulo, exact: true })
+    .first()
+  const hrefDoDestaque = await destaque.getAttribute('href').catch(() => null)
+  if (hrefDoDestaque !== ENTREGA.destaque.endereco)
+    falhas.push(`o botão "${ENTREGA.destaque.rotulo}" do cabeçalho leva a ${hrefDoDestaque}`)
+
+  console.log(
+    `[${informacoes.project.name}] lista desta entrega: ${enderecos.length} páginas (${enderecos.join(', ')})` +
+      ` · menu em linha ${JSON.stringify(vistos['links em linha'])} · menu lateral ${JSON.stringify(vistos['menu lateral'])}` +
+      ` · rodapé ${colunasVistas.join(' · ')} · destaque "${ENTREGA.destaque.rotulo}" → ${hrefDoDestaque}`
+  )
+  expect(falhas, `a entrega diverge da spec navegacao-publica:\n${falhas.join('\n')}`).toEqual([])
+})
+
+/*
  * Spec navegacao-publica: o Instagram abre em nova aba sem dar à página aberta
  * acesso à de origem nem o endereço dela. Medido no resultado, e não só no
  * atributo: a aba nova é interceptada aqui, sem sair da máquina.

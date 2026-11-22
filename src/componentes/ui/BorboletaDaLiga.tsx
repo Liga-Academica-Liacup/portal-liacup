@@ -8,8 +8,9 @@
  * Os números abaixo são o desenho, no sistema de coordenadas do viewBox, e não
  * medidas de tela.
  *
- * Mora junto do hero porque, por enquanto, só a inicial a usa. Quando a página
- * Sobre precisar dela, o lugar certo passa a ser src/componentes/ui/.
+ * Mora em src/componentes/ui/ desde a change pagina-sobre-e-equipe (D6): a
+ * inicial e a página Sobre a usam, e uma feature não importa de src/app/. Até
+ * ali, morava junto do hero da inicial.
  */
 import estilos from './BorboletaDaLiga.module.css'
 

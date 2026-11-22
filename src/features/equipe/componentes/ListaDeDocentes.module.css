@@ -1,0 +1,69 @@
+/* Cartões dos docentes. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Contraste (RP-09):
+   - sobre --color-surface #ebddc5 (Sobre): nome --color-accent-800 #4e3260,
+     8,05:1; cargo --color-accent-700 #683f74, 6,15:1; formação
+     --color-neutral-700 #645c50, 4,92:1;
+   - sobre --color-bg #f5ead8 (Equipe): 9,05:1, 6,91:1 e 5,53:1.
+   As iniciais do círculo estão no CirculoDeIniciais.module.css. */
+
+/* Duas colunas, e uma até 768 px ([data-resp3] do protótipo). 22 px de espaço
+   no protótipo: a soma de --space-2 e --space-3. */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--space-2) + var(--space-3));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* O cartão do protótipo: 26 px 28 px 30 px de preenchimento, nos degraus mais
+   perto. */
+.cartao {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  padding: var(--space-6) var(--space-6) calc(var(--space-4) + var(--space-3));
+  border-radius: var(--radius-xl);
+}
+
+.superficie {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.creme {
+  background: var(--color-bg);
+}
+
+.texto {
+  min-width: 0;
+}
+
+.nome {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-nome-do-docente);
+  color: var(--color-accent-800);
+}
+
+.cargo {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-cargo);
+  line-height: var(--line-height-apresentacao);
+  color: var(--color-accent-700);
+}
+
+.formacao {
+  margin: 0;
+  font-size: var(--font-size-formacao-do-docente);
+  line-height: var(--line-height-apresentacao);
+  color: var(--color-neutral-700);
+}
+
+@media (max-width: 768px) {
+  .grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

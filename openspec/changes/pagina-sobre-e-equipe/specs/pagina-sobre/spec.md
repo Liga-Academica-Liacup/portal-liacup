@@ -53,15 +53,27 @@ do protótipo.
 
 ### Requirement: A página Sobre não mostra foto de pessoa nem marcador de conteúdo pendente
 
-Enquanto a liga não manda fotos, a página SHALL mostrar, no lugar do círculo da foto de cada
-docente, uma borboleta da liga decorativa, igual à da página Equipe, e SHALL omitir todo marcador de
-conteúdo pendente e todo texto de demonstração do protótipo.
+Enquanto a liga não manda fotos, o círculo da foto de cada docente SHALL mostrar as iniciais do
+nome dela, tiradas do nome por uma regra fixa, como na página Equipe, sem que o leitor de tela as
+leia, e com contraste medido. A página SHALL omitir todo marcador de conteúdo pendente e todo
+texto de demonstração do protótipo.
 
-#### Scenario: O círculo da foto
+#### Scenario: As iniciais no círculo
 
 - **WHEN** alguém olha o cartão de um docente, em qualquer largura
-- **THEN** o círculo da foto mostra uma borboleta da liga, que não é anunciada por leitor de tela
+- **THEN** o círculo da foto mostra as iniciais do nome da seção 4.1 do documento de conteúdo: a
+  primeira letra da primeira palavra e a da última palavra do nome, sem os tratamentos "Profa." e
+  "Dra.", em maiúsculas, "MC" para Mariana Sodário Cruz e "KG" para Kerolyn Ramos Garcia
+- **AND** o círculo e as iniciais não são anunciados por leitor de tela, porque o nome completo
+  está escrito ao lado
 - **AND** nenhuma imagem de pessoa aparece
+
+#### Scenario: O contraste das iniciais
+
+- **WHEN** o contraste das iniciais é medido contra o fundo do círculo, no cartão da página
+- **THEN** atinge pelo menos 4,5:1, ou 3:1 se as iniciais forem texto grande (pelo menos 24 px, ou
+  18,66 px em negrito), com o tamanho registrado
+- **AND** o registro nomeia a cor das iniciais, a cor do fundo do círculo e a superfície do cartão
 
 #### Scenario: Nada pendente nem de demonstração
 

@@ -12,12 +12,12 @@
  * estático e o teste de unidade do conteúdo exige as cinco etapas. Os três
  * estados chegam na R3, com o banco (Q12 (a) do Gabriel, 21/11/2026).
  */
-import type { Etapa, TituloDeSecao as Titulo } from '../tipos'
+import { TituloDeSecao, type TextoDoTituloDeSecao } from '@/componentes/padroes/TituloDeSecao'
+import type { Etapa } from '../tipos'
 import estilos from './Etapas.module.css'
-import { TituloDeSecao } from './TituloDeSecao'
 
 type PropsDasEtapas = {
-  titulo: Titulo
+  titulo: TextoDoTituloDeSecao
   etapas: readonly Etapa[]
 }
 
@@ -27,7 +27,11 @@ export function Etapas({ titulo, etapas }: PropsDasEtapas) {
   return (
     <section aria-labelledby="titulo-das-etapas">
       <TituloDeSecao titulo={titulo} id="titulo-das-etapas" />
-      <ol className={estilos.linhaDoTempo}>
+      {/* Papel de lista explícito: o Safari tira o papel de toda lista sem marcador,
+          e o VoiceOver deixa de dizer quantos itens há (design.md da change
+          pagina-sobre-e-equipe, D7). */}
+      {/* eslint-disable-next-line jsx-a11y/no-redundant-roles -- WebKit, ver acima */}
+      <ol role="list" className={estilos.linhaDoTempo}>
         {etapas.map((etapa) => (
           <li key={etapa.nome} className={estilos.etapa}>
             <p className={estilos.nome}>{etapa.nome}</p>

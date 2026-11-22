@@ -1,0 +1,81 @@
+/* "O que a Liga se propõe a fazer". Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Contraste sobre --color-surface #ebddc5 (RP-09):
+   - nome do item, --color-accent-800 #4e3260: 8,05:1;
+   - parágrafos, --color-neutral-800 #474238: 7,45:1;
+   - número, --color-accent-700 #683f74: 6,15:1. Melhoria a aprovar pelo
+     Gabriel no Portão 2, pelo contraste: o lilás do protótipo,
+     --color-accent #9b6aaf, mede 3,09:1 sobre a superfície, e com 20 px não é
+     texto grande. */
+
+.secao {
+  padding: var(--espaco-secao-da-pagina) var(--space-6);
+  background: var(--color-surface);
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: var(--colunas-dos-objetivos);
+  gap: var(--espaco-secao);
+  align-items: start;
+  max-width: var(--largura-maxima-conteudo);
+  margin: 0 auto;
+}
+
+.lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* O número numa coluna estreita e o texto ao lado, alinhados pela primeira
+   linha, com o filete de cima, como no protótipo. */
+.item {
+  display: grid;
+  grid-template-columns: var(--coluna-do-numero-do-objetivo) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: baseline;
+  /* 20 px no protótipo; o degrau mais perto é a soma de --space-2 e
+     --space-3 (22 px), como nos fundadores da Equipe. */
+  padding: calc(var(--space-2) + var(--space-3)) 0;
+  border-top: var(--largura-borda) solid var(--color-divider);
+}
+
+.numero {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-h4);
+  line-height: var(--line-height-apresentacao);
+  color: var(--color-accent-700);
+}
+
+.nome {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-h4);
+  color: var(--color-accent-800);
+}
+
+.paragrafo {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-texto-do-objetivo);
+  line-height: var(--line-height-apresentacao);
+  color: var(--color-neutral-800);
+}
+
+.paragrafo:last-child {
+  margin-bottom: 0;
+}
+
+/* Os cortes do protótipo: [data-resp] e [data-pad]. */
+@media (max-width: 1024px) {
+  .grade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 768px) {
+  .secao {
+    padding-inline: var(--space-4);
+  }
+}

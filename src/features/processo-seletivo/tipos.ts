@@ -12,6 +12,7 @@
  * estado aberto entrar, numa change própria, ele acrescenta um membro à união
  * `SituacaoDasInscricoes`, e o TypeScript aponta todo lugar que precisa tratá-lo.
  */
+import type { TextoDoTituloDeSecao } from '@/componentes/padroes/TituloDeSecao'
 
 /** Um texto com um link no meio: o que vem antes, o link e o que vem depois. */
 export type TextoComLink = {
@@ -36,12 +37,6 @@ export type SituacaoDasInscricoes = InscricoesFechadas
 
 export type EstadoDasInscricoes = SituacaoDasInscricoes['estado']
 
-/** O sobretítulo pequeno, em maiúsculas, e o título de uma seção. */
-export type TituloDeSecao = {
-  readonly sobretitulo: string
-  readonly titulo: string
-}
-
 /** Uma etapa da seleção: o nome e o caráter dela (eliminatória, classificatória). */
 export type Etapa = {
   readonly nome: string
@@ -59,9 +54,9 @@ export type ConteudoDoProcessoSeletivo = {
   readonly apresentacao: string
   readonly inscricoes: SituacaoDasInscricoes
   readonly secoes: {
-    readonly etapas: TituloDeSecao
-    readonly requisitos: TituloDeSecao
-    readonly perguntas: TituloDeSecao
+    readonly etapas: TextoDoTituloDeSecao
+    readonly requisitos: TextoDoTituloDeSecao
+    readonly perguntas: TextoDoTituloDeSecao
   }
   readonly etapas: readonly Etapa[]
   /** Os itens do quadro "Quem pode se inscrever", sem a nota de fonte (Q4 (a)). */

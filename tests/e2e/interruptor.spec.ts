@@ -21,7 +21,12 @@ import { ORIGEM_NAO_PUBLICADO, ORIGEM_PUBLICADO } from '../../playwright.config'
  */
 
 const TITULO_EM_CONSTRUCAO = 'Portal em construção'
-const TRES_ROTAS = ['/vitrine', '/sobre', '/processo-seletivo'] as const
+/*
+ * As quatro rotas da spec publicacao-do-site (pagina-sobre-e-equipe): a
+ * vitrine e as tres paginas que existem fora da raiz. Todas existem com o site
+ * publicado, entao la cada uma responde 200, sem redirecionamento.
+ */
+const QUATRO_ROTAS = ['/vitrine', '/sobre', '/equipe', '/processo-seletivo'] as const
 const TAGS_DO_AXE = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
 
 type PrimeiraResposta = { status: number; location: string | undefined }
@@ -92,14 +97,14 @@ function primeiraLinha(erro: unknown): string {
 
 test.describe('site NAO publicado (3001)', () => {
   /* Item 1. */
-  test('as tres rotas redirecionam (307) para a raiz e chegam a pagina em construcao', async ({
+  test('as quatro rotas redirecionam (307) para a raiz e chegam a pagina em construcao', async ({
     page,
     request,
   }, informacoes) => {
     const falhas: string[] = []
     let verificadas = 0
 
-    for (const rota of TRES_ROTAS) {
+    for (const rota of QUATRO_ROTAS) {
       const resposta = await primeiraResposta(request, ORIGEM_NAO_PUBLICADO, rota)
       const problema = conferir(rota, resposta, ORIGEM_NAO_PUBLICADO, 307, '/')
       if (problema) {
@@ -121,7 +126,7 @@ test.describe('site NAO publicado (3001)', () => {
       `[${informacoes.project.name}] rotas verificadas: ${verificadas} · modo nao publicado`
     )
     expect(falhas, `rotas com defeito no modo nao publicado:\n${falhas.join('\n')}`).toEqual([])
-    expect(verificadas).toBe(TRES_ROTAS.length)
+    expect(verificadas).toBe(QUATRO_ROTAS.length)
   })
 
   /* Item 2: a raiz, com conteudo. */
@@ -244,20 +249,18 @@ test.describe('site NAO publicado (3001)', () => {
 
 test.describe('site publicado (3000)', () => {
   /* Item 5. */
-  test('as tres rotas respondem sem redirecionamento e nenhuma mostra a pagina em construcao', async ({
+  test('as quatro rotas respondem 200 sem redirecionamento e nenhuma mostra a pagina em construcao', async ({
     page,
     request,
   }, informacoes) => {
     const falhas: string[] = []
     let verificadas = 0
 
-    for (const rota of TRES_ROTAS) {
+    for (const rota of QUATRO_ROTAS) {
       const resposta = await primeiraResposta(request, ORIGEM_PUBLICADO, rota)
-      const redirecionou = resposta.status >= 300 && resposta.status < 400
-      const vitrineSemSucesso = rota === '/vitrine' && resposta.status !== 200
-      if (redirecionou || resposta.location !== undefined || vitrineSemSucesso) {
-        const esperado = rota === '/vitrine' ? '200' : 'sem redirecionamento'
-        falhas.push(`${descrever(rota, resposta)} (esperado ${esperado})`)
+      const problema = conferir(rota, resposta, ORIGEM_PUBLICADO, 200, null)
+      if (problema) {
+        falhas.push(problema)
         continue
       }
       try {
@@ -279,7 +282,7 @@ test.describe('site publicado (3000)', () => {
 
     console.log(`[${informacoes.project.name}] rotas verificadas: ${verificadas} · modo publicado`)
     expect(falhas, `rotas com defeito no modo publicado:\n${falhas.join('\n')}`).toEqual([])
-    expect(verificadas).toBe(TRES_ROTAS.length)
+    expect(verificadas).toBe(QUATRO_ROTAS.length)
   })
 
   /* Item 6. */
@@ -292,28 +295,49 @@ test.describe('site publicado (3000)', () => {
   })
 })
 
-/* Item 7: o pedido do Gabriel, o status e o Location da primeira resposta. */
+/*
+ * Item 7: o pedido do Gabriel, o status e o Location da primeira resposta.
+ * Desde a pagina-sobre-e-equipe, /sobre existe: no publicado responde 200, e o
+ * 404 fica com o endereco inexistente (spec publicacao-do-site).
+ */
 test('primeira resposta de /sobre e de um endereco inexistente, nos dois modos', async ({
   request,
 }, informacoes) => {
   const casos = [
-    { origem: ORIGEM_NAO_PUBLICADO, modo: 'nao publicado', status: 307, destino: '/' },
-    { origem: ORIGEM_PUBLICADO, modo: 'publicado', status: 404, destino: null },
+    {
+      origem: ORIGEM_NAO_PUBLICADO,
+      modo: 'nao publicado',
+      rota: '/sobre',
+      status: 307,
+      destino: '/',
+    },
+    {
+      origem: ORIGEM_NAO_PUBLICADO,
+      modo: 'nao publicado',
+      rota: '/endereco-que-nao-existe',
+      status: 307,
+      destino: '/',
+    },
+    { origem: ORIGEM_PUBLICADO, modo: 'publicado', rota: '/sobre', status: 200, destino: null },
+    {
+      origem: ORIGEM_PUBLICADO,
+      modo: 'publicado',
+      rota: '/endereco-que-nao-existe',
+      status: 404,
+      destino: null,
+    },
   ] as const
-  const rotas = ['/sobre', '/endereco-que-nao-existe'] as const
 
   const falhas: string[] = []
   const conferidas: string[] = []
 
-  for (const caso of casos) {
-    for (const rota of rotas) {
-      const resposta = await primeiraResposta(request, caso.origem, rota)
-      const problema = conferir(rota, resposta, caso.origem, caso.status, caso.destino)
-      if (problema) {
-        falhas.push(`${caso.modo}: ${problema}`)
-      } else {
-        conferidas.push(`${caso.modo} ${descrever(rota, resposta)}`)
-      }
+  for (const { origem, modo, rota, status, destino } of casos) {
+    const resposta = await primeiraResposta(request, origem, rota)
+    const problema = conferir(rota, resposta, origem, status, destino)
+    if (problema) {
+      falhas.push(`${modo}: ${problema}`)
+    } else {
+      conferidas.push(`${modo} ${descrever(rota, resposta)}`)
     }
   }
 
@@ -322,5 +346,5 @@ test('primeira resposta de /sobre e de um endereco inexistente, nos dois modos',
       conferidas.join('\n  ')
   )
   expect(falhas, `primeiras respostas com defeito:\n${falhas.join('\n')}`).toEqual([])
-  expect(conferidas).toHaveLength(casos.length * rotas.length)
+  expect(conferidas).toHaveLength(casos.length)
 })

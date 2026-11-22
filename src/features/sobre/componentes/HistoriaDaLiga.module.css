@@ -1,0 +1,49 @@
+/* "Como a Liga começou". Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Texto --color-neutral-800 #474238 sobre --color-bg #f5ead8: 8,38:1. */
+
+.secao {
+  padding: var(--espaco-secao-da-pagina) var(--space-6);
+}
+
+/* As mesmas colunas do hero da inicial, como no protótipo. */
+.grade {
+  display: grid;
+  grid-template-columns: var(--colunas-do-hero);
+  gap: var(--espaco-secao);
+  align-items: center;
+  max-width: var(--largura-maxima-conteudo);
+  margin: 0 auto;
+}
+
+.texto {
+  margin: 0;
+  font-size: var(--font-size-texto-da-historia);
+  line-height: var(--line-height-apresentacao);
+  color: var(--color-neutral-800);
+}
+
+.quadro {
+  height: var(--altura-quadro-da-historia);
+}
+
+/* O corte do protótipo: [data-resp], e o quadro com proporção no lugar da
+   altura (.img-sobre). */
+@media (max-width: 1024px) {
+  .grade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  .quadro {
+    height: auto;
+    aspect-ratio: var(--proporcao-quadro-do-hero);
+  }
+}
+
+@media (max-width: 768px) {
+  .secao {
+    padding-inline: var(--space-4);
+  }
+}

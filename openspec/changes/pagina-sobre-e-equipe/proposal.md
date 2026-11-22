@@ -32,8 +32,11 @@ pendências que a `pagina-processo-seletivo` deixou para cá: a Q20 (a) e as se�
    - os fundadores discentes do §4.2, onde a **Q8** decidir;
    - os docentes do §4.1, se a **Q5** os mantiver aqui;
    - o bloco "Ligantes" não aparece até a liga mandar nomes e fotos.
-4. **Nenhuma foto de pessoa.** O círculo da foto, de docentes e cargos, fica como a **Q7** decidir,
-   igual nas duas páginas. Nenhum "(pendente)", "Foto" ou texto de demonstração na tela.
+4. **Nenhuma foto de pessoa (Q7, decisão do Gabriel fora das três opções).** Os docentes, nas
+   duas páginas, têm as iniciais no círculo ("MC" e "KG", pela regra mecânica do `design.md`, D6),
+   decorativas, com o contraste medido e nomeado (RP-09). Os cartões de cargo ficam sem círculo,
+   porque não há pessoa para mostrar; os círculos voltam quando a liga mandar nomes e fotos.
+   Nenhum "(pendente)", "Foto" ou texto de demonstração na tela.
 5. **A lista única ganha Sobre e Equipe**, na ordem do menu do protótipo (Início, Sobre, Equipe), e
    no rodapé Sobre fica na coluna "Portal" e Equipe na "Conteúdo", como no gabarito. Títulos "Sobre
    · LIACUP" e "Equipe · LIACUP"; descrições pela **Q9**. Efeitos que vêm sozinhos da lista, e que
@@ -44,8 +47,8 @@ pendências que a `pagina-processo-seletivo` deixou para cá: a Q20 (a) e as se�
    `especificador`, só depois da decisão escrita do Gabriel. Os rótulos de interface (títulos de
    seção, **Q4**) vão para a `REFERENCIA-VISUAL.md` §7, pelo líder técnico.
 
-As specs estão escritas com a opção recomendada de cada Qn. Se o Gabriel escolher outra, o
-`especificador` ajusta a spec antes do apply.
+As specs seguem as decisões do Portão 1 (tabela abaixo). Só a Q7 saiu da recomendação, e as specs,
+o `design.md` e o `tasks.md` foram ajustados a ela antes do apply.
 
 **Critérios de aceite** (os do briefing):
 
@@ -61,12 +64,31 @@ As specs estão escritas com a opção recomendada de cada Qn. Se o Gabriel esco
   `feat/pagina-sobre-e-equipe`, no host `portal-liacup-git-feat-pagina-sobre-e-equipe-liacup1.vercel.app`
   (D11 da change anterior), com o host e o commit confirmados pelo Gabriel no painel da Vercel.
 - Nenhum "(pendente)", "Foto" ou texto de demonstração na tela.
+- Q7: iniciais "MC" e "KG" fora da árvore de acessibilidade, com o par de cor (cor das iniciais,
+  fundo do círculo e superfície do cartão) nomeado e medido em pelo menos 4,5:1, ou 3:1 se as
+  iniciais forem texto grande, nas duas páginas; nenhum círculo nos cartões de cargo.
 
 **Conta de tarefas: 14 de 15** (`tasks.md`). A change não se divide. Se uma correção passar de 15,
 a `/equipe` sai inteira para uma change própria (tarefas 4.1 e 5.2, e as partes de Equipe da 2.2,
-5.3 e 6.1). Nesse caso, precisam de decisão agora, porque mexem na `/sobre`: Q1, Q2 (a parte do
-Sobre), Q3, Q4, Q5, Q6, Q7, Q9 (a parte do Sobre) e Q10. Ficariam para a change da `/equipe`: Q2 (a
-parte da Equipe), Q8 e Q9 (a parte da Equipe).
+5.3 e 6.1), com as decisões do Portão 1 valendo para ela.
+
+## Decisões do Portão 1 (22/11/2026)
+
+O texto literal do Gabriel fica no `relatorio.md`, seção "Decisões do Gabriel no Portão 1",
+transcrito pelo líder técnico. As opções e os custos ficam no `design.md`, "Open Questions".
+
+| Qn | Decisão | Onde entrou |
+| --- | --- | --- |
+| Q1 (b) | Uma constante do nome da liga; o cabeçalho acrescenta " · UnB" | Item 1; D7 |
+| Q2 (b) nas duas | Sobre: `h1` "Sobre a LIACUP" e o §2.1. Equipe: "Equipe" e "Quem faz a LIACUP", sem a frase | Itens 2 e 3; specs `pagina-sobre` e `pagina-equipe`; D4, D5; `REFERENCIA-VISUAL.md` §7, pelo líder técnico |
+| Q3 (a) | Quatro linhas numeradas, com o título da seção do documento | Item 2; D4 |
+| Q4 (a) | Títulos e sobretítulos do protótipo, como rótulos de interface | Itens 2 e 3; `REFERENCIA-VISUAL.md` §7, pelo líder técnico |
+| Q5 (a) | Docentes nas duas páginas | Itens 2 e 3; D1 |
+| Q6 (b) | "Orientadora" na linha da Kerolyn | Item 2; `conteudo-institucional.md` §4.1, pelo `especificador` |
+| Q7 | **Nenhuma das três:** iniciais nos docentes, cargos sem círculo, contraste medido e nomeado | Item 4; specs `pagina-sobre` e `pagina-equipe`; D5, D6; `REFERENCIA-VISUAL.md` §7, pelo líder técnico |
+| Q8 (a) | Fundadores na Equipe, no lugar de "Ligantes" | Item 3; D5 |
+| Q9 (a) nas duas | Sobre: 1ª frase do §2.4. Equipe: a frase registrada no §4 | Item 5; spec `seo`; `conteudo-institucional.md` §4, pelo `especificador` |
+| Q10 (a) | Nota de fonte do §2.4 fora da tela | Item 2; spec `pagina-sobre`; D8 |
 
 ## Fora de escopo
 
@@ -106,7 +128,7 @@ parte da Equipe), Q8 e Q9 (a parte da Equipe).
 | RP-06 | Sim | Lighthouse nas 4 páginas publicadas e na raiz não publicada, com SEO ≥ 95 |
 | RP-07 | Sim | axe 0 nas páginas novas e na raiz não publicada |
 | RP-08 | Sim | Cada diferença do lado a lado com veredito e motivo |
-| RP-09 | Sim | Texto sobre a faixa escura do Sobre com o par medido e nomeado |
+| RP-09 | Sim | Texto sobre a faixa escura do Sobre e iniciais no círculo dos docentes, nas duas superfícies de cartão, com o par medido e nomeado |
 | RP-10 | Sim | O segredo de bypass do P23 nunca é versionado nem impresso |
 | RP-11 | Não | Nenhuma tabela |
 | RP-12 | Sim | Toda verificação nova vista falhando (`design.md`, D9) |
@@ -121,7 +143,7 @@ parte da Equipe), Q8 e Q9 (a parte da Equipe).
 | `tests/e2e/` | Specs das duas páginas; `paginas-publicas`, `interruptor`, `pagina-inicial` e `menu-por-teclado` ajustados | `qa-acessibilidade` |
 | `docs/PADROES-DE-CODIGO.md` §11.2 e §11.3 | Texto do briefing, colado | líder técnico |
 | `docs/REFERENCIA-VISUAL.md` §7 | Rótulos e regras decididos na Q2, Q4 e Q7 | líder técnico, no Portão 1 |
-| `docs/conteudo-institucional.md` §4 e §8 | Pendência nova, placar, e o texto que a Q2, a Q6 e a Q9 mandarem registrar | `especificador`, com autorização escrita do Gabriel, no Portão 1 |
+| `docs/conteudo-institucional.md` §4, §4.1 e §8 | Descrição da Equipe (Q9), "Orientadora" (Q6), pendência nova e placar | `especificador`, com autorização escrita do Gabriel, no Portão 1 (feito) |
 | Guardião | O diff toca `docs/PADROES-DE-CODIGO.md` e a spec `publicacao-do-site`, que estão na lista do gatilho: **checklist inteiro** (passo 1 da conferência proporcional) | `guardiao-appsec` |
 | Produção | Nada muda: o interruptor leva `/sobre` e `/equipe` à página em construção | — |
 | Prévias | As duas páginas, o "Conheça a Liga" e a coluna "Conteúdo" | — |

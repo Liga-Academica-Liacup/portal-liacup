@@ -1,0 +1,49 @@
+/* "Fundadores discentes". Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo (a grade e
+   a letra do bloco "Ligantes", no lugar de quem os fundadores ficam).
+
+   Nome --color-accent-800 #4e3260 sobre --color-surface #ebddc5: 8,05:1. */
+
+.secao {
+  margin-bottom: var(--espaco-secao);
+}
+
+/* Seis colunas, como a grade dos ligantes no protótipo. 20 px de espaço no
+   protótipo; o degrau mais perto é a soma de --space-2 e --space-3 (22 px). */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: calc(var(--space-2) + var(--space-3));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nome {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-nome-do-fundador);
+  line-height: var(--line-height-titulo);
+  letter-spacing: var(--letter-spacing-titulo);
+  text-align: center;
+  color: var(--color-accent-800);
+}
+
+/* Os cortes do protótipo: [data-resp4] em duas colunas até 1024 px; .g-2up
+   continua em duas colunas até 768 px, com o espaço menor. */
+@media (max-width: 1024px) {
+  .grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .grade {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .grade {
+    gap: var(--space-3);
+  }
+}
