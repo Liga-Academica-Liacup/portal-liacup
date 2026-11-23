@@ -24,6 +24,7 @@ import {
   lerRevList,
   lerStatus,
   montarResumo,
+  ordemDoUtf16,
   procurar,
 } from '../../scripts/buscar-segredo-antes-do-envio/funcoes.mjs'
 
@@ -330,6 +331,137 @@ describe('o que a busca examina', () => {
     const resultado = rodar({})
     expect(resultado.codigo).toBe(0)
     expect(resultado.saida).toContain('examinou 0 commits e 0 arquivos')
+  })
+})
+
+/*
+ * Conteúdo gravado com dois bytes por caractere (D6 da completar-ci-do-novo-fluxo,
+ * Q6 (a)). A marca de ordem de bytes é opcional no LE; no BE, os casos a põem.
+ */
+const MARCA_LE = Buffer.from([0xff, 0xfe])
+const MARCA_BE = Buffer.from([0xfe, 0xff])
+const emUtf16le = (texto, marca = Buffer.alloc(0)) =>
+  Buffer.concat([marca, Buffer.from(texto, 'utf16le')])
+const emUtf16be = (texto, marca = Buffer.alloc(0)) =>
+  Buffer.concat([marca, Buffer.from(texto, 'utf16le').swap16()])
+
+describe('o conteúdo em UTF-16', () => {
+  caso('UTF-16LE sem marca, na árvore: achado, e a leitura byte a byte sozinha não acha', () => {
+    const conteudo = emUtf16le(`a\n${chave(MODELOS[5], 36)}\n`)
+    expect(procurar(conteudo.toString('latin1'))).toEqual([])
+    const resultado = rodar({ arvore: { 'notas.txt': conteudo } })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain(
+      'token clássico do GitHub · árvore · notas.txt:2 · [MASCARADO · 40 caracteres · notas.txt:2]'
+    )
+    expect(resultado.saida).toContain('achados: 1')
+  })
+  caso('UTF-16LE com marca, num commit: achado, com o commit e a linha', () => {
+    const resultado = rodar({
+      commits: [
+        { sha: SHA_1, arquivos: { 'a.txt': emUtf16le(`${chave(MODELOS[0], 40)}`, MARCA_LE) } },
+      ],
+    })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain(
+      'JWT do Supabase · 1111111 · a.txt:1 · [MASCARADO · 48 caracteres · a.txt:1]'
+    )
+    expect(resultado.saida).toContain('achados: 1')
+  })
+  caso('UTF-16BE com marca, no índice: achado no índice', () => {
+    const resultado = rodar({
+      arvore: { 'b.txt': 'sem chave\n' },
+      indice: { 'b.txt': emUtf16be(`x\ny\n${chave(MODELOS[2], 40)}`, MARCA_BE) },
+    })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain(
+      'token pessoal do Supabase · índice · b.txt:3 · [MASCARADO · 44 caracteres · b.txt:3]'
+    )
+    expect(resultado.saida).toContain('achados: 1')
+  })
+  caso('a ordem dos bytes: marca, maioria de zeros nos ímpares ou nos pares, ou nenhuma', () => {
+    expect(ordemDoUtf16(emUtf16le('abc', MARCA_LE))).toEqual({ ordem: 'le', inicio: 2 })
+    expect(ordemDoUtf16(emUtf16be('abc', MARCA_BE))).toEqual({ ordem: 'be', inicio: 2 })
+    expect(ordemDoUtf16(emUtf16le('abc'))).toEqual({ ordem: 'le', inicio: 0 })
+    expect(ordemDoUtf16(emUtf16be('abc'))).toEqual({ ordem: 'be', inicio: 0 })
+    expect(ordemDoUtf16(Buffer.from('texto comum em UTF-8, ação\n', 'utf8'))).toBeNull()
+    expect(ordemDoUtf16(Buffer.from([0, 255, 137, 80, 0, 65, 66, 67, 68, 0]))).toBeNull()
+    expect(ordemDoUtf16(Buffer.from([0]))).toBeNull()
+  })
+  caso('UTF-16BE sem marca é achado, e a chave nas duas leituras conta uma vez', () => {
+    expect(procurar(emUtf16be(`${chave(MODELOS[5], 36)}`))).toEqual([
+      { formato: 'token clássico do GitHub', linha: 1, caracteres: 40 },
+    ])
+    // A mesma chave em bytes simples e, logo depois, em UTF-16LE: cada leitura acha
+    // uma, na mesma linha e com o mesmo número de caracteres, e o achado conta uma vez.
+    // Os dois espaços separam as duas e mantêm a cópia UTF-16 em posição par.
+    const nasDuas = Buffer.concat([
+      Buffer.from(`${chave(MODELOS[5], 36)}  `, 'latin1'),
+      emUtf16le(chave(MODELOS[5], 36)),
+    ])
+    expect(procurar(nasDuas)).toEqual([
+      { formato: 'token clássico do GitHub', linha: 1, caracteres: 40 },
+    ])
+  })
+})
+
+describe('o nome do arquivo', () => {
+  caso('a chave no caminho de um arquivo da árvore: achada como nome do arquivo, mascarada', () => {
+    const resultado = rodar({ arvore: { [`config/${chave(MODELOS[5], 36)}.txt`]: 'sem chave\n' } })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain(
+      'token clássico do GitHub · árvore · nome do arquivo:1 · ' +
+        '[MASCARADO · 40 caracteres · nome do arquivo:1]'
+    )
+    expect(resultado.saida).not.toContain('config/')
+    expect(resultado.saida).not.toContain(MODELOS[5].prefixo)
+    expect(resultado.saida).toContain(
+      'arquivos: 1 (dos commits: 0 · da árvore: 1 · do índice: 0) · linhas: 1 · formatos: 6 · ' +
+        'achados: 1'
+    )
+  })
+  caso('chave no nome e no conteúdo, num commit: os dois achados, e o caminho não sai', () => {
+    const caminho = `docs/${chave(MODELOS[3], 82)}/notas.md`
+    const resultado = rodar({
+      commits: [{ sha: SHA_1, arquivos: { [caminho]: `a\n${chave(MODELOS[0], 40)}\n` } }],
+    })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain(
+      'token granular do GitHub · 1111111 · nome do arquivo:1 · ' +
+        '[MASCARADO · 93 caracteres · nome do arquivo:1]'
+    )
+    expect(resultado.saida).toContain(
+      'JWT do Supabase · 1111111 · nome do arquivo:2 · [MASCARADO · 48 caracteres · nome do arquivo:2]'
+    )
+    expect(resultado.saida).not.toContain('docs/')
+    expect(resultado.saida).toContain('achados: 2')
+  })
+  caso('o nome de um arquivo que só está no índice também é examinado, uma vez', () => {
+    const caminho = `${chave(MODELOS[1], 12)}.env`
+    const resultado = rodar({ arvore: { [caminho]: null }, indice: { [caminho]: 'x\n' } })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain('chave secreta do Supabase · índice · nome do arquivo:1')
+    expect(resultado.saida).toContain('do índice: 1) · linhas: 1 · formatos: 6 · achados: 1')
+  })
+  caso('o nome que só cita o prefixo não acha', () => {
+    const resultado = rodar({ arvore: { [`${MODELOS[5].prefixo}curto.txt`]: 'nada\n' } })
+    expect(resultado.codigo).toBe(0)
+    expect(resultado.saida).toContain('achados: 0')
+  })
+})
+
+describe('a mensagem do achado', () => {
+  caso('manda tirar o valor e trocar a chave, sem condição', () => {
+    const resultado = rodar({ arvore: { 'a.txt': chave(MODELOS[5], 36) } })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain('  Não envie. Tire o valor e troque a chave.')
+    expect(resultado.saida).not.toContain('se ele já entrou num commit')
+    expect(resultado.saida).not.toContain('Tire o valor do arquivo')
+  })
+  caso('sem achado, a mensagem não aparece', () => {
+    const resultado = rodar({ arvore: { 'a.txt': 'nada\n' } })
+    expect(resultado.codigo).toBe(0)
+    expect(resultado.saida).not.toContain('troque a chave')
   })
 })
 

@@ -20,7 +20,9 @@
  * 2. Com o Git, só leitura: `git ls-tree` da `main` e `git hash-object` (sem `-w`)
  *    de cada arquivo vigiado do disco, que aplica a mesma conversão de fim de linha
  *    do Git. O disco é listado pelo sistema de arquivos, e não pelo `git ls-files`,
- *    para alcançar o que o `.gitignore` e o exclude escondem.
+ *    para alcançar o que o `.gitignore` e o exclude escondem. Entre os vigiados estão
+ *    este arquivo e o ./conferir-ambiente-local/funcoes.mjs (change
+ *    completar-ci-do-novo-fluxo, D7, Q7 (b)): a conferência compara a si mesma.
  *
  * NUNCA IMPRIME VALOR: do `.git/config` sai só a seção e a chave, com a subseção
  * trocada por `<subseção>`. Da diferença de arquivo sai o sha256 do conteúdo do

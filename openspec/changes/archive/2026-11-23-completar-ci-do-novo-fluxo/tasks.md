@@ -12,7 +12,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
 
 ## 1. A saída do LB-02 e o tempo do CI
 
-- [ ] 1.1 **Líder técnico:** a evidência do LB-02 e o tempo do CI (D9), no `relatorio.md`, numa
+- [x] 1.1 **Líder técnico:** a evidência do LB-02 e o tempo do CI (D9), no `relatorio.md`, numa
       seção própria. Verificar:
       - **a execução `45099474006`:** evento, ramo, sha `d7cc5c9`, conclusão e
         `run_attempt: 2`, com os dois jobs de cada tentativa e os horários. Também as 2
@@ -27,7 +27,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
 
 ## 2. O resíduo A1 e os segredos
 
-- [ ] 2.1 **dev:** o `ci.yml` do D1 e do D2, com a ação de baixar anexo do D4.
+- [x] 2.1 **dev:** o `ci.yml` do D1 e do D2, com a ação de baixar anexo do D4.
       - **Dado de entrada**, lido pelo líder técnico antes da passagem: o sha das 4 ações por
         `git ls-remote --tags https://github.com/actions/<nome>`, sem restringir a ref. A tabela vai
         para o relatório: ação · tag · sha · tem linha `^{}`? · endereço · faixa do aviso
@@ -45,7 +45,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
         'continue-on-error'` dá 0, `grep -c 'permissions:'` dá 1, e `grep -c
         'persist-credentials: false'` é igual a `grep -c 'actions/checkout@'`;
       - `npm run verificar` dá 0.
-- [ ] 2.2 **Líder técnico:** o README do CI e os passos do Gabriel (D1, D8, Migration Plan).
+- [x] 2.2 **Líder técnico:** o README do CI e os passos do Gabriel (D1, D8, Migration Plan).
       Verificar:
       - `grep -c 'chave-de-servico-da-main' README.md .github/workflows/ci.yml` dá pelo menos 1 em
         cada, e `grep -c 'Conferencias com segredo' README.md .github/workflows/ci.yml` dá 0 nos
@@ -57,7 +57,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
 
 ## 3. O OpenSpec no portão
 
-- [ ] 3.1 **dev:** `@fission-ai/openspec@2.1.0` como `devDependency` exata (D3, Q3 (a)). Verificar,
+- [x] 3.1 **dev:** `@fission-ai/openspec@2.1.0` como `devDependency` exata (D3, Q3 (a)). Verificar,
       com cada número no relatório:
       - `npm ls --depth=0` lista `@fission-ai/openspec@2.1.0`, e as dependências diretas são 23;
       - `grep -c '"hasInstallScript": true' package-lock.json` dá 3 antes e depois. Se subir, o dev
@@ -67,7 +67,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
         aviso alto ou crítico novo vindo do OpenSpec ou das dependências dele;
       - `openspec --version` e `npx openspec --version` dão `2.1.0` os dois;
       - a telemetria conferida, com a fonte, e desligada pela opção documentada se existir.
-- [ ] 3.2 **dev:** o `verificar:specs`, encadeado no `verificar`, e o passo no `Verificacoes`
+- [x] 3.2 **dev:** o `verificar:specs`, encadeado no `verificar`, e o passo no `Verificacoes`
       (D3). Verificar:
       - `npm run verificar:specs` dá 0, com a linha `Totals: N passed, 0 failed`;
       - **RP-12:** com uma change descartável plantada em `openspec/changes/`, tendo um requisito
@@ -94,14 +94,14 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
 
 ## 5. As ressalvas que pedem código
 
-- [ ] 5.1 **dev:** as ações presas passam a ver a forma compacta e a ação local em qualquer pasta
+- [x] 5.1 **dev:** as ações presas passam a ver a forma compacta e a ação local em qualquer pasta
       (D4, ACI-A2). Verificar:
       - `npm test` dá 0. `casos da verificação das ações presas` passa de 13, com casos para a
         lista e o mapa numa linha só e para a ação local fora de `.github/actions/`, cada um presa
         por etiqueta (vermelho) e por commit (verde);
       - **RP-12 no `ci.yml`:** uma linha trocada para a forma compacta, presa por etiqueta, dá 1 e
         nomeia `ci.yml:<linha>`. Desfeita a troca, dá 0, com o `sha256sum` igual ao de antes.
-- [ ] 5.2 **dev:** a busca de segredo com UTF-16, o nome do arquivo e a mensagem nova (D6, Q6 (a),
+- [x] 5.2 **dev:** a busca de segredo com UTF-16, o nome do arquivo e a mensagem nova (D6, Q6 (a),
       ACI-A3 e o 1 e o 2 da rodada 3 da `ajustar-ci`). Verificar:
       - `npm test` dá 0, e `casos da busca de segredo` passa de 36. Os casos novos são UTF-16LE
         com e sem marca, UTF-16BE com marca, a chave no nome e o texto da mensagem;
@@ -110,7 +110,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
       - **RP-12 na máquina:** com um arquivo não rastreado em UTF-16LE, sem marca, com a chave
         falsa montada por `node -e` com o prefixo partido, dá 1 com o valor mascarado. Apagado o
         arquivo, dá 0 com os mesmos contadores de antes.
-- [ ] 5.3 **dev e líder técnico:** a conferência do ambiente compara os próprios dois arquivos (D7,
+- [x] 5.3 **dev e líder técnico:** a conferência do ambiente compara os próprios dois arquivos (D7,
       Q7 (b), E-A3). Verificar:
       - `npm test` dá 0, com o caso novo;
       - o líder técnico registra o sha256 dos dois arquivos no `ambiente-decidido.txt`, citando a
@@ -121,7 +121,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
 
 ## 6. Os textos
 
-- [ ] 6.1 **Líder técnico:** a §6 e o cabeçalho do `SEGURANCA.md` (D8). As duas saídas valem só
+- [x] 6.1 **Líder técnico:** a §6 e o cabeçalho do `SEGURANCA.md` (D8). As duas saídas valem só
       com o veredito do guardião da 7.3. Verificar:
       - `sed -n '/^## 6\./,/^### Saíram da lista/p' docs/SEGURANCA.md | grep -cE
         '^\| (LB-02|A1 da) '` dá 0;
@@ -132,7 +132,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
         continua com o prazo `R2` e a change `papeis-da-diretoria-no-banco`;
       - `grep -c '^\*\*Versão 3.2' docs/SEGURANCA.md` dá 1, e o cabeçalho cita o que a 3.1 não
         citava (I2).
-- [ ] 6.2 **Líder técnico:** numa tarefa só, todas as ressalvas que são só texto (D8, as linhas
+- [x] 6.2 **Líder técnico:** numa tarefa só, todas as ressalvas que são só texto (D8, as linhas
       "tarefa 6.2" da tabela). Verificar:
       - o relatório traz, para cada uma dessas linhas, o `grep` que acha o texto novo e a contagem.
         Entre eles: `grep -c 'antes das quatro formas' docs/SEGURANCA.md` dá 0 (E-A7);
@@ -144,13 +144,13 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
 
 ## 7. Conferência final
 
-- [ ] 7.1 **qa:** `npx playwright test` inteiro e a comparação da raiz não publicada (D10).
+- [x] 7.1 **qa:** `npx playwright test` inteiro e a comparação da raiz não publicada (D10).
       Verificar:
       - `npx playwright test` dá 0, com o número de testes no relatório;
       - 0 pixels diferentes em 390 e em 1280 px, com o total de cada largura, contra os
         `raiz-nao-publicada-*` da `pagina-sobre-e-equipe` arquivada;
       - `git diff --exit-code main -- src public tests/e2e playwright.config.ts` dá 0.
-- [ ] 7.2 **Líder técnico:** as verificações do briefing e a tabela das ressalvas. Verificar, com o
+- [x] 7.2 **Líder técnico:** as verificações do briefing e a tabela das ressalvas. Verificar, com o
       código e os contadores no relatório:
       - `npm run verificar`, `npm test` e `openspec validate --all --strict` dão 0;
       - 23 dependências diretas, e a mudança do `package-lock.json` explicada pela 3.1;
@@ -158,7 +158,7 @@ Antes de qualquer `npm`, `test -e .npmrc` dá 1 e `npm config get registry` devo
       - `git status --porcelain` só mostra arquivos do D11;
       - a tabela das ressalvas tem 42 linhas, e cada destino está cumprido ou decidido no Portão 1;
       - `node scripts/buscar-segredo-antes-do-envio.mjs` dá 0.
-- [ ] 7.3 **`revisor` e `guardiao-appsec`.** O guardião aplica o checklist inteiro, porque o diff
+- [x] 7.3 **`revisor` e `guardiao-appsec`.** O guardião aplica o checklist inteiro, porque o diff
       toca `.github/`, `scripts/`, `package.json`, `package-lock.json` e `docs/SEGURANCA.md`.
       Verificar:
       - o veredito de cada um no relatório, e nenhum BLOQUEADO aberto;

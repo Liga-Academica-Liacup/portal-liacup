@@ -1,18 +1,38 @@
 # Verificacao automatica de toda alteracao proposta (FR-016).
 #
-# Nenhuma etapa usa continue-on-error: etapa que avisa e deixa passar e decoracao.
-# Cada etapa tem nome proprio, porque a protecao do ramo principal e configurada
-# selecionando essas verificacoes pelo nome — ver README.md.
+# Nenhuma etapa avisa e deixa passar: etapa assim e decoracao. Cada etapa tem
+# nome proprio, porque a protecao do ramo principal e configurada selecionando
+# essas verificacoes pelo nome — ver README.md. O ruleset exige so o job
+# Verificacoes: o que precisa barrar o merge e passo dele.
 #
-# DOIS JOBS, e a divisao e o ponto (LB-02, change ajustar-ci-ao-novo-fluxo, D1):
+# QUATRO JOBS, e a divisao e o ponto (change completar-ci-do-novo-fluxo, D1):
 #   - Verificacoes roda em todo PR e em todo push, e nao recebe segredo nenhum.
 #     Ele roda codigo do PR e das dependencias, e qualquer passo dele pode
 #     escrever no ambiente dos passos seguintes do mesmo job. Por isso o segredo
 #     nao vai para outro passo: vai para outro job.
-#   - O job das conferencias com segredo roda so no push para a main, ou seja,
-#     sobre codigo ja revisado, no ambiente segredos-da-main. O GitHub so entrega
-#     os segredos desse ambiente a execucao da main, entao um PR que mude este
-#     arquivo para pedi-los nao os recebe. No PR, ele aparece pulado.
+#   - Os outros tres rodam so no push para a main, ou seja, sobre codigo ja
+#     revisado. No PR, aparecem pulados.
+#       Build para a barreira da chave: sem segredo e sem ambiente. Compila e
+#         entrega o .next como anexo da execucao.
+#       Tipos do banco: no ambiente segredos-da-main, que guarda so o token.
+#       Chave fora do pacote: no ambiente chave-de-servico-da-main, que guarda
+#         so a chave de servico. Le o anexo do build e nao instala nada.
+#
+# POR QUE UM AMBIENTE POR SEGREDO (Q1 (c) do Gabriel, Portao 1, 23/11/2026).
+# Hipotese, nao conferida: o executor recebe no comeco do job os segredos que o
+# job pode citar, e um passo com sudo le a memoria do processo do executor. Se
+# for assim, a CLI do Supabase, que roda no job dos tipos com o token, alcancaria
+# a chave se as duas estivessem no mesmo ambiente. Com um ambiente por segredo, o
+# GitHub nem entrega a chave ao job dos tipos. Cada ambiente so e entregue a
+# execucao da main, entao um PR que mude este arquivo para pedir um segredo nao o
+# recebe.
+#
+# O A1 (achado do guardiao na ajustar-ci-ao-novo-fluxo): o build rodava antes da
+# chave, no mesmo job. Agora, em todo job com segredo, antes do passo que o
+# recebe so ha quatro formas de passo, nenhuma com codigo de dependencia nem do
+# build (D2): baixar o codigo sem guardar a credencial, preparar o Node sem
+# cache, instalar sem scripts de instalacao, ou baixar o anexo de um job sem
+# segredo. O build e feito so em job sem segredo.
 #
 # Roda so em Linux, deliberadamente. A paridade com Windows e travada na origem
 # por tres mecanismos (caixa de import na verificacao de tipos, fim de linha no
@@ -69,6 +89,18 @@ jobs:
       - name: Acoes presas por commit
         run: npm run verificar:acoes
 
+      # Valida em modo estrito todas as specs e changes, com o OpenSpec preso no
+      # package.json (D3, Q3 (a)). Aviso tambem reprova. O script ja desliga a
+      # telemetria e a checagem de versao do OpenSpec; as tres variaveis aqui
+      # repetem isso de proposito, para a leitura deste arquivo bastar (o
+      # OpenSpec tambem se desliga sozinho quando ve CI=true).
+      - name: Specs e changes do OpenSpec
+        env:
+          OPENSPEC_TELEMETRY: '0'
+          DO_NOT_TRACK: '1'
+          OPENSPEC_NO_UPDATE_CHECK: '1'
+        run: npm run verificar:specs
+
       # Encadeia `next typegen` antes do `tsc`, e isso NAO e detalhe: o
       # next-env.d.ts deixou de ser versionado (RP-13), e ele e quem traz o
       # `declare module '*.png'`. Sem o typegen, um `import logo from './x.png'`
@@ -101,6 +133,24 @@ jobs:
       - name: Testes de ponta a ponta
         run: npx playwright test
 
+      # Um print de pagina inteira de cada pagina da lista unica, com o site
+      # publicado, em 390 e 1280 px (D5). Vem DEPOIS do e2e porque o
+      # `playwright test` limpa o test-results/ ao comecar. Pagina que nao
+      # responde 200 deixa o job vermelho.
+      - name: Prints das paginas
+        run: npm run prints:site
+
+      # So roda com todos os passos anteriores verdes. O repositorio e publico:
+      # o anexo pode ser baixado por qualquer conta enquanto nao expira, e mostra
+      # o site publicado, cujos textos ja estao no repositorio.
+      - name: Guardar os prints das paginas
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: prints-do-site
+          path: test-results/prints-do-site/
+          if-no-files-found: error
+          retention-days: 7
+
       # Roda contra a versao compilada pelo passo Build, nunca contra o servidor
       # de desenvolvimento: medir desempenho em modo dev produz numero sem sentido.
       - name: Desempenho e acessibilidade por pagina
@@ -116,17 +166,20 @@ jobs:
             .lighthouseci/
           retention-days: 7
 
-  # O `if:` abaixo e do EVENTO, e nao da presenca do segredo, e a diferenca
-  # importa. Ele tira este job do PR, onde aparece pulado. Na main, nenhum passo
-  # se pula quando o segredo falta: os dois scripts que o usam terminam
-  # VERMELHOS dizendo que NAO VERIFICARAM, em vez de verdes por omissao. Entao
-  # este job so fica verde tendo recebido os dois segredos.
-  conferencias-com-segredo:
-    name: Conferencias com segredo
+  # O `if:` dos tres jobs abaixo e do EVENTO, e nao da presenca do segredo, e a
+  # diferenca importa. Ele tira os tres do PR, onde aparecem pulados. Na main,
+  # nenhum passo se pula quando o segredo falta: os scripts que o usam terminam
+  # VERMELHOS dizendo que NAO VERIFICARAM, em vez de verdes por omissao.
+
+  # Sem ambiente e sem segredo: e o unico lugar do push em que o build roda
+  # fora do Verificacoes. Antes do build so ha o checkout, o Node e a instalacao
+  # sem scripts, e nao o lint, os testes e o e2e (Q2 (b)). O .next/cache fica
+  # fora do anexo: a barreira da chave nao precisa dele.
+  build-para-a-chave:
+    name: Build para a barreira da chave
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    environment: segredos-da-main
+    timeout-minutes: 15
 
     steps:
       - name: Baixar o codigo
@@ -141,12 +194,53 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      - name: Instalar dependencias sem scripts de instalacao
+        run: npm ci --ignore-scripts
+
+      - name: Build
+        run: npm run build
+
+      # O .next comeca com ponto, e a acao deixa de fora, por padrao, todo
+      # caminho que comeca com ponto: sem o include-hidden-files, o anexo sairia
+      # vazio. Um dia de retencao: o anexo so serve a esta execucao.
+      - name: Guardar o build para a barreira da chave
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: build-para-a-chave
+          path: |
+            .next/
+            !.next/cache/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+
+  # Ambiente segredos-da-main, que guarda so o token do Supabase. Antes do passo
+  # do token: checkout sem credencial, Node sem cache e instalacao sem scripts.
+  # A CLI do Supabase roda dentro do passo do token, por desenho, e este job nao
+  # tem acesso a chave de servico, que mora noutro ambiente.
+  tipos-do-banco:
+    name: Tipos do banco
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: segredos-da-main
+
+    steps:
+      - name: Baixar o codigo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Preparar o Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+
       # Instala sem rodar nenhum script de instalacao de dependencia. A CLI do
       # Supabase nao precisa deles: o binario vem pela dependencia opcional da
       # plataforma. O lockfile mostra que nem o `supabase` nem nenhum dos 8
       # pacotes de plataforma `@supabase/cli-*` 2.115.0 tem script de
-      # instalacao. A tarefa 1.3 da change rodou `npm ci --ignore-scripts` no
-      # Windows; o pacote do Linux so roda de fato no primeiro push para a main.
+      # instalacao.
       - name: Instalar dependencias sem scripts de instalacao
         run: npm ci --ignore-scripts
 
@@ -160,16 +254,45 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
         run: npm run banco:tipos:check
 
-      # O build deste job, sem segredo no ambiente, e o que a barreira 3 varre.
-      - name: Build
-        run: npm run build
+  # Ambiente chave-de-servico-da-main, que guarda so a chave de servico. Este job
+  # nao instala dependencia nem compila: antes do passo da chave so ha o
+  # checkout sem credencial, o Node sem cache e o download do anexo do build,
+  # feito no job sem segredo da mesma execucao. Se o build ficar vermelho, este
+  # job aparece pulado; na main, isso e vermelho visivel e correcao imediata.
+  chave-fora-do-pacote:
+    name: Chave fora do pacote
+    needs: build-para-a-chave
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: chave-de-servico-da-main
 
-      # A BARREIRA 3 roda DEPOIS do Build, e essa ordem e o ponto: ela e a unica
-      # que verifica o artefato entregue ao navegador, e nao o codigo-fonte. As
-      # barreiras 1 e 2 ficam verdes quando um componente de servidor passa a
-      # chave por prop — o valor vai para a pagina gerada sem nenhum arquivo de
-      # cliente mencionar a variavel. A chave chega so a este passo.
+    steps:
+      - name: Baixar o codigo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Preparar o Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+
+      # Anexo que falta faz este passo falhar; anexo vazio faz a barreira
+      # terminar como NAO VERIFICADO. Nos dois casos o job fica vermelho.
+      - name: Baixar o build sem segredo
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: build-para-a-chave
+          path: .next
+
+      # A BARREIRA 3: a unica que verifica o artefato entregue ao navegador, e
+      # nao o codigo-fonte. As barreiras 1 e 2 ficam verdes quando um componente
+      # de servidor passa a chave por prop. Roda com o `node` direto, e nao com
+      # `npm run`: sem node_modules, o npm ainda leria o .npmrc e rodaria os
+      # scripts pre e post. O script so importa node:fs e node:path e so le o
+      # .next, sem executar nada dele. A chave chega so a este passo.
       - name: Chave de servico fora do pacote compilado
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: npm run verificar:chave
+        run: node scripts/verificar-chave-de-servico.mjs

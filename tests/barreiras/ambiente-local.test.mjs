@@ -16,8 +16,10 @@ import { describe, expect, it } from 'vitest'
 import {
   acharRegistro,
   aplicarRegistro,
+  ARQUIVOS_DA_CONFERENCIA,
   compararArvore,
   conferirConfigDoGit,
+  descrever,
   desligaOsGanchos,
   ehVigiado,
   executaveisDoGitNaRaiz,
@@ -277,6 +279,8 @@ describe('os caminhos vigiados', () => {
     '.clinerules/x.md',
     '.github/copilot-instructions.md',
     '.github/instructions/x.instructions.md',
+    'scripts/conferir-ambiente-local.mjs',
+    'scripts/conferir-ambiente-local/funcoes.mjs',
   ]
   const fora = [
     'README.md',
@@ -285,7 +289,9 @@ describe('os caminhos vigiados', () => {
     '.git/info/exclude',
     'openspec/changes/x/config.yaml',
     '.github/workflows/ci.yml',
-    'scripts/conferir-ambiente-local.mjs',
+    'scripts/conferir-ambiente-local/outro.mjs',
+    'scripts/buscar-segredo-antes-do-envio.mjs',
+    'outra/scripts/conferir-ambiente-local.mjs',
   ]
   caso(`vigia ${vigiados.length} caminhos de agente`, () => {
     expect(vigiados.filter((c) => !ehVigiado(c))).toEqual([])
@@ -365,6 +371,41 @@ describe('o registro de diferenças decididas', () => {
   })
   caso('o attributes para antes do Git, e o registro não o aceita', () => {
     expect(lerRegistro('attributes * filter=x  # decisão').problemas).toHaveLength(1)
+  })
+  caso('a própria conferência alterada: sem registro para; com registro, aceita e cita', () => {
+    // D7 da completar-ci-do-novo-fluxo, Q7 (b): os dois arquivos da conferência são
+    // vigiados, comparados com a main e aceitos só com o sha256 registrado.
+    const [script, funcoes] = ARQUIVOS_DA_CONFERENCIA
+    expect([script, funcoes]).toEqual([
+      'scripts/conferir-ambiente-local.mjs',
+      'scripts/conferir-ambiente-local/funcoes.mjs',
+    ])
+    expect(ARQUIVOS_DA_CONFERENCIA.every(ehVigiado)).toBe(true)
+    const main = new Map([
+      [script, 's1'],
+      [funcoes, 'f1'],
+    ])
+    const { diferencas } = compararArvore(
+      main,
+      new Map([
+        [script, 's2'],
+        [funcoes, 'f1'],
+      ])
+    )
+    expect(diferencas.map(descrever)).toEqual([`arquivo diferente da main: ${script}`])
+    const semRegistro = aplicarRegistro(diferencas, [], () => SHA)
+    expect(semRegistro.naoAceitas.map(descrever)).toEqual([`arquivo diferente da main: ${script}`])
+    const decisao = 'Q7 (b) da proposta completar-ci-do-novo-fluxo, aprovada em 23/11/2026'
+    const { entradas, problemas } = lerRegistro(`arquivo ${script} ${SHA}  # ${decisao}\n`)
+    expect(problemas).toEqual([])
+    const comRegistro = aplicarRegistro(diferencas, entradas, () => SHA)
+    expect(comRegistro.naoAceitas).toEqual([])
+    expect(comRegistro.aceitas.map((d) => d.linha)).toEqual([
+      `arquivo ${script} ${SHA}  # ${decisao}`,
+    ])
+    // Uma linha a mais depois do registro muda o sha256, e a diferença volta a parar.
+    const depois = aplicarRegistro(diferencas, entradas, () => 'c'.repeat(64))
+    expect(depois.naoAceitas.map((d) => d.caminho)).toEqual([script])
   })
   caso('arquivo novo, como .claude/DEMO-RP12.txt, não é aceito pelo registro', () => {
     const { entradas } = lerRegistro(REGISTRO)

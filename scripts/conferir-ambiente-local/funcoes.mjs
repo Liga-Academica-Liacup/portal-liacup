@@ -49,7 +49,8 @@ export const PASTAS_FORA = new Set(['node_modules', '.next', '.git'])
 
 /*
  * Os caminhos vigiados (D4 e D6): configuração e instrução que uma ferramenta de
- * agente de IA lê sozinha ao abrir a pasta. O nome se compara sem diferença de
+ * agente de IA lê sozinha ao abrir a pasta, e os arquivos da própria conferência
+ * (ARQUIVOS_DA_CONFERENCIA). O nome se compara sem diferença de
  * maiúscula, porque o disco do Windows também não diferencia.
  */
 const PASTAS_VIGIADAS = new Set(['.claude', '.cursor', '.clinerules'])
@@ -64,6 +65,18 @@ const NOMES_VIGIADOS = new Set([
   '.clinerules',
 ])
 
+/*
+ * Os arquivos da própria conferência (change completar-ci-do-novo-fluxo, D7, Q7 (b);
+ * A3 da endurecer): comparados com a main pelo conteúdo, como a configuração dos
+ * agentes. Diferença sem registro para; com registro, é aceita e cita a decisão.
+ * Limite (D7): uma edição que apaga esta comparação passa nela; contra isso valem o
+ * `git status` depois de cada passagem e o checklist inteiro do guardião.
+ */
+export const ARQUIVOS_DA_CONFERENCIA = [
+  'scripts/conferir-ambiente-local.mjs',
+  'scripts/conferir-ambiente-local/funcoes.mjs',
+]
+
 export function ehVigiado(caminho) {
   const partes = caminho.split('/')
   if (partes.some((p) => PASTAS_FORA.has(p.toLowerCase()))) return false
@@ -72,6 +85,7 @@ export function ehVigiado(caminho) {
   if (NOMES_VIGIADOS.has(baixo.at(-1))) return true
   const junto = baixo.join('/')
   return (
+    ARQUIVOS_DA_CONFERENCIA.includes(junto) ||
     junto === 'openspec/config.yaml' ||
     junto === '.github/copilot-instructions.md' ||
     junto.startsWith('.github/instructions/')

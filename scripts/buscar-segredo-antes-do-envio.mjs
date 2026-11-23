@@ -15,8 +15,11 @@
  * rastreado alterado e cada não rastreado que não está ignorado, lido do disco. O
  * apagado é pulado. Um arquivo com versão já preparada no índice (`MM`, `AM`, `M `)
  * tem também essa versão examinada, lida por `cat-file blob :<caminho>`, porque é ela
- * que entra no próximo commit; se for igual à do disco, conta uma vez só. Os formatos
- * e a saída estão em ./buscar-segredo-antes-do-envio/funcoes.mjs, que o teste usa.
+ * que entra no próximo commit; se for igual à do disco, conta uma vez só. O caminho de
+ * cada arquivo examinado também passa pelos formatos, e cada conteúdo é lido byte a
+ * byte e, se parece UTF-16, também decodificado assim (change
+ * completar-ci-do-novo-fluxo, D6, Q6 (a)). Os formatos, as duas leituras e a saída
+ * estão em ./buscar-segredo-antes-do-envio/funcoes.mjs, que o teste usa.
  *
  * O GIT, SÓ LEITURA, com operações da lista da barreira: `rev-parse --verify`,
  * `rev-list --parents`, `show --name-only` (no merge, `diff --name-only` contra o
