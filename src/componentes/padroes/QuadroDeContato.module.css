@@ -1,0 +1,118 @@
+/* Quadro de contato. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo (página
+   Contato, cada item da lista de canais).
+
+   Contraste (RP-09), medido pela fórmula do WCAG 2.x:
+   - sobre o fundo da página, --color-bg #f5ead8: rótulo --color-neutral-700
+     #645c50, 5,53:1 (o --color-neutral-600 #82796a do protótipo mede 3,61:1
+     e reprova; REFERENCIA-VISUAL.md, seção 3, texto secundário); dado
+     --color-accent-800 #4e3260, 9,05:1;
+   - no hover, sobre #ecddd4 (--color-fundo-hover-fantasma sobre o fundo):
+     rótulo 4,97:1, dado 8,14:1;
+   - pressionado, sobre #e5d3d1 (--color-fundo-pressionado-fantasma sobre o
+     fundo): rótulo 4,57:1, dado 7,48:1. */
+
+/* Protótipo: grid-template-columns 100px 1fr, gap 18 px (no degrau
+   --space-4, 17,6 px), align-items center. */
+.quadro {
+  display: grid;
+  grid-template-columns: var(--tamanho-circulo-de-contato) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: center;
+}
+
+/* O quadro inteiro é o link, e o alvo (100 px de altura, pelo círculo). Da
+   largura do conteúdo, e não da coluna toda, para o contorno do foco abraçar o
+   quadro. A ponta da direita, arredondada, ganha uma sobra para não encostar
+   no texto. */
+.link {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  padding-inline-end: var(--space-6);
+  border-radius: var(--radius-pill);
+  color: inherit;
+  text-decoration: none;
+}
+
+/* O navegador não conta como do link o ponto fora do raio, e todo ponto do
+   quadro, cantos incluídos, precisa abrir o destino (REFERENCIA-VISUAL.md,
+   seção 7). Esta camada transparente, retangular, cobre o quadro inteiro e é
+   do link: o canto também abre. */
+.link::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+}
+
+/* Hover só onde há hover (ADR-0006): os fundos do Botao fantasma, que já são
+   os do protótipo (.btn-ghost:hover e :active), e o dado sublinhado. */
+@media (hover: hover) {
+  .link:hover {
+    background: var(--color-fundo-hover-fantasma);
+  }
+
+  .link:hover .valor {
+    text-decoration: underline;
+    text-underline-offset: var(--underline-offset);
+  }
+}
+
+/* Pressionado: mouse, caneta e toque. */
+.link:active {
+  background: var(--color-fundo-pressionado-fantasma);
+}
+
+.link:active .valor {
+  text-decoration: underline;
+  text-underline-offset: var(--underline-offset);
+}
+
+/* O foco é o anel --color-accent-700 do global.css (6,91:1 sobre o fundo),
+   que segue o raio do quadro e o contorna inteiro. Distinto do hover, que é
+   só fundo. */
+
+/* O círculo de 100 px do protótipo (image-slot shape="circle"). */
+.figura {
+  display: grid;
+  place-items: center;
+  width: var(--tamanho-circulo-de-contato);
+  height: var(--tamanho-circulo-de-contato);
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+}
+
+.texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Protótipo: 12 px, letter-spacing .1em, maiúsculas. */
+.rotulo {
+  font-size: var(--font-size-rotulo);
+  letter-spacing: var(--letter-spacing-kicker);
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+}
+
+/* Protótipo: 16 px, --color-accent-800. O e-mail quebra só se não couber,
+   para não abrir rolagem horizontal em 360 px. */
+.valor {
+  font-size: var(--font-size-valor-de-contato);
+  color: var(--color-accent-800);
+  overflow-wrap: anywhere;
+}
+
+/* Texto só para leitor de tela: a técnica C7 do WCAG, como no cabeçalho. */
+.soParaLeitorDeTela {
+  position: absolute;
+  width: var(--tamanho-so-para-leitor-de-tela);
+  height: var(--tamanho-so-para-leitor-de-tela);
+  margin: calc(var(--tamanho-so-para-leitor-de-tela) * -1);
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

@@ -16,6 +16,10 @@ Fontes desta versão, em ordem de autoridade:
 
 ## 1. Identidade e dados institucionais
 
+**Descrição da página Contato para buscadores** _(decisão do Gabriel, 23/11/2026, Q4 da pagina-contato)_:
+
+> Contato da Liga Acadêmica Multiprofissional de Cuidados Paliativos (LIACUP): Instagram @liacup.unb e e-mail liacup.unb@gmail.com.
+
 | Campo                | Valor                                                                                             | Fonte                              |
 | -------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------- |
 | Nome                 | Liga Acadêmica Multiprofissional de Cuidados Paliativos                                           | Estatuto                           |

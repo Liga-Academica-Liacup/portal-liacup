@@ -1,13 +1,19 @@
-# Spec Delta
+# pagina-contato Specification
 
-## ADDED Requirements
+## Purpose
+A página Contato: mostra o Instagram, o e-mail e a sede da liga, com os dados do
+`conteudo-institucional.md` §1, os dois primeiros como quadros inteiros clicáveis e a sede como
+texto, sem formulário, e leva à página em construção quando o site não está publicado. O bloco de
+contato é reaproveitado pela inicial. Nasceu na change `pagina-contato` (R1); muda na R4, quando o
+formulário traz de volta a composição do protótipo.
+
+## Requirements
 
 ### Requirement: A página Contato mostra os três canais da liga
 
-Com o site publicado, `/contato` SHALL mostrar, na composição do protótipo aprovado sem o
-formulário, o sobretítulo, o título principal e três quadros de contato, Instagram, E-mail e Onde
-estamos, nessa ordem, cada um com uma imagem decorativa, o rótulo e o dado da seção 1 do documento
-de conteúdo.
+Com o site publicado, `/contato` SHALL mostrar, sem formulário, o sobretítulo, o título principal e
+três quadros de contato, numa coluna até 1024 px e com o título à esquerda e os quadros à direita
+acima disso, composição aprovada pelo Gabriel sobre o protótipo.
 
 #### Scenario: O topo da página
 
@@ -18,7 +24,7 @@ de conteúdo.
 
 #### Scenario: Os três quadros
 
-- **WHEN** alguém lê a página abaixo do título
+- **WHEN** alguém lê a página depois do título, em qualquer largura
 - **THEN** vê três quadros, anunciados por leitor de tela como uma lista de três itens: "Instagram",
   com a logo da liga e `@liacup.unb`; "E-mail", com o ícone do Gmail e `liacup.unb@gmail.com`; e
   "Onde estamos", com a borboleta da liga e o endereço "FCTS · Campus UnB Ceilândia, QNN 14 Área
@@ -26,12 +32,27 @@ de conteúdo.
 - **AND** a logo, o ícone e a borboleta são decorativos e não são anunciados por leitor de tela
 - **AND** a página tem um único título principal, e nenhum título pula nível
 
-#### Scenario: Sem formulário, no celular e no desktop
+#### Scenario: Sem formulário
 
-- **WHEN** a página é aberta em 390 px e em 1280 px
+- **WHEN** a página é aberta em qualquer largura
 - **THEN** não há nenhum campo de formulário, nem botão de envio, nem o título "Mande uma mensagem"
-- **AND** em 390 px o topo e os quadros ficam numa coluna; em 1280 px ficam na coluna da esquerda,
-  na posição do protótipo, e a coluna da direita fica vazia
+
+#### Scenario: Uma coluna até 1024 px
+
+- **WHEN** a página é aberta em 360, 390, 430, 480, 768 ou 1024 px
+- **THEN** o sobretítulo e o título vêm primeiro e os três quadros vêm abaixo deles, numa coluna só
+- **AND** não há rolagem horizontal
+
+#### Scenario: Título à esquerda e quadros à direita acima de 1024 px
+
+- **WHEN** a página é aberta em 1280 px
+- **THEN** o sobretítulo e o título ficam na coluna da esquerda, e os três quadros, um abaixo do
+  outro, ficam na coluna da direita, inteiros à direita do título
+- **AND** os quadros ficam alinhados ao topo do título: a coluna dos quadros começa na mesma altura
+  da coluna do título
+- **AND** a ordem de leitura e de foco é a mesma do celular: sobretítulo, título e os quadros na
+  ordem Instagram, E-mail, Onde estamos
+- **AND** não há rolagem horizontal
 
 ### Requirement: Os quadros do Instagram e do e-mail são links inteiros
 

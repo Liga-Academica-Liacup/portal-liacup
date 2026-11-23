@@ -32,7 +32,8 @@ Ver `proposal.md`, seção Why. Estado lido na `main` `c12cf9b` pelo especificad
 
 ### D1 — Onde cada parte mora
 
-- **Rota** em `src/app/(site)/(publicas)/contato/`. Só compõe o topo e o bloco.
+- **Rota** em `src/app/(site)/(publicas)/contato/`. Só compõe o topo e o bloco, e é dona da grade de
+  duas colunas da Q3 (b) (D4).
 - **Domínio** em `src/features/contato/`, com `tipos.ts`, `conteudo.ts` (o sobretítulo e o título),
   `conteudo.test.ts` e `componentes/TopoDoContato` (sobretítulo em parágrafo e `h1`). É a feature
   onde o formulário da R4 vai morar. O topo não importa a faixa da Equipe nem a de Projetos (uma
@@ -83,12 +84,12 @@ Ver `proposal.md`, seção Why. Estado lido na `main` `c12cf9b` pelo especificad
 - Descrição pela Q4. Com a (a), a frase fica no §1 na forma da do §3 e do §4: a linha
   "**Descrição da página Contato para buscadores** _(decisão do Gabriel, <data>, Q4 da
   pagina-contato)_:" e a frase como citação, **logo abaixo do título "## 1."**, antes da tabela, para
-  ser a primeira citação da seção, que é o que o teste da lista lê. Se a Q1 for (b), a frase da
-  faixa entra no §1 depois da descrição, como segunda citação, com a linha de autorização.
+  ser a primeira citação da seção, que é o que o teste da lista lê. Com a Q1 (a), nenhuma frase da
+  faixa entra no §1. O texto pronto está no `relatorio.md`, "Texto proposto para a tarefa 1.2".
 
 ### D4 — A composição de `/contato`
 
-Do protótipo vale a composição; o texto vem dos dados (D5).
+Do protótipo vale a composição, com a mudança da Q3 (b) abaixo; o texto vem dos dados (D5).
 
 - **Topo:** sobretítulo "Contato" em parágrafo e `h1` "Fale com a Liga", no fundo da página, como o
   gabarito (sem faixa de outra cor). Com a Q1 (a), sem frase.
@@ -111,10 +112,30 @@ Do protótipo vale a composição; o texto vem dos dados (D5).
   - **Estados (ADR-0006):** repouso, hover, pressionado e `focus-visible` nos dois quadros
     clicáveis, com os tokens dos links que já existem; o foco contorna o quadro inteiro. O quadro de
     texto não tem estado.
-- **Q3 (a):** em 1280, a coluna esquerda do gabarito, na mesma largura e posição; à direita, nada.
-  Abaixo do corte de duas colunas do protótipo, uma coluna, que é o próprio gabarito sem o
-  formulário. O dev lê o corte e a largura da coluna no CSS do `prototipo/Portal-LIACUP.html` e
-  registra no relatório. Na R4, o formulário ocupa a coluna da direita.
+- **A composição, Q3 (b): melhoria aprovada pelo Gabriel sobre o protótipo** (Portão 1, 23/11/2026,
+  literal no `relatorio.md`). Esboço aprovado: `prints/q3-opcao-b-1280.png`; em 390,
+  `prints/q3-opcao-b-390.png`, igual ao das outras opções.
+  - **Até 1024 px, inclusive:** uma coluna, o topo e, abaixo dele, a lista dos três quadros. É o
+    gabarito de 390 sem a frase e sem o formulário.
+  - **Acima de 1024 px:** duas colunas. Sobretítulo e título na da esquerda; a lista dos três
+    quadros na da direita, onde o protótipo põe o formulário, alinhada ao topo do título (as duas
+    colunas começam na mesma altura). Com a Q1 (a), a coluna da esquerda fica com duas linhas.
+  - **O corte** é o da grade `data-resp` da seção Contato do protótipo, que passa a uma coluna em
+    `@media (max-width: 1024px)` (lido pelo especificador por busca de texto no
+    `prototipo/Portal-LIACUP.html`), e é um dos cortes permitidos (`PADROES-DE-CODIGO.md` §3). As
+    proporções das duas colunas, o espaço entre elas e a largura máxima da seção, o dev lê no CSS
+    dessa mesma grade e registra no relatório, com os tokens que usou; nenhum valor solto.
+  - **A ordem no código é a de leitura:** o topo, depois a lista. A grade só posiciona; não
+    reordena, e o foco segue a mesma ordem em toda largura.
+  - **A grade é da rota, não do bloco** (D1). O bloco de contato não sabe em que coluna está nem
+    quantas colunas a página tem: a `inicio-completo` reaproveita a lista de quadros sem herdar a
+    grade.
+  - **No lado a lado**, o `guardiao-visual` classifica a posição dos quadros acima de 1024 px e a
+    ausência do formulário como "melhoria aprovada pelo Gabriel (Q3 (b))", e não como defeito nem
+    como melhoria a aprovar.
+  - **Na R4, o formulário traz de volta a composição do protótipo:** a lista volta para a coluna da
+    esquerda, abaixo do título, e o formulário ocupa a da direita, com lado a lado novo. A mudança é
+    na rota; o bloco não muda. A regra fica na `REFERENCIA-VISUAL.md` §7 (tarefa 1.2).
 - **Contraste (RP-09):** o dev mede o rótulo (maiúsculas pequenas, cinza no protótipo), o valor e o
   sobretítulo contra o fundo, nomeia o par e registra. Mínimo de 4,5:1; o rótulo cinza do protótipo,
   se não passar, usa `--color-neutral-700` (`REFERENCIA-VISUAL.md` §3, texto secundário).
@@ -142,9 +163,8 @@ copiar texto:
 1. **Spec de `/contato`**, nas 7 larguras, publicado:
    - do §1, lidos da tabela: o @ da célula "Instagram" (o trecho entre crases, sem `**` e sem
      " — confirmado"); o e-mail da célula "E-mail", sem crases; a sede da célula "Sede", com " — "
-     trocado por " · ", contando as trocas (exige 1 e imprime `travessões trocados: 1`). Com a Q2
-     (a), a sede vem da linha "Rodapé" da §7. Conferidos palavra por palavra, com a sobra de texto
-     fora do documento e dos rótulos;
+     trocado por " · ", contando as trocas (exige 1 e imprime `travessões trocados: 1`), pela Q2
+     (b). Conferidos palavra por palavra, com a sobra de texto fora do documento e dos rótulos;
    - os rótulos (sobretítulo, título, "Instagram", "E-mail", "Onde estamos"), da linha nova da §7;
    - ausentes do texto visível: `liacup@unb.br`, "Faculdade de Medicina", "Darcy Ribeiro",
      "Perfil do Instagram", "Logo do e-mail", "Foto de perfil", "Reuniões", "Imprensa", o
@@ -154,8 +174,12 @@ copiar texto:
      `mailto:`; um ponto perto do canto de cada quadro, longe do texto, pertence ao link (sem abrir o
      Instagram de verdade); o nome acessível começa pelo texto visível; o quadro "Onde estamos" não
      é link; as imagens decorativas, fora do leitor de tela;
-   - um `h1`, nenhum `h2` no conteúdo, a lista anunciada com 3 itens; em 1280, os quadros na metade
-     esquerda (Q3 (a)); alvo de cada quadro clicável ≥ 44 × 44 px; foco visível nos dois;
+   - um `h1`, nenhum `h2` no conteúdo, a lista anunciada com 3 itens; alvo de cada quadro clicável
+     ≥ 44 × 44 px; foco visível nos dois;
+   - a composição da Q3 (b): de 360 a 1024, a lista inteira abaixo do título; em 1280, a lista
+     inteira à direita do título e o topo dela na altura do topo da coluna do título, com a
+     diferença impressa em px; a ordem de foco, topo e depois Instagram e E-mail, igual nas 7
+     larguras. Imprime `composição: 6 larguras em uma coluna, 1 em duas`;
    - axe 0 e nenhuma rolagem horizontal;
    - **o interruptor:** `/contato` sem seguir redirecionamento dá 307 com destino `/` no não
      publicado e, seguido, chega à página em construção; no publicado, 200 sem `Location`. Imprime
@@ -178,6 +202,7 @@ Demonstrações de falha, cada uma com a saída vermelha e a verde no relatório
 | 8 | `/contato` antes de `/equipe` na lista | unidade: o menu esperado e o recebido |
 | 9 | A lista dos quadros sem o papel de lista | e2e das listas anunciadas: a página e a lista |
 | 10 | A conferência do 307 apontada, no próprio teste, para o servidor publicado | e2e: "200 sem Location (esperado 307 para /)" |
+| 11 | A grade da rota com uma coluna só em toda largura | e2e da composição: a largura (1280), a posição esperada da lista e a recebida |
 
 Depois, `git status --porcelain` igual ao de antes, `sha256sum -c` com OK nos arquivos tocados e
 `git grep -c --untracked DEMO-RP12 -- src tests/e2e` com código 1 (a forma restrita que a
@@ -247,17 +272,19 @@ Feita pelo líder técnico antes desta proposta, nas seções "Evidência herdad
 | Dados de contato escritos em três lugares (bloco, rodapé, página em construção) | Dívida nomeada (D1); o rodapé e a página em construção têm teste próprio dos dados |
 | O teste ler a célula errada da tabela do §1, ou o "— confirmado" do Instagram | A regra do D6 lê pelo nome da linha e pelo trecho entre crases; a demonstração 1 confere |
 | A frase da Q4 (a) não ser a primeira citação do §1 | D3: logo abaixo do título "## 1."; o teste de unidade fica vermelho se não for |
-| O 1280 da Q3 (a) parecer vazio | É o que a Q3 decide, com print; o `guardiao-visual` classifica |
+| A grade de duas colunas entrar no bloco e a inicial herdá-la | D1 e D4: a grade é da rota; o teste de unidade do bloco renderiza a composição da inicial; o `revisor` confere no diff |
+| A R4 ter de desfazer a composição da Q3 (b) | A regra da §7 já diz que o formulário traz de volta a do protótipo; a mudança fica na rota, com lado a lado novo |
 | `openspec validate` recusar o delta | O especificador não rodou o validador (sem terminal). O líder técnico roda antes do Portão 1 |
 
 ## Open Questions
 
-As quatro estão na proposta, seção "Questões para o Portão 1", com opções, custo e recomendação. O
-texto literal das decisões do Gabriel vai para o `relatorio.md`, transcrito pelo líder técnico.
+Nenhuma. As quatro foram decididas pelo Gabriel no Portão 1, 23/11/2026; o texto literal está no
+`relatorio.md`, seção "Decisões do Gabriel no Portão 1, 23/11/2026". As opções e os custos ficam na
+proposta, seção "Questões para o Portão 1".
 
-| Qn | Assunto | Recomendação |
+| Qn | Assunto | Decisão do Gabriel |
 | --- | --- | --- |
 | Q1 | Frase abaixo do título | (a) nenhuma |
 | Q2 | Endereço de "Onde estamos" | (b) o completo do §1, com "·" |
-| Q3 | O lugar do formulário | (a) coluna única, a esquerda do protótipo |
+| Q3 | O lugar do formulário | (b) título à esquerda e quadros à direita acima de 1024 px; uma coluna até 1024 px. Melhoria aprovada sobre o protótipo; na R4, o formulário traz de volta a composição do protótipo. Não era a recomendação (a) |
 | Q4 | Descrição para buscadores | (a) frase com o @ e o e-mail, registrada no §1 |

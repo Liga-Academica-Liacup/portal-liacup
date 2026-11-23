@@ -1,0 +1,41 @@
+/* O que vai dentro do círculo de cada canal. Nenhum valor escrito à mão: tudo
+   vem de src/estilos/tokens.css. Sem o filtro .washed do protótipo, que é
+   tratamento de foto: o esboço aprovado na Q3 (b)
+   (openspec/changes/pagina-contato/prints/q3-opcao-b-1280.png) mostra a logo e
+   o ícone do Gmail nas cores próprias. */
+
+/* Instagram: a logo da liga, redonda, ocupa o círculo inteiro, como no esboço. */
+.logo {
+  width: 100%;
+  height: 100%;
+}
+
+/* E-mail: o ícone do Gmail no meio de um círculo --color-neutral-100, como no
+   esboço (o fundo medido no PNG é #f9f4ed). Aprovado pelo Gabriel na Q5 (a)
+   da pagina-contato, 23/11/2026. */
+.circuloDoEmail {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--color-neutral-100);
+}
+
+.iconeDoEmail {
+  width: var(--tamanho-icone-do-email);
+  height: auto;
+}
+
+/* Onde estamos: a borboleta da liga num círculo --color-accent-100, como no
+   protótipo (svg de 44 por 37 px; a altura sai da proporção do desenho). */
+.circuloDaBorboleta {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--color-accent-100);
+}
+
+.borboleta {
+  width: var(--largura-borboleta-de-contato);
+}

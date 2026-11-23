@@ -12,7 +12,7 @@ deixou para a primeira tarefa desta change (Q10 (b) de lá).
 
 1. **A evidência herdada da `pagina-projetos` e a prova do push pela execução #46**, no
    `relatorio.md`, pelo líder técnico (tarefa 1.1, já feita; `design.md`, D9).
-2. **`/contato`**, na composição do gabarito, sem o formulário:
+2. **`/contato`**, sem o formulário, na composição decidida no Portão 1 (Q3 (b)):
    - topo: sobretítulo "Contato" e título principal "Fale com a Liga", rótulos de interface
      registrados na `REFERENCIA-VISUAL.md` §7. A frase de baixo do protótipo não está no documento:
      a **Q1** decide;
@@ -25,7 +25,11 @@ deixou para a primeira tarefa desta change (Q10 (b) de lá).
    - sem as legendas "Perfil do Instagram", "Logo do e-mail" e "Foto de perfil do Instagram da liga"
      (`REFERENCIA-VISUAL.md` §6), sem nenhum dado errado do protótipo (`liacup@unb.br`, "Faculdade
      de Medicina", "Darcy Ribeiro") e sem nenhum campo de formulário;
-   - o que fica no lugar do formulário é a **Q3**, com print de cada opção em 390 e 1280.
+   - até 1024 px, uma coluna: o topo e, abaixo, os três quadros; acima de 1024 px, sobretítulo e
+     título à esquerda e os três quadros à direita, alinhados ao topo do título. É a **Q3 (b)**,
+     melhoria aprovada pelo Gabriel sobre o protótipo e registrada na `REFERENCIA-VISUAL.md` §7; na
+     R4, o formulário traz de volta a composição do protótipo. A grade é da página, não do bloco
+     de contato.
 3. **O bloco de contato é um componente só**, que a `inicio-completo` vai reaproveitar com o
    Instagram e o e-mail, sem copiar código (`design.md`, D1).
 4. **A lista única ganha Contato**, a última do menu, como no protótipo (Início, Sobre, Projetos,
@@ -39,8 +43,9 @@ deixou para a primeira tarefa desta change (Q10 (b) de lá).
    o checklist inteiro** (passo 1 da conferência proporcional). É o custo conhecido até a regra
    geral dos prints, na `lancamento-r1`.
 
-As specs e as tarefas seguem as recomendações das Qn. Se o Gabriel decidir outra opção, o
-especificador ajusta specs, `design.md` e `tasks.md` antes do apply.
+As specs e as tarefas seguem as decisões do Gabriel no Portão 1, 23/11/2026: Q1 (a), Q2 (b), Q3 (b)
+e Q4 (a), literais no `relatorio.md`. A Q3 (b) não era a recomendação; specs, `design.md` e
+`tasks.md` foram ajustados a ela antes do apply.
 
 **Critérios de aceite** (os do briefing):
 
@@ -110,6 +115,9 @@ traz conteúdo novo nem serviço de terceiros. Em 390, as três são iguais: uma
   tem cartão, e o endereço da Q2 (b) quebraria em 4 ou 5 linhas num terço da largura.
 - Recomendo (a), porque é o protótipo menos o formulário, sem nada novo a aprovar, e a R4 só
   acrescenta.
+- **Decidido: (b), Gabriel, 23/11/2026.** Melhoria sobre o protótipo, registrada na
+  `REFERENCIA-VISUAL.md` §7 com a nota de que, na R4, o formulário traz de volta a composição do
+  protótipo. Corte de duas colunas: acima de 1024 px (`design.md`, D4).
 
 **Q4. A descrição de Contato para buscadores** (`PADROES-DE-CODIGO.md` §11.1). Nenhum trecho do
 documento descreve a página: as duas frases com "Instagram" (§2.0 e §5.1) falam da agenda e do
@@ -176,8 +184,8 @@ processo seletivo.
 | --- | --- | --- |
 | `src/` e `public/` (lista nominal no `design.md`, D7) | A página, o bloco de contato, a lista com 6 entradas e a cópia do ícone do Gmail | `dev-frontend` |
 | `tests/e2e/` | Spec da página; `paginas-publicas` ajustado | `qa-acessibilidade` |
-| `docs/REFERENCIA-VISUAL.md` §7 | Os rótulos e as decisões da Q1 a Q3 | líder técnico, no Portão 1 |
-| `docs/conteudo-institucional.md` §1 | A descrição para buscadores (Q4) e, se a Q1 for (b), a frase | líder técnico, com autorização escrita do Gabriel, no Portão 1 |
+| `docs/REFERENCIA-VISUAL.md` §7 | A linha "Contato, página": os rótulos, a Q1 (a), o endereço da Q2 (b) e a composição da Q3 (b) como melhoria aprovada, com a nota da R4 | líder técnico, no Portão 1 |
+| `docs/conteudo-institucional.md` §1 | A descrição para buscadores (Q4 (a)) | líder técnico, com autorização escrita do Gabriel, no Portão 1 |
 | `docs/SEGURANCA.md` §7 | Origem dos prints e da cópia do Gmail, total e versão 3.4 | líder técnico, antes do guardião |
 | Guardião | **Passo 1, checklist inteiro**: o `docs/SEGURANCA.md` está na lista do gatilho (`design.md`, D7) | `guardiao-appsec` |
 | Produção | Nada muda: o interruptor leva `/contato` à página em construção | — |

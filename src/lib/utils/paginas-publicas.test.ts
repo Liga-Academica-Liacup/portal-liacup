@@ -61,7 +61,8 @@ function primeiraFraseDaApresentacao(documento: string, numero: string): string 
  * A primeira citação (as linhas que começam com "> ") logo abaixo do título
  * "## <numero>. ..." de uma seção de nível 2, inteira. A descrição da Equipe
  * mora assim no §4, como decisão do Gabriel (Q9 (a) da pagina-sobre-e-equipe),
- * e a de Projetos no §3 (Q3 (a) da pagina-projetos).
+ * a de Projetos no §3 (Q3 (a) da pagina-projetos) e a de Contato no §1 (Q4 (a)
+ * da pagina-contato).
  */
 function citacaoDaSecaoDeNivel2(documento: string, numero: string): string {
   const linhas = documento.split(/\r?\n/)
@@ -105,20 +106,21 @@ describe('lista de páginas públicas', () => {
     expect(ENTRADAS_DA_LISTA.length, 'a lista não pode estar vazia').toBeGreaterThan(0)
   })
 
-  it('os títulos desta entrega são os da Q6 (a), do D3 da pagina-sobre-e-equipe e do D3 da pagina-projetos', () => {
+  it('os títulos desta entrega são os da Q6 (a) e do D3 da pagina-sobre-e-equipe, da pagina-projetos e da pagina-contato', () => {
     const titulos = Object.fromEntries(PAGINAS_PUBLICAS.map((p) => [p.endereco, p.titulo]))
     expect(titulos['/']).toBe('Liga Acadêmica Multiprofissional de Cuidados Paliativos · LIACUP')
     expect(titulos['/sobre']).toBe('Sobre · LIACUP')
     expect(titulos['/processo-seletivo']).toBe('Processo seletivo · LIACUP')
     expect(titulos['/projetos']).toBe('Projetos · LIACUP')
     expect(titulos['/equipe']).toBe('Equipe · LIACUP')
+    expect(titulos['/contato']).toBe('Contato · LIACUP')
   })
 
-  it('o menu e o rodapé seguem a ordem do protótipo: Início, Sobre, Projetos e Equipe', () => {
+  it('o menu e o rodapé seguem a ordem do protótipo: Início, Sobre, Projetos, Equipe e Contato', () => {
     const rotulos = (paginas: readonly { rotulo: string }[]) => paginas.map((p) => p.rotulo)
-    expect(rotulos(paginasDoMenu())).toEqual(['Início', 'Sobre', 'Projetos', 'Equipe'])
+    expect(rotulos(paginasDoMenu())).toEqual(['Início', 'Sobre', 'Projetos', 'Equipe', 'Contato'])
     expect(rotulos(paginasDaColuna('Portal'))).toEqual(['Início', 'Sobre'])
-    expect(rotulos(paginasDaColuna('Conteúdo'))).toEqual(['Projetos', 'Equipe'])
+    expect(rotulos(paginasDaColuna('Conteúdo'))).toEqual(['Projetos', 'Equipe', 'Contato'])
   })
 
   /*
@@ -153,6 +155,10 @@ describe('lista de páginas públicas', () => {
     // Q3 (a) da pagina-projetos: a frase registrada logo abaixo do título "## 3.".
     expect(descricoes['/projetos'], 'a da "/projetos" é a citação do §3').toBe(
       citacaoDaSecaoDeNivel2(documento, '3')
+    )
+    // Q4 (a) da pagina-contato: a frase registrada logo abaixo do título "## 1.".
+    expect(descricoes['/contato'], 'a da "/contato" é a citação do §1').toBe(
+      citacaoDaSecaoDeNivel2(documento, '1')
     )
   })
 
