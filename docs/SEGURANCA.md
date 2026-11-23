@@ -1,6 +1,9 @@
 # Segurança do Portal LIACUP
 
-**Versão 3 · 21 de novembro de 2026** · change `endurecer-agentes-e-git-local`: a barreira do Git,
+**Versão 3.1 · 22 de novembro de 2026** · change `ajustar-ci-ao-novo-fluxo`: a superfície do CI em
+dois jobs na §3; a busca de segredo antes do envio e a frase da auditoria de base na §5; na §6, o
+LB-09 apontado para a R2, o LB-02 à espera do primeiro push, e a saída do LB-08 e do LB-17. A
+versão 3, de 21/11, veio da change `endurecer-agentes-e-git-local`: a barreira do Git,
 a conferência do ambiente local, a conferência proporcional (regra 2 da dieta), a lista nova do
 AS-17 e a saída de sete riscos da seção 6. A versão 2, de 20/11, veio da change
 `auditoria-de-base-appsec`; a 1, de 19/11, da `montar-guardiao-appsec`
@@ -52,6 +55,13 @@ release atualiza a seção da release dela, na seção 3.
   Desde a `pagina-sobre-e-equipe` (22/11/2026): as páginas `/sobre` e `/equipe`, com texto fixo
   vindo de arquivos de dados versionados, sem nenhum link externo novo (AS-02, AS-04); e o P23 nas
   duas rotas novas (AS-15).
+  Desde a `ajustar-ci-ao-novo-fluxo` (22/11/2026): o CI em dois jobs, com `permissions: contents:
+  read` e checkout sem guardar a credencial; o job `Verificacoes`, de todo PR e push, sem nenhum
+  segredo; o job `Conferencias com segredo`, só no push para a `main`, no ambiente
+  `segredos-da-main`, que o GitHub só entrega à `main`, com instalação sem script de dependência
+  (AS-09); as ações presas por sha, com a verificação que acusa `uses:` preso por tag (AS-09); e a
+  busca de segredo antes do envio, `node scripts/buscar-segredo-antes-do-envio.mjs`, que o Gabriel
+  roda antes do `git add` (AS-01).
 - **Pode dar errado:** página escondida alcançável por endereço técnico (AS-02); redirecionamento
   para fora (AS-05); link externo inseguro (AS-04); requisição a terceiro (AS-07); dependência
   vulnerável (AS-08); CI com permissão larga ou segredo no log (AS-09); cabeçalhos ausentes (AS-15).
@@ -230,7 +240,9 @@ que o guardião recebe, e é sobre ela que valem as regras desta seção.
 **Modo auditoria de base.** Além do diff de cada change, o guardião audita a `main` inteira:
 
 - **Quando roda:** na `auditoria-de-base-appsec`, a primeira, e na última change de cada release,
-  antes de a release ir ao ar (hoje, a `ajustar-ci-ao-novo-fluxo` na R0 e a `lancamento-r1` na R1).
+  antes de a release ir ao ar (hoje, a `lancamento-r1` na R1; a frase que citava esta change na R0
+  ficou velha quando o plano de 20/11 a passou para a R1, e saiu pela Q4 (b) da
+  `ajustar-ci-ao-novo-fluxo`, 22/11/2026).
 - **A lista auditada** é a saída de `git ls-tree -r --name-only main`, no sha que o líder técnico
   anota no relatório antes do primeiro bloco. (`git ls-files main` não lê revisão e devolve vazio.)
   O número de arquivos conferidos precisa ser igual ao número de linhas dessa saída.
@@ -477,7 +489,27 @@ escrita, e o gancho recusa todo comando que cite `.claude/settings` ou `.claude/
 positivo aceito). Mudar esses arquivos é passo do Gabriel: o líder técnico prepara o conteúdo e
 entrega o comando, como no Git. E o primeiro comando da lista de comandos Git de toda change é
 `node scripts/conferir-ambiente-local.mjs --change <change>`, no terminal do Gabriel; se não sair com
-código 0, o Gabriel para.
+código 0, o Gabriel para. O segundo é a busca de segredo antes do envio,
+`node scripts/buscar-segredo-antes-do-envio.mjs`, também com o `node` direto e antes do `git add`;
+se não sair com código 0, o Gabriel para do mesmo jeito.
+
+**A busca de segredo antes do envio** (change `ajustar-ci-ao-novo-fluxo`, Q3 (b) do Portão 1,
+22/11/2026) usa só leitura do Git e procura seis formatos de chave, cada um pelo prefixo seguido de
+um comprimento **mínimo**, nunca exato, para não ficar muda se o formato crescer: o JWT do
+Supabase, a chave secreta nova do Supabase, o token pessoal do Supabase, os dois tokens do GitHub
+(o fino e o clássico) e a chave privada em PEM. As expressões estão no script. O piso dos dois do
+GitHub vem do formato publicado, com margem, e não de medição (decisão do Gabriel, 22/11/2026).
+Ela examina cada commit de `origin/main..HEAD`, com a mensagem, o autor e o conteúdo de cada
+arquivo que o commit mudou; os arquivos rastreados alterados e os não rastreados e não ignorados da
+árvore de trabalho; e a versão já preparada no índice de cada arquivo com mudança preparada, que é
+a que entra no commit. Diz quantos commits, arquivos, linhas e formatos examinou, mascara todo
+achado como nesta seção, e sai com 0 sem achado, 1 com achado e 2 quando não conseguiu verificar.
+**Limites conhecidos:** só os seis formatos (formato novo, como a chave do Resend na R3, entra por
+change); conteúdo comprimido dentro de binário não aparece, como na busca do guardião; a chave PEM
+gravada numa linha só, com `\n` escrito como texto (o JSON de conta de serviço), não casa com a
+expressão aprovada; a mensagem do commit que ainda vai ser feito não existe quando a busca roda,
+e não é examinada antes daquele push, por isso o líder técnico a escreve sem nenhum valor de
+chave; e um `origin/main` velho só aumenta o intervalo examinado.
 
 **Limite conhecido** (Gabriel, Q13 (b), 22/11/2026): **a barreira é contra engano, não contra
 agente que esconde o comando.** Contra isso valem as leituras depois de cada passagem (índice,
@@ -537,18 +569,16 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 | Código | Achado | Prazo | Change que resolve | Aceite |
 | --- | --- | --- | --- | --- |
 | LB-01 · AS-10 · bloqueante | Qualquer conta autenticada do Supabase vale como diretoria: lê mensagens e rascunhos e altera conteúdo. **Condição do aceite:** cadastro público e login anônimo desligados em produção até a R2 (conferido pelo Gabriel em 20/11: desligados, 0 contas, 0 mensagens). O Gabriel confere de novo no painel antes de cada release; se a condição cair, o LB-01 volta a bloquear | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em separado |
-| LB-02 · AS-09 · alta | O PAT do Supabase e a chave de serviço chegam a passos do CI que rodam código do PR e das dependências | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-02 · AS-09 · alta | O PAT do Supabase e a chave de serviço chegam a passos do CI que rodam código do PR e das dependências. **Correção feita na configuração** pela `ajustar-ci-ao-novo-fluxo` (22/11/2026: job com segredo só no push para a `main`, no ambiente `segredos-da-main`, com `npm ci --ignore-scripts`); sai daqui só depois de o job ser visto rodando no push para a `main`, na primeira tarefa da `completar-ci-do-novo-fluxo` (Q5 (b) do Gabriel, RP-12) | R1 | `completar-ci-do-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-03 · AS-10 · alta | O seed apaga sem filtro as 11 coleções do projeto ligado, que pode ser o de produção | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-04 · AS-13 · alta | O anônimo insere em `mensagens` direto pela API, sem limite, e escolhe `situacao` e `recebida_em` | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-07 · AS-15 · média | Produção não manda CSP, proteção contra embutimento, `Referrer-Policy`, `Permissions-Policy` nem `nosniff` | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-08 · AS-09 · média | O `ci.yml` não tem `permissions` e o checkout persiste o `GITHUB_TOKEN` | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-09 · AS-10 · média | A suíte de políticas e de banco não roda no CI | R2 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
+| LB-09 · AS-10 · média | A suíte de políticas e de banco não roda no CI. Saiu da `ajustar-ci-ao-novo-fluxo` pela Q2 (b) do Portão 1 dela, 22/11/2026: o LB-03 está aberto e nenhuma página da R1 lê o banco | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-10 · AS-10 · média | A barreira 3 procura a chave de serviço num build que nunca a teve, e diz VERIFICADO | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-11 · AS-10 · média | O lint não pega a chave de serviço lida por desestruturação de `process.env` | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-12 · AS-10 · média | Um autenticado altera nome, e-mail, texto e `recebida_em` de mensagem de terceiro | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-13 · AS-16 · média | A purga é manual e os textos divergem sobre a frequência, contra um prazo de 24 h; o script mira produção por padrão | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-16 · AS-08 · baixa | `vite` e `vitest` vulneráveis, exploráveis só com servidor local do vite ouvindo | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| LB-17 · AS-09 · baixa | As ações do CI estão presas por tag móvel, não por sha | R1 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-18 · AS-02 · baixa | Com o site publicado, `/vitrine` fica no ar com campos que não enviam nada | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-19 · AS-04 · baixa | As colunas de URL aceitam `javascript:` e `http:`, e a leitura não confere o esquema | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-20 · AS-10 · baixa | O verificador de RLS soma concessões e ignora visões, funções e TRUNCATE, TRIGGER e REFERENCES | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
@@ -567,8 +597,8 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 
 ### Saíram da lista
 
-Cada linha saiu depois de conferida pelo `guardiao-appsec` (decisão da auditoria da change, APROVADO
-COM RESSALVAS, 22/11/2026). A evidência está no relatório da change, na seção citada.
+Cada linha saiu depois de conferida pelo `guardiao-appsec` na auditoria da change citada na
+linha. A evidência está no relatório da change, na seção citada.
 
 | Código | Achado | Saiu em | Change | Evidência |
 | --- | --- | --- | --- | --- |
@@ -579,6 +609,8 @@ COM RESSALVAS, 22/11/2026). A evidência está no relatório da change, na seç�
 | LB-24 · AS-09 · informativa | O caminho da correção urgente não dizia que o guardião audita antes do merge | 22/11/2026 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-22-endurecer-agentes-e-git-local/relatorio.md`, "Tarefa 6.2 e as verificações de texto" (tarefa 5.3): README e `PADROES-DE-CODIGO.md` §8; ADR-0005 intocado (Q7 (a)) |
 | LB-25 · AS-17 · informativa | A hierarquia do README não trazia o `SEGURANCA.md` | 22/11/2026 | `endurecer-agentes-e-git-local` | `openspec/changes/archive/2026-11-22-endurecer-agentes-e-git-local/relatorio.md`, "Tarefa 6.2 e as verificações de texto" (tarefa 5.3) |
 | LB-26 · AS-01 · informativa | O protótipo guardava conteúdo comprimido que só a origem declarada cobre, sem estar nomeado | 22/11/2026 | `endurecer-agentes-e-git-local` | Linha 220 relida pelo líder técnico (ajuste 4 do Portão 1); o arquivo fica nomeado no "Limite conhecido" do arquivo binário, na §5 |
+| LB-08 · AS-09 · média | O `ci.yml` não tinha `permissions` e o checkout persistia o `GITHUB_TOKEN` | 22/11/2026 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-22-ajustar-ci-ao-novo-fluxo/relatorio.md`, `dev-frontend` (tarefa 1.1) e `guardiao-appsec`: `permissions: contents: read` só no topo, `persist-credentials: false` nos 2 checkouts |
+| LB-17 · AS-09 · baixa | As ações do CI estavam presas por tag móvel, não por sha | 22/11/2026 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-22-ajustar-ci-ao-novo-fluxo/relatorio.md`, `dev-frontend` (tarefas 1.1 e 1.2) e `guardiao-appsec`: 5 de 5 `uses:` presos por sha, e `npm run verificar:acoes` visto falhando e voltando |
 
 ## 7. Origem dos arquivos binários
 

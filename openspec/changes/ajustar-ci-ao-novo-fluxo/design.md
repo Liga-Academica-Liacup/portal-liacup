@@ -55,9 +55,31 @@ O motivo está na proposta, em "Why". O estado de hoje que molda a solução:
   comentário do `ci.yml` sobre "nenhum `if:` que pule quando o segredo falta" continua valendo.
   Ele é reescrito para dizer essa diferença.
 - **O ambiente `segredos-da-main`** tem a regra de branches de implantação só com `main` e nenhum
-  revisor obrigatório. Os 2 segredos vão para ele e saem do nível do repositório. Um PR que mude o
-  `ci.yml` para usar o ambiente é recusado pelo GitHub, porque o ref do PR não é a `main`. O
-  Gabriel faz esse passo manual antes de abrir o PR (tarefa 1.4), e ele fica escrito no README.
+  revisor obrigatório. Os 2 segredos vão para ele e, no fim, saem do nível do repositório. Um PR
+  que mude o `ci.yml` para usar o ambiente é recusado pelo GitHub, porque o ref do PR não é a
+  `main`. A configuração final fica escrita no README (tarefa 1.4).
+- **A ordem dos passos do Gabriel no GitHub**, que vai na entrega do Portão 2 junto com os comandos
+  Git (decisão do Gabriel no Portão 1):
+  1. **Antes do merge:** criar o ambiente `segredos-da-main`, com a regra de branch só `main`, e
+     pôr nele `SUPABASE_ACCESS_TOKEN` e `SUPABASE_SERVICE_ROLE_KEY`, com os valores tirados de novo
+     do Supabase, porque segredo do GitHub não se lê de volta. Os dois do nível do repositório
+     ficam no lugar.
+  2. O PR roda o job `Verificacoes` sem segredo, e o job com segredo aparece pulado.
+  3. Merge. O push na `main` roda os dois jobs, e o job com segredo recebe os valores pelo
+     ambiente.
+  4. **Só depois de esse push ficar verde:** apagar os dois segredos do nível do repositório.
+  5. Conferir, pela página de execuções do GitHub, que nenhuma execução da `main` entre o merge e a
+     remoção ficou vermelha, e que o job com segredo da execução do push mostra o ambiente.
+- **Por que essa ordem:** segredo de ambiente vence o de repositório com o mesmo nome, então, a
+  partir do merge, o job novo usa os do ambiente mesmo com os do repositório no lugar. Até o merge,
+  o `ci.yml` da `main` antiga ainda usa os do repositório, e apagá-los antes deixaria um push na
+  `main` sem segredo. Apagar só depois do push verde mantém a volta simples (Migration Plan).
+- **Como se prova que o job não "roda sem segredo" verde:** os dois scripts que usam segredo
+  terminam vermelhos quando o segredo falta. A barreira 3 sem a chave termina como verificada só em
+  parte, com código 1, e os tipos sem autenticação terminam como não verificados, com código 1. Isso
+  está lido no código, e ainda não foi executado: a tarefa 1.3 confirma. Então uma execução do job
+  com segredo que fica verde recebeu os dois segredos. Se algum dos scripts sair 0 sem o segredo,
+  é defeito, e a correção entra na tarefa 1.3.
 - **Sem cache no job com segredo:** custa uns 30 s de download e tira a dúvida sobre o escopo do
   cache entre ramos.
 - **Alternativas:** a (b) e a (c) da Q1. Também pensei em separar o build e a barreira 3 em jobs
@@ -73,10 +95,19 @@ false`.
 
 ### D3 · Ações presas (LB-17, Q6 (a))
 
-A forma é `uses: actions/checkout@<sha de 40> # v4.x.y`. O dev busca o sha do último patch da `v4`
-de cada ação na referência da tag do repositório oficial (`github.com/actions/<nome>`). Se a tag for
-anotada, usa o sha do **commit** para onde ela aponta, e não o do objeto da tag. O relatório traz a
-tabela ação · tag · sha · endereço consultado. A verificação do D4 confere a forma, mas não que o
+A forma é `uses: actions/checkout@<sha de 40> # v4.x.y`. Os sha do último patch da `v4` de cada
+ação já foram lidos pelo líder técnico com `git ls-remote --tags` no repositório oficial
+(`github.com/actions/<nome>`), em 22/11/2026. As três tags são leves (sem `^{}`), então o sha
+lido é o do commit:
+
+| Ação | Tag | Sha do commit |
+| --- | --- | --- |
+| `actions/checkout` | v4.4.0 | `11d5960a326750d5838078e36cf38b85af677262` |
+| `actions/setup-node` | v4.4.0 | `49933ea5288caeca8642d1e84afbd3f7d6820020` |
+| `actions/upload-artifact` | v4.6.2 | `ea165f8d65b6e75b540449e92b4886f43607fa02` |
+
+O dev usa esses valores como dado de entrada, sem precisar de rede. O relatório traz a tabela ação
+· tag · sha · endereço consultado, com a fonte. A verificação do D4 confere a forma, mas não que o
 sha é o oficial: isso é a tabela, conferida pelo guardião.
 
 ### D4 · A verificação das ações presas
@@ -102,20 +133,31 @@ o teste em `tests/barreiras/busca-de-segredo.test.mjs`. Roda com
 
 - **O Git que usa,** só da lista de leitura da barreira: `rev-parse --verify origin/main`,
   `rev-list origin/main..HEAD`, `show --name-only --format= -z <sha>` (no merge,
-  `diff --name-only -z <sha>^1 <sha>`), `cat-file` para ler cada blob, e
+  `diff --name-only -z <sha>^1 <sha>`), `cat-file` para ler cada blob, `cat-file commit <sha>`
+  para a mensagem e as linhas de autor e de quem fez o commit, e
   `status --porcelain -z --untracked-files=all`.
+- **A mensagem e o autor** de cada commit do intervalo também são examinados, porque o push os
+  publica (achado 2 do revisor, rodada 2). O achado sai como `<sha curto> · mensagem do
+  commit:<linha>`, com a linha da saída de `git cat-file commit`.
 - **O que cobre:** em cada commit do intervalo, cada arquivo que o commit mudou, com o conteúdo
   naquele commit. Na árvore, cada arquivo rastreado alterado e cada não rastreado que não está
-  ignorado, lido do disco; os apagados são pulados. Ela cobre a árvore porque roda **antes** do
+  ignorado, lido do disco; os apagados são pulados. E, de cada arquivo com mudança já preparada no
+  índice, também a versão do índice (`cat-file blob :<caminho>`), que é a que entra no commit;
+  versão igual à do disco conta uma vez só, e conflito de merge no índice termina como não
+  verificado (achado 5 do revisor, rodada 1). Ela cobre a árvore porque roda **antes** do
   `git add` (proposta, item 4). Um arquivo ignorado e forçado com `git add -f` aparece no índice e
   é coberto.
-- **Os formatos:** os 6 da proposta. O texto de cada expressão não casa com ela própria, porque
-  depois do prefixo vem `[`. É isso que deixa a busca rodar sobre os relatórios que citam os
-  formatos.
+- **Os formatos:** os 6 da proposta, todos com comprimento mínimo (`{n,}`) e nenhum com
+  comprimento exato (Q3 (b)). O piso dos dois do GitHub, 60 e 30, vem do formato publicado (82 e
+  36), com margem, e não de medição. Uma chave mais longa que o publicado também é acusada, e o
+  número de caracteres da saída é o do trecho achado. O texto de cada expressão não casa com ela
+  própria, porque depois do prefixo vem `[`. É isso que deixa a busca rodar sobre os relatórios que
+  citam os formatos.
 - **Binário:** o conteúdo é lido em bytes, como `latin1`. Conteúdo comprimido não aparece, que é o
   mesmo limite da §5.
-- **A saída:** `commits: C · arquivos: F (dos commits: a · da árvore: b) · linhas: L · formatos: 6
-  · achados: K`. Cada achado sai como `<formato> · <sha curto | árvore> · arquivo:linha ·
+- **A saída:** `commits: C · mensagens: M · arquivos: F (dos commits: a · da árvore: b · do
+  índice: i) · linhas: L · formatos: 6 · achados: K`. Cada achado sai como `<formato> · <sha curto | árvore | índice> ·
+  arquivo:linha ·
   [MASCARADO · <n> caracteres · arquivo:linha]`. Nada a enviar sai como "examinou 0 commits e 0
   arquivos".
 - **Códigos:** 0 sem achado, 1 com achado, 2 não verificado (sem `origin/main`, fora de um
@@ -153,8 +195,10 @@ desta change, citando esta proposta aprovada no Portão 1. A conferência precis
   verificação das ações e a busca (AS-01, AS-09).
 - **`SEGURANCA.md` §5:** a frase da auditoria de base (Q4 (b)), e o limite da busca: conteúdo
   comprimido, e só os 6 formatos.
-- **`SEGURANCA.md` §6:** a linha do LB-09 muda de change (Q2 (b)), e LB-02, LB-08 e LB-17 vão para
-  "Saíram da lista" depois do guardião (Q5 (a)).
+- **`SEGURANCA.md` §6:** a linha do LB-09 muda de change (Q2 (b)). Depois do guardião, LB-08 e
+  LB-17 vão para "Saíram da lista". O LB-02 fica (Q5 (b)): a linha dele passa a dizer que a
+  correção está feita na configuração e espera a execução do push na primeira tarefa da
+  `completar-ci-do-novo-fluxo`, que é a change que o tira da §6.
 - **`PLANO-DE-DESENVOLVIMENTO.md` §7, R1:** a linha 5 diz o que esta change entrega, e a
   `completar-ci-do-novo-fluxo` entra como 6, renumerando as seguintes.
 - **README:** a seção do CI deixa de dizer "O CI e um job so" e explica os dois jobs e o ambiente.
@@ -164,7 +208,7 @@ desta change, citando esta proposta aprovada no Portão 1. A conferência precis
 
 O "antes" vem da proposta, critério 6, com a fonte. O "depois" do PR é a duração da execução do PR
 desta change (`updated_at − run_started_at`, mesma API), e vai na entrega do Portão 2. O do push
-vai para a `completar-ci-do-novo-fluxo` (Q5 (a)).
+vai para a primeira tarefa da `completar-ci-do-novo-fluxo` (Q5 (b)).
 
 ### D10 · A raiz não publicada
 
@@ -192,10 +236,14 @@ eles não provam nada além do número.
 - [O job com segredo ainda roda código de dependência revisado: a CLI do Supabase recebe o token
   por desenho, e o build roda o Next] → Lockfile preso e AS-08. Fora do escopo, e declarado na
   proposta.
-- [Os segredos continuam no nível do repositório por esquecimento] → A tarefa 1.4 exige a resposta
-  do Gabriel com "0 segredos no repositório", e o guardião confere a resposta.
+- [Os segredos continuam no nível do repositório por esquecimento] → O passo 4 do D1 vai escrito na
+  entrega do Portão 2. A resposta do Gabriel com "0 segredos no repositório e 2 no ambiente" entra
+  na primeira tarefa da `completar-ci-do-novo-fluxo`, e o LB-02 fica na §6 até lá (Q5 (b)).
+- [Merge sem o passo 1 do D1] → O GitHub cria o ambiente sem a regra de branch nem os segredos, e
+  o job usa os do repositório. A entrega do Portão 2 põe o passo 1 antes do merge, e o passo 5
+  confere o ambiente na execução do push.
 - [O ambiente só aceita a `main`, então não há como testar o job antes do merge] → A configuração é
-  conferida pelo revisor e pelo guardião, e a primeira execução é a prova (Q5). **Não conferido
+  conferida pelo revisor e pelo guardião, e a primeira execução é a prova (Q5 (b)). **Não conferido
   nesta proposta:** se o job com ambiente pede alguma permissão além de `contents: read`. Se o push
   falhar por permissão, a correção é a primeira tarefa da `completar-ci-do-novo-fluxo`.
 - [Sha que não é o oficial] → A tabela do D3, com o endereço consultado. A verificação do D4 só vê a
@@ -208,13 +256,15 @@ eles não provam nada além do número.
 ## Migration Plan
 
 1. Na branch: as tarefas 1.1 a 3.1.
-2. Antes de abrir o PR, o Gabriel cria o ambiente, põe os 2 segredos nele e apaga os do repositório
-   (tarefa 1.4). Não há outro push na `main` nesse meio-tempo, então o fluxo antigo não roda sem
-   segredo.
+2. Antes do merge, o Gabriel cria o ambiente e põe os 2 segredos nele, deixando os do repositório
+   no lugar (D1, passo 1). O fluxo antigo da `main` continua com segredo.
 3. No PR: `Verificacoes` verde, e `Conferencias com segredo` pulado.
-4. Depois do merge, o push roda os dois jobs, e a prova vai para a `completar-ci-do-novo-fluxo`.
-5. **Volta:** reverter o commit do `ci.yml` e recriar os 2 segredos no nível do repositório. O
-   ambiente pode ficar, porque sem uso ele não faz nada.
+4. Merge. O push roda os dois jobs, o com segredo pelo ambiente.
+5. Só com esse push verde, o Gabriel apaga os 2 segredos do repositório e confere as execuções da
+   `main` (D1, passos 4 e 5). A prova vai para a primeira tarefa da `completar-ci-do-novo-fluxo`.
+6. **Volta:** reverter o commit do `ci.yml`. Se os 2 segredos já saíram do repositório, recriá-los
+   lá, com os valores tirados de novo do Supabase. O ambiente pode ficar, porque sem uso ele não
+   faz nada.
 
 ## Open Questions
 

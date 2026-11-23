@@ -117,7 +117,7 @@ O modelo literal fica no `CLAUDE.md`, que todo agente carrega sozinho. O princí
 | Evidência | Comando, código de saída e contadores. Saída literal curta, nunca resumo |
 | Mudanças | Contagem A/M/R/D e qualquer arquivo fora do escopo esperado |
 | Desvios e incompleto | O que saiu diferente do briefing, e o que não foi feito ou não foi medido, com essas palavras |
-| Próximo passo | Comandos em bash, mensagem de commit em arquivo com `git commit -F`. O primeiro é sempre `node scripts/conferir-ambiente-local.mjs --change <change>`, e o Gabriel para se não der 0 |
+| Próximo passo | Comandos em bash, mensagem de commit em arquivo com `git commit -F`. O primeiro é sempre `node scripts/conferir-ambiente-local.mjs --change <change>`, e o segundo, `node scripts/buscar-segredo-antes-do-envio.mjs`; o Gabriel para se qualquer um dos dois não der 0 |
 
 ### 7.2 Gestor para o Gabriel
 

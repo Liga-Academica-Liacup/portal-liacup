@@ -28,6 +28,13 @@ avise e deixe passar.
 - **THEN** o job das conferências com segredo fica vermelho na execução da versão principal
 - **AND** a falha diz o que encontrou, sem mostrar valor de segredo
 
+#### Scenario: Conferência com segredo sem o segredo
+
+- **WHEN** o job das conferências com segredo roda na versão principal e um segredo de que ele
+  precisa não chega
+- **THEN** a conferência que usa esse segredo termina como não verificada, e o job fica vermelho
+- **AND** o job nunca fica verde sem ter recebido os segredos
+
 ## ADDED Requirements
 
 ### Requirement: O segredo só chega a código já revisado
@@ -106,7 +113,8 @@ quantas referências conferiu.
 O projeto SHALL oferecer uma busca de segredo que o Gabriel roda antes de enviar ao repositório
 remoto, sem o gerenciador de pacotes e com o Git só para leitura. Ela SHALL examinar cada commit
 ainda não enviado à versão principal remota e as mudanças da árvore de trabalho que ainda vão
-entrar num commit, procurando o formato de uma chave real, e não o prefixo solto.
+entrar num commit, procurando o formato de uma chave real, e não o prefixo solto. Cada formato
+SHALL exigir um comprimento mínimo depois do prefixo, e nunca um comprimento exato.
 
 #### Scenario: Chave num commit intermediário
 
@@ -119,6 +127,13 @@ entrar num commit, procurando o formato de uma chave real, e não o prefixo solt
 - **WHEN** um arquivo rastreado alterado, ou um arquivo não rastreado que não está ignorado, tem uma
   chave no formato real e ainda não entrou em commit
 - **THEN** a busca falha e nomeia o arquivo, a linha e o formato
+
+#### Scenario: Chave mais longa que o formato publicado
+
+- **WHEN** um arquivo a enviar tem uma chave com o prefixo de um formato conhecido e mais
+  caracteres do que o formato publicado
+- **THEN** a busca falha e nomeia o arquivo, a linha e o formato
+- **AND** o número de caracteres da saída é o do trecho achado inteiro
 
 #### Scenario: Texto que só cita o formato
 

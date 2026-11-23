@@ -15,7 +15,9 @@ Change sem tela.
    segredo e continua rodando em todo PR e em todo push. Os dois passos que usam segredo saem dele:
    os tipos do banco e a barreira 3. Eles vão para um job à parte, `Conferencias com segredo`, que
    só roda no push para a `main`. Esse job instala as dependências sem script de instalação, e os
-   segredos ficam num ambiente do GitHub que só a `main` alcança (`design.md`, D1).
+   segredos ficam num ambiente do GitHub que só a `main` alcança (`design.md`, D1). Os passos do
+   Gabriel no GitHub seguem a ordem do D1, que não deixa execução da `main` vermelha nem sem
+   segredo, e vão na entrega do Portão 2 junto com os comandos Git.
 2. **Permissões mínimas (LB-08):** o token só lê o conteúdo, e nenhum checkout guarda a credencial.
 3. **Ações presas por sha (LB-17, Q6),** com a versão num comentário. Uma verificação nova acusa
    todo `uses:` preso por tag e roda no `npm run verificar` e no CI.
@@ -31,11 +33,14 @@ Change sem tela.
    base na §5 (Q4) e a linha da R1 no plano (D7, D8).
 
 Os formatos da busca (D5) são os da Q15 e mais dois, que cito pela expressão, cujo texto não casa
-com ela: `eyJhbGci[A-Za-z0-9_-]{20,}`, `sb_secret_[A-Za-z0-9_-]{10,}`, `sbp_[A-Za-z0-9]{20,}`,
-`github_pat_[A-Za-z0-9_]{82}` e `-----BEGIN[A-Z ]*PRIVATE KEY-----\s*[A-Za-z0-9+/=]{64}`. O
-comprimento do token do GitHub vem do formato publicado por ele (22 + `_` + 59), e o da chave
-privada vem da linha de 64 caracteres do PEM (RFC 7468). Com Q3 (b), entra também o token clássico
-do GitHub, `ghp_[A-Za-z0-9]{36}`.
+com ela. **Todos dão comprimento mínimo, e nenhum dá comprimento exato** (Q3 (b), decisão do
+Gabriel): `eyJhbGci[A-Za-z0-9_-]{20,}`, `sb_secret_[A-Za-z0-9_-]{10,}`, `sbp_[A-Za-z0-9]{20,}`,
+`github_pat_[A-Za-z0-9_]{60,}`, `-----BEGIN[A-Z ]*PRIVATE KEY-----\s*[A-Za-z0-9+/=]{64,}` e o
+token clássico do GitHub, `ghp_[A-Za-z0-9]{30,}`. O mínimo da chave privada vem da linha de 64
+caracteres do PEM (RFC 7468). O piso dos dois do GitHub vem do formato publicado, com margem, e
+**não de medição**: o publicado tem 82 caracteres depois do primeiro prefixo e 36 depois do
+segundo, e o piso fica em 60 e 30 (decisão do Gabriel, `relatorio.md`). Uma busca de tamanho
+exato ficaria muda se o formato mudasse.
 
 **Decisão registrada para o AS-17**, se esta proposta for aprovada: muda o `CLAUDE.md`, no item 6
 do modelo de entrega e no parágrafo que vem logo depois. Por isso, o líder técnico registra a linha
@@ -49,26 +54,38 @@ dele no `ambiente-decidido.txt` da change. Nada muda em `.claude/`.
    fica vermelha com uma ação presa por tag, nomeando o arquivo e a linha, e volta ao verde, com o
    contador de referências (RP-12).
 3. Nenhum passo do job `Verificacoes` cita segredo. O job com segredo roda só no push para a `main`,
-   no ambiente restrito a ela, e instala com `--ignore-scripts`. O Gabriel confirma que há 0
-   segredos no nível do repositório e 2 no ambiente. Na execução do PR, o job com segredo aparece
-   pulado. A primeira execução real dele é no push depois do merge (Q5).
+   no ambiente restrito a ela, e instala com `--ignore-scripts`. Os dois scripts com segredo saem
+   vermelhos quando o segredo falta, com o código de saída no relatório (tarefa 1.3). Na execução
+   do PR, o job com segredo aparece pulado. A entrega do Portão 2 traz os passos do Gabriel no
+   GitHub na ordem do D1, junto com os comandos Git. A primeira execução real do job com segredo,
+   a confirmação de 0 segredos no repositório e 2 no ambiente, e a conferência das execuções da
+   `main` ficam para a primeira tarefa da `completar-ci-do-novo-fluxo` (Q5 (b)).
 4. A busca de segredo fica vermelha com uma chave falsa no formato certo, na árvore de trabalho e
    num commit intermediário (este pelo teste), sem imprimir o valor. Volta ao verde sem ela, e não
-   acusa os artefatos desta change, que citam as expressões. A saída diz quantos commits, arquivos,
-   linhas e formatos examinou (RP-12).
+   acusa os artefatos desta change, que citam as expressões. Todos os 6 formatos dão comprimento
+   mínimo, e uma chave mais longa que o publicado também é acusada. A saída diz quantos commits,
+   arquivos, linhas e formatos examinou (RP-12).
 5. A conferência do ambiente sai com 0, com a linha do `CLAUDE.md` aceita por decisão.
 6. O tempo do CI antes e depois, em minutos, no relatório. Antes, pela mediana das 3 execuções mais
    recentes de cada evento (API pública de execuções do GitHub, levantada pelo líder técnico em
-   22/11/2026): **pull_request 5,95 min; push 5,73 min**. Depois: Q5.
+   22/11/2026): **pull_request 5,95 min; push 5,73 min**. Depois: o do PR na entrega do Portão 2,
+   e o do push na primeira tarefa da `completar-ci-do-novo-fluxo` (Q5 (b)).
 7. `npm run verificar`, `npm test`, `npx playwright test` e `openspec validate --all --strict` com
    código 0. A raiz não publicada fica idêntica, pixel a pixel, ao print arquivado da
    `pagina-sobre-e-equipe`, em 390 e 1280 px.
-8. A §6 sem LB-02, LB-08 e LB-17, e a linha do LB-09 apontando a change da Q2.
+8. A §6 sem LB-08 e LB-17, que vão para "Saíram da lista". O LB-02 **fica na §6** (Q5 (b)): a
+   linha dele diz que a correção está feita na configuração e espera a execução do push na
+   primeira tarefa da `completar-ci-do-novo-fluxo`, que é quando ele sai. A linha do LB-09 aponta
+   a change da Q2.
 
 **Conta de tarefas: 11, com quatro de folga** (`tasks.md`). Com todo o briefing, seriam 21 ou
 mais, então aplico a divisão que ele prevê (ver "Fora de escopo").
 
-## Questões para o Portão 1
+## Questões do Portão 1, decididas pelo Gabriel em 22/11/2026
+
+As decisões literais estão no `relatorio.md`, em "Decisões do Gabriel no Portão 1". Q1 (a), Q2 (b),
+Q4 (b) e Q6 (a) seguem a recomendação. Q3 (b) veio com comprimento mínimo em todos os formatos.
+Q5 ficou na (b), e não na recomendação.
 
 **Q1. A forma do LB-02.**
 
@@ -83,9 +100,10 @@ mais, então aplico a divisão que ele prevê (ver "Fora de escopo").
   depois da aprovação, e a espera inclui a pessoa.
 - (c) Igual a (a), com os segredos no repositório. · custo: nenhum passo manual. Um PR que mude o
   `ci.yml` volta a alcançar o segredo, e a proteção fica só no texto do fluxo.
-- Recomendo (a): só ela recusa o segredo a qualquer ramo pela configuração do GitHub, e a R1 não tem
-  banco. O PLANO (decisão 3) diz que todas as verificações ficam. Elas ficam, mas o PR deixa de ver
-  duas, e só o Gabriel aceita isso.
+- Recomendei (a): só ela recusa o segredo a qualquer ramo pela configuração do GitHub, e a R1 não
+  tem banco. O PLANO (decisão 3) diz que todas as verificações ficam. Elas ficam, mas o PR deixa de
+  ver duas, e só o Gabriel aceita isso.
+- **Decidido: (a).**
 
 **Q2. O LB-09.**
 
@@ -95,7 +113,8 @@ mais, então aplico a divisão que ele prevê (ver "Fora de escopo").
   apontam. A suíte nunca rodou no CI, e o tempo dela não está medido.
 - (b) Vai para a `papeis-da-diretoria-no-banco` (R2), quando o banco volta a importar. · custo: só
   muda a coluna "Change que resolve" da §6, e o prazo continua R2.
-- Recomendo (b): o LB-03 está aberto e nenhuma página da R1 lê o banco.
+- Recomendei (b): o LB-03 está aberto e nenhuma página da R1 lê o banco.
+- **Decidido: (b).**
 
 **Q3. A ferramenta da busca.**
 
@@ -109,7 +128,9 @@ mais, então aplico a divisão que ele prevê (ver "Fora de escopo").
 - (d) A `gitleaks-action`. · custo: é EULA desde a v2, exige `GITLEAKS_LICENSE` em repositório de
   organização (o README fala em chave gratuita, o LICENSE.txt fala em faixas pagas) e depende do
   Node 20. Ela roda no CI, que vem depois do push, então não atende ao briefing.
-- Recomendo (b): é a solução óbvia, sem terceiro, com os formatos que o Gabriel já fixou.
+- Recomendei (b): é a solução óbvia, sem terceiro, com os formatos que o Gabriel já fixou.
+- **Decidido: (b), com comprimento mínimo em todos os formatos, e não exato.** O piso dos dois do
+  GitHub vem do formato publicado, com margem, e não de medição (ver os formatos acima).
 
 **Q4. A auditoria de base.** A §5 diz "hoje, a `ajustar-ci-ao-novo-fluxo` na R0 e a
 `lancamento-r1` na R1". O plano de 20/11 pôs esta change como a 5ª da R1. A spec `equipe-de-agentes`,
@@ -120,8 +141,9 @@ o `CLAUDE.md` e a `EQUIPE-DE-AGENTES.md` §2 mandam a auditoria na última chang
   sessão junto com a change.
 - (b) Corrigir a frase para "hoje, a `lancamento-r1` na R1", com o guardião passando o checklist
   inteiro só no diff. · custo: uma linha na §5.
-- Recomendo (b), porque a frase ficou velha quando o plano mudou, e as outras três fontes concordam
-  entre si.
+- Recomendei (b), porque a frase ficou velha quando o plano mudou, e as outras três fontes
+  concordam entre si.
+- **Decidido: (b).**
 
 **Q5. A prova que só existe depois do push.** A execução real do job com segredo e o tempo do push
 só existem depois do merge, ou seja, depois do Portão 2 e da change arquivada.
@@ -133,21 +155,25 @@ só existem depois do merge, ou seja, depois do Portão 2 e da change arquivada.
 - (b) Igual, mas o LB-02 só sai da §6 na change seguinte. · custo: o risco segue aberto alguns dias.
 - (c) Um commit a mais na branch depois do PR, com o tempo do PR. · custo: uma nova rodada de CI e
   de revisão, e o push continua para depois.
-- Recomendo (a): o Portão 2 já confere a prévia do mesmo jeito.
+- Recomendei (a): o Portão 2 já confere a prévia do mesmo jeito.
+- **Decidido: (b).** O LB-02 só sai da §6 depois que o job com segredo for visto rodando no push
+  para a `main`, na primeira tarefa da `completar-ci-do-novo-fluxo` (RP-12).
 
 **Q6. A versão das ações.**
 
 - (a) Prender o último patch da major em uso (`v4` das três). · custo: nenhum comportamento muda.
 - (b) Subir cada uma para a major mais nova. · custo: ler as notas de mudança, com risco de
   comportamento novo no `upload-artifact`, e uma tarefa a mais.
-- Recomendo (a). A troca de major pode ir junto com o LB-35 na `lancamento-r1`.
+- Recomendei (a). A troca de major pode ir junto com o LB-35 na `lancamento-r1`.
+- **Decidido: (a).**
 
 ## Fora de escopo
 
 - **`completar-ci-do-novo-fluxo`**, que entra logo depois desta (divisão do briefing): o
   `openspec validate --all --strict` e os prints das páginas da lista única, em 390 e 1280 px, como
   anexo do CI; as ressalvas da `endurecer-agentes-e-git-local` (A2 a A7 do guardião e as 7 da
-  rodada 3 do revisor); e a prova do push da Q5. Os critérios de aceite do briefing sobre a spec
+  rodada 3 do revisor); e, na primeira tarefa dela, a prova do push da Q5, a confirmação de 0
+  segredos no repositório e a saída do LB-02 da §6. Os critérios de aceite do briefing sobre a spec
   inválida plantada e os prints vão com ela.
 - Telas, banco (R2), cabeçalhos de segurança (`lancamento-r1`) e o `.claude/`.
 - Rodar a busca de segredo no CI: lá ela chega depois do push.
@@ -168,8 +194,7 @@ lista de tela.
   de segredo em dois requisitos.
 - `equipe-de-agentes`: ADDED, a lista de comandos Git busca segredo antes de enviar.
 
-A spec delta segue as recomendações. Outra escolha na Q1 ou na Q3 reescreve os requisitos que
-falam do job com segredo ou dos formatos.
+A spec delta segue as decisões do Portão 1.
 
 ## Requisitos permanentes
 
@@ -192,5 +217,5 @@ falam do job com segredo ou dos formatos.
 | `scripts/` e `tests/barreiras/` | A verificação das ações presas e a busca de segredo, com os testes | `dev-frontend` |
 | `package.json` | Só `scripts`: `verificar:acoes`, encadeado no `verificar`. O lockfile não muda | `dev-frontend` |
 | `CLAUDE.md`, `README.md`, `docs/SEGURANCA.md` §3, §5 e §6, `docs/EQUIPE-DE-AGENTES.md` §2, `docs/PLANO-DE-DESENVOLVIMENTO.md` §7 | Os textos | líder técnico |
-| Configuração do GitHub | Ambiente `segredos-da-main` e os segredos movidos (Q1 (a)) | Gabriel |
+| Configuração do GitHub | Ambiente `segredos-da-main`, os segredos postos nele antes do merge e os do repositório apagados depois do push verde, na ordem do D1 (Q1 (a)) | Gabriel |
 | `src/`, `tests/e2e/`, `public/`, `.claude/`, lockfile, produção | Nada muda | — |

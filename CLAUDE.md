@@ -172,14 +172,19 @@ A <n> · M <n> · R <n> · D <n>. Arquivos fora do escopo esperado: <lista ou "n
 
 **6. Próximo passo**
 Comandos em bash; mensagem de commit em arquivo, com git commit -F.
-O primeiro comando é sempre a conferência do ambiente, e o Gabriel para se ela não der 0:
+O primeiro comando é sempre a conferência do ambiente, e o segundo, a busca de segredo; o Gabriel
+para se qualquer um dos dois não der 0:
 node scripts/conferir-ambiente-local.mjs --change <nome-da-change>
+node scripts/buscar-segredo-antes-do-envio.mjs
 ```
 
 O primeiro comando da seção 6 de toda entrega com comandos Git é a conferência do ambiente local
-(`docs/SEGURANCA.md` §5). Ela roda no terminal do Gabriel, antes de qualquer `git`. **Se ela não
-sair com código 0, o Gabriel para**, não roda mais nenhum comando da lista, e manda a saída ao líder
-técnico.
+(`docs/SEGURANCA.md` §5). O segundo é a busca de segredo antes do envio, que procura o formato de
+chave em cada commit que o push vai publicar (com a mensagem e o autor), nos arquivos alterados ou
+novos da árvore de trabalho e na versão já preparada no índice. Os dois rodam no terminal do Gabriel, com o `node` direto: a conferência antes de
+qualquer `git`, e a busca logo depois dela, antes do `git add`.
+**Se qualquer um dos dois não sair com código 0, o Gabriel para**, não roda mais nenhum comando da
+lista, e manda a saída ao líder técnico.
 
 ## O que nunca muda sem decisão escrita do Gabriel
 
