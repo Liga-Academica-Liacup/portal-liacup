@@ -1,0 +1,6 @@
+# Diferenças decididas da change completar-ci-do-novo-fluxo, contra a main.
+# Só o líder técnico escreve este arquivo (docs/SEGURANCA.md §5, "A conferência do ambiente local").
+# Formato: arquivo <caminho> <sha256 do disco, ou "ausente">  # decisão
+#          exclude <regra do .git/info/exclude>  # decisão
+arquivo scripts/conferir-ambiente-local.mjs 21d45617010606baa1b3c8184a54f55163e594e9d89e62e4e5dbb11a9f17c36c  # proposta aprovada no Portão 1, 23/11/2026, "Decisão registrada para o AS-17", D7 e Q7 (b): a conferência compara os próprios arquivos (E-A3); só o cabeçalho muda neste arquivo
+arquivo scripts/conferir-ambiente-local/funcoes.mjs 0b38a5ee1cc3601f56d60fbd35860ac1e328524e3a04d82084676160accd02fc  # proposta aprovada no Portão 1, 23/11/2026, "Decisão registrada para o AS-17", D7 e Q7 (b): ARQUIVOS_DA_CONFERENCIA entra no ehVigiado (E-A3)

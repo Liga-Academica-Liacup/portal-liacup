@@ -48,8 +48,8 @@ Abra <http://localhost:3000>. **`npm run dev` e o unico comando para trabalhar n
 npm run verificar
 ```
 
-Roda as **seis** verificacoes em sequencia — artefatos gerados, tipos, analise estatica, formatacao,
-tokens e chave de servico — e para na primeira que falhar.
+Roda as **oito** verificacoes em sequencia — artefatos gerados, acoes presas, specs do OpenSpec,
+tipos, analise estatica, formatacao, tokens e chave de servico — e para na primeira que falhar.
 
 ```bash
 npm test
@@ -69,21 +69,23 @@ e pode passar testando uma versão antiga do código.
 
 ## Todos os comandos
 
-| Comando                    | O que faz                                                                   |
-| -------------------------- | --------------------------------------------------------------------------- |
-| `npm run dev`              | Sobe o projeto para trabalhar                                               |
-| `npm run build`            | Gera a versao de producao                                                   |
-| `npm start`                | Sobe a versao ja compilada                                                  |
-| `npm run verificar`        | As seis: artefatos + tipos + analise estatica + formatacao + tokens + chave |
-| `npm run verificar:tipos`  | So a verificacao de tipos                                                   |
-| `npm run lint`             | So a analise estatica                                                       |
-| `npm run formatar:check`   | Confere formatacao sem alterar arquivo                                      |
-| `npm run formatar`         | Corrige a formatacao                                                        |
-| `npm run verificar:tokens` | Procura cor e medida escritas a mao                                         |
-| `npm test`                 | Testes de unidade                                                           |
-| `npm run test:watch`       | Testes de unidade, reexecutando ao salvar                                   |
-| `npm run test:e2e`         | Testes de ponta a ponta, nas 7 larguras                                     |
-| `npm run test:desempenho`  | Lighthouse contra a versao compilada                                        |
+| Comando                    | O que faz                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------- |
+| `npm run dev`              | Sobe o projeto para trabalhar                                                      |
+| `npm run build`            | Gera a versao de producao                                                          |
+| `npm start`                | Sobe a versao ja compilada                                                         |
+| `npm run verificar`        | As oito: artefatos + acoes + specs + tipos + analise + formatacao + tokens + chave |
+| `npm run verificar:tipos`  | So a verificacao de tipos                                                          |
+| `npm run lint`             | So a analise estatica                                                              |
+| `npm run formatar:check`   | Confere formatacao sem alterar arquivo                                             |
+| `npm run formatar`         | Corrige a formatacao                                                               |
+| `npm run verificar:tokens` | Procura cor e medida escritas a mao                                                |
+| `npm run verificar:specs`  | Valida specs e changes com o OpenSpec do projeto, sem telemetria                   |
+| `npm test`                 | Testes de unidade                                                                  |
+| `npm run test:watch`       | Testes de unidade, reexecutando ao salvar                                          |
+| `npm run test:e2e`         | Testes de ponta a ponta, nas 7 larguras                                            |
+| `npm run test:desempenho`  | Lighthouse contra a versao compilada                                               |
+| `npm run prints:site`      | Prints das paginas da lista unica em 390 e 1280 px, depois do `build`              |
 
 ---
 
@@ -215,23 +217,31 @@ Estes cinco passos acontecem nas interfaces do GitHub e da Vercel, **nesta ordem
 > vez, porque antes disso o GitHub nao sabe quais verificacoes existem: a protecao fica vazia,
 > parece configurada e nao barra nada.
 
-5. **Criar o ambiente dos segredos.** No GitHub, _Settings › Environments › New environment_,
-   com o nome `segredos-da-main`. Em _Deployment branches and tags_, escolher _Selected branches and
-   tags_ e acrescentar só a `main`, sem revisor obrigatório. Os dois segredos,
-   `SUPABASE_ACCESS_TOKEN` e `SUPABASE_SERVICE_ROLE_KEY`, ficam **neste ambiente**, e nenhum fica em
-   _Settings › Secrets and variables › Actions_ no nível do repositório. Os valores vêm do painel do
-   Supabase, porque segredo do GitHub não se lê de volta.
+5. **Criar os dois ambientes dos segredos, um segredo em cada.** No GitHub, _Settings ›
+   Environments › New environment_, duas vezes:
+   - `segredos-da-main`, com um segredo só, `SUPABASE_ACCESS_TOKEN`;
+   - `chave-de-servico-da-main`, com um segredo só, `SUPABASE_SERVICE_ROLE_KEY`.
 
-> **O CI tem dois jobs, e só um é exigido.** `Verificacoes` roda em toda alteração proposta e em
+   Nos dois, em _Deployment branches and tags_, escolher _Selected branches and tags_ e acrescentar
+   só a `main`, sem revisor obrigatório. Nenhum segredo fica em _Settings › Secrets and variables ›
+   Actions_ no nível do repositório, e nenhum no nível da organização: segredo de organização chega
+   a todo job, e desfaria a separação. Os valores vêm do painel do Supabase, porque segredo do
+   GitHub não se lê de volta. Um ambiente por segredo é decisão do Gabriel (Q1 (c) da
+   `completar-ci-do-novo-fluxo`, 23/11/2026): o job que recebe um não recebe o outro.
+
+> **O CI tem quatro jobs, e só um é exigido.** `Verificacoes` roda em toda alteração proposta e em
 > todo push para a `main`, **sem nenhum segredo**, e é a verificação que a proteção exige: qualquer
-> passo vermelho derruba o check inteiro, por isso a lista do passo 3 tem um nome só.
-> `Conferencias com segredo` roda **só no push para a `main`**, depois do merge, no ambiente
-> `segredos-da-main`: confere os tipos do banco contra o esquema e procura a chave de serviço no
-> pacote compilado. Ele roda depois do merge de propósito: assim o segredo só chega a código que já
-> passou por revisão, e o GitHub recusa o ambiente a qualquer outro ramo (LB-02,
-> `docs/SEGURANCA.md` §6). O preço é que esses dois resultados só aparecem na `main`; se um deles
-> ficar vermelho, a correção é imediata. Na alteração proposta, esse job aparece como pulado, e isso
-> é o esperado.
+> passo vermelho derruba o check inteiro, por isso a lista do passo 3 tem um nome só. Ele também
+> valida as specs do OpenSpec e anexa à execução os prints das páginas, por 7 dias.
+> Os outros três rodam **só no push para a `main`**, depois do merge:
+> `Build para a barreira da chave`, sem segredo, compila o site e anexa o resultado;
+> `Tipos do banco`, no ambiente `segredos-da-main`, confere os tipos do banco contra o esquema; e
+> `Chave fora do pacote`, no ambiente `chave-de-servico-da-main`, baixa o build anexado, sem
+> instalar nenhuma dependência, e procura a chave de serviço nele. Eles rodam depois do merge de
+> propósito: assim o segredo só chega a código que já passou por revisão, e o GitHub recusa os
+> ambientes a qualquer outro ramo (`docs/SEGURANCA.md` §5). O preço é que esses resultados só
+> aparecem na `main`; se um deles ficar vermelho, a correção é imediata. Na alteração proposta, os
+> três aparecem como pulados, e isso é o esperado.
 
 **Depois de configurar, teste — e olhe TRES coisas, nao uma.** Crie um branch, quebre alguma coisa
 de proposito, abra uma alteracao proposta e confira:
@@ -258,8 +268,9 @@ Se der para incorporar com o CI vermelho, a protecao nao esta valendo — e todo
 ### Alteracao vinda de fork e propostas simultaneas
 
 - **Fork:** nenhuma alteracao proposta recebe segredo, venha de fork ou de branch do proprio
-  repositorio. A garantia e que os dois segredos ficam so no ambiente `segredos-da-main`, que o
-  GitHub so entrega a `main`, e nenhum no nivel do repositorio (passo 5 acima). O conteudo do
+  repositorio. A garantia e que cada segredo fica so no seu ambiente (`segredos-da-main` e
+  `chave-de-servico-da-main`), que o GitHub so entrega a `main`, e nenhum no nivel do repositorio
+  nem no da organizacao (passo 5 acima). O conteudo do
   `ci.yml` ajuda, porque o `Verificacoes` nao pede segredo, mas nao basta sozinho: uma alteracao
   proposta pode mudar o arquivo. Uma alteracao vinda de fork roda as mesmas verificacoes que
   qualquer outra.
@@ -297,10 +308,13 @@ na seção 9 de [`docs/PLANO-DE-DESENVOLVIMENTO.md`](docs/PLANO-DE-DESENVOLVIMEN
 
 ### A versão do OpenSpec importa
 
-O CLI é global e não entra no `package.json`. **A versão em uso é a 2.1.0**, instalada com
-`npm install -g @fission-ai/openspec@2.1.0`, com a versão presa. Confira com `openspec --version`.
-Trocar de versão é uma change: a proposta traz a versão de antes e a de depois e a saída de
-`openspec --version`, porque a ferramenta nova roda em todo `/opsx:*`.
+São **duas instalações na mesma versão, a 2.1.0**. A global, instalada com
+`npm install -g @fission-ai/openspec@2.1.0`, é a que os `/opsx:*` usam; confira com
+`openspec --version`. A do projeto é `devDependency` exata no `package.json` desde a
+`completar-ci-do-novo-fluxo` (Q3 (a) do Gabriel, 23/11/2026), e é a que o `npm run verificar:specs`
+e o CI usam, sempre com a telemetria e a checagem de versão desligadas (`scripts/validar-specs.mjs`).
+Trocar de versão é uma change que muda as duas: a proposta traz a versão de antes e a de depois e a
+saída de `openspec --version`, porque a ferramenta nova roda em todo `/opsx:*`.
 
 Está escrito aqui por um motivo mecânico, não informativo. As seis skills de
 `.claude/skills/openspec-*` são geradas pela ferramenta e ficam versionadas, o que é uma exceção
@@ -316,6 +330,9 @@ do Claude Code roda neste repositório, pelas três ferramentas que rodam comand
 `PowerShell` e `mcp__terminal__run_in_terminal`), passa antes pelo gancho
 `.claude/ganchos/barrar-git-de-escrita.mjs`, registrado em `.claude/settings.json`:
 
+O "só" e o "todo" abaixo valem pelo texto do comando: a barreira é contra engano, e não contra
+agente que esconde o comando (ver o **Limite conhecido** mais abaixo nesta seção).
+
 - **Deixa passar** só a leitura do `git`: `status`, `diff`, `log`, `show`, `ls-files`, `ls-tree`,
   `grep`, `check-ignore`, `rev-parse`, `ls-remote`, `rev-list`, `merge-base`, `cat-file`, `blame`,
   `branch` só para listar e `version`.
@@ -326,9 +343,9 @@ do Claude Code roda neste repositório, pelas três ferramentas que rodam comand
   de leitura ou de edição.
 - **As regras de negação** do mesmo arquivo seguram as formas diretas se os ganchos forem
   desligados (medido em 21/11/2026: com os ganchos desligados, `git add -n` foi recusado, e
-  `git -C . add -n` e `bash -c "git add -n …"` passaram), e negam por inteiro a `mcp__terminal__run_in_terminal`: nenhum agente digita no
-  terminal do Gabriel neste projeto. O que o Gabriel digita no próprio terminal não passa por nada
-  disso.
+  `git -C . add -n` e `bash -c "git add -n …"` passaram), e negam por inteiro a
+  `mcp__terminal__run_in_terminal`: nenhum agente digita no terminal do Gabriel neste projeto. O que
+  o Gabriel digita no próprio terminal não passa por nada disso.
 - **Vale na hora** em que o `.claude/settings.json` é salvo, sem reabrir nada.
 - **Se a barreira não aparecer** (um `git add -n README.md` pedido a um agente não é recusado), o
   Gabriel reabre a sessão do Claude Code e pede o teste de novo. Se continuar passando, a change
@@ -363,10 +380,10 @@ o Gabriel para e não roda mais nada da lista. Os formatos e os limites estão n
 lê o texto do comando, e deixa passar o nome que o shell monta na hora (`${X:-git} add .`,
 `g{i..i}t add .`, `$(printf 'g%s' it)`) e o script ou `npm run` que roda o Git por dentro
 (`sh scripts/x.sh` com `git add` escrito no arquivo). Contra isso valem as leituras depois de cada
-passagem e o fato de que só o Gabriel faz push. O que o líder técnico mede depois de cada agente: `git diff --cached --name-only` vazio, `git rev-parse
-HEAD` e o número de linhas de `git rev-list --all` iguais aos de antes, `git ls-remote origin
-<branch>` igual ao de antes, e a conferência do ambiente. Mudança que nenhuma dessas leituras
-mostra não é pega.
+passagem e o fato de que só o Gabriel faz push. O que o líder técnico mede depois de cada
+agente: `git diff --cached --name-only` vazio, `git rev-parse HEAD` e o número de linhas de
+`git rev-list --all` iguais aos de antes, `git ls-remote origin <branch>` igual ao de antes, e a
+conferência do ambiente. Mudança que nenhuma dessas leituras mostra não é pega.
 
 ---
 
@@ -660,8 +677,10 @@ carrega o `.env` inteiro no ambiente dos testes de política, e ela vai junto.
 
 ## Dependencias
 
-O projeto tem **20 dependencias diretas** — 3 de execucao e 17 de desenvolvimento —, e cada uma
-esta justificada em
+O projeto tem **23 dependencias diretas** — 4 de execucao e 19 de desenvolvimento —, contadas no
+`package.json` em 23/11/2026. A ultima a entrar, `@fission-ai/openspec`, esta justificada na
+proposta da `completar-ci-do-novo-fluxo` (Q3 (a)); a origem de cada uma das outras nao foi
+reconferida nessa change. As da fundacao estao justificadas em
 [`docs/historico/specs/001-fundacao-tecnica/plan.md`](docs/historico/specs/001-fundacao-tecnica/plan.md).
 
 **Dependencia nova se justifica na tabela do plano ANTES de entrar, nao depois.** Nao e burocracia:

@@ -8,7 +8,11 @@
  *
  * NUNCA IMPRIME VALOR: de cada achado sai o formato, o commit ou a árvore, o arquivo,
  * a linha e o número de caracteres do trecho achado, na marca de mascarado da §5 do
- * docs/SEGURANCA.md. Nenhuma função devolve o trecho.
+ * docs/SEGURANCA.md. Nenhuma função devolve o trecho. Achado no caminho do arquivo
+ * sai como `nome do arquivo`, e o caminho não sai.
+ *
+ * DUAS LEITURAS DE CADA CONTEÚDO (change completar-ci-do-novo-fluxo, D6, Q6 (a)): byte
+ * a byte, como latin1, e, se o conteúdo parece UTF-16, decodificado como UTF-16.
  */
 
 /*
@@ -56,12 +60,40 @@ const comoTexto = (conteudo) =>
   typeof conteudo === 'string' ? conteudo : conteudo.toString('latin1')
 
 /*
- * Procura os 6 formatos num conteúdo. Recebe texto ou bytes: bytes são lidos como
- * latin1, um caractere por byte, para o binário não comprimido também ser lido.
- * Devolve [{ formato, linha, caracteres }], sem o trecho.
+ * A ordem dos bytes, se o conteúdo parece UTF-16 (D6 da completar-ci-do-novo-fluxo,
+ * Q6 (a)): pela marca do começo (`FF FE` é 'le', `FE FF` é 'be'), ou, sem a marca,
+ * quando mais da metade dos bytes ímpares é zero ('le': o texto em ASCII gravado com
+ * dois bytes por caractere, o zero depois) ou mais da metade dos pares ('be', o zero
+ * antes). Devolve { ordem, inicio } ou null. UTF-32 e texto comprimido ficam de fora
+ * (limite declarado na §5 do docs/SEGURANCA.md).
  */
-export function procurar(conteudo) {
-  const texto = comoTexto(conteudo)
+export function ordemDoUtf16(bytes) {
+  if (bytes.length < 2) return null
+  if (bytes[0] === 0xff && bytes[1] === 0xfe) return { ordem: 'le', inicio: 2 }
+  if (bytes[0] === 0xfe && bytes[1] === 0xff) return { ordem: 'be', inicio: 2 }
+  let zerosPares = 0
+  let zerosImpares = 0
+  for (let posicao = 0; posicao < bytes.length; posicao++) {
+    if (bytes[posicao] !== 0) continue
+    if (posicao % 2 === 0) zerosPares += 1
+    else zerosImpares += 1
+  }
+  const pares = Math.ceil(bytes.length / 2)
+  const impares = Math.floor(bytes.length / 2)
+  if (zerosImpares * 2 > impares) return { ordem: 'le', inicio: 0 }
+  if (zerosPares * 2 > pares) return { ordem: 'be', inicio: 0 }
+  return null
+}
+
+// Os bytes decodificados como UTF-16 na ordem dada, sem a marca e sem o byte sobrando.
+function decodificarUtf16(bytes, { ordem, inicio }) {
+  const fim = inicio + Math.floor((bytes.length - inicio) / 2) * 2
+  const trecho = Buffer.from(bytes.subarray(inicio, fim))
+  return (ordem === 'be' ? trecho.swap16() : trecho).toString('utf16le')
+}
+
+// Os achados dos 6 formatos num texto, sem o trecho.
+function procurarNoTexto(texto) {
   const achados = []
   for (const { nome, expressao } of FORMATOS) {
     for (const encontro of texto.matchAll(new RegExp(expressao, 'g'))) {
@@ -70,6 +102,32 @@ export function procurar(conteudo) {
         linha: contarLinhas(texto.slice(0, encontro.index + 1)),
         caracteres: encontro[0].length,
       })
+    }
+  }
+  return achados
+}
+
+const mesmoAchado = (primeiro, segundo) =>
+  primeiro.formato === segundo.formato &&
+  primeiro.linha === segundo.linha &&
+  primeiro.caracteres === segundo.caracteres
+
+/*
+ * Procura os 6 formatos num conteúdo. Recebe texto ou bytes: bytes são lidos como
+ * latin1, um caractere por byte, para o binário não comprimido também ser lido; e,
+ * se parecem UTF-16 (ordemDoUtf16), também decodificados assim. O achado que sai nas
+ * duas leituras, com o mesmo formato, linha e número de caracteres, conta uma vez.
+ * Devolve [{ formato, linha, caracteres }], sem o trecho.
+ */
+export function procurar(conteudo) {
+  const achados = procurarNoTexto(comoTexto(conteudo))
+  const ordem = typeof conteudo === 'string' ? null : ordemDoUtf16(conteudo)
+  if (ordem !== null) {
+    const daLeituraEmBytes = [...achados]
+    for (const achado of procurarNoTexto(decodificarUtf16(conteudo, ordem))) {
+      const repetido = daLeituraEmBytes.findIndex((outro) => mesmoAchado(outro, achado))
+      if (repetido === -1) achados.push(achado)
+      else daLeituraEmBytes.splice(repetido, 1)
     }
   }
   return achados.sort((primeiro, segundo) => primeiro.linha - segundo.linha)
@@ -126,6 +184,12 @@ export function lerStatus(texto) {
 // O lugar do achado na mensagem, no campo do arquivo: `<sha> · mensagem do commit:<linha>`.
 export const LOCAL_DA_MENSAGEM = 'mensagem do commit'
 
+// O lugar do achado no caminho do arquivo, que nunca sai: `<origem> · nome do arquivo:<linha>`.
+export const LOCAL_DO_NOME = 'nome do arquivo'
+
+// O que fazer com um achado, sem condição: a chave que chegou ao disco já vazou (D6, Q6 (a)).
+export const MENSAGEM_DO_ACHADO = 'Não envie. Tire o valor e troque a chave.'
+
 /*
  * A busca, depois de executar() conferir a origin/main. O leitor tem: commits()
  * ([{ sha, pais }]), mensagemDoCommit(sha) (o objeto do commit: o cabeçalho, com o
@@ -134,7 +198,9 @@ export const LOCAL_DA_MENSAGEM = 'mensagem do commit'
  * arquivosDaArvore() ([{ caminho, temVersaoNoIndice }]), conteudoNoDisco(caminho) (null
  * para o apagado) e conteudoNoIndice(caminho). Na árvore, a versão do disco e a do
  * índice são examinadas; se forem iguais, o arquivo conta uma vez só, como da
- * árvore. Erro do Git lança, e executar() o transforma em não verificado.
+ * árvore. O caminho de cada arquivo examinado, nos commits e na árvore, também passa
+ * pelos formatos (examinarNome). Erro do Git lança, e executar() o transforma em não
+ * verificado.
  */
 export function buscar(leitor) {
   const medida = {
@@ -147,9 +213,20 @@ export function buscar(leitor) {
     achados: [],
   }
   const examinar = (conteudo, origem, arquivo) => {
-    const texto = comoTexto(conteudo)
-    medida.linhas += contarLinhas(texto)
-    for (const achado of procurar(texto)) medida.achados.push({ ...achado, origem, arquivo })
+    medida.linhas += contarLinhas(comoTexto(conteudo))
+    for (const achado of procurar(conteudo)) medida.achados.push({ ...achado, origem, arquivo })
+  }
+  /*
+   * O caminho também passa pelos formatos. Com achado no nome, todo achado daquele
+   * arquivo sai como `nome do arquivo`, porque o caminho levaria o valor à saída.
+   * Devolve o nome que vai para a saída.
+   */
+  const examinarNome = (caminho, origem) => {
+    const noNome = procurar(caminho)
+    for (const achado of noNome) {
+      medida.achados.push({ ...achado, origem, arquivo: LOCAL_DO_NOME })
+    }
+    return noNome.length > 0 ? LOCAL_DO_NOME : caminho
   }
   for (const commit of leitor.commits()) {
     medida.commits += 1
@@ -158,19 +235,25 @@ export function buscar(leitor) {
     examinar(leitor.mensagemDoCommit(commit.sha), shaCurto, LOCAL_DA_MENSAGEM)
     for (const arquivo of leitor.arquivosDoCommit(commit)) {
       medida.dosCommits += 1
-      examinar(leitor.conteudoNoCommit(commit.sha, arquivo), shaCurto, arquivo)
+      const nome = examinarNome(arquivo, shaCurto)
+      examinar(leitor.conteudoNoCommit(commit.sha, arquivo), shaCurto, nome)
     }
   }
   for (const { caminho, temVersaoNoIndice } of leitor.arquivosDaArvore()) {
     const noDisco = leitor.conteudoNoDisco(caminho)
     const noIndice = temVersaoNoIndice ? leitor.conteudoNoIndice(caminho) : null
+    const examinaOIndice =
+      noIndice !== null && (noDisco === null || comoTexto(noDisco) !== comoTexto(noIndice))
+    if (noDisco === null && !examinaOIndice) continue
+    // O nome conta uma vez por caminho da árvore, mesmo com as duas versões lidas.
+    const nome = examinarNome(caminho, noDisco !== null ? 'árvore' : 'índice')
     if (noDisco !== null) {
       medida.daArvore += 1
-      examinar(noDisco, 'árvore', caminho)
+      examinar(noDisco, 'árvore', nome)
     }
-    if (noIndice !== null && (noDisco === null || comoTexto(noDisco) !== comoTexto(noIndice))) {
+    if (examinaOIndice) {
       medida.doIndice += 1
-      examinar(noIndice, 'índice', caminho)
+      examinar(noIndice, 'índice', nome)
     }
   }
   return medida
@@ -227,7 +310,7 @@ export function executar({ leitor, nomesNaRaiz, imprimir }) {
   if (medida.achados.length > 0) {
     imprimir('=== ACHADO — segredo no que vai ser enviado ===')
     medida.achados.forEach((achado) => imprimir(`  ${descreverAchado(achado)}`))
-    imprimir('  Não envie. Tire o valor do arquivo e, se ele já entrou num commit, troque a chave.')
+    imprimir(`  ${MENSAGEM_DO_ACHADO}`)
   } else {
     imprimir('=== NADA ACHADO — busca de segredo ===')
   }

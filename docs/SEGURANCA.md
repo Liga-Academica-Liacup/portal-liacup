@@ -1,8 +1,14 @@
 # Segurança do Portal LIACUP
 
-**Versão 3.1 · 22 de novembro de 2026** · change `ajustar-ci-ao-novo-fluxo`: a superfície do CI em
-dois jobs na §3; a busca de segredo antes do envio e a frase da auditoria de base na §5; na §6, o
-LB-09 apontado para a R2, o LB-02 à espera do primeiro push, e a saída do LB-08 e do LB-17. A
+**Versão 3.2 · 23 de novembro de 2026** · change `completar-ci-do-novo-fluxo`: na §3, os quatro
+jobs do CI, os dois ambientes, os anexos e o OpenSpec no portão; na §5, um ambiente por segredo, a
+revogação do PAT antigo como fato, os limites novos da busca e da conferência do ambiente, o AS-01
+do relatório com o `.gitignore` no diff (Q8 (a)) e as ressalvas de texto herdadas; na §6, a saída
+do LB-02 e do A1, e o motivo da Q12 (b) corrigido (I3). A versão 3.1, de 22/11, veio da change
+`ajustar-ci-ao-novo-fluxo`: a superfície do CI em
+dois jobs na §3; a busca de segredo antes do envio, a troca do PAT e a frase da auditoria de base
+na §5; na §6, o LB-09 apontado para a R2, o LB-02 à espera do primeiro push, duas linhas novas (o
+resíduo A1 e a chave de serviço que mantém o valor, Q12 (b)) e a saída do LB-08 e do LB-17. A
 versão 3, de 21/11, veio da change `endurecer-agentes-e-git-local`: a barreira do Git,
 a conferência do ambiente local, a conferência proporcional (regra 2 da dieta), a lista nova do
 AS-17 e a saída de sete riscos da seção 6. A versão 2, de 20/11, veio da change
@@ -62,6 +68,13 @@ release atualiza a seção da release dela, na seção 3.
   (AS-09); as ações presas por sha, com a verificação que acusa `uses:` preso por tag (AS-09); e a
   busca de segredo antes do envio, `node scripts/buscar-segredo-antes-do-envio.mjs`, que o Gabriel
   roda antes do `git add` (AS-01).
+  Desde a `completar-ci-do-novo-fluxo` (23/11/2026): o CI em quatro jobs. O `Verificacoes`, de todo
+  PR e push, sem segredo, passa a validar as specs do OpenSpec (dependência nova, com a telemetria e
+  a checagem de versão desligadas; AS-07, AS-08) e a anexar os prints das páginas da lista única,
+  públicos por 7 dias (AS-02). No push para a `main`, sem segredo, um job compila e anexa o build,
+  público por 1 dia; um job no ambiente `segredos-da-main` recebe só o PAT do Supabase; e um job no
+  ambiente `chave-de-servico-da-main` recebe só a chave de serviço, sem instalar dependência, e lê o
+  build pela ação nova de baixar anexo, presa por sha (AS-09).
 - **Pode dar errado:** página escondida alcançável por endereço técnico (AS-02); redirecionamento
   para fora (AS-05); link externo inseguro (AS-04); requisição a terceiro (AS-07); dependência
   vulnerável (AS-08); CI com permissão larga ou segredo no log (AS-09); cabeçalhos ausentes (AS-15).
@@ -215,13 +228,19 @@ main...HEAD` e, nos arquivos não rastreados, `git grep -c --untracked`.
   - `docs/constitution.md`, `docs/PADROES-DE-CODIGO.md`, `docs/SEGURANCA.md`,
     `docs/DADOS-PESSOAIS.md`, `docs/EQUIPE-DE-AGENTES.md`, `docs/PLANO-DE-DESENVOLVIMENTO.md` e
     `docs/ADR-*`;
-  - as specs `equipe-de-agentes`, `camada-de-dados`, `fundacao-e-ci` e `publicacao-do-site`.
+  - as specs `equipe-de-agentes`, `camada-de-dados`, `fundacao-e-ci` e `publicacao-do-site`, em
+    `openspec/specs/` e também como spec delta de qualquer change
+    (`openspec/changes/<change>/specs/<uma dessas>/`, inclusive no caminho do archive);
+  - o `ambiente-decidido.txt` de qualquer change, que decide o que a conferência do ambiente aceita
+    (A4 do guardião da `endurecer-agentes-e-git-local`, escrito pela `completar-ci-do-novo-fluxo`).
 - **Lista de tela:**
   - `src/app/(site)/`, fora os `route.ts`, `src/componentes/`, `src/features/`, `src/estilos/` e
     `src/lib/utils/`;
   - `public/`, `assets/` e `tests/e2e/`;
   - `README.md`, `docs/conteudo-institucional.md` e `docs/REFERENCIA-VISUAL.md`;
-  - `openspec/changes/<change>/` e o caminho dela em `openspec/changes/archive/`;
+  - `openspec/changes/<change>/` e o caminho dela em `openspec/changes/archive/`, fora o que está
+    na lista do gatilho (o `ambiente-decidido.txt` e a spec delta de spec do gatilho), que o passo 1
+    decide antes;
   - as specs de `openspec/specs/` que não estão no gatilho.
 
   Na conferência curta, os artefatos da change e os documentos citados no `CLAUDE.md` governam e
@@ -346,9 +365,11 @@ tabela.
 
 - **Antes da primeira execução** das quatro formas, o líder técnico confere `curl --version`: o
   `-H @-` existe desde a 7.55. Versão anterior: não roda, e o item fica não verificado.
-- **O commit da prévia.** Antes das quatro formas, quem confere que a prévia serve o commit certo
-  da change é o Gabriel, no painel da Vercel, junto com o host. O líder técnico pede essa
-  conferência e registra a resposta dele no `relatorio.md` antes de ler o segredo. Nenhum agente
+- **O commit da prévia.** Antes da primeira forma, a do `curl`, que é a única das quatro que usa a
+  prévia, quem confere que a prévia serve o commit certo da change é o Gabriel, no painel da Vercel,
+  junto com o host. As três buscas no Git não dependem da prévia e não esperam essa conferência.
+  O líder técnico pede essa
+  conferência e registra a resposta dele no `relatorio.md` antes da forma do `curl`. Nenhum agente
   consulta o commit da prévia por linha de comando: o `gh` é recusado a agente pela barreira do Git.
 
 - O `sed` lê só a linha `VERCEL_AUTOMATION_BYPASS_SECRET=` do `.env`, sem carregar o resto do
@@ -404,11 +425,32 @@ tabela.
     percorre o ambiente só para salvá-lo e restaurá-lo, sem imprimir;
   - **leitura por nome fixo:** `scripts/purgar-dado-pessoal.mjs:36`, com o nome que o chamador passa
     sempre como constante, `scripts/verificar-chave-de-servico.mjs:45`,
-    `scripts/verificar-tipos-do-banco.mjs:56`, e a conferência do ambiente local, que lê `PATH` e
-    `SYSTEMROOT` e só os repassa ao Git;
-  - **ambiente repassado inteiro:** `scripts/iniciar-servidor.mjs:39`, ao `next start`, sem imprimi-lo.
+    `scripts/verificar-tipos-do-banco.mjs:56`, e a conferência do ambiente local
+    (`scripts/conferir-ambiente-local.mjs:72`) e a busca de segredo antes do envio
+    (`scripts/buscar-segredo-antes-do-envio.mjs:55`), que leem `PATH` e `SYSTEMROOT` e só os
+    repassam ao Git, com `GIT_CONFIG_NOSYSTEM`;
+  - **ambiente repassado inteiro:** `scripts/iniciar-servidor.mjs:39`, ao `next start`, sem
+    imprimi-lo; `scripts/validar-specs.mjs:76`, ao OpenSpec, com as três variáveis que desligam a
+    telemetria e a checagem de versão por cima, sem imprimi-lo;
+  - **processo filho sem `env:` explícito, que herda o ambiente inteiro de quem roda:**
+    - `scripts/verificar-tipos-do-banco.mjs:88`, a CLI do Supabase por `npx`, com `shell: true`. É
+      o único com segredo no ambiente: no CI, o `SUPABASE_ACCESS_TOKEN`, que a CLI precisa ler, e
+      nenhum outro segredo, porque o job dos tipos só recebe esse (Q1 (c));
+    - `scripts/verificar-rls.mjs:118`, a CLI do Supabase por `npx`, com `shell: true`, que não roda
+      no CI;
+    - `scripts/medir-desempenho.mjs:82`, o Lighthouse, que sobe o `iniciar-servidor.mjs`;
+    - `scripts/prints-do-site.mjs:130`, que sobe o `iniciar-servidor.mjs`, e
+      `scripts/prints-do-site.mjs:78`, o `taskkill` que o derruba, só no Windows;
+    - `scripts/verificar-navegador.mjs:10` e `scripts/verificar-artefatos.mjs:95`, um `node -e`
+      fixo e o `git ls-files`;
+    - nos testes, os `spawnSync` de `tests/barreiras/acoes-presas.test.mjs:41`,
+      `tests/barreiras/ambiente-local.test.mjs:450` e `tests/barreiras/git-de-escrita.test.mjs:243`
+      e `:283`, que rodam scripts do próprio projeto.
 
-  Linhas conferidas em 21/11/2026.
+    Nenhum deles imprime o ambiente.
+
+  Linhas conferidas em 21/11/2026; refeitas em 23/11/2026 pela `completar-ci-do-novo-fluxo`
+  (ACI-R3.5).
 
 As lacunas:
 
@@ -425,7 +467,21 @@ As lacunas:
   trecho começa com `.env`, e todo caminho que o `.gitignore` da `main` ignora. Se o diff mexe no
   `.gitignore`, as formas de conteúdo (`git grep -n` e `git diff`) e as duas de contagem só valem
   para arquivos já rastreados na `main`, e a exceção de pasta das formas de contagem deixa de valer: o `.gitignore`
-  está no diff, e o diff não pode desfazer a regra que o protege. Nas formas que só respondem sim
+  está no diff, e o diff não pode desfazer a regra que o protege. **Nesse caso, o AS-01 do
+  `relatorio.md` da change** (que não é rastreado na `main`) se conclui assim (Gabriel, Q8 (a) da
+  `completar-ci-do-novo-fluxo`, 23/11/2026): o líder técnico confere três coisas e põe a saída de
+  cada uma no relatório:
+  - `git check-ignore -v -- '<caminho do relatorio.md>'` com código 1: o `.gitignore` do disco não
+    ignora o arquivo;
+  - que a busca alcança o arquivo, por uma de duas leituras: `git status --porcelain --
+    '<caminho do relatorio.md>'` não vazio (a busca lê a árvore, alterado ou não rastreado), ou
+    `git log --oneline origin/main..HEAD -- '<caminho do relatorio.md>'` não vazio (a busca lê os
+    commits da branch). A busca imprime só contadores, e não nomes, então é essa leitura que diz
+    que o arquivo esteve entre os examinados;
+  - `node scripts/buscar-segredo-antes-do-envio.mjs` com código 0.
+
+  As três juntas concluem "sem achado". Qualquer outro resultado deixa o item não verificado, e ele
+  vai ao Gabriel no portão. Nas formas que só respondem sim
   ou não (`git ls-files` e `git check-ignore`), vale qualquer caminho no padrão, inclusive
   `.env.local`.
 - `<texto>`: entre aspas simples, sem aspas simples dentro e sem quebra de linha.
@@ -472,11 +528,18 @@ qualquer `git` ou `npm` da lista. A conferência:
   Gabriel decidir;
 - **diz quanto mediu:** arquivos comparados, iguais, diferentes e aceitos, regras de exclusão,
   ganchos do Git ativos, chaves do `.git/config` e se os ganchos do Claude Code estão ligados.
+- **Limite conhecido** (A5 do guardião da `endurecer-agentes-e-git-local`): ela lê só a
+  configuração **local** do Git, o `.git/config`. A configuração global (`~/.gitconfig` e
+  `~/.config/git/config`) e a de sistema (a do Git for Windows) não são lidas, e uma chave posta
+  nelas, como `core.hooksPath` ou `core.fsmonitor`, roda código em qualquer `git` sem que a
+  conferência veja. Elas ficam fora do repositório e são da máquina do Gabriel.
 
 **A barreira do Git.** Todo comando de agente, pelas três ferramentas que rodam comando (`Bash`,
 `PowerShell` e `mcp__terminal__run_in_terminal`), passa por `.claude/ganchos/barrar-git-de-escrita.mjs`,
 registrado em `.claude/settings.json`. Ele deixa passar só a lista de leitura do `git` e recusa
-todo o resto, inclusive o `gh` e o que não conseguir analisar. As regras de negação do mesmo arquivo
+todo o resto, inclusive o `gh` e o que não conseguir analisar, sempre pelo texto do comando: o
+"só" e o "todo" valem contra engano, e não contra agente que esconde o comando (ver o "Limite
+conhecido" mais abaixo nesta seção). As regras de negação do mesmo arquivo
 seguram as formas diretas com os ganchos desligados; a `mcp__terminal__run_in_terminal`, que digita
 no terminal do Gabriel, fica negada inteira no projeto. Por causa da barreira, um pedido de comando
 que só **cita** uma escrita no Git (um `<texto>` como `git push`) também é recusado; o líder técnico
@@ -485,9 +548,12 @@ registra a recusa e o guardião lê o arquivo pela própria ferramenta de leitur
 **A configuração que segura a barreira** (decisão do Gabriel, 21/11/2026, depois de o passo 4 da
 demonstração mostrar que um `.claude/settings.local.json` com `disableAllHooks` desliga o gancho):
 `.claude/settings.json`, `.claude/settings.local.json` e `.claude/ganchos/` têm regra de negação de
-escrita, e o gancho recusa todo comando que cite `.claude/settings` ou `.claude/ganchos` (falso
-positivo aceito). Mudar esses arquivos é passo do Gabriel: o líder técnico prepara o conteúdo e
-entrega o comando, como no Git. E o primeiro comando da lista de comandos Git de toda change é
+escrita, e também a configuração do Claude Code na pasta do usuário, `~/.claude/settings.json` e
+`~/.claude/settings.local.json`, que valeria para todo projeto (Gabriel, Q14 (a) da
+`endurecer-agentes-e-git-local`, 22/11/2026); e o gancho recusa todo comando que cite
+`.claude/settings` ou `.claude/ganchos` (falso positivo aceito). Mudar esses arquivos é passo do
+Gabriel: o líder técnico prepara o conteúdo e entrega o comando, como no Git. E o primeiro comando
+da lista de comandos Git de toda change é
 `node scripts/conferir-ambiente-local.mjs --change <change>`, no terminal do Gabriel; se não sair com
 código 0, o Gabriel para. O segundo é a busca de segredo antes do envio,
 `node scripts/buscar-segredo-antes-do-envio.mjs`, também com o `node` direto e antes do `git add`;
@@ -509,17 +575,49 @@ change); conteúdo comprimido dentro de binário não aparece, como na busca do 
 gravada numa linha só, com `\n` escrito como texto (o JSON de conta de serviço), não casa com a
 expressão aprovada; a mensagem do commit que ainda vai ser feito não existe quando a busca roda,
 e não é examinada antes daquele push, por isso o líder técnico a escreve sem nenhum valor de
-chave; e um `origin/main` velho só aumenta o intervalo examinado.
+chave; e um `origin/main` velho só aumenta o intervalo examinado. Desde a
+`completar-ci-do-novo-fluxo` (Q6 (a), 23/11/2026), o conteúdo também é lido como UTF-16, com ou
+sem marca de ordem de bytes (o `>` do Windows PowerShell 5.1 grava assim), e o caminho de cada
+arquivo examinado passa pelos mesmos formatos; um achado no caminho sai como `nome do arquivo`,
+mascarado. A leitura em UTF-16 decide pelo arquivo inteiro (a marca no começo, ou a maioria dos
+bytes pares ou ímpares em zero). Continuam fora: outras codificações, como UTF-32; texto
+comprimido; e um trecho em UTF-16 dentro de arquivo que, no todo, não é UTF-16 (um `>>` do Windows
+PowerShell 5.1 sobre um arquivo UTF-8, ou um trecho dentro de binário), inclusive o que começa em
+byte ímpar.
+
+**A conferência do ambiente confere a si mesma** (Q7 (b) da `completar-ci-do-novo-fluxo`,
+23/11/2026, A3 do guardião da `endurecer-agentes-e-git-local`): `scripts/conferir-ambiente-local.mjs`
+e `scripts/conferir-ambiente-local/funcoes.mjs` são comparados com a `main` como os arquivos do
+AS-17, e a change que os altera registra o sha256 no `ambiente-decidido.txt`. **Limite conhecido:**
+uma edição que apague a própria comparação passa nela. Contra isso valem o `git status` depois de
+cada passagem e o checklist inteiro do guardião, porque `scripts/` está na lista do gatilho.
 
 **A troca do PAT do Supabase na mudança do CI** (Gabriel, Portão 2 da `ajustar-ci-ao-novo-fluxo`,
 22/11/2026). O PAT antigo chegou a passos do CI que rodavam código de PR (LB-02). Por isso, quando
 os segredos vão para o ambiente `segredos-da-main`, o PAT do ambiente é um token **novo**, gerado
 naquela hora no Supabase. Depois que o push na `main` fica verde e os dois segredos saem do nível
 do repositório, o Gabriel revoga o PAT antigo no Supabase. Antes de revogar, ele confere no
-Supabase (_Account › Access Tokens_) que o token do CI não é o do login local da CLI, porque
-revogar este quebraria o `banco:tipos:check` na máquina dele. A chave de serviço mantém o valor,
-com o risco aceito numa linha própria da §6 (Gabriel, Q12 (b) do Portão 2). A
+Supabase (_Account › Access Tokens_) que o PAT **antigo** do CI não é o do login local da CLI,
+porque revogar este quebraria o `banco:tipos:check` na máquina dele. A chave de serviço mantém o
+valor, com o risco aceito numa linha própria da §6 (Gabriel, Q12 (b) do Portão 2). A
 revogação é uma das três condições de saída do LB-02 na §6 (Gabriel, Q10 (a) do Portão 2).
+**Feito em 22/11/2026:** o PAT antigo, `ci-portal-liacup`, foi revogado (Gabriel: "ci-portal-liacup
+antigo revogado", registrado no relatório da `completar-ci-do-novo-fluxo`, tarefa 1.1). Pelo
+briefing do gestor dessa change, o PAT novo do ambiente é escopado, só o projeto de produção e só
+Database com Read. O texto não registra se o PAT antigo era o do login local da CLI.
+
+**Um ambiente por segredo** (Gabriel, Q1 (c) do Portão 1 da `completar-ci-do-novo-fluxo`,
+23/11/2026). A chave de serviço (`SUPABASE_SERVICE_ROLE_KEY`) passa a um ambiente só dela,
+`chave-de-servico-da-main`, também com a regra só `main`, e o `segredos-da-main` fica só com o PAT
+do Supabase (`SUPABASE_ACCESS_TOKEN`) **depois** de o Gabriel apagar dele a chave, com o primeiro
+push verde da change (passo 5 do Migration Plan dela). Até esse passo, a chave está nos dois
+ambientes, e o `ci.yml` novo só a pede ao ambiente novo. Cada job do CI que recebe segredo
+entra num ambiente só, e o GitHub não entrega a um job o segredo de um ambiente em que ele não
+entra. Assim, **depois do passo 5**, a CLI do Supabase, que roda no job do PAT, não alcança a chave
+nem pela memória do executor. **Janela declarada:** entre o merge e o passo 5, a chave ainda está
+no `segredos-da-main`, em que o job dos tipos entra; o `ci.yml` não a pede ali, mas, pela hipótese
+da Q1, o job dos tipos poderia alcançá-la nessa janela, e o "nenhum job tem acesso a mais de um
+segredo" da spec só vale depois dela. Por isso o passo 5 vem logo depois do primeiro push verde.
 
 **Limite conhecido** (Gabriel, Q13 (b), 22/11/2026): **a barreira é contra engano, não contra
 agente que esconde o comando.** Contra isso valem as leituras depois de cada passagem (índice,
@@ -579,9 +677,7 @@ correção foi auditada. Bloqueante confirmado e explorável hoje em produção 
 | Código | Achado | Prazo | Change que resolve | Aceite |
 | --- | --- | --- | --- | --- |
 | LB-01 · AS-10 · bloqueante | Qualquer conta autenticada do Supabase vale como diretoria: lê mensagens e rascunhos e altera conteúdo. **Condição do aceite:** cadastro público e login anônimo desligados em produção até a R2 (conferido pelo Gabriel em 20/11: desligados, 0 contas, 0 mensagens). O Gabriel confere de novo no painel antes de cada release; se a condição cair, o LB-01 volta a bloquear | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em separado |
-| LB-02 · AS-09 · alta | O PAT do Supabase e a chave de serviço chegam a passos do CI que rodam código do PR e das dependências. **Correção parcial na configuração** pela `ajustar-ci-ao-novo-fluxo` (22/11/2026: o código do PR já não alcança o segredo, porque o job com segredo roda só no push para a `main`, no ambiente `segredos-da-main`, com `npm ci --ignore-scripts`). Continua aberto o resíduo da chave de serviço alcançável por código de dependência depois do `Build` do job com segredo, com linha própria logo abaixo (A1 da `ajustar-ci-ao-novo-fluxo`). Sai daqui só depois de três coisas: o job visto rodando no push para a `main`; o Gabriel confirmando por escrito 2 segredos no ambiente, com a regra só `main`, e 0 no repositório e na organização; e o PAT antigo revogado (§5). As três ficam na primeira tarefa da `completar-ci-do-novo-fluxo` (Q5 (b) e Portão 2 da `ajustar-ci-ao-novo-fluxo`, Gabriel, RP-12) | R1 | `completar-ci-do-novo-fluxo` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
-| A1 da `ajustar-ci-ao-novo-fluxo` · AS-09 · média | Resíduo do LB-02: no job `conferencias-com-segredo`, o `Build` roda código de dependência antes do passo que recebe a chave de serviço, e uma dependência maliciosa já no lockfile da `main` poderia alcançá-la pelo disco do executor ou pelo `$GITHUB_PATH`. **Condição de saída:** antes de cada `secrets.` do job, só checkout, setup-node e `npm ci --ignore-scripts`, conferido no `ci.yml` pelo guardião. Motivo do aceite: o build da Vercel já roda com as variáveis de produção, então o job do CI não abre exposição nova; e a change seguinte já mexe no CI | R1 | `completar-ci-do-novo-fluxo` | `openspec/changes/archive/2026-11-22-ajustar-ci-ao-novo-fluxo/relatorio.md`, "Decisões do Gabriel no Portão 2", Q8 (b), 22/11/2026 |
-| A da passagem 2 do guardião na `ajustar-ci-ao-novo-fluxo` · AS-09 com AS-01 · média | A chave de serviço, no formato antigo em JWT, chegou a passos do CI que rodavam código de PR (mesma exposição do LB-02) e mantém o valor: trocá-la agora exigiria girar o segredo JWT do projeto, com efeito na chave anônima, na Vercel e no `.env`. Motivo do aceite: só quem tem escrita no repositório alcançava o passo (PR de fork não recebe segredo), e o banco está dormente na R1, sem página que o leia. **Condição:** se o banco de produção passar a ter dado pessoal real antes do prazo, a troca vem antes. **Condição de saída:** a migração para as chaves novas do Supabase (`sb_publishable_` e `sb_secret_`) com as chaves antigas desligadas, o que invalida a chave exposta | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-22-ajustar-ci-ao-novo-fluxo/relatorio.md`, "Decisão do Gabriel sobre a Q12", 22/11/2026 |
+| A da passagem 2 do guardião na `ajustar-ci-ao-novo-fluxo` · AS-09 com AS-01 · média | A chave de serviço, no formato antigo em JWT, chegou a passos do CI que rodavam código de PR (mesma exposição do LB-02) e mantém o valor: trocá-la agora exigiria girar o segredo JWT do projeto, com efeito na chave anônima, na Vercel e no `.env`. Motivo do aceite: só quem tem escrita no repositório alcançava o passo (PR de fork não recebe segredo), e o banco está dormente na R1, sem página que o leia. Correção do motivo (I3 do guardião, visto pelo Gabriel em 22/11/2026): além de quem tem escrita no repositório, o código de dependência que rodava no mesmo job também alcançava o passo, sem escrita nenhuma; o aceite, o prazo e as condições não mudam. **Condição:** se o banco de produção passar a ter dado pessoal real antes do prazo, a troca vem antes. **Condição de saída:** a migração para as chaves novas do Supabase (`sb_publishable_` e `sb_secret_`) com as chaves antigas desligadas, o que invalida a chave exposta | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-22-ajustar-ci-ao-novo-fluxo/relatorio.md`, "Decisão do Gabriel sobre a Q12", 22/11/2026 |
 | LB-03 · AS-10 · alta | O seed apaga sem filtro as 11 coleções do projeto ligado, que pode ser o de produção | R2 | `papeis-da-diretoria-no-banco` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-04 · AS-13 · alta | O anônimo insere em `mensagens` direto pela API, sem limite, e escolhe `situacao` e `recebida_em` | R4 | `seguranca-do-formulario` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
 | LB-07 · AS-15 · média | Produção não manda CSP, proteção contra embutimento, `Referrer-Policy`, `Permissions-Policy` nem `nosniff` | R1 | `lancamento-r1` | `openspec/changes/archive/2026-11-20-auditoria-de-base-appsec/relatorio.md`, "Aceite do Gabriel", 20/11/2026, em bloco |
@@ -623,6 +719,8 @@ linha. A evidência está no relatório da change, na seção citada.
 | LB-26 · AS-01 · informativa | O protótipo guardava conteúdo comprimido que só a origem declarada cobre, sem estar nomeado | 22/11/2026 | `endurecer-agentes-e-git-local` | Linha 220 relida pelo líder técnico (ajuste 4 do Portão 1); o arquivo fica nomeado no "Limite conhecido" do arquivo binário, na §5 |
 | LB-08 · AS-09 · média | O `ci.yml` não tinha `permissions` e o checkout persistia o `GITHUB_TOKEN` | 22/11/2026 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-22-ajustar-ci-ao-novo-fluxo/relatorio.md`, `dev-frontend` (tarefa 1.1) e `guardiao-appsec`: `permissions: contents: read` só no topo, `persist-credentials: false` nos 2 checkouts |
 | LB-17 · AS-09 · baixa | As ações do CI estavam presas por tag móvel, não por sha | 22/11/2026 | `ajustar-ci-ao-novo-fluxo` | `openspec/changes/archive/2026-11-22-ajustar-ci-ao-novo-fluxo/relatorio.md`, `dev-frontend` (tarefas 1.1 e 1.2) e `guardiao-appsec`: 5 de 5 `uses:` presos por sha, e `npm run verificar:acoes` visto falhando e voltando |
+| LB-02 · AS-09 · alta | O PAT do Supabase e a chave de serviço chegavam a passos do CI que rodavam código do PR e das dependências | 23/11/2026 | `completar-ci-do-novo-fluxo` | `openspec/changes/archive/2026-11-23-completar-ci-do-novo-fluxo/relatorio.md`, tarefa 1.1 e `guardiao-appsec`: a execução `45099474006` do push do merge (`d7cc5c9`), verde nos dois jobs nas duas tentativas, com 2 implantações no `segredos-da-main` e a regra só `main` lidas pela API pública; a confirmação do Gabriel de 22/11/2026 ("tudo verde, Repository secrets e Organization vazia, ci-portal-liacup antigo revogado") e a da Q4 (b) do Portão 1, 23/11/2026 ("2 segredos no ambiente segredos-da-main, regra só main") |
+| A1 da `ajustar-ci-ao-novo-fluxo` · AS-09 · média | No job com segredo, o `Build` rodava código de dependência antes do passo que recebia a chave de serviço | 23/11/2026 | `completar-ci-do-novo-fluxo` | `openspec/changes/archive/2026-11-23-completar-ci-do-novo-fluxo/relatorio.md`, `dev-frontend` (tarefa 2.1) e `guardiao-appsec`: o build num job sem segredo, um job e um ambiente por segredo (Q1 (c)), e no job da chave só checkout, setup-node sem cache e o download do build antes do `secrets.`, lido no `ci.yml` (Q5 (a)) |
 
 ## 7. Origem dos arquivos binários
 

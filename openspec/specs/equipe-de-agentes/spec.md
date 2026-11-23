@@ -693,6 +693,14 @@ parar o ciclo.
 - **THEN** a saída diz quantos arquivos comparou, quantas regras de exclusão, ganchos e chaves leu,
   e quantas diferenças aceitou por decisão
 
+#### Scenario: A própria conferência foi alterada
+
+- **WHEN** um dos arquivos da própria conferência no disco difere do da versão principal, sem
+  decisão registrada
+- **THEN** a conferência termina com erro e nomeia o arquivo, como faz com a configuração dos
+  agentes
+- **AND** com a diferença registrada como decidida, ela passa e cita a decisão
+
 ### Requirement: A conferência do guardião é proporcional ao risco
 
 Fora da auditoria de base, o tamanho da conferência do guardião SHALL ser decidido pela lista de
@@ -727,6 +735,13 @@ aprovada depois de ela estar escrita.
 
 - **WHEN** a change é a última da release
 - **THEN** a auditoria de base roda, com o checklist inteiro, como antes
+
+#### Scenario: A pasta da change traz o que governa
+
+- **WHEN** o diff traz, dentro da pasta da change, o registro das diferenças decididas do ambiente
+  ou uma spec delta de uma spec que está na lista do gatilho
+- **THEN** o guardião aplica o checklist inteiro, mesmo que todo o resto do diff esteja na lista de
+  tela
 
 ### Requirement: Ferramenta do projeto não deixa instrução a agentes no repositório
 

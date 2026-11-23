@@ -109,6 +109,64 @@ describe('a forma aceita', () => {
       'arquivos: 1 · referências: 3 · presas por commit: 3 · locais: 0 · fora da regra: 0'
     )
   })
+  caso('lista de uma linha, presa por commit, com uma ou duas ações: verde', () => {
+    const resultado = rodar({
+      '.github/workflows/ci.yml': [
+        'jobs:',
+        '  x:',
+        `    steps: [{ uses: dono/repo@${SHA} }] # v1`,
+        '  y:',
+        `    steps: [{ name: A, uses: "dono/repo@${SHA}" }, {uses: dono/b@${SHA}}]   # v2.0.1`,
+        `  z: { runs-on: ubuntu-latest, steps: [ { uses: dono/c@${SHA} } ] } # v3`,
+        '',
+      ].join('\n'),
+    })
+    expect(resultado.codigo).toBe(0)
+    expect(resultado.saida).toContain(
+      'arquivos: 1 · referências: 4 · presas por commit: 4 · locais: 0 · fora da regra: 0'
+    )
+  })
+  caso('mapa de uma linha depois de uma chave e item de item, presos por commit: verde', () => {
+    const resultado = rodar({
+      '.github/workflows/ci.yml': [
+        'jobs:',
+        `  x: { uses: dono/repo/.github/workflows/y.yml@${SHA} } # v1`,
+        '  z:',
+        '    steps:',
+        `      - - uses: dono/repo@${SHA} # v2`,
+        `      - { name: 'a, b {c}', uses: dono/d@${SHA}, with: { x: "[1]" } } # v3`,
+        '',
+      ].join('\n'),
+    })
+    expect(resultado.codigo).toBe(0)
+    expect(resultado.saida).toContain('referências: 3 · presas por commit: 3 · locais: 0')
+  })
+  caso('ação local fora de .github/actions, presa por commit: lida e verde', () => {
+    const resultado = rodar({
+      '.github/workflows/ci.yml': fluxo('./acoes/preparar', './acoes/preparar/'),
+      'acoes/preparar/action.yaml': [
+        'runs:',
+        '  using: composite',
+        `  steps: [{ uses: dono/repo@${SHA} }] # v1`,
+        '',
+      ].join('\n'),
+    })
+    expect(resultado.codigo).toBe(0)
+    expect(resultado.saida).toContain(
+      'arquivos: 2 · referências: 3 · presas por commit: 1 · locais: 2 · fora da regra: 0'
+    )
+  })
+  caso('ação local que cita outra ação local, em outra pasta: as duas lidas, verde', () => {
+    const resultado = rodar({
+      '.github/workflows/ci.yml': fluxo('./a'),
+      'a/action.yml': 'runs:\n  steps:\n    - uses: ./b/c\n',
+      'b/c/action.yml': `runs:\n  steps:\n    - uses: dono/repo@${SHA} # v1\n`,
+    })
+    expect(resultado.codigo).toBe(0)
+    expect(resultado.saida).toContain(
+      'arquivos: 3 · referências: 3 · presas por commit: 1 · locais: 2 · fora da regra: 0'
+    )
+  })
   caso('linha comentada e texto que só cita uses: não contam', () => {
     const resultado = rodar({
       '.github/workflows/ci.yml': [
@@ -160,6 +218,85 @@ describe('o que fica fora da regra', () => {
     expect(resultado.saida).toContain(
       'referências: 4 · presas por commit: 0 · locais: 0 · fora da regra: 4'
     )
+  })
+  caso('lista de uma linha presa por etiqueta: vermelho, com cada ação da linha', () => {
+    const resultado = rodar({
+      '.github/workflows/ci.yml': [
+        'jobs:',
+        '  x:',
+        '    steps: [{ uses: actions/x@v1 }]',
+        `    outro: [{ uses: dono/repo@${SHA} }, { name: B, uses: 'actions/y@main' }] # v1`,
+        '  z: { steps: [ { uses: actions/z@v2, with: { a: 1 } } ] }',
+        '',
+      ].join('\n'),
+    })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain(
+      '.github/workflows/ci.yml:3 · presa por etiqueta ou ramo (@v1)'
+    )
+    expect(resultado.saida).toContain('ci.yml:4 · presa por etiqueta ou ramo (@main)')
+    expect(resultado.saida).toContain('ci.yml:5 · presa por etiqueta ou ramo (@v2)')
+    expect(resultado.saida).toContain(
+      'referências: 4 · presas por commit: 1 · locais: 0 · fora da regra: 3'
+    )
+  })
+  caso(
+    'mapa de uma linha depois de uma chave, e item de item, presos por etiqueta: vermelho',
+    () => {
+      const resultado = rodar({
+        '.github/workflows/ci.yml': [
+          'jobs:',
+          '  x: { uses: dono/repo/.github/workflows/y.yml@v1 }',
+          '  z:',
+          '    steps:',
+          '      - - uses: actions/x@v4',
+          '      - { name: "a, {b}", uses: actions/y@v4 }',
+          '      - { uses: { a: b } }',
+          '',
+        ].join('\n'),
+      })
+      expect(resultado.codigo).toBe(1)
+      expect(resultado.saida).toContain('ci.yml:2 · presa por etiqueta ou ramo (@v1)')
+      expect(resultado.saida).toContain('ci.yml:5 · presa por etiqueta ou ramo (@v4)')
+      expect(resultado.saida).toContain('ci.yml:6 · presa por etiqueta ou ramo (@v4)')
+      expect(resultado.saida).toContain('ci.yml:7 · referência sem a forma dono/repo@<ref>')
+      expect(resultado.saida).toContain('fora da regra: 4')
+    }
+  )
+  caso('ação local fora de .github/actions, presa por etiqueta: vermelho, na linha dela', () => {
+    const resultado = rodar({
+      '.github/workflows/ci.yml': fluxo(`dono/repo@${SHA} # v1`, './acoes/preparar'),
+      'acoes/preparar/action.yml': [
+        'runs:',
+        '  using: composite',
+        '  steps:',
+        '    - uses: actions/setup-node@v4',
+        '    - { uses: actions/cache@v4 }',
+        '',
+      ].join('\n'),
+    })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain(
+      'acoes/preparar/action.yml:4 · presa por etiqueta ou ramo (@v4)'
+    )
+    expect(resultado.saida).toContain(
+      'acoes/preparar/action.yml:5 · presa por etiqueta ou ramo (@v4)'
+    )
+    expect(resultado.saida).toContain(
+      'arquivos: 2 · referências: 4 · presas por commit: 1 · locais: 1 · fora da regra: 2'
+    )
+  })
+  caso('ação local sem definição, ou fora do repositório: vermelho', () => {
+    const resultado = rodar({
+      '.github/workflows/ci.yml': fluxo('./nao-existe', './../fora', './x/../../fora'),
+    })
+    expect(resultado.codigo).toBe(1)
+    expect(resultado.saida).toContain(
+      'ci.yml:5 · ação local sem action.yml nem action.yaml (./nao-existe)'
+    )
+    expect(resultado.saida).toContain('ci.yml:6 · ação local fora do repositório (./../fora)')
+    expect(resultado.saida).toContain('ci.yml:7 · ação local fora do repositório')
+    expect(resultado.saida).toContain('locais: 0 · fora da regra: 3')
   })
   caso('presa por ramo e por sha curto: vermelho', () => {
     const resultado = rodar({
