@@ -1,0 +1,43 @@
+/* A composição da página Contato. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem no protótipo.
+
+   A seção e a grade são as da seção Contato do protótipo
+   (<section data-pad> e <div data-resp>); o que muda é o que vai em cada
+   coluna (Q3 (b) do Gabriel, 23/11/2026): à esquerda, só o topo; à direita,
+   onde o protótipo põe o formulário, a lista dos quadros. */
+
+/* Protótipo: padding 56 px 28 px 80 px; 28 px no degrau --space-6
+   (26,4 px). */
+.secao {
+  padding: var(--espaco-secao) var(--space-6) var(--espaco-fim-da-secao-de-contato);
+}
+
+/* Protótipo: max-width 1100 px, colunas minmax(0,1fr) minmax(0,1.1fr), gap
+   64 px, align-items start. As duas colunas começam na mesma altura: a lista
+   fica alinhada ao topo do título. A ordem no código é a de leitura, e a grade
+   não reordena. */
+.grade {
+  display: grid;
+  grid-template-columns: var(--colunas-do-contato);
+  gap: var(--espaco-entre-colunas-do-contato);
+  align-items: start;
+  max-width: var(--largura-da-secao-de-contato);
+  margin: 0 auto;
+}
+
+/* O corte do protótipo: [data-resp] passa a uma coluna, com gap 34 px (no
+   degrau --space-8, 35,2 px). Sem a frase (Q1 (a)), é também o espaço que ela
+   deixava entre o título e os quadros (margin-bottom de 34 px). */
+@media (max-width: 1024px) {
+  .grade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+/* O corte do protótipo: [data-pad]. */
+@media (max-width: 768px) {
+  .secao {
+    padding-inline: var(--space-4);
+  }
+}

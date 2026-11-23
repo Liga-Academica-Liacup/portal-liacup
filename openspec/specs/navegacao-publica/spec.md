@@ -169,7 +169,7 @@ com a última linha centralizada.
 - **WHEN** nenhuma página da lista pertence a uma coluna de destinos do rodapé
 - **THEN** essa coluna não aparece, nem o título dela
 - **AND** nesta entrega as duas colunas aparecem: "Portal", com "Início" e "Sobre", e "Conteúdo",
-  com "Projetos" e "Equipe", nessa ordem
+  com "Projetos", "Equipe" e "Contato", nessa ordem
 
 #### Scenario: A página atual nas colunas do rodapé
 
@@ -194,7 +194,7 @@ voltando ao verde.
   nenhum pedido a domínio externo, e todo link e botão do cabeçalho, do menu e do rodapé mede pelo
   menos 44 × 44 px
 - **AND** a saída de cada largura imprime `páginas verificadas: <n> de <n>`, com `<n>` igual ao
-  número de páginas da lista (5 nesta entrega), e quantos alvos mediu
+  número de páginas da lista (6 nesta entrega), e quantos alvos mediu
 
 #### Scenario: A página de produção não perde cobertura
 
@@ -250,11 +250,11 @@ aprovado, e nenhum desses lugares SHALL precisar de alteração para uma página
 #### Scenario: O que a lista mostra nesta entrega
 
 - **WHEN** alguém abre uma página da lista com o site publicado
-- **THEN** a lista tem a Início, o Sobre, Projetos, a Equipe e o Processo seletivo
-- **AND** o menu mostra "Início", "Sobre", "Projetos" e "Equipe", nessa ordem, e nenhum outro
-  destino
+- **THEN** a lista tem a Início, o Sobre, Projetos, a Equipe, Contato e o Processo seletivo
+- **AND** o menu mostra "Início", "Sobre", "Projetos", "Equipe" e "Contato", nessa ordem, e nenhum
+  outro destino
 - **AND** a coluna "Portal" do rodapé mostra "Início" e "Sobre", e a coluna "Conteúdo" mostra
-  "Projetos" e "Equipe", nessa ordem
+  "Projetos", "Equipe" e "Contato", nessa ordem
 - **AND** o cabeçalho e o fim do menu lateral mostram o botão "Processo seletivo", que leva a
   `/processo-seletivo`
 - **AND** o hero da inicial mostra "Quero participar", que leva a `/processo-seletivo`, e "Conheça

@@ -24,11 +24,11 @@ entre páginas.
 
 #### Scenario: Os títulos e as descrições desta entrega
 
-- **WHEN** alguém lê os metadados da Início, do Sobre, de Projetos, da Equipe e do Processo
-  seletivo
+- **WHEN** alguém lê os metadados da Início, do Sobre, de Projetos, da Equipe, de Contato e do
+  Processo seletivo
 - **THEN** o título da Início é "Liga Acadêmica Multiprofissional de Cuidados Paliativos · LIACUP",
   o do Sobre é "Sobre · LIACUP", o de Projetos é "Projetos · LIACUP", o da Equipe é "Equipe ·
-  LIACUP" e o do Processo seletivo é "Processo seletivo · LIACUP"
+  LIACUP", o de Contato é "Contato · LIACUP" e o do Processo seletivo é "Processo seletivo · LIACUP"
 - **AND** a descrição da Início e a do Processo seletivo são a primeira frase, inteira e sem
   mudança, da apresentação da página no documento de conteúdo (seções 2.0 e 5.2)
 - **AND** a descrição do Sobre é a primeira frase, inteira e sem mudança, da finalidade
@@ -36,6 +36,8 @@ entre páginas.
 - **AND** a descrição de Projetos é a frase registrada para ela na seção 3 do documento de
   conteúdo, inteira e sem mudança
 - **AND** a descrição da Equipe é a frase registrada para ela na seção 4 do documento de conteúdo,
+  inteira e sem mudança
+- **AND** a descrição de Contato é a frase registrada para ela na seção 1 do documento de conteúdo,
   inteira e sem mudança
 
 #### Scenario: Título repetido

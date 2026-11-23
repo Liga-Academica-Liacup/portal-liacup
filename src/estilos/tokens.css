@@ -429,4 +429,27 @@
   --line-height-titulo-da-frente: 1.1; /* protótipo: h2 de cada frente */
   --font-size-texto-da-frente: 16px; /* protótipo: parágrafo de cada frente */
   --largura-texto-da-frente: 56ch; /* protótipo: max-width do parágrafo de cada frente */
+
+  /* ── Tokens da change pagina-contato (R1, 23/11/2026) ──────────────────────
+     Nenhum token existente foi alterado. "Protótipo" é prototipo/Portal-LIACUP.html,
+     na página Contato: o valor é o do estilo do elemento citado. "Esboço" é
+     openspec/changes/pagina-contato/prints/q3-opcao-b-1280.png, aprovado pelo
+     Gabriel na Q3 (b), medido no PNG. Como nas changes anteriores, onde o
+     protótipo usa um preenchimento, margem ou vão a 2 px ou menos de um degrau
+     --space-* (ou de uma soma de dois), o componente usa o degrau, e não um
+     token novo. */
+  --largura-da-secao-de-contato: 1100px; /* protótipo: max-width da grade [data-resp] da seção Contato */
+  --colunas-do-contato: minmax(0, 1fr) minmax(0, 1.1fr); /* protótipo: grid-template-columns da grade [data-resp] */
+  --espaco-entre-colunas-do-contato: 64px; /* protótipo: gap da grade [data-resp] */
+  --espaco-fim-da-secao-de-contato: 80px; /* protótipo: padding-bottom da seção Contato */
+  --font-size-titulo-do-contato: clamp(
+    36px,
+    4.4vw,
+    52px
+  ); /* protótipo: h1 "Fale com a Liga" (.t-h1) */
+  --line-height-titulo-do-contato: 1.05; /* protótipo: h1 "Fale com a Liga" */
+  --tamanho-circulo-de-contato: 100px; /* protótipo: image-slot de cada canal e círculo da borboleta */
+  --largura-borboleta-de-contato: 44px; /* protótipo: <svg width="44"> no círculo da borboleta */
+  --font-size-valor-de-contato: 16px; /* protótipo: valor de cada canal */
+  --tamanho-icone-do-email: 52px; /* esboço: o "M" do Gmail com 49,5 px, 96% da largura da imagem; aprovado pelo Gabriel na Q5 (a) da pagina-contato, 23/11/2026 */
 }

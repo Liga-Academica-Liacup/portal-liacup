@@ -43,5 +43,14 @@
     "noMenu": true,
     "colunaDoRodape": "Conteúdo",
     "destaque": false
+  },
+  {
+    "endereco": "/contato",
+    "rotulo": "Contato",
+    "titulo": "Contato · LIACUP",
+    "descricao": "Contato da Liga Acadêmica Multiprofissional de Cuidados Paliativos (LIACUP): Instagram @liacup.unb e e-mail liacup.unb@gmail.com.",
+    "noMenu": true,
+    "colunaDoRodape": "Conteúdo",
+    "destaque": false
   }
 ]

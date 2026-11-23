@@ -1,0 +1,37 @@
+/* Topo da página Contato. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Sobre --color-bg #f5ead8 (RP-09): sobretítulo --color-accent-700 #683f74,
+   6,91:1; título --color-accent-800 #4e3260, 9,05:1. */
+
+/* Protótipo: 12 px, letter-spacing .16em, maiúsculas, 12 px abaixo (no degrau
+   --space-3, 13,2 px). */
+.sobretitulo {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-sobretitulo);
+  letter-spacing: var(--letter-spacing-sobretitulo);
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+}
+
+/* Sem margem: o espaço até os quadros é o vão da grade da rota. */
+.titulo {
+  margin: 0;
+  font-size: var(--font-size-titulo-do-contato);
+  line-height: var(--line-height-titulo-do-contato);
+  color: var(--color-accent-800);
+}
+
+/* O corte do protótipo: .t-h1. */
+@media (max-width: 768px) {
+  .titulo {
+    font-size: var(--font-size-hero-tablet);
+    line-height: var(--line-height-hero-estreito);
+  }
+}
+
+@media (max-width: 480px) {
+  .titulo {
+    font-size: var(--font-size-hero-celular);
+  }
+}

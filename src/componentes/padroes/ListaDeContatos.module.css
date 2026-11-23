@@ -1,0 +1,11 @@
+/* A lista dos quadros de contato. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css. Protótipo: flex em coluna, gap 18 px, no degrau
+   --space-4 (17,6 px). */
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
