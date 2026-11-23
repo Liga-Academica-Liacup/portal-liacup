@@ -118,7 +118,7 @@ tarefas foram ajustadas a ela antes do apply.
       **passo 1, checklist inteiro**, pelo `docs/SEGURANCA.md`. Verificar: nenhum arquivo da lista
       fora da lista de tela, fora o `docs/SEGURANCA.md`; a busca vazia; o veredito de cada um no
       relatório; nenhum BLOQUEADO aberto; `git status` igual antes e depois das duas passagens.
-- [ ] 4.5 **Depois do push, antes do merge:** o P23 (D8) em
+- [x] 4.5 **Depois do push, antes do merge:** o P23 (D8) em
       `https://portal-liacup-git-feat-pagina-contato-liacup1.vercel.app/contato`, pelas formas da
       `SEGURANCA.md` §5. Verificar: a confirmação do Gabriel do host, letra por letra, e do commit no
       painel, registrada antes do `curl`; a resposta com `HTTP/2 200` e sem `Location`, literal e

@@ -738,3 +738,49 @@ Texto literal da mensagem do Gabriel:
   Escrito o Purpose em `openspec/specs/pagina-contato/spec.md`, no molde do de `pagina-projetos`;
   depois, 14 de 14. `npm run verificar` e `npm run verificar:artefatos` com código 0 (545
   rastreados examinados).
+
+## P23 e conferência do menu dos links (tarefa 4.5)
+
+Registrado pelo líder técnico antes do merge, 23/11/2026, 20:19:15 UTC, no terminal Bash do
+Windows, com `MSYS_NO_PATHCONV=1`.
+
+**Confirmado pelo Gabriel no painel da Vercel, literal (antes do `curl`):**
+
+> Domains
+> portal-liacup-git-feat-pagina-contato-liacup1.vercel.app
+> commit: https://github.com/Liga-Academica-Liacup/portal-liacup/commit/7c6858dd80f1e1fe53dc6416660632b2afc7fceb
+
+| Comando | Código | Resultado |
+| --- | --- | --- |
+| Host, contra o D8 | — | `portal-liacup-git-feat-pagina-contato-liacup1.vercel.app`, igual letra por letra; 45 caracteres antes de `.vercel.app` |
+| Commit da prévia contra a branch | — | `7c6858dd80f1e1fe53dc6416660632b2afc7fceb` = `rev-parse HEAD` = `ls-remote` de `feat/pagina-contato`; `status --porcelain` vazio |
+| Forma da linha do `.env`, só por contagem | — | 1 linha com o nome · 0 fora da forma · `curl 8.7.1` |
+| `conferir-ambiente-local --change pagina-contato` | 0 | 20 comparados · 20 iguais · 18 chaves do `.git/config`, 0 fora da lista |
+| `rev-parse main` e `ls-remote origin refs/heads/main` | — | `c12cf9b337d6ab70d02754593ba85bb65a5ca2a5` nos dois; `main..HEAD`: `7c6858d` e `1a65180` |
+| P23, forma com o segredo, em `/contato` | 0 | `HTTP/1.1 200 OK`, sem `Location`, `X-Matched-Path: /contato`, `X-Robots-Tag: noindex`, `X-Vercel-Cache: HIT`; 18 cabeçalhos, 0 `Location`, 0 `set-cookie` |
+| Forma 2, `<rev>` = `1a65180` | 1 | saída vazia |
+| Forma 2, `<rev>` = `7c6858d` | 1 | saída vazia |
+| Forma 3, segredo na árvore de trabalho | 1 | saída vazia |
+| Forma 4, segredo no índice | 1 | saída vazia |
+| Produção, `curl -I https://www.liacup.com.br/` | 0 | `200`, `X-Matched-Path: /em-construcao` |
+| Produção, `curl -I https://www.liacup.com.br/contato` | 0 | `307`, `Location: /` |
+
+- **AS-15 da prévia:** a resposta de `/contato` traz `X-Robots-Tag: noindex`. Os cabeçalhos de
+  segurança da produção continuam sob o LB-07, para a `lancamento-r1`.
+
+**Cópia pelo menu dos links, conferida pelo Gabriel na prévia, literal:**
+
+> copias:INSTAGRAM
+> @liacup.unb
+> (abre em nova aba)
+> https://www.instagram.com/liacup.unb/
+> liacup.unb@gmail.com
+
+- **Leitura do líder técnico, para o Gabriel confirmar:**
+  - no e-mail, a cópia deu `liacup.unb@gmail.com`;
+  - no Instagram, deu o endereço do perfil, `https://www.instagram.com/liacup.unb/`, como a §7
+    (Q9 (b)) diz;
+  - as três primeiras linhas parecem ser o texto do link copiado ("Copiar texto do link"): o rótulo,
+    o @ e o "(abre em nova aba)" que só o leitor de tela anuncia.
+- **Não informado:** em que aparelho cada cópia foi feita (computador ou celular). Fica como o
+  Gabriel escreveu.
