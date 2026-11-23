@@ -1,0 +1,5 @@
+# Diferenças decididas da change ajustar-ci-ao-novo-fluxo, contra a main.
+# Só o líder técnico escreve este arquivo (docs/SEGURANCA.md §5, "A conferência do ambiente local").
+# Formato: arquivo <caminho> <sha256 do disco, ou "ausente">  # decisão
+#          exclude <regra do .git/info/exclude>  # decisão
+arquivo CLAUDE.md e4c7214463710085bf381495de3312a7b4981f5adf7b0650155e52b9a6303aab  # proposta aprovada no Portão 1, 22/11/2026, "Decisão registrada para o AS-17" e D7: o segundo comando da lista Git, no item 6 do modelo de entrega e no parágrafo seguinte; achado 1 do revisor, rodada 1; achado 6 do revisor, rodada 2

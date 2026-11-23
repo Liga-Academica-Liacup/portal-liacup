@@ -195,7 +195,7 @@ change; o ADR-0005 é anterior ao guardião e não se edita.
 
 ### Configuracao inicial — feita uma vez, pelo responsavel do projeto
 
-Estes tres passos acontecem nas interfaces do GitHub e da Vercel, **nesta ordem**:
+Estes cinco passos acontecem nas interfaces do GitHub e da Vercel, **nesta ordem**:
 
 1. **Conectar a Vercel.** Em vercel.com, entrar com a conta do GitHub da liga, _Add New Project_,
    importar o repositorio e aceitar os padroes de Next.js. Isso ja entrega publicacao automatica da
@@ -215,9 +215,23 @@ Estes tres passos acontecem nas interfaces do GitHub e da Vercel, **nesta ordem*
 > vez, porque antes disso o GitHub nao sabe quais verificacoes existem: a protecao fica vazia,
 > parece configurada e nao barra nada.
 
-> **O CI e um job so.** Todos os passos moram dentro de `Verificacoes`, entao a protecao exige **uma**
-> verificacao, nao onze. Qualquer passo vermelho derruba o check inteiro — que e o comportamento
-> desejado, e explica por que a lista do passo 3 tem um nome so.
+5. **Criar o ambiente dos segredos.** No GitHub, _Settings › Environments › New environment_,
+   com o nome `segredos-da-main`. Em _Deployment branches and tags_, escolher _Selected branches and
+   tags_ e acrescentar só a `main`, sem revisor obrigatório. Os dois segredos,
+   `SUPABASE_ACCESS_TOKEN` e `SUPABASE_SERVICE_ROLE_KEY`, ficam **neste ambiente**, e nenhum fica em
+   _Settings › Secrets and variables › Actions_ no nível do repositório. Os valores vêm do painel do
+   Supabase, porque segredo do GitHub não se lê de volta.
+
+> **O CI tem dois jobs, e só um é exigido.** `Verificacoes` roda em toda alteração proposta e em
+> todo push para a `main`, **sem nenhum segredo**, e é a verificação que a proteção exige: qualquer
+> passo vermelho derruba o check inteiro, por isso a lista do passo 3 tem um nome só.
+> `Conferencias com segredo` roda **só no push para a `main`**, depois do merge, no ambiente
+> `segredos-da-main`: confere os tipos do banco contra o esquema e procura a chave de serviço no
+> pacote compilado. Ele roda depois do merge de propósito: assim o segredo só chega a código que já
+> passou por revisão, e o GitHub recusa o ambiente a qualquer outro ramo (LB-02,
+> `docs/SEGURANCA.md` §6). O preço é que esses dois resultados só aparecem na `main`; se um deles
+> ficar vermelho, a correção é imediata. Na alteração proposta, esse job aparece como pulado, e isso
+> é o esperado.
 
 **Depois de configurar, teste — e olhe TRES coisas, nao uma.** Crie um branch, quebre alguma coisa
 de proposito, abra uma alteracao proposta e confira:
@@ -243,9 +257,12 @@ Se der para incorporar com o CI vermelho, a protecao nao esta valendo — e todo
 
 ### Alteracao vinda de fork e propostas simultaneas
 
-- **Fork:** por seguranca, o GitHub nao entrega os segredos do repositorio para alteracoes vindas
-  de fork. As verificacoes que nao dependem de segredo rodam normalmente. Como a liga trabalha com
-  branches do proprio repositorio, isso nao afeta o dia a dia.
+- **Fork:** nenhuma alteracao proposta recebe segredo, venha de fork ou de branch do proprio
+  repositorio. A garantia e que os dois segredos ficam so no ambiente `segredos-da-main`, que o
+  GitHub so entrega a `main`, e nenhum no nivel do repositorio (passo 5 acima). O conteudo do
+  `ci.yml` ajuda, porque o `Verificacoes` nao pede segredo, mas nao basta sozinho: uma alteracao
+  proposta pode mudar o arquivo. Uma alteracao vinda de fork roda as mesmas verificacoes que
+  qualquer outra.
 - **Duas propostas ao mesmo tempo:** cada uma recebe seu proprio endereco de pre-visualizacao. Uma
   nao sobrescreve a outra.
 
@@ -326,6 +343,21 @@ node scripts/conferir-ambiente-local.mjs --change <nome-da-change>
 Ela compara com a `main` os arquivos de configuração e de instrução dos agentes que estão no disco,
 lê o `.git/config`, os ganchos do Git e o `.git/info/exclude`, e sai com código diferente de 0 em
 toda diferença sem decisão registrada. As regras estão no `docs/SEGURANCA.md` §5.
+
+**A busca de segredo antes do envio** é o segundo comando de toda lista de comandos Git, logo
+depois da conferência do ambiente e antes do `git add`, também com o `node` direto:
+
+```bash
+node scripts/buscar-segredo-antes-do-envio.mjs
+```
+
+Ela usa só leitura do Git e procura o **formato** de chave (o prefixo seguido do comprimento mínimo
+de uma chave real), nunca o nome solto, em cada commit que o push vai publicar
+(`origin/main..HEAD`, com a mensagem e o autor), nos arquivos alterados ou novos da árvore de
+trabalho e na versão já preparada no índice. Diz quantos commits,
+arquivos, linhas e formatos examinou, e nunca imprime o valor achado. Se ela não sair com código 0,
+o Gabriel para e não roda mais nada da lista. Os formatos e os limites estão no
+`docs/SEGURANCA.md` §5.
 
 **Limite conhecido: a barreira é contra engano, não contra agente que esconde o comando.** O gancho
 lê o texto do comando, e deixa passar o nome que o shell monta na hora (`${X:-git} add .`,

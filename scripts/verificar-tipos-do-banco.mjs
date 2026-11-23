@@ -47,7 +47,7 @@ function naoVerificou(motivo, detalhe) {
   }
   console.error('  Nada foi comparado, entao NADA foi provado sobre os tipos.')
   console.error('  Falta autenticacao: `npx supabase login` na maquina, ou o segredo')
-  console.error('  SUPABASE_ACCESS_TOKEN no repositorio, para o CI.\n')
+  console.error('  SUPABASE_ACCESS_TOKEN no ambiente segredos-da-main, para o CI.\n')
   process.exit(1)
 }
 

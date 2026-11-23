@@ -8,7 +8,7 @@
 
 1. **Interruptor** `SITE_PUBLICADO` em vez de branch longa (seção 6).
 2. **O design do protótipo não muda.** Ele foi aprovado pela liga. O que recomeça é a implementação, que não ficou boa. Melhorias de UI e UX são bem-vindas, desde que mostradas lado a lado com o protótipo e aprovadas pelo Gabriel. O site precisa ser responsivo em todas as larguras.
-3. **O CI não é simplificado.** Todas as verificações ficam. A change de CI só entra para melhorar a automação e o fluxo (seção 7, R0).
+3. **O CI não é simplificado.** Todas as verificações ficam. A change de CI só entra para melhorar a automação e o fluxo (seção 7, R0; desde 20/11, na R1).
 4. **Conteúdo pendente não segura entrega.** Texto da Secretaria, acréscimo do FAQ 1, números da home e confirmação da marca UnB: a R1 sai sem eles, mostramos à liga e ajustamos depois.
 5. **Pasta local do repositório:** `C:\Projetos\portal-liacup` (não mais `C:\Dev`).
 6. **A rodada mobile v3 foi aplicada no protótipo.** Medido em 18/11: cabeçalho de 62 px em 390 px, nenhum alvo de toque abaixo de 44 px em 390 px nas 10 páginas medidas (de 11; a de Processo seletivo, aberta pelo botão do cabeçalho, ficou fora da medição), nenhuma rolagem horizontal, menu lateral com `aria-expanded` e `aria-controls`.
@@ -95,7 +95,7 @@ Cada release é publicável. Cada item da lista é uma *change* do OpenSpec, pen
 | `montar-guardiao-appsec` | O sétimo agente, guardião de segurança, como etapa obrigatória antes do Portão 2, com checklist de bloqueio e `docs/SEGURANCA.md`. Ideia do Gabriel, 19/11 |
 | `atualizar-next` | **Correção imediata**, aberta pelo primeiro veredito do guardião em 19/11: o `next` 16.3.1 está na faixa de duas falhas críticas de execução remota de código (uma delas a CVE-2026-96889, no otimizador de imagem). Sobe para a versão corrigida mais recente da linha 16.4 |
 | `auditoria-de-base-appsec` | Auditoria de linha de base da `main` inteira pelo guardião, com cada achado ligado a uma release. Saiu da `montar-guardiao-appsec` pela E2 |
-| `ajustar-ci-ao-novo-fluxo` | Todas as verificações atuais ficam. Entram: validação do OpenSpec, prints automáticos das páginas como anexo do CI e cobertura de e2e e Lighthouse derivada da lista de páginas |
+| `ajustar-ci-ao-novo-fluxo` | **Passou para a R1** (linha 5 da tabela da R1, ordem do Gabriel de 20/11) e foi dividida no Portão 1 dela, em 22/11: o `openspec validate` e os prints foram para a `completar-ci-do-novo-fluxo`. Texto original: todas as verificações atuais ficam. Entram: validação do OpenSpec, prints automáticos das páginas como anexo do CI e cobertura de e2e e Lighthouse derivada da lista de páginas |
 
 Ao fim da R0, o Gabriel recebe um link de prévia que ainda mostra pouco, e um repositório pronto para andar rápido.
 
@@ -109,12 +109,13 @@ Conteúdo fixo, vindo do `conteudo-institucional.md`. Nenhum banco, nenhum formu
 | 2 | `pagina-processo-seletivo` | A conversão principal: apresentação, quem pode, pré-requisitos, etapas, FAQ, estado "inscrições fechadas". O botão do cabeçalho e o "Quero participar" aparecem |
 | 3 | `endurecer-agentes-e-git-local` | Os 7 achados de configuração de agente e Git local da auditoria, e a regra 2 da dieta escrita na §5 do `SEGURANCA.md` e na spec |
 | 4 | `pagina-sobre-e-equipe` | Apresentação, história, objetivo, finalidade, impacto, docentes, fundadores e os seis cargos |
-| 5 | `ajustar-ci-ao-novo-fluxo` | Os 4 achados de CI da auditoria, a validação do OpenSpec, os prints automáticos e a busca de segredo antes do push. A cobertura do e2e e do Lighthouse pela lista de páginas já entra na change 1 |
-| 6 | `pagina-projetos` | As quatro frentes de trabalho |
-| 7 | `pagina-contato` | E-mail, Instagram e sede, sem formulário |
-| 8 | `inicio-completo` | Números, chamadas para as páginas que existem, bloco de contato e faixa do processo seletivo |
-| 9 | `homologacao-r1` | O site da R1 inteiro num endereço próprio, só para a liga: valida textos e telas, dá o aceite e entrega o conteúdo que falta (foto do hero, texto da Secretaria, acréscimo do FAQ 1, números atualizados, fotos dos ligantes). O endereço não é indexado por buscadores. Decisão do Gabriel, 20/11 |
-| 10 | `lancamento-r1` | Aplica o que a liga mandou na homologação, os 6 achados da auditoria para a R1 (inclusive cabeçalhos de segurança), metadados, `sitemap.xml`, 404, nota de privacidade, auditoria completa do guardião e o interruptor ligado em produção |
+| 5 | `ajustar-ci-ao-novo-fluxo` | O segredo do CI só no push para a `main`, num ambiente que só ela alcança (LB-02), permissões mínimas (LB-08), ações presas por sha com a verificação (LB-17) e a busca de segredo antes do push. O LB-09 foi para a `papeis-da-diretoria-no-banco`. Dividida no Portão 1 (Gabriel, 22/11/2026). A cobertura do e2e e do Lighthouse pela lista de páginas já entra na change 1 |
+| 6 | `completar-ci-do-novo-fluxo` | As três condições de saída do LB-02 da §6: o job com segredo visto no primeiro push para a `main`, a confirmação escrita do Gabriel sobre os segredos e o PAT antigo revogado; a correção do resíduo A1 da `ajustar-ci-ao-novo-fluxo` (Q8 (b)) e as ressalvas baixas e informativas dela (Q9 (a), Gabriel, 22/11/2026); a validação do OpenSpec e os prints automáticos das páginas como anexo do CI; e as ressalvas da `endurecer-agentes-e-git-local` (A2 a A7 do guardião e as 7 da terceira rodada do revisor) |
+| 7 | `pagina-projetos` | As quatro frentes de trabalho |
+| 8 | `pagina-contato` | E-mail, Instagram e sede, sem formulário |
+| 9 | `inicio-completo` | Números, chamadas para as páginas que existem, bloco de contato e faixa do processo seletivo |
+| 10 | `homologacao-r1` | O site da R1 inteiro num endereço próprio, só para a liga: valida textos e telas, dá o aceite e entrega o conteúdo que falta (foto do hero, texto da Secretaria, acréscimo do FAQ 1, números atualizados, fotos dos ligantes). O endereço não é indexado por buscadores. Decisão do Gabriel, 20/11 |
+| 11 | `lancamento-r1` | Aplica o que a liga mandou na homologação, os 6 achados da auditoria para a R1 (inclusive cabeçalhos de segurança), metadados, `sitemap.xml`, 404, nota de privacidade, auditoria completa do guardião e o interruptor ligado em produção |
 
 Ficam para depois, na página inicial: próximos eventos e notícias (R2) e conteúdo educativo (R5).
 
@@ -122,7 +123,7 @@ Ficam para depois, na página inicial: próximos eventos e notícias (R2) e cont
 
 | Change | O que entrega |
 |---|---|
-| `papeis-da-diretoria-no-banco` | **Antes de tudo na R2.** Os 10 achados de banco da auditoria, entre eles o LB-01: papel atribuído por administrador, recusa testada para conta comum. Até lá, cadastro público e login anônimo desligados em produção |
+| `papeis-da-diretoria-no-banco` | **Antes de tudo na R2.** A migração para as chaves novas do Supabase (`sb_publishable_` e `sb_secret_`), com as antigas desligadas, que invalida a chave de serviço exposta no CI (risco aceito pelo Gabriel na Q12 (b) da `ajustar-ci-ao-novo-fluxo`, 22/11/2026; antes, se o banco de produção passar a ter dado pessoal real). Os 10 achados de banco da auditoria, entre eles o LB-01: papel atribuído por administrador, recusa testada para conta comum. Até lá, cadastro público e login anônimo desligados em produção |
 | `leitura-de-noticias-e-eventos` | Leitura do Supabase com o esquema da F02, com dados inseridos por nós |
 | `pagina-noticias` | Lista, filtro por categoria e cartão com link externo |
 | `pagina-eventos` | Próximos e anteriores |
