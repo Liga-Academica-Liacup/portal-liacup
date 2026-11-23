@@ -27,6 +27,15 @@
     "destaque": true
   },
   {
+    "endereco": "/projetos",
+    "rotulo": "Projetos",
+    "titulo": "Projetos · LIACUP",
+    "descricao": "Ensino, Extensão, Pesquisa e Secretaria: as quatro frentes de trabalho da Liga Acadêmica Multiprofissional de Cuidados Paliativos (LIACUP).",
+    "noMenu": true,
+    "colunaDoRodape": "Conteúdo",
+    "destaque": false
+  },
+  {
     "endereco": "/equipe",
     "rotulo": "Equipe",
     "titulo": "Equipe · LIACUP",

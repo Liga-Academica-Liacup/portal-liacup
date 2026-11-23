@@ -1,6 +1,8 @@
 # Segurança do Portal LIACUP
 
-**Versão 3.2 · 23 de novembro de 2026** · change `completar-ci-do-novo-fluxo`: na §3, os quatro
+**Versão 3.3 · 23 de novembro de 2026** · change `pagina-projetos`: na §7, a linha de origem dos 9
+prints da change e o total de 88 (Q7 (a), Q8 (a) e Q9 (a) do Gabriel). A versão 3.2, também de
+23/11, veio da change `completar-ci-do-novo-fluxo`: na §3, os quatro
 jobs do CI, os dois ambientes, os anexos e o OpenSpec no portão; na §5, um ambiente por segredo, a
 revogação do PAT antigo como fato, os limites novos da busca e da conferência do ambiente, o AS-01
 do relatório com o `.gitignore` no diff (Q8 (a)) e as ressalvas de texto herdadas; na §6, a saída
@@ -742,10 +744,11 @@ binário acrescenta a linha no mesmo diff; sem ela, é achado de AS-01, alto e c
 | `openspec/changes/archive/2026-11-21-pagina-processo-seletivo/prints/{lado-a-lado,raiz-nao-publicada}-*.png` | 9 | Ativo aprovado: 7 lado a lado do protótipo e do site e 2 prints da página em construção, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado); os 2 lado a lado da página, refeitos pelo líder técnico com o mesmo script depois da Q19. Aprovados pelo Gabriel na Q15 (a), 21/11/2026, Portão 2. O caminho é o do `openspec archive`, feito em 21/11/2026 |
 | `openspec/changes/archive/2026-11-22-pagina-sobre-e-equipe/prints/q3-opcao-{a,b,c}-{390,1280}.png` | 6 | Ativo aprovado: esboços estáticos da Q3, com o texto do `conteudo-institucional.md` §2.3 a §2.6, gerados pelo líder técnico com um script Playwright temporário, fora do repositório, com o método escrito no `relatorio.md` da change. Vistos e decididos pelo Gabriel no Portão 1 da `pagina-sobre-e-equipe` (Q3 (a), 22/11/2026) |
 | `openspec/changes/archive/2026-11-22-pagina-sobre-e-equipe/prints/{lado-a-lado,raiz-nao-publicada}-*.png` | 13 | Ativo aprovado: 11 lado a lado do protótipo e do site e 2 prints da página em construção, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q16 (a), 22/11/2026, Portão 2 |
+| `openspec/changes/archive/2026-11-23-pagina-projetos/prints/{lado-a-lado,raiz-nao-publicada}-*.png` | 9 | Ativo aprovado: 7 lado a lado do protótipo e do site e 2 prints da página em construção, tirados pelo `guardiao-visual` com o método escrito no `relatorio.md` da change (script temporário, não versionado). Aprovados pelo Gabriel na Q9 (a), 23/11/2026, antes do Portão 2 |
 
 Os 9 de `assets/` e `public/` entraram no commit `6636202` (F00, 21/08/2026). Origem confirmada
 pelo Gabriel no Portão 1 da `auditoria-de-base-appsec`, em 20/11/2026. Os 15 prints da
 `layout-e-hero` ficam na pasta da change até o `openspec archive`, que os leva para o caminho da
 tabela no mesmo diff. Os 9 prints da `pagina-processo-seletivo` seguem a mesma regra, e os 19 da
 `pagina-sobre-e-equipe` também: se o archive cair em outra data, o caminho das duas linhas muda no
-mesmo diff. Total: 79 arquivos.
+mesmo diff. Os 9 da `pagina-projetos` também. Total: 88 arquivos.

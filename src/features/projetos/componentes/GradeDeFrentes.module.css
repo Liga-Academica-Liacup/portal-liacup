@@ -1,0 +1,32 @@
+/* A grade das frentes. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo. */
+
+/* 0 28 px 80 px no protótipo; 28 px no degrau --space-6 (26,4 px). */
+.secao {
+  padding: 0 var(--space-6) var(--espaco-fim-da-secao-de-projetos);
+}
+
+/* Duas colunas e 22 px de vão no protótipo ([data-resp3]): o vão na soma de
+   --space-2 e --space-3 (22 px). Os itens esticam até a altura da linha, e os
+   cartões lado a lado ficam com a mesma altura. */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--space-2) + var(--space-3));
+  max-width: var(--largura-maxima-conteudo);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+/* Os cortes do protótipo: [data-resp3] continua em duas colunas até 1024 px
+   e passa a uma até 768 px; [data-pad]. */
+@media (max-width: 768px) {
+  .secao {
+    padding-inline: var(--space-4);
+  }
+
+  .grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

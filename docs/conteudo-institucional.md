@@ -84,6 +84,10 @@ Fontes desta versão, em ordem de autoridade:
 
 ## 3. Projetos — as quatro frentes de trabalho
 
+**Descrição da página Projetos para buscadores** _(decisão do Gabriel, 23/11/2026, Q3 da pagina-projetos)_:
+
+> Ensino, Extensão, Pesquisa e Secretaria: as quatro frentes de trabalho da Liga Acadêmica Multiprofissional de Cuidados Paliativos (LIACUP).
+
 Decisão D3: a página traz **quatro** frentes, como a liga pediu.
 
 > **Escolha de palavra, proposta pela coordenação.** Chamar de "frentes de trabalho" ou "áreas de atuação", e não de "eixos". O Estatuto (Art. 2º) e o formulário que os candidatos preenchem hoje dizem que a liga tem três eixos — ensino, pesquisa e extensão. Com "frentes de trabalho", a liga tem os quatro blocos que quer e o site não afirma nada que contradiga o estatuto. É a troca de uma palavra. Se preferir "eixos", uso "eixos".

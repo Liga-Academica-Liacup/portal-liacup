@@ -1,0 +1,38 @@
+/* O cartão de uma frente. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo.
+
+   Sobre --color-surface #ebddc5 (RP-09): nome --color-accent-800 #4e3260,
+   8,05:1, a 28 px (texto grande); texto --color-neutral-800 #474238, 7,45:1,
+   a 16 px. */
+
+/* 34 px 38 px 38 px no protótipo: 34 no degrau --space-8 (35,2 px); 38 na
+   soma de --space-8 e --space-1 (39,6 px). */
+.cartao {
+  padding: var(--space-8) calc(var(--space-8) + var(--space-1))
+    calc(var(--space-8) + var(--space-1));
+  border-radius: var(--radius-cartao-da-frente);
+  background: var(--color-surface);
+}
+
+/* 14 px abaixo no protótipo, no degrau --space-3 (13,2 px). */
+.nome {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-titulo-da-frente);
+  line-height: var(--line-height-titulo-da-frente);
+  color: var(--color-accent-800);
+}
+
+.texto {
+  max-width: var(--largura-texto-da-frente);
+  margin: 0;
+  font-size: var(--font-size-texto-da-frente);
+  color: var(--color-neutral-800);
+}
+
+/* O corte do protótipo: .pad-lg até 768 px, 22 px 20 px. 22 na soma de
+   --space-2 e --space-3 (22 px); 20 no mesmo degrau, a 2 px. */
+@media (max-width: 768px) {
+  .cartao {
+    padding: calc(var(--space-2) + var(--space-3));
+  }
+}
