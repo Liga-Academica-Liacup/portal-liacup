@@ -659,3 +659,58 @@ Destinos da tabela das ressalvas, conferidos: as 6 de código feitas (2.1, 5.1, 
 texto feitas (2.2, 6.1 e 6.2, com os `grep` da seção anterior do líder técnico); as de decisão
 decididas no Portão 1 (Q5 (a); Q7 (b), com o E-A2 escrito na linha da `lancamento-r1`; Q8 (a)); as
 15 fechadas com motivo; e as 2 da R2 sem mudança.
+
+## Decisões do Gabriel no Portão 2, 23/11/2026
+
+Registradas pelo líder técnico depois do archive e do commit `5fe16cd`, num commit à parte antes do
+merge, porque o critério do M1 do guardião pede este registro antes do merge. Texto literal da
+mensagem do Gabriel:
+
+> Decisões do Gabriel (registre literal no relatorio.md arquivado antes do commit, se ainda der; senão, na 1ª tarefa da pagina-projetos):
+> Q10 (a): as 5 ressalvas de código vão para a lancamento-r1.
+> Q11 (a), separada: os textos de docs/, da spec e do relatório entram na 1ª tarefa da pagina-projetos; o comentário do ci.yml vai com a Q10 para a lancamento-r1, para a pagina-projetos não mexer em CI.
+> Q12 (a).
+> Q13 (a): o Gabriel rodou openspec config set telemetry.enabled false na máquina dele.
+>
+> Passo 3 do bloco B feito: o ambiente chave-de-servico-da-main existe, com regra só main e o segredo SUPABASE_SERVICE_ROLE_KEY. Confira pela API e registre (M1). Depois eu abro o PR.
+
+**Destinos que as decisões fixam** (para a `lancamento-r1` e a 1ª tarefa da `pagina-projetos`):
+
+- `lancamento-r1` (Q10 (a) e a parte do `ci.yml` da Q11): a busca com chave no nome apontando a
+  linha errada (R1-3 do revisor); a verificação das ações sem ver `uses:` em mapa de várias linhas
+  (R1-4); o `validar-specs.mjs` sem conferir `failed = 0` nem exigir a 2.1.0 (R1-11); a porta fixa
+  3002 dos prints (R1-12); o `.lighthouseci/` fora do anexo de falha, sem `include-hidden-files`
+  (R1-7); e o comentário do `ci.yml:17` e `:219-220` que descreve a separação dos ambientes como
+  fato antes do passo 7 (R3-1, parte do `ci.yml`).
+- 1ª tarefa da `pagina-projetos` (Q11 (a)): o plano (`:113`) e a linha do A1 em "Saíram da lista"
+  da §6 (R3-1 e I3 do guardião); o cenário do UTF-16 da spec `fundacao-e-ci`, com o limite
+  declarado (R3-2); a frase das formas de sim ou não depois da sublista da Q8 (R3-4); a atribuição
+  "visto pelo Gabriel" do I3 na linha da Q12 (b) (I4 do guardião); junto com o registro do push
+  (Q9 (a)), do passo 7 e do anexo do build (I1).
+- Q12 (a): a justificativa de dependência nova mora na proposta da change; o RP-01 dos padrões e o
+  README se ajustam numa change futura.
+- Q13 (a): a telemetria do OpenSpec global desligada na máquina do Gabriel, pela configuração
+  documentada do pacote.
+
+## Líder técnico — M1 do guardião, antes do merge, 23/11/2026, 13:14 UTC
+
+Pela API pública do GitHub, sem autenticação, `curl -q -sS --max-time 20 --proto =https` sobre
+`https://api.github.com/repos/Liga-Academica-Liacup/portal-liacup` (R). O JSON reduzido aos campos
+do critério:
+
+```
+== GET R/environments/chave-de-servico-da-main · http 200
+{"name":"chave-de-servico-da-main","protection_rules":[{"type":"branch_policy"}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}
+== GET R/environments/chave-de-servico-da-main/deployment-branch-policies · http 200
+{"total_count":1,"branch_policies":[{"name":"main","type":"branch"}]}
+== GET R/deployments?environment=chave-de-servico-da-main · http 200
+implantações: 0 []
+== GET R/environments · http 200
+[{"name":"chave-de-servico-da-main","policy":{"protected_branches":false,"custom_branch_policies":true}},{"name":"Preview","policy":null},{"name":"Production","policy":null},{"name":"segredos-da-main","policy":{"protected_branches":false,"custom_branch_policies":true}}]
+```
+
+**O critério do M1 se cumpre:** `custom_branch_policies: true`, uma regra só `{name: "main", type:
+"branch"}`, nenhuma regra de revisor, e 0 implantações no ambiente antes do merge. O segredo
+`SUPABASE_SERVICE_ROLE_KEY` dentro dele não se lê pela API sem autenticação; a existência é a
+palavra do Gabriel, acima. O merge está liberado por este critério. Depois do push, as implantações
+desse ambiente devem mostrar só `ref: main` (1ª tarefa da `pagina-projetos`).
