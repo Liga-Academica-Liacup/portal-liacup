@@ -62,12 +62,15 @@ O motivo está na proposta, em "Why". O estado de hoje que molda a solução:
   Git (decisão do Gabriel no Portão 1):
   1. **Antes do merge:** criar o ambiente `segredos-da-main`, com a regra de branch só `main`, e
      pôr nele `SUPABASE_ACCESS_TOKEN` e `SUPABASE_SERVICE_ROLE_KEY`, com os valores tirados de novo
-     do Supabase, porque segredo do GitHub não se lê de volta. Os dois do nível do repositório
-     ficam no lugar.
+     do Supabase, porque segredo do GitHub não se lê de volta. O `SUPABASE_ACCESS_TOKEN` do
+     ambiente é um PAT **novo**, gerado nessa hora; a chave de serviço mantém o valor (decisão do
+     Gabriel no Portão 2, `SEGURANCA.md` §5). Os dois do nível do repositório ficam no lugar.
   2. O PR roda o job `Verificacoes` sem segredo, e o job com segredo aparece pulado.
   3. Merge. O push na `main` roda os dois jobs, e o job com segredo recebe os valores pelo
      ambiente.
-  4. **Só depois de esse push ficar verde:** apagar os dois segredos do nível do repositório.
+  4. **Só depois de esse push ficar verde:** apagar os dois segredos do nível do repositório e, em
+     seguida, revogar no Supabase o PAT antigo, depois de conferir em _Account › Access Tokens_
+     que ele não é o do login local da CLI (Q10 (a) do Portão 2).
   5. Conferir, pela página de execuções do GitHub, que nenhuma execução da `main` entre o merge e a
      remoção ficou vermelha, e que o job com segredo da execução do push mostra o ambiente.
 - **Por que essa ordem:** segredo de ambiente vence o de repositório com o mesmo nome, então, a

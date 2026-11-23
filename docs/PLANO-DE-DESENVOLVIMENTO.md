@@ -110,7 +110,7 @@ Conteúdo fixo, vindo do `conteudo-institucional.md`. Nenhum banco, nenhum formu
 | 3 | `endurecer-agentes-e-git-local` | Os 7 achados de configuração de agente e Git local da auditoria, e a regra 2 da dieta escrita na §5 do `SEGURANCA.md` e na spec |
 | 4 | `pagina-sobre-e-equipe` | Apresentação, história, objetivo, finalidade, impacto, docentes, fundadores e os seis cargos |
 | 5 | `ajustar-ci-ao-novo-fluxo` | O segredo do CI só no push para a `main`, num ambiente que só ela alcança (LB-02), permissões mínimas (LB-08), ações presas por sha com a verificação (LB-17) e a busca de segredo antes do push. O LB-09 foi para a `papeis-da-diretoria-no-banco`. Dividida no Portão 1 (Gabriel, 22/11/2026). A cobertura do e2e e do Lighthouse pela lista de páginas já entra na change 1 |
-| 6 | `completar-ci-do-novo-fluxo` | A prova do job com segredo no primeiro push para a `main`, que tira o LB-02 da §6; a validação do OpenSpec e os prints automáticos das páginas como anexo do CI; e as ressalvas da `endurecer-agentes-e-git-local` (A2 a A7 do guardião e as 7 da terceira rodada do revisor) |
+| 6 | `completar-ci-do-novo-fluxo` | As três condições de saída do LB-02 da §6: o job com segredo visto no primeiro push para a `main`, a confirmação escrita do Gabriel sobre os segredos e o PAT antigo revogado; a correção do resíduo A1 da `ajustar-ci-ao-novo-fluxo` (Q8 (b)) e as ressalvas baixas e informativas dela (Q9 (a), Gabriel, 22/11/2026); a validação do OpenSpec e os prints automáticos das páginas como anexo do CI; e as ressalvas da `endurecer-agentes-e-git-local` (A2 a A7 do guardião e as 7 da terceira rodada do revisor) |
 | 7 | `pagina-projetos` | As quatro frentes de trabalho |
 | 8 | `pagina-contato` | E-mail, Instagram e sede, sem formulário |
 | 9 | `inicio-completo` | Números, chamadas para as páginas que existem, bloco de contato e faixa do processo seletivo |
@@ -123,7 +123,7 @@ Ficam para depois, na página inicial: próximos eventos e notícias (R2) e cont
 
 | Change | O que entrega |
 |---|---|
-| `papeis-da-diretoria-no-banco` | **Antes de tudo na R2.** Os 10 achados de banco da auditoria, entre eles o LB-01: papel atribuído por administrador, recusa testada para conta comum. Até lá, cadastro público e login anônimo desligados em produção |
+| `papeis-da-diretoria-no-banco` | **Antes de tudo na R2.** A migração para as chaves novas do Supabase (`sb_publishable_` e `sb_secret_`), com as antigas desligadas, que invalida a chave de serviço exposta no CI (risco aceito pelo Gabriel na Q12 (b) da `ajustar-ci-ao-novo-fluxo`, 22/11/2026; antes, se o banco de produção passar a ter dado pessoal real). Os 10 achados de banco da auditoria, entre eles o LB-01: papel atribuído por administrador, recusa testada para conta comum. Até lá, cadastro público e login anônimo desligados em produção |
 | `leitura-de-noticias-e-eventos` | Leitura do Supabase com o esquema da F02, com dados inseridos por nós |
 | `pagina-noticias` | Lista, filtro por categoria e cartão com link externo |
 | `pagina-eventos` | Próximos e anteriores |

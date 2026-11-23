@@ -341,6 +341,168 @@ passo 3 (arquivo apagado) · codigo: 0
 - **Encaminhamento:** os 6 vão à seção 5 da entrega do Portão 2. O 1, o 2 e o 5 entram como
   pedido para a `completar-ci-do-novo-fluxo`, que já mexe na busca e na §5.
 
+### Rodada de texto, 22/11/2026 (invocação nova, contexto limpo, só o diff de `git diff 08ba82f`)
+
+- **Veredito:** aprovado com ressalva · 4 de 4 arquivos (111 linhas) · 3 decisões e 6 regras.
+  Nenhuma frase afrouxa regra. A linha do A1 traz os cinco elementos da §5. A lista da Q9 (12
+  itens) bate com os achados baixos e informativos abertos.
+- **Achados:**
+  1. baixa · `docs/SEGURANCA.md:519` e `:579`: a revogação do PAT antigo virou **condição de
+     saída** do LB-02, e as três condições são atribuídas à Q5 (b). O Gabriel decidiu a revogação
+     como passo depois do passo 4, e a Q5 (b) cobre só o job visto no push;
+  2. baixa · `docs/SEGURANCA.md:580`: o motivo do A1 corta a segunda metade do motivo literal ("e
+     a change seguinte já mexe no CI");
+  3. baixa · `docs/PLANO-DE-DESENVOLVIMENTO.md:113` ("tira o LB-02 da §6") e, fora do diff,
+     `tasks.md:122-127` (a 4.3 manda escrever "a correção está feita na configuração") e
+     `tasks.md:147-150` (o follow-up sem a revogação) divergem da §6 nova;
+  4. informativa · `SEGURANCA.md:579`: "a metade das dependências" generaliza; o A1 é a chave de
+     serviço depois do `Build`;
+  5. informativa · o caminho do aceite do A1 depende da data do archive, como o A6;
+  6. informativa · `relatorio.md`, guardião: "nenhum até aqui. A1 vai a ele como Q8." foi
+     substituído, e não complementado.
+- **Não conseguiu conferir:** a literalidade das aspas contra a mensagem do Gabriel, o diff inteiro
+  por comando, a seção 6 da entrega e se o PAT antigo é o mesmo do login local da CLI (se for, a
+  revogação quebra o `banco:tipos:check` na máquina do Gabriel).
+- **Pede correção:** sim, 1, 2 e 3. É o terceiro pedido de correção do `revisor` nesta change
+  (rodadas 1, 2 e esta). Pela regra 4 da dieta, o líder técnico parou, sem corrigir, e levou ao
+  Gabriel. O `guardiao-appsec` não rodou sobre a rodada de texto.
+
+### Decisões do Gabriel sobre Q10 e Q11, e a saída da Q7, 22/11/2026
+
+Registradas pelo líder técnico, com o texto literal da mensagem do Gabriel.
+
+> Decisões do Gabriel (registre literal no relatorio.md):
+> Q10 (a): a revogação do PAT antigo é condição de saída do LB-02, junto com as outras duas; a atribuição passa a "Q5 (b) e Portão 2". Antes de revogar, o Gabriel confere no Supabase (Account, Access Tokens) que o token do CI não é o do login local da CLI.
+> Q11 (a): autorizo a quarta passagem, só sobre o diff dos 3 achados de texto, com o revisor e o guardião. Se o revisor pedir correção de novo sobre esse texto, o achado vai declarado para a completar-ci-do-novo-fluxo, sem quinta passagem.
+>
+> Q7: o gestor leu o demonstracao-q7.sh, e o Gabriel rodou a partir do /tmp. Resultado, para o relatório:
+> - casos 1, 2 e 3: código 1, com o achado mascarado (48 caracteres) no commit e5... intermediário (a.txt:1), na mensagem do commit (linha 6) e no índice (b.txt:1). O leitor real foi visto falhando nos três caminhos que o RP-12 pedia.
+> - caso 4: código 1, por erro da demonstração, não da busca. O git rm -q --cached b.txt foi recusado ("staged content different from both the file and the HEAD"; faltou -f), então a chave ficou no índice e a busca a achou de novo, corretamente.
+> - o caminho limpo da busca real já está demonstrado no repositório (RP-12 0 → 1 → 0, e o commit wip com achados: 0). Não é preciso rodar de novo.
+> - pasta temporária apagada; a cópia do script em C:\Projetos foi removida pelo Gabriel.
+>
+> Depois: o archive e o Portão 2 final, com os comandos Git em blocos separados (a conferência do ambiente e a busca de segredo primeiro) e os passos do Gabriel no GitHub, na ordem, já com o PAT novo e a revogação.
+
+**RP-12 do leitor real (Q7), pelo Gabriel:** a busca foi vista falhando, com código 1 e o valor
+mascarado, nos três caminhos que só o leitor real alcança: chave num commit intermediário apagada
+no seguinte, chave na mensagem de commit e chave só no índice. O defeito do caso 4 é do script da
+demonstração (faltou `-f` no `git rm --cached`), escrito pelo líder técnico, e não da busca. O
+caminho limpo (código 0) fica provado pelo RP-12 da tarefa 4.2 e pela busca do commit wip.
+Conferido pelo líder técnico depois da mensagem: `git status --porcelain --untracked-files=all` só
+com os 4 arquivos da rodada de texto, sem cópia do script no repositório.
+
+### Revisor, quarta passagem, 22/11/2026 (invocação nova, só o diff dos 3 achados, Q11 (a))
+
+- **Veredito:** aprovado com ressalva · 4 arquivos, 73 linhas · as 3 correções conferem: a
+  conferência do token e a atribuição "Q10 (a)" e "Q5 (b) e Portão 2" na §5 e na §6; o motivo do
+  A1 igual ao literal da Q8 (b); o plano e o `tasks.md` com as três condições e a revogação.
+  Nenhuma frase afrouxa regra nem aceita risco no lugar do Gabriel.
+- **Achados, declarados para a `completar-ci-do-novo-fluxo` sem quinta passagem (Q11 (a)):**
+  1. baixa · `tasks.md:148-149`: o follow-up não traz "com a regra só `main`" da condição 2;
+  2. baixa · `design.md:202-204` (D8) ainda diz que a linha do LB-02 diz "a correção está feita
+     na configuração"; `proposal.md:77` repete, como registro do Portão 1;
+  3. informativa · `SEGURANCA.md:519`: "o token do CI" é ambíguo entre o PAT antigo e o novo, e
+     nenhum texto diz o que fazer se o antigo for o do login local (a decisão também não diz).
+
+### Guardião, passagem 2, 22/11/2026: levantamento sobre o diff de texto depois de `08ba82f`
+
+- **Veredito provisório:** APROVADO COM RESSALVAS · bloqueante 0 · alta 0 · média 1 · baixa 0 ·
+  informativa 4 · checklist inteiro sobre o diff (passo 1: `docs/SEGURANCA.md` e o plano estão no
+  gatilho). AS-01 sem achado nos 4 arquivos; AS-09 com A a E; AS-17 e os demais não se aplicam.
+  Confirmou que a linha nova do A1 na §6 traz achado, motivo, prazo, change e aceite do Gabriel, e
+  que a §5 nova bate com a §6 e o D1.
+- **Achados:**
+  - **A · AS-09 (com AS-01) · média · provável:** `SEGURANCA.md:515` e `:520`, `design.md:66-67`.
+    A chave de serviço teve a mesma exposição que o PAT (o passo dela vinha depois do `npm run
+    build` do PR, no mesmo job), mas "mantém o valor", e nenhuma condição do LB-02 nem linha da §6
+    registra isso. Critério: antes de o LB-02 sair, (a) uma quarta condição com valor novo da
+    chave no ambiente e o antigo invalidado no Supabase, ou (b) uma linha própria na §6 com o
+    aceite escrito do Gabriel. **Pede decisão do Gabriel (Q12).**
+  - B · informativa · a 1ª condição do LB-02 na §6 diz menos que o `tasks.md` e o D1 (os dois
+    jobs, o ambiente e nenhuma execução vermelha);
+  - C · informativa · a condição de saída do A1 não diz se o download de artefato é permitido,
+    vale só para "o job", não exige setup-node sem `cache` e não nomeia o `$GITHUB_ENV`;
+  - D · informativa · o texto não diz que a revogação acontece mesmo se o token for o do login
+    local;
+  - E · informativa · `design.md:202-204` (D8), `:242-244` e `tasks.md:64-65` com texto velho (o
+    mesmo do achado 2 da quarta passagem do revisor).
+- **Pedidos de comando** (Git Bash, `MSYS_NO_PATHCONV=1`, conferência código 0 antes), R = o
+  `relatorio.md` desta change, todos na forma `git grep -c -a --untracked -e '<texto>' -- 'R'`:
+  - P1 `'eyJ[A-Za-z0-9_-]\{10,\}\.eyJ[A-Za-z0-9_-]\{10,\}'` · P2 `'sb_secret_[A-Za-z0-9_-]\{10,\}'`
+    · P3 `'sbp_[A-Za-z0-9]\{20,\}'` · P4 `'github_pat_[A-Za-z0-9_]\{60,\}'` · P5
+    `'ghp_[A-Za-z0-9]\{30,\}'` · P6 `'-----BEGIN [A-Z ]*PRIVATE KEY-----'` · saída vazia ·
+    `[código de saída: 1]` nos 6;
+  - P7 `'Decisões do Gabriel no Portão 2'` · `…/relatorio.md:1` · `[código de saída: 0]`;
+  - P8 `'o build da Vercel já roda com as variáveis de produção'` · `…/relatorio.md:2` ·
+    `[código de saída: 0]`;
+  - P9 `'mantém o valor'` · `…/relatorio.md:1` · `[código de saída: 0]` (a ocorrência é a decisão
+    literal do Gabriel).
+- **Encaminhamento:** a decisão do guardião, numa invocação nova, fica para depois da Q12, junto
+  com o texto que ela pedir. B a E vão declarados para a `completar-ci-do-novo-fluxo`, como a Q9
+  (a).
+
+### Decisão do Gabriel sobre a Q12, 22/11/2026
+
+Registrada pelo líder técnico, com o texto literal da mensagem do Gabriel.
+
+> Q12 (b), decisão do Gabriel (registre literal no relatorio.md): a chave de serviço do CI é do formato antigo, em JWT (o .env local é eyJ..., conferido pelo gestor sem ler o valor). Trocá-la agora exigiria girar o segredo JWT do projeto, com efeito na chave anônima, na Vercel e no .env. Fica aceita por escrito, numa linha própria da §6:
+> - motivo: só quem tem escrita no repositório alcançava o passo (PR de fork não recebe segredo), e o banco está dormente na R1, sem página que o leia;
+> - prazo: R2, na papeis-da-diretoria-no-banco, que migra para as chaves novas do Supabase (sb_publishable_ e sb_secret_) e desliga as chaves antigas, o que invalida a chave exposta;
+> - condição: se o banco de produção passar a ter dado pessoal real antes disso, a troca vem antes.
+> O PAT segue como decidido na Q10: novo no ambiente e o antigo revogado.
+>
+> O revisor não roda de novo (Q11 (a)). O guardião decide numa invocação nova, sobre esse texto e as saídas de P1 a P9. Depois: o archive e o Portão 2 final, com os comandos Git em blocos separados (conferência do ambiente e busca de segredo primeiro) e os passos do Gabriel no GitHub, na ordem.
+
+- **Risco aceito pelo Gabriel:** A da passagem 2 do guardião · AS-09 com AS-01 · média · a chave
+  de serviço, em JWT, chegou a passos do CI que rodavam código de PR e mantém o valor · aceite
+  literal acima · motivo, prazo R2, change `papeis-da-diretoria-no-banco` e condição como no
+  aceite · 22/11/2026. Linha própria na §6, escrita pelo líder técnico.
+
+### Guardião, passagem 2, decisão, 22/11/2026 (invocação nova, só o texto depois de `08ba82f`)
+
+- **Veredito final:** **APROVADO COM RESSALVAS** · bloqueante 0 · alta 0 · média 1 (hipótese) ·
+  baixa 1 (hipótese) · informativa 3 · checklist inteiro sobre o diff (passo 1). AS-01 sem achado
+  no diff nem no `relatorio.md` (P1 a P6); AS-09 e AS-10 com os achados abaixo; os demais não se
+  aplicam.
+- **Achado A do levantamento:** respondido pelo aceite do Gabriel, Q12 (b). A linha nova da §6 tem
+  achado, motivo, prazo R2, change, ponteiro do aceite e a condição de troca antecipada; nenhum
+  aceite de agente; prazo R2 coerente com a §5 (não é bloqueante confirmado e explorável hoje: o
+  banco está sem contas e sem mensagens pela condição do LB-01, e a migração vem "antes de tudo na
+  R2"). LB-02, A1, a §5 nova, o D1 e o `tasks.md` concordam entre si.
+- **Achados (lista inteira), todos declarados, sem nova passagem:**
+  - **M1 · AS-01 com AS-09 · média · hipótese:** `SEGURANCA.md:584`. Desligar as chaves antigas
+    pode não invalidar o JWT exposto, se o segredo JWT legado continuar entre as chaves de
+    verificação; com a `sb_publishable_` no `apikey` e o JWT antigo no `Authorization`, o banco o
+    aceitaria como `service_role`. Critério: a condição de saída exige também o segredo JWT legado
+    revogado, com confirmação escrita do Gabriel no relatório da `papeis-da-diretoria-no-banco`;
+  - **B1 · AS-10 · baixa · hipótese:** invalidar a chave não apaga o que alguém tenha gravado com
+    ela (conta pela API de administração, notícia com link `javascript:`). Critério: antes de
+    qualquer change da R2 que leia o banco, contagem registrada de contas, linhas por tabela exposta
+    e objetos do armazenamento, igual à esperada;
+  - I1 · informativa · confirmado: o caminho do archive nas linhas 583 e 584 precisa ser o real
+    (conferido abaixo, depois do archive);
+  - I2 · informativa · confirmado: o cabeçalho da versão 3.1 não cita as duas linhas novas da §6
+    nem a troca do PAT;
+  - I3 · informativa · provável: o motivo da Q12 (b) diz "só quem tem escrita no repositório
+    alcançava o passo", mas o código de dependência também alcançava, sem escrita. O motivo é do
+    Gabriel; vai a ele na entrega, para registrar que viu.
+- **Pedidos de comando** (conferência código 0 antes), na forma `git grep -c -a --untracked -e
+  '<texto>' -- '<relatorio.md desta change>'`:
+  - P10 `'Decisão do Gabriel sobre a Q12'` · `…/relatorio.md:1` · `[código de saída: 0]`;
+  - P11 `'PR de fork não recebe segredo'` · `…/relatorio.md:1` · `[código de saída: 0]`;
+  - P12 `'passar a ter dado pessoal real'` · `…/relatorio.md:1` · `[código de saída: 0]`.
+- **Encaminhamento do líder técnico:** M1 e B1 entram como requisito da condição de saída para a
+  `papeis-da-diretoria-no-banco`, que é a change que tira a linha da §6; I1 conferido no archive; I2
+  declarado para a `completar-ci-do-novo-fluxo`; I3 vai ao Gabriel na entrega.
+
+### Tarefa 4.3, conferida pelo líder técnico, 22/11/2026
+
+`sed -n '/^## 6\./,/^### Saíram da lista/p' docs/SEGURANCA.md | grep -cE '^\| LB-(08|17) '` → 0 ·
+a mesma faixa com `'^\| LB-02 .*completar-ci-do-novo-fluxo'` → 1 · "Saíram da lista" com
+`'^\| LB-(08|17) .*ajustar-ci-ao-novo-fluxo'` → 2. Revisor: aprovado com ressalva (rodadas 1 a 3,
+de texto e quarta passagem). Guardião: APROVADO COM RESSALVAS nas duas passagens, nenhum BLOQUEADO
+aberto.
+
 ## guardiao-appsec
 
 O guardião não escreve: o líder técnico registra o relatório em uma tela por passagem, com a lista
@@ -412,7 +574,42 @@ ea165f8d65b6e75b540449e92b4886f43607fa02	refs/tags/v4.6.2     (actions/upload-ar
 - **Não verificado:** a configuração do GitHub (o ambiente, a regra só `main`, 2 segredos no
   ambiente, 0 no repositório e 0 na organização) e a primeira execução do job com segredo, que só
   existem depois do merge (Q5 (b)).
-- **Riscos aceitos pelo Gabriel:** nenhum até aqui. A1 vai a ele como Q8.
+- **Riscos aceitos pelo Gabriel:** o resíduo do A1, pela Q8 (b) abaixo · AS-09 · média · o
+  `Build` do job com segredo roda código de dependência antes do passo que recebe a chave de
+  serviço · aceite literal abaixo · motivo: o build da Vercel já roda com as variáveis de produção,
+  então o job do CI não abre exposição nova, e a change seguinte já mexe no CI · prazo R1 ·
+  `completar-ci-do-novo-fluxo` · 22/11/2026.
+
+### Decisões do Gabriel no Portão 2, 22/11/2026
+
+Registradas pelo líder técnico, com o texto literal da mensagem do Gabriel.
+
+> Commit wip enviado.
+>
+> Decisões do Gabriel (registre literal no relatorio.md):
+> Q8 (b): o resíduo A1 fica aceito por escrito, numa linha própria da §6, com prazo R1 e a correção na completar-ci-do-novo-fluxo. Motivo: o build da Vercel já roda com as variáveis de produção, então o job do CI não abre exposição nova; e a change seguinte já mexe no CI.
+> Q9 (a): as ressalvas baixas e informativas vão declaradas para a completar-ci-do-novo-fluxo.
+> Q7 (a): o Gabriel roda o demonstracao-q7.sh depois de o gestor ler o script. A saída vem na próxima mensagem.
+>
+> Ajuste nos passos do Gabriel no GitHub: no passo 1, o PAT do Supabase do ambiente é um token novo, gerado agora; depois do passo 4, o Gabriel revoga o antigo no Supabase. A chave de serviço mantém o valor. Atualize os passos e registre na §5.
+>
+> Faça a rodada de texto da Q8 e da Q9, com o revisor e o guardião só sobre esse diff, e espere a saída da Q7 para fechar o archive.
+
+Commit wip, feito pelo Gabriel: `08ba82f` na `chore/ajustar-ci-ao-novo-fluxo`, igual ao remoto;
+`git rev-list --all` com 111 linhas; conferência do ambiente com código 0. A rodada de texto parte
+dele.
+
+**As ressalvas que vão para a `completar-ci-do-novo-fluxo` (Q9 (a)),** além da correção do
+resíduo A1 (Q8 (b)) e da prova do push (Q5 (b)):
+
+- do guardião: A2 (`uses` em sequência em fluxo e ação local fora de `.github/actions/`), A3
+  (chave em UTF-16), A4 (prova de tag leve), A5 (0 segredos de organização na confirmação, e o
+  passo 5 do README), A6 (o caminho do archive na evidência do LB-08 e do LB-17);
+- do revisor, rodada 3: 1 (nome do arquivo e UTF-16 fora da busca, como limite ou correção),
+  2 (a mensagem da busca manda trocar a chave sempre), 3 e 4 (números velhos no relatório desta
+  change, já declarados), 5 (o inventário de `process.env` da §5 com a busca e o `spawnSync` do
+  teste), 6 (forma);
+- do revisor, rodada 1: 8 (a referência à §2 da `EQUIPE-DE-AGENTES.md`, que é a §7.1).
 
 ## Líder técnico — conferência de escopo
 

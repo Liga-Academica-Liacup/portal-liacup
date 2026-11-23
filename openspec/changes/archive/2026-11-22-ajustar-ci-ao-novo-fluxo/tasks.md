@@ -52,7 +52,7 @@ ajustar-ci-ao-novo-fluxo`.
         ser diferente de 0. Se algum sair 0 sem o segredo, é defeito, e a correção entra nesta
         tarefa, com a mesma prova depois dela;
       - `npm run verificar` com código 0.
-- [ ] 1.4 **Líder técnico:** o README (D8) e os passos do Gabriel no GitHub (D1). O líder técnico
+- [x] 1.4 **Líder técnico:** o README (D8) e os passos do Gabriel no GitHub (D1). O líder técnico
       escreve no README a seção do CI e, na "Configuração inicial", a configuração final: o
       ambiente `segredos-da-main` com a regra de branch só `main`, os 2 segredos nele e nenhum no
       nível do repositório. Ele prepara, para a entrega do Portão 2, os 5 passos do D1 na ordem,
@@ -119,12 +119,12 @@ ajustar-ci-ao-novo-fluxo`.
       - `git diff --exit-code main -- package-lock.json .claude src` com código 0;
       - o tempo "antes" no relatório, com a fonte (proposta, critério 6);
       - `git status --porcelain` só com arquivos do D11.
-- [ ] 4.3 **`revisor` e `guardiao-appsec`**, o guardião com o checklist inteiro, porque o diff toca
+- [x] 4.3 **`revisor` e `guardiao-appsec`**, o guardião com o checklist inteiro, porque o diff toca
       a lista do gatilho (`.github/`, `scripts/`, `package.json`, `CLAUDE.md`). Depois, o líder
       técnico passa LB-08 e LB-17 para "Saíram da lista". O LB-02 fica na §6 (Q5 (b)): a linha
-      dele passa a dizer que a correção está feita na configuração e espera a execução do push na
-      primeira tarefa da `completar-ci-do-novo-fluxo`, e a coluna "Change que resolve" aponta
-      essa change. Verificar:
+      dele passa a dizer que a correção é parcial na configuração, com o resíduo A1 numa linha
+      própria (Q8 (b) do Portão 2), e que ele sai só pelas três condições da primeira tarefa da
+      `completar-ci-do-novo-fluxo`; a coluna "Change que resolve" aponta essa change. Verificar:
       - o veredito de cada um no relatório, e nenhum BLOQUEADO aberto;
       - `git status` igual antes e depois das duas passagens;
       - `sed -n '/^## 6\./,/^### Saíram da lista/p' docs/SEGURANCA.md | grep -cE
@@ -146,5 +146,6 @@ ajustar-ci-ao-novo-fluxo`.
   pulado, e o tempo do PR (D9), na entrega do Portão 2.
 - Depois do merge, na primeira tarefa da `completar-ci-do-novo-fluxo` (Q5 (b)): a execução do push,
   com os dois jobs e o ambiente no job com segredo; a resposta do Gabriel com 2 segredos no
-  ambiente e 0 no repositório; nenhuma execução da `main` vermelha entre o merge e a remoção; o
-  tempo do push; e só então o LB-02 sai da §6.
+  ambiente e 0 no repositório e na organização; nenhuma execução da `main` vermelha entre o merge
+  e a remoção; o PAT antigo revogado, depois de o Gabriel conferir que não é o do login local da
+  CLI (Q10 (a) do Portão 2); o tempo do push; e só então o LB-02 sai da §6.
