@@ -413,4 +413,20 @@
   --tamanho-circulo-do-docente: 74px; /* protótipo: image-slot do cartão de docente */
   --font-size-nome-do-docente: 19px; /* protótipo: h3 do cartão de docente */
   --font-size-formacao-do-docente: 14px; /* protótipo: formação no cartão de docente */
+
+  /* ── Tokens da change pagina-projetos (R1, 23/11/2026) ─────────────────────
+     Nenhum token existente foi alterado. "Protótipo" é prototipo/Portal-LIACUP.html,
+     na página Projetos: o valor é o do estilo do elemento citado. A faixa do
+     topo usa os tokens da faixa da Equipe, que o protótipo escreve igual. Como
+     nas changes anteriores, onde o protótipo usa um preenchimento, margem ou
+     vão a 2 px ou menos de um degrau --space-* (ou de uma soma de dois), o
+     componente usa o degrau, e não um token novo. */
+  --espaco-fim-da-secao-de-projetos: 80px; /* protótipo: padding-bottom da seção dos cartões */
+  --radius-cartao-da-frente: calc(
+    var(--radius-lg) * 1.3
+  ); /* protótipo: border-radius do <article> de cada frente */
+  --font-size-titulo-da-frente: 28px; /* protótipo: h2 de cada frente */
+  --line-height-titulo-da-frente: 1.1; /* protótipo: h2 de cada frente */
+  --font-size-texto-da-frente: 16px; /* protótipo: parágrafo de cada frente */
+  --largura-texto-da-frente: 56ch; /* protótipo: max-width do parágrafo de cada frente */
 }

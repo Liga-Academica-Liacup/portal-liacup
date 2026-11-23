@@ -22,7 +22,8 @@ Ver `proposal.md`, seção Why. Estado lido na `main` `e31d49a` pelo especificad
 - A página sai da lista e dos dados; nenhum componente guarda texto.
 - Nada inventado nem marcado como rascunho na tela.
 - A produção continua igual.
-- O diff fica todo na lista de tela da `SEGURANCA.md` §5.
+- O diff fica todo na lista de tela da `SEGURANCA.md` §5, fora o `docs/SEGURANCA.md`, que entrou
+  pela Q7 (a) (ver D7).
 
 **Non-Goals:** ver "Fora de escopo" da proposta.
 
@@ -154,17 +155,23 @@ Nenhuma demonstração toca `src/proxy.ts`, que está no gatilho.
 **Não mudam:** `src/proxy.ts`, `src/app/layout.tsx`, `src/app/(site)/em-construcao/`,
 `src/componentes/layout/`, `src/features/` fora de `projetos/`, `tests/e2e/interruptor.spec.ts`,
 `playwright.config.ts`, `lighthouserc.json`, `scripts/`, `.github/`, `package.json`,
-`package-lock.json`, `docs/SEGURANCA.md`, `docs/PLANO-DE-DESENVOLVIMENTO.md`, `docs/PADROES-DE-CODIGO.md`
+`package-lock.json`, `docs/PLANO-DE-DESENVOLVIMENTO.md`, `docs/PADROES-DE-CODIGO.md`
 e `openspec/specs/`. Arquivo fora das listas acima é desvio, e vai nomeado na entrega.
 
 **Conferência proporcional do guardião** (`SEGURANCA.md` §5). Todo arquivo previsto está na lista
 de tela: `src/app/(site)/` sem `route.ts`, `src/features/`, `src/lib/utils/`, `src/estilos/`,
 `tests/e2e/`, `docs/REFERENCIA-VISUAL.md`, `docs/conteudo-institucional.md` e
 `openspec/changes/pagina-projetos/` (sem `ambiente-decidido.txt` e sem spec delta de spec do
-gatilho). Nenhum acrescenta `process.env` nem `NEXT_PUBLIC_`. A change é da R1. Pelo **passo 3**:
-AS-01, AS-02, AS-04, AS-07 e AS-15. Cuidado: `playwright.config.ts` e `lighthouserc.json` não estão
+gatilho). Nenhum acrescenta `process.env` nem `NEXT_PUBLIC_`. A change é da R1. Previsto no Portão 1:
+**passo 3**, AS-01, AS-02, AS-04, AS-07 e AS-15. **Depois da Q7 (a): passo 1**, checklist inteiro
+(nota abaixo). Cuidado: `playwright.config.ts` e `lighthouserc.json` não estão
 em nenhuma das duas listas; tocar um deles leva ao passo 4, o checklist inteiro. A Q1 (b) ou a Q4 (b)
 levam ao passo 1.
+
+**Depois da Q7 (a) (Gabriel, 23/11/2026):** o `docs/SEGURANCA.md` sai de "Não mudam" e entra no
+diff, escrito pelo líder técnico. Ele está na lista do gatilho: a conferência do guardião passa
+ao **passo 1**, checklist inteiro. Pela Q8 (a), a regra geral dos prints saiu, e no §7 ficam só a
+linha dos 9 PNG, o total e a versão 3.3.
 
 ### D8 — O P23
 

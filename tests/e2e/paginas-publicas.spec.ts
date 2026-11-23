@@ -579,21 +579,24 @@ test('o cabeçalho, o menu e o rodapé mostram só os destinos da lista, sem o q
 })
 
 /*
- * Spec navegacao-publica, cenário "Nesta entrega, a lista tem a Início, o
- * Sobre, a Equipe e o Processo seletivo" (pagina-sobre-e-equipe, D3 e D9,
- * item 2). Os testes acima comparam a moldura com a lista, e ficariam verdes
- * com uma lista que tivesse perdido o Sobre. Este confere a lista desta
+ * Spec navegacao-publica, cenário "O que a lista mostra nesta entrega"
+ * (pagina-projetos, D3 e D6, item 2). Os testes acima comparam a moldura com
+ * a lista, e ficariam verdes com uma lista que tivesse perdido o Sobre. Este
+ * confere a lista desta
  * entrega e o que a raiz mostra dela. Os rótulos são os da spec, e não texto
  * do conteudo-institucional.md.
  */
 const ENTREGA = {
-  enderecos: ['/', '/sobre', '/equipe', '/processo-seletivo'],
-  menu: ['Início', 'Sobre', 'Equipe'],
-  colunas: { Portal: ['Início', 'Sobre'], Conteúdo: ['Equipe'] } as Record<string, string[]>,
+  enderecos: ['/', '/sobre', '/projetos', '/equipe', '/processo-seletivo'],
+  menu: ['Início', 'Sobre', 'Projetos', 'Equipe'],
+  colunas: { Portal: ['Início', 'Sobre'], Conteúdo: ['Projetos', 'Equipe'] } as Record<
+    string,
+    string[]
+  >,
   destaque: { rotulo: 'Processo seletivo', endereco: '/processo-seletivo' },
 }
 
-test('nesta entrega, a lista tem Início, Sobre, Equipe e Processo seletivo, e a moldura os mostra na ordem do protótipo', async ({
+test('nesta entrega, a lista tem Início, Sobre, Projetos, Equipe e Processo seletivo, e a moldura os mostra na ordem do protótipo', async ({
   page,
 }, informacoes) => {
   const falhas: string[] = []

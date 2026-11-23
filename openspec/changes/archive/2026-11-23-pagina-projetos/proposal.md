@@ -121,9 +121,10 @@ protótipo não mostra a Secretaria com texto real.
 - O detalhamento das frentes pela liga, o painel e qualquer outra página.
 - Os cinco textos do passo 7 e o comentário do `ci.yml` (Q1).
 - Botão para Projetos no hero da inicial: chamadas para as páginas são da `inicio-completo`.
-- Mudar `docs/SEGURANCA.md`, `docs/PLANO-DE-DESENVOLVIMENTO.md`, qualquer spec do gatilho,
+- Mudar `docs/PLANO-DE-DESENVOLVIMENTO.md`, qualquer spec do gatilho,
   `.github/`, `scripts/`, `package*.json`, `src/proxy.ts`, `playwright.config.ts` ou
-  `lighthouserc.json`.
+  `lighthouserc.json`. O `docs/SEGURANCA.md` entrou depois, pela Q7 (a) e pela Q8 (a) do Gabriel:
+  só a linha de origem dos 9 prints no §7, o total e a versão 3.3.
 
 ## Capabilities
 
@@ -167,6 +168,6 @@ protótipo não mostra a Secretaria com texto real.
 | `docs/REFERENCIA-VISUAL.md` §7 | Os rótulos da faixa (e a frase, se a Q2 for (b)) | líder técnico, no Portão 1 |
 | `docs/conteudo-institucional.md` §3 | A descrição para buscadores, se a Q3 for (a) ou (c) | `especificador`, com autorização escrita do Gabriel, no Portão 1 |
 | `relatorio.md` desta change | A prova do push e a passagem para a `lancamento-r1` | líder técnico e `especificador` |
-| Guardião | Com a Q1 (a) e a Q4 (a), todo arquivo do diff está na lista de tela e nenhum acrescenta `process.env` nem `NEXT_PUBLIC_`: **passo 3, AS-01, AS-02, AS-04, AS-07 e AS-15** (`design.md`, D7) | `guardiao-appsec` |
+| Guardião | Previsto no Portão 1: passo 3 (AS-01, AS-02, AS-04, AS-07 e AS-15). **Depois da Q7 (a): passo 1, checklist inteiro**, porque o `docs/SEGURANCA.md` está na lista do gatilho (`design.md`, D7) | `guardiao-appsec` |
 | Produção | Nada muda: o interruptor leva `/projetos` à página em construção | — |
 | Prévias | A página, o destino no menu e no rodapé | — |

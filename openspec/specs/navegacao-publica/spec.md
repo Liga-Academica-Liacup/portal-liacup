@@ -169,7 +169,7 @@ com a última linha centralizada.
 - **WHEN** nenhuma página da lista pertence a uma coluna de destinos do rodapé
 - **THEN** essa coluna não aparece, nem o título dela
 - **AND** nesta entrega as duas colunas aparecem: "Portal", com "Início" e "Sobre", e "Conteúdo",
-  com "Equipe"
+  com "Projetos" e "Equipe", nessa ordem
 
 #### Scenario: A página atual nas colunas do rodapé
 
@@ -194,7 +194,7 @@ voltando ao verde.
   nenhum pedido a domínio externo, e todo link e botão do cabeçalho, do menu e do rodapé mede pelo
   menos 44 × 44 px
 - **AND** a saída de cada largura imprime `páginas verificadas: <n> de <n>`, com `<n>` igual ao
-  número de páginas da lista (4 nesta entrega), e quantos alvos mediu
+  número de páginas da lista (5 nesta entrega), e quantos alvos mediu
 
 #### Scenario: A página de produção não perde cobertura
 
@@ -222,19 +222,39 @@ voltando ao verde.
 - **AND** a saída diz quantas páginas mediu em cada modo, contadas no resultado da medição, e não
   na lista de endereços pedidos
 
-### Requirement: A lista única decide as páginas públicas, onde aparecem e em que ordem
+### Requirement: Lista sem marcador visível continua anunciada como lista
+
+Em toda página da lista, cada lista mostrada sem marcador visível (sem bolinha nem número
+desenhados pelo navegador), na moldura ou no conteúdo, SHALL continuar exposta ao leitor de tela
+como lista, com o número de itens, inclusive no navegador do iPhone, que deixa de anunciar essas
+listas quando nada o diz.
+
+#### Scenario: As listas da moldura e das páginas
+
+- **WHEN** os testes de ponta a ponta percorrem as páginas da lista com o site publicado
+- **THEN** toda lista sem marcador visível declara explicitamente o papel de lista
+- **AND** a saída imprime quantas listas conferiu em cada página
+
+#### Scenario: Uma lista perde o papel
+
+- **WHEN** uma lista sem marcador visível deixa de declarar o papel de lista
+- **THEN** o teste fica vermelho, nomeando a página e a lista
+
+### Requirement: A lista única decide as páginas públicas, a ordem delas e o lugar de cada uma
 
 O portal SHALL manter uma lista única das páginas públicas, com o endereço e o rótulo de cada uma e
 o lugar onde ela aparece. O menu, o rodapé, o botão de destaque do cabeçalho e os botões que levam a
 outras páginas SHALL mostrar só páginas que estão nessa lista, na ordem do menu do protótipo
 aprovado, e nenhum desses lugares SHALL precisar de alteração para uma página nova aparecer.
 
-#### Scenario: Nesta entrega, a lista tem a Início, o Sobre, a Equipe e o Processo seletivo
+#### Scenario: O que a lista mostra nesta entrega
 
 - **WHEN** alguém abre uma página da lista com o site publicado
-- **THEN** o menu mostra "Início", "Sobre" e "Equipe", nessa ordem, e nenhum outro destino
+- **THEN** a lista tem a Início, o Sobre, Projetos, a Equipe e o Processo seletivo
+- **AND** o menu mostra "Início", "Sobre", "Projetos" e "Equipe", nessa ordem, e nenhum outro
+  destino
 - **AND** a coluna "Portal" do rodapé mostra "Início" e "Sobre", e a coluna "Conteúdo" mostra
-  "Equipe"
+  "Projetos" e "Equipe", nessa ordem
 - **AND** o cabeçalho e o fim do menu lateral mostram o botão "Processo seletivo", que leva a
   `/processo-seletivo`
 - **AND** o hero da inicial mostra "Quero participar", que leva a `/processo-seletivo`, e "Conheça
@@ -254,21 +274,3 @@ aprovado, e nenhum desses lugares SHALL precisar de alteração para uma página
   publicado
 - **THEN** cada um leva a um endereço da lista, que responde 200
 - **AND** a saída imprime quantos links conferiu
-
-### Requirement: Lista sem marcador visível continua anunciada como lista
-
-Em toda página da lista, cada lista mostrada sem marcador visível (sem bolinha nem número
-desenhados pelo navegador), na moldura ou no conteúdo, SHALL continuar exposta ao leitor de tela
-como lista, com o número de itens, inclusive no navegador do iPhone, que deixa de anunciar essas
-listas quando nada o diz.
-
-#### Scenario: As listas da moldura e das páginas
-
-- **WHEN** os testes de ponta a ponta percorrem as páginas da lista com o site publicado
-- **THEN** toda lista sem marcador visível declara explicitamente o papel de lista
-- **AND** a saída imprime quantas listas conferiu em cada página
-
-#### Scenario: Uma lista perde o papel
-
-- **WHEN** uma lista sem marcador visível deixa de declarar o papel de lista
-- **THEN** o teste fica vermelho, nomeando a página e a lista
