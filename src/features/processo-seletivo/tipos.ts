@@ -49,6 +49,11 @@ export type PerguntaFrequente = {
   readonly resposta: string
 }
 
+/** A faixa do processo seletivo na página inicial: o rótulo do botão que leva a esta página. */
+export type ChamadaDaInicial = {
+  readonly rotuloDoBotao: string
+}
+
 export type ConteudoDoProcessoSeletivo = {
   readonly titulo: string
   readonly apresentacao: string
@@ -62,4 +67,6 @@ export type ConteudoDoProcessoSeletivo = {
   /** Os itens do quadro "Quem pode se inscrever", sem a nota de fonte (Q4 (a)). */
   readonly quemPodeSeInscrever: readonly string[]
   readonly perguntas: readonly PerguntaFrequente[]
+  /** O que a faixa da página inicial usa além do título e das inscrições (inicio-completo, D4). */
+  readonly chamadaDaInicial: ChamadaDaInicial
 }

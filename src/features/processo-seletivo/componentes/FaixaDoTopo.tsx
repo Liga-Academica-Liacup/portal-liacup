@@ -7,35 +7,17 @@
  * Todo texto chega por props, do conteudo.ts. O círculo lilás do canto é
  * decorativo e fica atrás do texto.
  *
- * O link do aviso abre o Instagram em nova aba, sem dar à página aberta acesso
- * a esta (noopener) nem o endereço de origem (noreferrer). O nome acessível
- * diz o destino e contém o texto visível, "@liacup.unb".
+ * O aviso, com o link do Instagram, é o AvisoComLink, o mesmo da faixa da
+ * página inicial; as cores e os estados do link ficam aqui.
  */
-import type { SituacaoDasInscricoes, TextoComLink } from '../tipos'
+import type { SituacaoDasInscricoes } from '../tipos'
+import { AvisoComLink } from './AvisoComLink'
 import estilos from './FaixaDoTopo.module.css'
 
 type PropsDaFaixaDoTopo = {
   titulo: string
   apresentacao: string
   inscricoes: SituacaoDasInscricoes
-}
-
-function Aviso({ aviso }: { aviso: TextoComLink }) {
-  return (
-    <p className={estilos.aviso}>
-      {aviso.antesDoLink}
-      <a
-        className={estilos.link}
-        href={aviso.endereco}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={aviso.nomeAcessivelDoLink}
-      >
-        {aviso.textoDoLink}
-      </a>
-      {aviso.depoisDoLink}
-    </p>
-  )
 }
 
 export function FaixaDoTopo({ titulo, apresentacao, inscricoes }: PropsDaFaixaDoTopo) {
@@ -50,7 +32,10 @@ export function FaixaDoTopo({ titulo, apresentacao, inscricoes }: PropsDaFaixaDo
         <p className={estilos.apresentacao}>{apresentacao}</p>
         {/* Hoje o único estado é 'fechado' (Q2 (a)). O estado aberto, quando
             entrar, acrescenta aqui os botões de inscrição e do edital. */}
-        <Aviso aviso={inscricoes.aviso} />
+        <AvisoComLink
+          aviso={inscricoes.aviso}
+          classes={{ paragrafo: estilos.aviso, link: estilos.link }}
+        />
       </div>
     </section>
   )

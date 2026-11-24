@@ -14,7 +14,7 @@
  */
 import estilos from './Botao.module.css'
 
-export type VarianteDoBotao = 'primario' | 'secundario' | 'fantasma' | 'icone'
+export type VarianteDoBotao = 'primario' | 'secundario' | 'fantasma' | 'icone' | 'claro'
 
 /** As variantes que um link com aparência de botão pode ter. */
 export type VarianteDoLinkBotao = Exclude<VarianteDoBotao, 'icone'>

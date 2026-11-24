@@ -14,6 +14,13 @@
  *   - "texto": o quadro é só texto, que se pode selecionar e copiar.
  * (REFERENCIA-VISUAL.md, seção 7, "links do Instagram e do e-mail".)
  *
+ * A apresentação diz como o quadro se desenha, também sem booleanas soltas
+ * (change inicio-completo, Q6 (a) do Gabriel, 23/11/2026):
+ *   - "solto", o padrão: sem fundo, como na página Contato, que não muda;
+ *   - "cartao": num cartão claro, com o círculo de 104 px, como no bloco de
+ *     contato da inicial. O link continua sendo o quadro inteiro: o cartão todo
+ *     abre o destino, e o foco contorna o cartão.
+ *
  * O nome acessível do link é o texto visível, na ordem: rótulo e dado. No
  * externo, termina dizendo que abre em nova aba.
  *
@@ -27,11 +34,15 @@ type Destino =
   | { variante: 'email'; endereco: string }
   | { variante: 'texto' }
 
+/** Como o quadro se desenha; ver o comentário do topo. */
+export type ApresentacaoDoQuadro = 'solto' | 'cartao'
+
 type PropsDoQuadroDeContato = Destino & {
   rotulo: string
   valor: string
   /** A imagem do círculo, decorativa. */
   children: ReactNode
+  apresentacao?: ApresentacaoDoQuadro
 }
 
 /** O aviso só para leitor de tela, no fim do nome do link externo. */
@@ -39,6 +50,9 @@ const AVISO_DE_NOVA_ABA = '(abre em nova aba)'
 
 export function QuadroDeContato(props: PropsDoQuadroDeContato) {
   const { rotulo, valor, children } = props
+  const apresentacao = props.apresentacao ?? 'solto'
+  /* No "solto", nenhuma classe a mais: a página Contato fica como está. */
+  const classeDaApresentacao = apresentacao === 'cartao' ? ` ${estilos.cartao}` : ''
 
   /* Os espaços entre os pedaços não aparecem (cada um é uma linha), mas
      separam as palavras no nome acessível: "Instagram @liacup.unb". */
@@ -63,7 +77,7 @@ export function QuadroDeContato(props: PropsDoQuadroDeContato) {
   if (props.variante === 'externo') {
     return (
       <a
-        className={`${estilos.quadro} ${estilos.link}`}
+        className={`${estilos.quadro} ${estilos.link}${classeDaApresentacao}`}
         href={props.endereco}
         target="_blank"
         rel="noopener noreferrer"
@@ -75,11 +89,14 @@ export function QuadroDeContato(props: PropsDoQuadroDeContato) {
 
   if (props.variante === 'email') {
     return (
-      <a className={`${estilos.quadro} ${estilos.link}`} href={`mailto:${props.endereco}`}>
+      <a
+        className={`${estilos.quadro} ${estilos.link}${classeDaApresentacao}`}
+        href={`mailto:${props.endereco}`}
+      >
         {conteudo}
       </a>
     )
   }
 
-  return <div className={estilos.quadro}>{conteudo}</div>
+  return <div className={`${estilos.quadro}${classeDaApresentacao}`}>{conteudo}</div>
 }

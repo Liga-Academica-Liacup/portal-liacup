@@ -9,13 +9,24 @@
 import Image from 'next/image'
 import { CONTATO_DA_LIGA } from './contato-da-liga'
 import figuras from './FigurasDeContato.module.css'
-import { QuadroDeContato } from './QuadroDeContato'
+import { QuadroDeContato, type ApresentacaoDoQuadro } from './QuadroDeContato'
 
-export function QuadroDoEmail() {
+type PropsDoQuadroDoEmail = {
+  /** "solto" na página Contato; "cartao" no bloco de contato da inicial. */
+  apresentacao?: ApresentacaoDoQuadro
+}
+
+export function QuadroDoEmail({ apresentacao = 'solto' }: PropsDoQuadroDoEmail) {
   const { rotulo, valor } = CONTATO_DA_LIGA.email
 
   return (
-    <QuadroDeContato variante="email" endereco={valor} rotulo={rotulo} valor={valor}>
+    <QuadroDeContato
+      apresentacao={apresentacao}
+      variante="email"
+      endereco={valor}
+      rotulo={rotulo}
+      valor={valor}
+    >
       <span className={figuras.circuloDoEmail}>
         <Image
           src="/icone-email-gmail.png"

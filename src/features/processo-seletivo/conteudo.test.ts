@@ -47,6 +47,11 @@ describe('conteúdo do processo seletivo', () => {
     expect(conteudo.inscricoes.estado).toBe('fechado')
   })
 
+  it('tem o rótulo do botão da faixa da inicial, sem estar vazio (inicio-completo, Q3 (a))', () => {
+    const rotulo = conteudo.chamadaDaInicial.rotuloDoBotao
+    expect(rotulo.trim(), 'rótulo do botão da faixa da inicial vazio').not.toBe('')
+  })
+
   it('acusa pergunta sem resposta, nomeando a pergunta', () => {
     const perguntas = conteudo.perguntas.map((item, indice) =>
       indice === 2 ? { ...item, resposta: ' ' } : item

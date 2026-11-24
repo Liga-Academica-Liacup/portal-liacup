@@ -21,4 +21,13 @@ import type { ConteudoDoContato } from './tipos'
 
 export const CONTEUDO_DO_CONTATO: ConteudoDoContato = {
   topo: { sobretitulo: 'Contato', titulo: 'Fale com a Liga' },
+  /*
+   * O topo do bloco de contato da página inicial (change inicio-completo):
+   * sobretítulo "Contato" e título "Onde a Liga responde", rótulos de
+   * interface registrados na REFERENCIA-VISUAL.md, seção 7, linha "Inicial,
+   * bloco de contato". Sem a frase do protótipo, que não está no
+   * docs/conteudo-institucional.md, e sem o botão "Mandar uma mensagem", que é
+   * da R4 (Q4 (a) e Q5 (a) do Gabriel, 23/11/2026).
+   */
+  blocoDaInicial: { sobretitulo: 'Contato', titulo: 'Onde a Liga responde' },
 }

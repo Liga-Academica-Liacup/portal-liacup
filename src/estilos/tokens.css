@@ -452,4 +452,50 @@
   --largura-borboleta-de-contato: 44px; /* protótipo: <svg width="44"> no círculo da borboleta */
   --font-size-valor-de-contato: 16px; /* protótipo: valor de cada canal */
   --tamanho-icone-do-email: 52px; /* esboço: o "M" do Gmail com 49,5 px, 96% da largura da imagem; aprovado pelo Gabriel na Q5 (a) da pagina-contato, 23/11/2026 */
+
+  /* ── Tokens da change inicio-completo (R1, 23/11/2026) ─────────────────────
+     Nenhum token existente foi alterado. "Protótipo" é prototipo/Portal-LIACUP.html,
+     na página Início: o valor é o do estilo do elemento citado. Como nas changes
+     anteriores, onde o protótipo usa um preenchimento, margem ou vão a 2 px ou
+     menos de um degrau --space-* (ou de uma soma de dois), o componente usa o
+     degrau, e não um token novo. */
+
+  /* Números da liga (protótipo: <div class="g-2up" data-resp4> dentro da seção do hero) */
+  --colunas-dos-numeros: repeat(
+    4,
+    minmax(0, 1fr)
+  ); /* protótipo: grid-template-columns da grade dos números */
+  --colunas-dos-numeros-estreito: repeat(
+    2,
+    minmax(0, 1fr)
+  ); /* protótipo: [data-resp4] até 1024 px e .g-2up até 768 px */
+  --font-size-numero-da-liga: 34px; /* protótipo: número de cada cartão */
+  --line-height-numero-da-liga: 1; /* protótipo: número de cada cartão */
+  --font-size-rotulo-do-numero: 13.5px; /* protótipo: rótulo de cada cartão */
+
+  /* Bloco de contato da inicial (protótipo: <section> de superfície com "Onde a Liga responde") */
+  --colunas-do-contato-da-inicial: minmax(0, 1fr) minmax(0, 1fr); /* protótipo: grid-template-columns da grade [data-resp] */
+  --tamanho-circulo-de-contato-no-cartao: 104px; /* protótipo: image-slot de cada canal da inicial */
+  --font-size-valor-de-contato-no-cartao: 17px; /* protótipo: valor de cada canal da inicial */
+
+  /* Faixa do processo seletivo da inicial (protótipo: <div class="cta-box" data-resp>) */
+  --radius-cartao-da-faixa: calc(var(--radius-lg) * 1.4); /* protótipo: border-radius do .cta-box */
+  --padding-cartao-da-faixa-x: 56px; /* protótipo: padding do .cta-box, 52 px 56 px */
+  --colunas-do-cartao-da-faixa: minmax(0, 1fr) auto; /* protótipo: grid-template-columns do .cta-box */
+  --tamanho-circulo-do-cartao-da-faixa: 280px; /* protótipo: círculo decorativo do .cta-box */
+  --circulo-do-cartao-da-faixa-direita: -70px; /* protótipo: círculo decorativo do .cta-box, right */
+  --circulo-do-cartao-da-faixa-baixo: -90px; /* protótipo: círculo decorativo do .cta-box, bottom */
+  --color-circulo-do-cartao-da-faixa: color-mix(
+    in srgb,
+    var(--color-accent-800) 35%,
+    transparent
+  ); /* protótipo: rgba(78, 50, 96, 0.35), o círculo decorativo do .cta-box */
+  --font-size-titulo-do-cartao-da-faixa: clamp(
+    30px,
+    3.6vw,
+    44px
+  ); /* protótipo: h2 do .cta-box (.t-h2) */
+  --line-height-titulo-do-cartao-da-faixa: 1.06; /* protótipo: h2 do .cta-box */
+  --font-size-texto-do-cartao-da-faixa: 16px; /* protótipo: parágrafo e botão do .cta-box */
+  --largura-texto-do-cartao-da-faixa: 52ch; /* protótipo: parágrafo do .cta-box */
 }

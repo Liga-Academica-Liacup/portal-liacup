@@ -116,3 +116,68 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* ── Apresentação "cartao" (change inicio-completo, Q6 (a) do Gabriel) ───────
+   O quadro num cartão claro, como cada canal do bloco de contato da inicial
+   do protótipo. Só regras acrescentadas: o "solto", da página Contato, não
+   ganha nem perde nada.
+
+   Protótipo: grid-template-columns 104px 1fr, gap 20 px, fundo --color-bg,
+   --radius-lg, padding 18 px 22 px. O gap (20 px) fica na soma de --space-1 e
+   --space-4 (22 px); o padding, em --space-4 (17,6 px) e na soma de --space-2 e
+   --space-3 (22 px).
+
+   Contraste (RP-09): o fundo do cartão é o mesmo --color-bg #f5ead8 da página
+   Contato, e o hover e o pressionado põem por cima os mesmos fundos do
+   "solto". Por isso os pares são os do topo deste arquivo: repouso, rótulo
+   5,53:1 e dado 9,05:1; hover, sobre #ecddd4, 4,97:1 e 8,14:1; pressionado,
+   sobre #e5d3d1, 4,57:1 e 7,48:1. O anel de foco --color-accent-700 fica fora
+   do cartão, sobre a superfície --color-surface #ebddc5 da seção: 6,15:1. */
+.cartao {
+  grid-template-columns: var(--tamanho-circulo-de-contato-no-cartao) minmax(0, 1fr);
+  gap: calc(var(--space-1) + var(--space-4));
+  padding: var(--space-4) calc(var(--space-2) + var(--space-3));
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+/* O link é o cartão inteiro, na largura da coluna, e não só a do conteúdo. A
+   camada de cobertura (.link::after) cobre o cartão todo, preenchimento e
+   cantos incluídos, e o anel de foco segue o raio do cartão. */
+.link.cartao {
+  width: auto;
+  max-width: none;
+  padding-inline-end: calc(var(--space-2) + var(--space-3));
+  border-radius: var(--radius-lg);
+}
+
+/* Hover e pressionado: os fundos do "solto" por cima do fundo claro do cartão,
+   e não no lugar dele (senão o cartão ficaria da cor da superfície). */
+@media (hover: hover) {
+  .link.cartao:hover {
+    background: linear-gradient(
+        var(--color-fundo-hover-fantasma),
+        var(--color-fundo-hover-fantasma)
+      )
+      var(--color-bg);
+  }
+}
+
+.link.cartao:active {
+  background: linear-gradient(
+      var(--color-fundo-pressionado-fantasma),
+      var(--color-fundo-pressionado-fantasma)
+    )
+    var(--color-bg);
+}
+
+/* Protótipo: o círculo de 104 px. */
+.cartao .figura {
+  width: var(--tamanho-circulo-de-contato-no-cartao);
+  height: var(--tamanho-circulo-de-contato-no-cartao);
+}
+
+/* Protótipo: o dado com 17 px no cartão da inicial (16 px na página Contato). */
+.cartao .valor {
+  font-size: var(--font-size-valor-de-contato-no-cartao);
+}
