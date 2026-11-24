@@ -102,6 +102,9 @@ describe('Botao', () => {
     ['secundario', 'natural'],
     ['fantasma', 'natural'],
     ['primario', 'total'],
+    // A variante "claro" (Q9 (a) e Q10 (a) da inicio-completo).
+    ['claro', 'natural'],
+    ['claro', 'total'],
   ] as const)(
     'botao e link da variante %s, largura %s, tem as mesmas classes',
     (variante, largura) => {
@@ -119,6 +122,27 @@ describe('Botao', () => {
       const link = screen.getByRole('link', { name: 'Link' })
       expect(link.className).toBe(botao.className)
       expect(link.className).toContain(variante)
+    }
+  )
+
+  /* A variante "claro" (Q9 (a) da inicio-completo): além das mesmas classes do
+     Botao, conferidas acima, o link tem a classe base, a da variante e a da
+     largura, e nenhuma das outras variantes. */
+  it.each(['natural', 'total'] as const)(
+    'o link da variante claro, largura %s, tem as classes do contrato',
+    (largura) => {
+      render(
+        <a href="/destino" className={aparenciaDeBotao('claro', largura)}>
+          Link
+        </a>
+      )
+      const link = screen.getByRole('link', { name: 'Link' })
+      expect(link.className).toContain('botao')
+      expect(link.className).toContain('claro')
+      for (const outra of ['primario', 'secundario', 'fantasma', 'icone']) {
+        expect(link.className).not.toContain(outra)
+      }
+      expect(link.className.includes('larguraTotal')).toBe(largura === 'total')
     }
   )
 

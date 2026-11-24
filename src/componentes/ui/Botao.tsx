@@ -35,7 +35,7 @@ type PropsComuns = {
  * compila (FR-002).
  */
 type PropsDoBotao =
-  | (PropsComuns & { variante?: 'primario' | 'secundario' | 'fantasma' })
+  | (PropsComuns & { variante?: 'primario' | 'secundario' | 'fantasma' | 'claro' })
   | (PropsComuns & { variante: 'icone'; 'aria-label': string })
 
 export function Botao({ children, larguraTotal = false, type = 'button', ...resto }: PropsDoBotao) {

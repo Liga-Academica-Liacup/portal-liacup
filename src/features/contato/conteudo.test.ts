@@ -32,3 +32,33 @@ describe('conteúdo de Contato', () => {
     process.stdout.write(`contato · topo: ${rotulosConferidos} rótulos\n`)
   })
 })
+
+/*
+ * Confere o topo do bloco de contato da inicial (change inicio-completo, D5):
+ * o sobretítulo e o título, não vazios, sem travessão, e sem a frase nem o
+ * botão do protótipo (Q4 (a) e Q5 (a) do Gabriel, 23/11/2026).
+ */
+let rotulosDaInicialConferidos = 0
+
+/** O que o protótipo traz no bloco e não vai ao ar. */
+const FORA_DO_BLOCO_DA_INICIAL = ['canal mais rápido', 'Mandar uma mensagem', '—']
+
+describe('conteúdo do bloco de contato da inicial', () => {
+  it('o bloco tem o sobretítulo e o título, não vazios, sem travessão, frase nem botão', () => {
+    const rotulos = Object.entries(CONTEUDO_DO_CONTATO.blocoDaInicial)
+    const vazios = rotulos.filter(([, texto]) => texto.trim() === '').map(([nome]) => nome)
+    const proibidos = rotulos.flatMap(([nome, texto]) =>
+      FORA_DO_BLOCO_DA_INICIAL.filter((termo) => texto.includes(termo)).map(
+        (termo) => `${nome}: "${termo}"`
+      )
+    )
+    rotulosDaInicialConferidos = rotulos.length - vazios.length
+    expect(vazios, 'rótulos vazios no bloco da inicial').toEqual([])
+    expect(proibidos, 'termos proibidos no bloco da inicial').toEqual([])
+    expect(rotulos.map(([nome]) => nome)).toEqual(['sobretitulo', 'titulo'])
+  })
+
+  afterAll(() => {
+    process.stdout.write(`contato · bloco da inicial: ${rotulosDaInicialConferidos} rótulos\n`)
+  })
+})

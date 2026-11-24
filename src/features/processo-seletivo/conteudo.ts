@@ -25,6 +25,10 @@
  *   - títulos e sobretítulos das seções: rótulos do protótipo, com
  *     "Cronograma" trocado por "Etapas" (REFERENCIA-VISUAL.md, seção 7; Q3 (a));
  *   - nome acessível do link: o mesmo rótulo do link do Instagram no rodapé.
+ *   - rótulo do botão da faixa da página inicial: "Quero participar", o do
+ *     botão do hero, na REFERENCIA-VISUAL.md, seção 7 (Q3 (a) do Gabriel na
+ *     change inicio-completo, 23/11/2026). A faixa lê o título e as
+ *     inscrições deste mesmo objeto, para nunca contradizer esta página.
  *
  * Quem confere este arquivo é o `conteudo.test.ts`: pergunta sem resposta,
  * item vazio, número de itens diferente de quatro ou de etapas diferente de
@@ -53,6 +57,7 @@ export const CONTEUDO_DO_PROCESSO_SELETIVO: ConteudoDoProcessoSeletivo = {
     requisitos: { sobretitulo: 'Requisitos', titulo: 'Quem pode se inscrever' },
     perguntas: { sobretitulo: 'FAQ', titulo: 'Perguntas que sempre chegam' },
   },
+  chamadaDaInicial: { rotuloDoBotao: 'Quero participar' },
   etapas: [
     { nome: 'Inscrição por formulário', carater: 'Etapa eliminatória.' },
     { nome: 'Análise do produto', carater: 'Etapa eliminatória.' },

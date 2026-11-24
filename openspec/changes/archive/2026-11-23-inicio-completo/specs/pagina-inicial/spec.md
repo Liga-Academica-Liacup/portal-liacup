@@ -91,6 +91,56 @@ sem nenhum texto de exemplo do protótipo.
 - **AND** cada um mostra os estados de repouso, hover, pressionado e foco, e mede pelo menos 44 ×
   44 px
 
+### Requirement: O botão, o selo e o link da faixa se destacam do cartão
+
+O botão da faixa SHALL ter fundo diferente do fundo do cartão. O texto do botão, do selo "Inscrições
+fechadas" e do link do aviso SHALL medir pelo menos 4,5:1 contra a superfície em que está, e a borda
+do botão e o contorno de foco SHALL medir pelo menos 3:1 contra o cartão, em cada estado, no pior
+ponto, inclusive sobre o círculo decorativo.
+
+#### Scenario: O botão em cada estado
+
+- **WHEN** o botão da faixa é medido em repouso, hover, pressionado e foco, nas sete larguras
+- **THEN** o texto dele atinge pelo menos 4,5:1 contra o fundo do próprio botão
+- **AND** o fundo do botão atinge pelo menos 3:1 contra o cartão e contra o círculo decorativo, no
+  ponto em que a diferença é menor
+- **AND** o fundo do botão em repouso não é a cor do cartão
+
+#### Scenario: O foco visível sobre o cartão
+
+- **WHEN** o botão ou o link do aviso recebe foco pelo teclado
+- **THEN** o contorno de foco atinge pelo menos 3:1 contra o cartão e contra o círculo decorativo
+
+#### Scenario: O anel de foco da faixa é o creme do fundo da página
+
+- **WHEN** alguém percorre a faixa com Tab e o link do aviso e o botão recebem foco, um de cada vez
+- **THEN** cada um mostra o contorno de foco na cor creme do fundo da página, `--color-bg`
+  `#f5ead8`, e não na cor do contorno de foco do resto do site, `--color-accent-700` `#683f74`
+- **AND** o contorno mede 4,84:1 contra o cartão `#82558f`, e o registro nomeia as duas cores e a
+  superfície
+
+#### Scenario: O selo e o link do aviso
+
+- **WHEN** o selo e o link do aviso são medidos, o link em repouso, hover e pressionado
+- **THEN** o texto do selo atinge pelo menos 4,5:1 contra o fundo do selo
+- **AND** o texto do link atinge pelo menos 4,5:1 contra o que estiver atrás dele, cartão, círculo
+  ou fundo do estado
+- **AND** o registro de cada medida nomeia as duas cores e a superfície
+
+### Requirement: O botão da faixa segue o contrato único do botão do site
+
+O botão da faixa SHALL usar uma aparência própria do contrato único de botão do site, para fundo
+escuro, com os estados de repouso, hover, pressionado e foco. Essa aparência SHALL ser a mesma num
+botão e num link que parece botão, como as outras aparências do contrato, e as outras aparências e
+as telas que já as usam SHALL continuar como estão.
+
+#### Scenario: O contrato cobre a aparência nova
+
+- **WHEN** as verificações de unidade do botão rodam
+- **THEN** um botão e um link com aparência de botão, na aparência nova, em largura natural e em
+  largura total, saem com a mesma aparência, como já se confere para as outras aparências
+- **AND** nenhuma conferência que já existia nessas verificações foi alterada nem removida
+
 ### Requirement: A inicial termina no bloco de contato com o Instagram e o e-mail
 
 Com o site publicado, a raiz SHALL mostrar, depois da faixa e antes do rodapé, o bloco de contato:
@@ -132,8 +182,18 @@ num cartão clicável em toda a área, sem frase, sem botão e sem dado errado d
 
 #### Scenario: A página Contato não muda
 
-- **WHEN** `/contato` é aberta em 390 e 1280 px com o site publicado, depois desta entrega
-- **THEN** a tela é a mesma de antes, pixel a pixel
+- **WHEN** `/contato` é aberta em 390 e 1280 px com o site publicado, depois desta entrega, e
+  capturada como na entrega da página Contato
+- **THEN** a captura é idêntica, pixel a pixel e no tamanho, à captura de `/contato` guardada no
+  registro arquivado daquela entrega, na mesma largura
+
+#### Scenario: As verificações da página Contato continuam as mesmas
+
+- **WHEN** as verificações de ponta a ponta e de unidade da página Contato rodam depois desta
+  entrega
+- **THEN** todas passam
+- **AND** nenhuma conferência que já existia foi alterada nem removida: só há conferências
+  acrescentadas
 
 ### Requirement: A inicial não mostra os blocos que a R1 não tem para mostrar
 

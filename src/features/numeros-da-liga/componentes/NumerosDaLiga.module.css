@@ -1,0 +1,78 @@
+/* Os números da liga. Nenhum valor escrito à mão: tudo vem de
+   src/estilos/tokens.css, com a origem de cada token no protótipo (página
+   Início, a grade <div class="g-2up" data-resp4> no fim da seção do hero).
+
+   Contraste (RP-09), sobre o fundo do cartão --color-surface #ebddc5, pela
+   fórmula do WCAG 2.x: número --color-accent-800 #4e3260, 8,04:1; rótulo
+   --color-neutral-700 #645c50, 4,91:1 (o texto secundário da
+   REFERENCIA-VISUAL.md, seção 3, como no protótipo). */
+
+/* Protótipo: a grade fica dentro da seção do hero, com margin-top 56 px e
+   padding-bottom 56 px. Aqui a seção é própria: o vão de cima é o fim do hero
+   (--espaco-secao, 56 px), e o de baixo, o mesmo token. Laterais iguais às do
+   hero (28 px no degrau --space-6). */
+.secao {
+  padding: 0 var(--space-6) var(--espaco-secao);
+}
+
+/* Protótipo: max-width 1200 px, 4 colunas, gap 18 px (no degrau --space-4,
+   17,6 px). */
+.grade {
+  display: grid;
+  grid-template-columns: var(--colunas-dos-numeros);
+  gap: var(--space-4);
+  max-width: var(--largura-maxima-conteudo);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+/* Protótipo: fundo --color-surface, --radius-lg, padding 22 px 24 px (os dois
+   na soma de --space-2 e --space-3, 22 px). */
+.cartao {
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--space-2) + var(--space-3));
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+/* Protótipo: Caprasimo, 34 px, line-height 1, --color-accent-800. */
+.valor {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--font-size-numero-da-liga);
+  line-height: var(--line-height-numero-da-liga);
+  color: var(--color-accent-800);
+}
+
+/* Protótipo: 13,5 px, --color-neutral-700, 8 px acima (no degrau --space-2,
+   8,8 px). */
+.rotulo {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-rotulo-do-numero);
+  color: var(--color-neutral-700);
+}
+
+/* Os cortes do protótipo: [data-resp4] passa a duas colunas até 1024 px; até
+   768 px, o .g-2up mantém as duas colunas (vence o [data-resp4] de uma
+   coluna), com gap 16 px (no degrau --space-4); até 480 px, gap 12 px (no
+   degrau --space-3, 13,2 px). [data-pad] até 768 px: 20 px de lado, e 18 px
+   até 480 px, os dois no degrau --space-4, como no hero. */
+@media (max-width: 1024px) {
+  .grade {
+    grid-template-columns: var(--colunas-dos-numeros-estreito);
+  }
+}
+
+@media (max-width: 768px) {
+  .secao {
+    padding-inline: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .grade {
+    gap: var(--space-3);
+  }
+}

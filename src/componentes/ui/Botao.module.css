@@ -116,3 +116,35 @@
   width: 100%;
   margin-top: var(--space-2);
 }
+
+/* Variante "claro": o botão creme para fundo escuro, como o botão do cartão da
+   faixa do processo seletivo da inicial no protótipo (fundo --color-bg, texto
+   --color-accent-800). Q9 (a) do Gabriel, change inicio-completo, 23/11/2026.
+   O protótipo não tem hover nem pressionado próprios para esse botão: os dois
+   escurecem o fundo um degrau da rampa cada.
+
+   Texto --color-accent-800 #4e3260 sobre o fundo de cada estado: repouso
+   --color-bg #f5ead8, 9,05:1; hover --color-accent-200 #eee0f4, 8,51:1;
+   pressionado --color-accent-300 #dcc5e8, 6,76:1. Contra o cartão
+   --color-accent-600 #82558f, o fundo do botão mede 4,84:1, 4,55:1 e 3,61:1
+   (mínimo de 3:1 para elemento de interface).
+
+   O anel de foco não muda aqui: o do site é --color-accent-700, que some sobre
+   fundo escuro (1,42:1 sobre --color-accent-600). Quem usa esta variante
+   sobre fundo escuro troca a cor do anel no próprio bloco, como a faixa da
+   inicial faz (anel em --color-bg). */
+.claro {
+  background: var(--color-bg);
+  color: var(--color-accent-800);
+}
+
+@media (hover: hover) {
+  .claro:not(:disabled):hover {
+    background: var(--color-accent-200);
+    color: var(--color-accent-800);
+  }
+}
+
+.claro:not(:disabled):active {
+  background: var(--color-accent-300);
+}

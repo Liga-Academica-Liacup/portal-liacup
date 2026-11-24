@@ -15,4 +15,12 @@ export type ConteudoDoContato = {
     readonly sobretitulo: string
     readonly titulo: string
   }
+  /**
+   * O sobretítulo e o título do bloco de contato da página inicial, rótulos de
+   * interface, sem frase e sem botão (Q4 (a) e Q5 (a) da inicio-completo).
+   */
+  readonly blocoDaInicial: {
+    readonly sobretitulo: string
+    readonly titulo: string
+  }
 }

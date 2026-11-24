@@ -109,3 +109,43 @@ describe('bloco de contato', () => {
     )
   })
 })
+
+/*
+ * A apresentação "cartao" (change inicio-completo, design.md, D5; Q6 (a) do
+ * Gabriel): a inicial usa os mesmos quadros, num cartão, e a página Contato,
+ * sem o argumento, continua no "solto", sem a classe do cartão.
+ */
+let quadrosEmCartao = 0
+
+describe('bloco de contato, apresentação cartão', () => {
+  it('a composição da inicial em cartão tem Instagram e E-mail, cada um um link em cartão', () => {
+    render(
+      <ListaDeContatos>
+        <QuadroDoInstagram apresentacao="cartao" />
+        <QuadroDoEmail apresentacao="cartao" />
+      </ListaDeContatos>
+    )
+    const itens = within(screen.getByRole('list')).getAllByRole('listitem')
+    const links = screen.getAllByRole('link')
+    quadrosEmCartao = links.filter((link) => link.className.includes('cartao')).length
+    expect(itens).toHaveLength(2)
+    expect(links).toHaveLength(2)
+    expect(quadrosEmCartao).toBe(2)
+    expect(links[0]).toHaveAccessibleName('Instagram @liacup.unb (abre em nova aba)')
+    expect(links[0]).toHaveAttribute('href', 'https://www.instagram.com/liacup.unb/')
+    expect(links[1]).toHaveAccessibleName('E-mail liacup.unb@gmail.com')
+    expect(links[1]).toHaveAttribute('href', 'mailto:liacup.unb@gmail.com')
+  })
+
+  it('sem o argumento, nenhum quadro da página Contato ganha a classe do cartão', () => {
+    const { container } = renderizarAPagina()
+    const comCartao = [...container.querySelectorAll('li > *')].filter((quadro) =>
+      quadro.className.includes('cartao')
+    )
+    expect(comCartao).toHaveLength(0)
+  })
+
+  afterAll(() => {
+    process.stdout.write(`apresentação cartão: ${quadrosEmCartao}\n`)
+  })
+})
